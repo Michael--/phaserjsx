@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+out/
+.vite/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+.cache/
+
+# Changeset pre-release files
+.changeset/*.md
+!.changeset/README.md
+!.changeset/config.json
+
+# Miscellaneous
+.turbo/
+.eslintcache

@@ -1,0 +1,34 @@
+{
+  "name": "@phaserjsx/test-ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Test and playground app for @phaserjsx/ui",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts'",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@phaserjsx/ui": "workspace:*",
+    "phaser": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-unused-imports": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  }
+}

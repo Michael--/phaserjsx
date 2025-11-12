@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // No composite mode for apps
+    "composite": false,
+    "rootDir": "./src",
+
+    // Include Vite client types
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
+  "references": [
+    {
+      "path": "../../packages/ui"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "@phaserjsx/ui",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Declarative Phaser3 + rexUI renderer core library",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx --ignore-pattern '**/*.test.ts' --ignore-pattern '**/*.spec.ts'",
+    "format": "prettier --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "rexui",
+    "declarative",
+    "typescript",
+    "game-engine"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-unused-imports": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vite-plugin-dts": "latest",
+    "vitest": "latest"
+  },
+  "peerDependencies": {
+    "phaser": "^3.80.0"
+  },
+  "peerDependenciesMeta": {
+    "phaser": {
+      "optional": false
+    }
+  }
+}

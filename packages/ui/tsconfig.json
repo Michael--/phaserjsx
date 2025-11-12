@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Enable project references for faster builds
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Override noEmit for this package since we build it
+    "noEmit": false,
+
+    // Generate declaration files
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
+}

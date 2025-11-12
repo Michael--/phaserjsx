@@ -1,0 +1,44 @@
+{
+  "name": "phaserjsx",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Declarative Phaser3 + rexUI framework with TypeScript",
+  "packageManager": "pnpm@latest",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @phaserjsx/test-ui dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format",
+    "typecheck": "pnpm -r typecheck",
+    "changeset": "pnpm -w changeset",
+    "release": "pnpm -w changeset version && pnpm -r install --no-frozen-lockfile && pnpm -r build && pnpm -w changeset publish",
+    "prepare": "husky",
+    "doctor": "node -v && pnpm -v && pnpm exec tsc -v"
+  },
+  "devDependencies": {
+    "@changesets/cli": "latest",
+    "@commitlint/cli": "latest",
+    "@commitlint/config-conventional": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "cspell": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-unused-imports": "latest",
+    "husky": "latest",
+    "lint-staged": "latest",
+    "prettier": "latest",
+    "typescript": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}

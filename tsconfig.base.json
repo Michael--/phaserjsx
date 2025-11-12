@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    // Language and environment
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+
+    // Emit settings
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "noEmit": true,
+
+    // Interop constraints
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    // Type checking - strictest settings
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
+    // Skip lib check for faster builds
+    "skipLibCheck": true,
+
+    // Force consistent casing
+    "forceConsistentCasingInFileNames": true,
+
+    // Path mappings for workspace packages
+    "baseUrl": ".",
+    "paths": {
+      "@phaserjsx/ui": ["packages/ui/src"],
+      "@phaserjsx/test-ui": ["apps/test-ui/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "coverage", ".changeset"]
+}

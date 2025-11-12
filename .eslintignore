@@ -1,0 +1,10 @@
+# Ignore build outputs
+dist/
+coverage/
+node_modules/
+
+# Ignore config files (these aren't part of the source code)
+*.config.ts
+*.config.js
+*.config.cjs
+.eslintrc.cjs

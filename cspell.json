@@ -1,0 +1,32 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "phaser",
+    "rexui",
+    "jsx",
+    "vite",
+    "vitest",
+    "pnpm",
+    "tsconfig",
+    "phaserjsx",
+    "esmodule",
+    "bundler",
+    "changesets",
+    "commitlint",
+    "lintstagedrc",
+    "editorconfig",
+    "gitattributes",
+    "prettierrc",
+    "prettierignore",
+    "eslintrc",
+    "devserver"
+  ],
+  "ignorePaths": [
+    "**/dist/**",
+    "**/coverage/**",
+    "**/.changeset/**",
+    "**/node_modules/**",
+    "pnpm-lock.yaml"
+  ]
+}
