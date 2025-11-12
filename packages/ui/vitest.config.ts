@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 // Vitest configuration for unit tests
 export default defineConfig({
@@ -11,4 +11,4 @@ export default defineConfig({
       exclude: ['node_modules/', 'dist/', '**/*.config.ts', '**/*.d.ts'],
     },
   },
-});
+})

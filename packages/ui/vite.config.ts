@@ -1,6 +1,6 @@
-import { resolve } from 'node:path';
-import { defineConfig } from 'vite';
-import dts from 'vite-plugin-dts';
+import { resolve } from 'node:path'
+import { defineConfig } from 'vite'
+import dts from 'vite-plugin-dts'
 
 // Vite configuration for library build
 // Outputs ESM and CJS bundles with TypeScript declarations
@@ -32,4 +32,4 @@ export default defineConfig({
       tsconfigPath: './tsconfig.json',
     }),
   ],
-});
+})
