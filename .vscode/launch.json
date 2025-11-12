@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/apps/test-ui"
+    },
+    {
+      "name": "Vite Dev Server",
+      "request": "launch",
+      "type": "node",
+      "cwd": "${workspaceFolder}/apps/test-ui",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Test UI",
+      "configurations": ["Vite Dev Server", "Launch Chrome"],
+      "presentation": {
+        "order": 1
+      }
+    }
+  ]
+}
