@@ -9,46 +9,46 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: latest
+        specifier: ^2.29.7
         version: 2.29.7(@types/node@24.10.1)
       '@commitlint/cli':
-        specifier: latest
+        specifier: ^20.1.0
         version: 20.1.0(@types/node@24.10.1)(typescript@5.9.3)
       '@commitlint/config-conventional':
-        specifier: latest
+        specifier: ^20.0.0
         version: 20.0.0
       '@typescript-eslint/eslint-plugin':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       '@typescript-eslint/parser':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       cspell:
-        specifier: latest
+        specifier: ^9.3.1
         version: 9.3.1
       eslint:
-        specifier: latest
+        specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
       eslint-config-prettier:
-        specifier: latest
+        specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import:
-        specifier: latest
+        specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-unused-imports:
-        specifier: latest
+        specifier: ^4.3.0
         version: 4.3.0(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       husky:
-        specifier: latest
+        specifier: ^9.1.7
         version: 9.1.7
       lint-staged:
-        specifier: latest
+        specifier: ^16.2.6
         version: 16.2.6
       prettier:
-        specifier: latest
+        specifier: ^3.6.2
         version: 3.6.2
       typescript:
-        specifier: latest
+        specifier: ^5.9.3
         version: 5.9.3
 
   apps/test-ui:
@@ -57,84 +57,84 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: latest
+        specifier: ^3.90.0
         version: 3.90.0
     devDependencies:
       '@types/node':
-        specifier: latest
+        specifier: ^24.10.1
         version: 24.10.1
       '@typescript-eslint/eslint-plugin':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       '@typescript-eslint/parser':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint:
-        specifier: latest
+        specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
       eslint-config-prettier:
-        specifier: latest
+        specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import:
-        specifier: latest
+        specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-unused-imports:
-        specifier: latest
+        specifier: ^4.3.0
         version: 4.3.0(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       prettier:
-        specifier: latest
+        specifier: ^3.6.2
         version: 3.6.2
       typescript:
-        specifier: latest
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: latest
+        specifier: ^7.2.2
         version: 7.2.2(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1)
       vitest:
-        specifier: latest
+        specifier: ^4.0.8
         version: 4.0.8(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1)
 
   packages/ui:
     dependencies:
       phaser:
-        specifier: ^3.80.0
+        specifier: ^3.90.0
         version: 3.90.0
     devDependencies:
       '@types/node':
-        specifier: latest
+        specifier: ^24.10.1
         version: 24.10.1
       '@typescript-eslint/eslint-plugin':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       '@typescript-eslint/parser':
-        specifier: latest
+        specifier: ^8.46.4
         version: 8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
       eslint:
-        specifier: latest
+        specifier: ^9.39.1
         version: 9.39.1(jiti@2.6.1)
       eslint-config-prettier:
-        specifier: latest
+        specifier: ^10.1.8
         version: 10.1.8(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-import:
-        specifier: latest
+        specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       eslint-plugin-unused-imports:
-        specifier: latest
+        specifier: ^4.3.0
         version: 4.3.0(@typescript-eslint/eslint-plugin@8.46.4(@typescript-eslint/parser@8.46.4(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.1(jiti@2.6.1))
       prettier:
-        specifier: latest
+        specifier: ^3.6.2
         version: 3.6.2
       typescript:
-        specifier: latest
+        specifier: ^5.9.3
         version: 5.9.3
       vite:
-        specifier: latest
+        specifier: ^7.2.2
         version: 7.2.2(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1)
       vite-plugin-dts:
-        specifier: latest
+        specifier: ^4.5.4
         version: 4.5.4(@types/node@24.10.1)(rollup@4.53.2)(typescript@5.9.3)(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1))
       vitest:
-        specifier: latest
+        specifier: ^4.0.8
         version: 4.0.8(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1)
 
 packages:
