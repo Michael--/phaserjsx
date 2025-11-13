@@ -35,8 +35,8 @@ describe('Host', () => {
         y: 20,
         width: undefined,
         height: undefined,
-        orientation: undefined,
-        rtl: undefined,
+        orientation: 'x',
+        rtl: false,
         space: undefined,
         align: undefined,
       })

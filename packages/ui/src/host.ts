@@ -105,8 +105,8 @@ export const host = {
           y: p.y,
           width: p.width,
           height: p.height,
-          orientation: p.orientation,
-          rtl: p.rtl,
+          orientation: p.orientation ?? 'x',
+          rtl: p.rtl ?? false,
           space: p.space,
           align: p.align,
         }) as RexSizerType
