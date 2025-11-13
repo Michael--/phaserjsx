@@ -112,7 +112,15 @@ export const host = {
           space: p.space,
           align: p.align,
         }) as RexLabelType
-        if (p.onPointerdown) label.on('pointerdown', p.onPointerdown)
+        if (p.onPointerdown) {
+          const interactiveLabel = label as {
+            setInteractive?: () => void
+            input?: { cursor?: string }
+          }
+          interactiveLabel.setInteractive?.()
+          if (interactiveLabel.input) interactiveLabel.input.cursor = 'pointer'
+          label.on('pointerdown', p.onPointerdown)
+        }
         return label
       }
       case 'Text': {
@@ -129,7 +137,11 @@ export const host = {
           textProps.text ?? '',
           textProps.style
         )
-        if (textProps.onPointerdown) text.on('pointerdown', textProps.onPointerdown)
+        if (textProps.onPointerdown) {
+          text.setInteractive()
+          if (text.input) text.input.cursor = 'pointer'
+          text.on('pointerdown', textProps.onPointerdown)
+        }
         return text
       }
       default:
@@ -198,11 +210,15 @@ export const host = {
     }
 
     // Pointer events
-    if (prev.onPointerDown !== next.onPointerDown) {
-      if (prev.onPointerDown) nodeObj.off?.('pointerdown', prev.onPointerDown)
-      if (next.onPointerDown) {
+    const prevPointer = (prev as { onPointerdown?: () => void }).onPointerdown
+    const nextPointer = (next as { onPointerdown?: () => void }).onPointerdown
+    if (prevPointer !== nextPointer) {
+      if (prevPointer) nodeObj.off?.('pointerdown', prevPointer)
+      if (nextPointer) {
         nodeObj.setInteractive?.()
-        nodeObj.on?.('pointerdown', next.onPointerDown)
+        const interactiveNode = node as { input?: { cursor?: string } }
+        if (interactiveNode.input) interactiveNode.input.cursor = 'pointer'
+        nodeObj.on?.('pointerdown', nextPointer)
       }
     }
 
