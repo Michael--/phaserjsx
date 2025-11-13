@@ -206,11 +206,11 @@ export const host = {
     }
 
     // Pointer events
-    if (prev.onPointerdown !== next.onPointerdown) {
-      if (prev.onPointerdown) nodeObj.off?.('pointerdown', prev.onPointerdown)
-      if (next.onPointerdown) {
+    if (prev.onPointerDown !== next.onPointerDown) {
+      if (prev.onPointerDown) nodeObj.off?.('pointerdown', prev.onPointerDown)
+      if (next.onPointerDown) {
         nodeObj.setInteractive?.()
-        nodeObj.on?.('pointerdown', next.onPointerdown)
+        nodeObj.on?.('pointerdown', next.onPointerDown)
       }
     }
 

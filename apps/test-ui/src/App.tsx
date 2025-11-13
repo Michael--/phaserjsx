@@ -18,7 +18,10 @@ export function Counter(props: { step?: number; label?: string; x?: number; y?: 
       <RexLabel
         text={`Add +${step}`}
         background={{ radius: 6, color: 0x555555 }}
-        onPointerdown={() => setN((v) => v + step)}
+        onPointerDown={() => {
+          console.log(`Counter: adding ${step}`)
+          setN((v) => v + step)
+        }}
       />
     </RexSizer>
   )
