@@ -87,8 +87,11 @@ export function mount(
     scene
   )
   vnode.__node = node
+  vnode.__parent = parentOrScene // Store parent for unmounting
   host.append(parentOrScene, node)
-  vnode.children?.forEach((c) => mount(node as ParentType, c))
+  vnode.children?.forEach((c) => {
+    if (c != null && c !== false) mount(node as ParentType, c)
+  })
   host.layout(node)
   return node
 }
@@ -97,17 +100,18 @@ export function mount(
  * Unmounts a VNode and cleans up resources
  * @param vnode - VNode to unmount
  */
-export function unmount(vnode: VNode) {
+export function unmount(vnode: VNode | null | undefined | false): void {
+  if (!vnode || (vnode as unknown) === false) return
   if (typeof vnode.type === 'function') {
     const ctx = (vnode as VNode & { __ctx?: Ctx }).__ctx
     if (ctx) disposeCtx(ctx)
     if (ctx?.vnode) unmount(ctx.vnode)
     return
   }
+  // Clean up children FIRST (before removing from parent)
   vnode.children?.forEach(unmount)
-  const parent =
-    (vnode.__node as { parentContainer?: unknown; scene?: unknown } | undefined)?.parentContainer ??
-    (vnode.__node as { scene?: unknown } | undefined)?.scene
+  // Then remove from parent/scene
+  const parent = vnode.__parent
   if (parent) host.remove(parent as ParentType, vnode.__node as Phaser.GameObjects.GameObject)
 }
 
@@ -174,11 +178,14 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
       c2 = b[i]
-    if (!c1 && c2) {
+    // Filter out false/null/undefined children
+    const isValidC1 = c1 != null && c1 !== false
+    const isValidC2 = c2 != null && c2 !== false
+    if (!isValidC1 && isValidC2) {
       mount(oldV.__node as ParentType, c2)
-    } else if (c1 && !c2) {
+    } else if (isValidC1 && !isValidC2) {
       unmount(c1)
-    } else if (c1 && c2) {
+    } else if (isValidC1 && isValidC2) {
       patchVNode(oldV.__node as ParentType, c1, c2)
     }
   }

@@ -25,9 +25,10 @@ let CURRENT: Ctx | null = null
 export type VNode = {
   type: unknown
   props?: Record<string, unknown> | undefined
-  children?: VNode[]
+  children?: (VNode | null | undefined | false)[]
   __node?: unknown
   __ctx?: Ctx
+  __parent?: unknown
 }
 
 /**

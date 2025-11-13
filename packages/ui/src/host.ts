@@ -270,8 +270,21 @@ export const host = {
    * @param child - Child node to remove
    */
   remove(parent: ParentType, child: Phaser.GameObjects.GameObject) {
-    if (isRexContainer(parent)) parent.remove(child, true)
-    ;(child as { destroy?: (destroyChildren?: boolean) => void }).destroy?.(true)
+    // Check if child still has a scene (not already destroyed)
+    const childObj = child as {
+      scene?: Phaser.Scene | null
+      destroy?: (destroyChildren?: boolean) => void
+    }
+
+    if (!childObj.scene) return
+
+    // Remove from parent container first
+    if (isRexContainer(parent)) {
+      parent.remove(child, false)
+    }
+
+    // Destroy the child WITHOUT destroying its children (we handle that separately in unmount)
+    childObj.destroy?.(false)
   },
 
   /**
