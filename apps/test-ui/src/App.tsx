@@ -43,7 +43,7 @@ export function Button(props: {
       y={props.y ?? 0}
       width={100}
       height={50}
-      orientation="x"
+      orientation="y"
       background={{ radius: 6, color: 0x555555 }}
       onPointerdown={props.onClick}
       space={{ left: 10, right: 10, top: 10, bottom: 10 }}
@@ -59,12 +59,20 @@ export function Button(props: {
  * @returns App component JSX
  */
 export function App() {
+  const [count, setCount] = useState(0)
+
   return (
     <RexSizer x={400} y={250} orientation="y" space={{ item: 16 }} align="center">
       <RexLabel text="Two independent counters:" textStyle={{ fontSize: 28 }} />
       <Counter step={1} label="A" />
       <Counter step={5} label="B" />
-      <Button onClick={() => console.log('Button clicked')}>
+      <RexLabel text={`Clicked: ${count}`} textStyle={{ fontSize: 16 }} />
+      <Button
+        onClick={() => {
+          console.log('Button clicked')
+          setCount(count + 1)
+        }}
+      >
         <RexLabel text="Click me" />
       </Button>
     </RexSizer>

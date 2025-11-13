@@ -1,4 +1,5 @@
 import type Phaser from 'phaser'
+import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
 
@@ -11,9 +12,10 @@ export interface RexLabelProps {
   text?: string
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
   background?: { radius?: number; color?: number }
-  space?: Record<string, number>
-  align?: string
+  space?: Partial<Record<'left' | 'right' | 'top' | 'bottom' | 'item', number>>
+  align?: 'left' | 'center' | 'right' | 'justify'
   onPointerdown?: () => void
+  children?: VNode[]
 }
 
 /**
@@ -23,12 +25,13 @@ export interface RexSizerProps {
   x?: number
   y?: number
   orientation?: 'x' | 'y'
-  space?: Record<string, number>
-  align?: string
+  space?: Partial<Record<'left' | 'right' | 'top' | 'bottom' | 'item', number>>
+  align?: 'left' | 'center' | 'right' | 'justify'
   width?: number
   height?: number
   background?: { radius?: number; color?: number }
-  onPointerdown?: () => void
+  onPointerdown?: (() => void) | undefined
+  children?: VNode | VNode[] | null | undefined
 }
 
 /**
@@ -40,6 +43,7 @@ export interface TextProps {
   text?: string
   style?: Phaser.Types.GameObjects.Text.TextStyle
   onPointerdown?: () => void
+  children?: VNode | VNode[] | null | undefined
 }
 
 /**
@@ -63,3 +67,16 @@ export type RexLabelType = Phaser.GameObjects.Container & {
  * Type for parent objects that can contain children
  */
 export type ParentType = Phaser.Scene | Phaser.GameObjects.Container | RexSizerType
+
+// JSX type definitions for type-safe props
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      RexSizer: RexSizerProps
+      RexLabel: RexLabelProps
+      Text: TextProps
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
