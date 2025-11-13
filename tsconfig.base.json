@@ -28,6 +28,7 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
 
@@ -41,7 +42,7 @@
     "baseUrl": ".",
     "paths": {
       "@phaserjsx/ui": ["packages/ui/src"],
-      "@phaserjsx/test-ui": ["apps/test-ui/src"]
+      "@phaserjsx/ui/*": ["packages/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "coverage", ".changeset"]
