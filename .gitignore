@@ -7,7 +7,7 @@ dist/
 build/
 out/
 .vite/
-.*tsbuildinfo
+*.tsbuildinfo
 
 # Test coverage
 coverage/
