@@ -4,11 +4,16 @@
 
 /**
  * RexSizer layout container component
- * @param props - Sizer properties
+ * @param props - Sizer properties including children
  * @returns VNode object
  */
-export function RexSizer(props: Record<string, unknown>) {
-  return { type: 'RexSizer', props, children: (props?.children ?? []) as unknown[] }
+export function RexSizer(props: { children?: unknown; [key: string]: unknown }) {
+  console.log('RexSizer called with props:', props)
+  const { children, ...rest } = props
+  console.log('RexSizer children:', children)
+  const kids = children == null ? [] : Array.isArray(children) ? children : [children]
+  console.log('RexSizer kids:', kids)
+  return { type: 'RexSizer', props: rest, children: kids as unknown[] }
 }
 
 /**

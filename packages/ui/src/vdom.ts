@@ -32,6 +32,8 @@ export function createElement(
 export function mount(parentOrScene: unknown, vnode: VNode): unknown {
   // Function component
   if (typeof vnode.type === 'function') {
+    console.log('Mounting function component:', (vnode.type as { name?: string }).name)
+    console.log('VNode has children:', vnode.children?.length ?? 0)
     const ctx: Ctx = {
       index: 0,
       slots: [],
@@ -40,7 +42,15 @@ export function mount(parentOrScene: unknown, vnode: VNode): unknown {
       vnode,
       parent: parentOrScene,
     }
-    const rendered = withHooks(ctx, () => (vnode.type as (props: unknown) => VNode)(vnode.props))
+    // Pass children to the component via props
+    const propsWithChildren = vnode.children?.length
+      ? { ...(vnode.props ?? {}), children: vnode.children }
+      : vnode.props
+    console.log('Calling component with props:', propsWithChildren)
+    const rendered = withHooks(ctx, () =>
+      (vnode.type as (props: unknown) => VNode)(propsWithChildren)
+    )
+    console.log('Rendered VNode:', rendered)
     ;(rendered as VNode & { __ctx?: Ctx }).__ctx = ctx
     const node = mount(parentOrScene, rendered)
     ctx.cleanups.push(() => unmount(rendered))
@@ -49,8 +59,20 @@ export function mount(parentOrScene: unknown, vnode: VNode): unknown {
     return node
   }
   // Host node
-  const scene = (parentOrScene as { scene?: unknown }).scene ?? parentOrScene
-  const node = host.create(String(vnode.type), vnode.props ?? {}, scene as Phaser.Scene)
+  console.log('Mounting host node:', String(vnode.type), 'props:', vnode.props)
+  console.log('parentOrScene:', parentOrScene)
+
+  // Check if parentOrScene is already a Phaser.Scene
+  const scene = (parentOrScene as { sys?: unknown }).sys
+    ? (parentOrScene as Phaser.Scene) // It's a Scene
+    : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
+
+  console.log('Extracted scene:', scene)
+  console.log('Scene type:', scene?.constructor?.name)
+  console.log('Scene has rexUI?', !!(scene as { rexUI?: unknown }).rexUI)
+
+  const node = host.create(String(vnode.type), vnode.props ?? {}, scene)
+  console.log('Created node:', node)
   vnode.__node = node
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => mount(node, c))

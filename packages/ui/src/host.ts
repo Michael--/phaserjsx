@@ -62,6 +62,7 @@ export const host = {
    * @throws Error if node type is unknown
    */
   create(type: string, props: Record<string, unknown>, scene: unknown): unknown {
+    console.log('host.create called:', type, props)
     const phaserScene = scene as Phaser.Scene & {
       rexUI?: {
         add: {
@@ -78,17 +79,30 @@ export const host = {
         }
       }
     }
+
+    if (!phaserScene.rexUI) {
+      console.error('rexUI plugin not found on scene!', phaserScene)
+      throw new Error('rexUI plugin not installed. Make sure the scene has rexUI plugin.')
+    }
+
     switch (type) {
       case 'RexSizer': {
         const p = props as RexSizerProps
+        console.log('Creating RexSizer with config:', {
+          x: p.x ?? 0,
+          y: p.y ?? 0,
+          orientation: p.orientation ?? 'y',
+        })
         // rexUI scene plugin must be installed in the Scene as "rexUI"
-        return phaserScene.rexUI?.add.sizer({
+        const sizer = phaserScene.rexUI.add.sizer({
           x: p.x ?? 0,
           y: p.y ?? 0,
           orientation: p.orientation ?? 'y',
           space: p.space,
           align: p.align,
         })
+        console.log('Created sizer:', sizer)
+        return sizer
       }
       case 'RexLabel': {
         const p = props as RexLabelProps
@@ -102,14 +116,14 @@ export const host = {
               p.background.color ?? 0x2a2a2a
             )
           : undefined
+        const textObject = phaserScene.add.text(0, 0, p.text ?? '', p.textStyle)
         return phaserScene.rexUI?.add.label({
           x: p.x ?? 0,
           y: p.y ?? 0,
-          text: p.text ?? '',
+          text: textObject,
           background,
           space: p.space,
           align: p.align,
-          style: p.textStyle,
         })
       }
       case 'Text': {

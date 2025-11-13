@@ -11,16 +11,40 @@ import { App } from './App'
  * Main Phaser scene
  */
 class MainScene extends Phaser.Scene {
+  rexUI!: {
+    add: {
+      sizer: (config: unknown) => unknown
+      roundRectangle: (
+        x: number,
+        y: number,
+        w: number,
+        h: number,
+        r: number,
+        color: number
+      ) => unknown
+      label: (config: unknown) => unknown
+    }
+  }
+
   /**
    * Creates the scene and mounts the JSX app
    */
   create() {
+    console.log('MainScene.create() called')
+    console.log('Scene dimensions:', this.scale.width, 'x', this.scale.height)
+    console.log('rexUI available?', this.rexUI)
+    console.log('Scene plugins:', Object.keys(this))
+
     // Install a simple bridge for pointerdown mapped in host.patch
     this.input.on('gameobjectdown', (_p: unknown, go: { onPointerdown?: () => void }) =>
       go?.onPointerdown?.()
     )
+
+    console.log('Mounting App...')
     const tree = { type: App, props: {}, children: [] }
-    mount(this, tree)
+    const result = mount(this, tree)
+    console.log('Mount result:', result)
+    console.log('Scene children count:', this.children.length)
   }
 }
 
@@ -32,6 +56,12 @@ new Phaser.Game({
   parent: 'app',
   scene: [MainScene],
   plugins: {
-    scene: [{ key: 'rexuiplugin', plugin: RexUIPlugin, mapping: 'rexUI' }],
+    scene: [
+      {
+        key: 'rexUI',
+        plugin: RexUIPlugin,
+        mapping: 'rexUI',
+      },
+    ],
   },
 })
