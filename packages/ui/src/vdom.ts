@@ -44,6 +44,7 @@ export function mount(
       cleanups: [],
       vnode,
       parent: parentOrScene,
+      function: vnode.type as (props: unknown) => VNode,
     }
     // Pass children to the component via props
     const propsWithChildren = vnode.children?.length
@@ -52,8 +53,6 @@ export function mount(
     const rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
-    console.log('Rendered VNode:', rendered)
-    ;(rendered as VNode & { __ctx?: Ctx }).__ctx = ctx
     const node = mount(parentOrScene, rendered)
     ctx.cleanups.push(() => unmount(rendered))
     ctx.vnode = rendered
@@ -61,20 +60,12 @@ export function mount(
     return node
   }
   // Host node
-  console.log('Mounting host node:', String(vnode.type), 'props:', vnode.props)
-  console.log('parentOrScene:', parentOrScene)
-
   // Check if parentOrScene is already a Phaser.Scene
   const scene = (parentOrScene as { sys?: unknown }).sys
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  console.log('Extracted scene:', scene)
-  console.log('Scene type:', scene?.constructor?.name)
-  console.log('Scene has rexUI?', !!(scene as { rexUI?: unknown }).rexUI)
-
   const node = host.create(String(vnode.type), vnode.props ?? {}, scene)
-  console.log('Created node:', node)
   vnode.__node = node
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => mount(node as ParentType, c))
@@ -110,14 +101,14 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   // Function components
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {
-      const ctx = (oldV as VNode & { __ctx?: Ctx }).__ctx!
+      const ctx = (oldV as VNode & { __ctx?: Ctx }).__ctx
+      if (!ctx) return
       if (newV.props !== undefined) {
         ctx.vnode.props = newV.props
       }
       const renderedNext = withHooks(ctx, () =>
         (newV.type as (props: unknown) => VNode)(newV.props)
       )
-      ;(renderedNext as VNode & { __ctx?: Ctx }).__ctx = ctx
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()

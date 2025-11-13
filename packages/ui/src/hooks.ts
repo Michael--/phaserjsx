@@ -14,6 +14,7 @@ export type Ctx = {
   cleanups: Cleanup[]
   vnode: VNode
   parent: ParentType
+  function: (props: unknown) => VNode
   updater?: (() => void) | undefined
 }
 
@@ -144,7 +145,7 @@ function scheduleUpdate(c: Ctx) {
   c.updater = () => {
     c.updater = undefined
     const prevVNode = c.vnode
-    const nextVNode = withHooks(c, () => (c.vnode.type as (props: unknown) => VNode)(c.vnode.props))
+    const nextVNode = withHooks(c, () => c.function(c.vnode.props))
     // link ctx for next render tree
     ;(nextVNode as VNode & { __ctx?: Ctx }).__ctx = c
     patchVNode(c.parent, prevVNode, nextVNode)

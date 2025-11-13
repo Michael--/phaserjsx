@@ -105,7 +105,7 @@ export const host = {
             )
           : undefined
         const textObject = phaserScene.add.text(0, 0, p.text ?? '', p.textStyle)
-        return phaserScene.rexUI?.add.label({
+        const label = phaserScene.rexUI?.add.label({
           x: p.x ?? 0,
           y: p.y ?? 0,
           text: textObject,
@@ -113,6 +113,8 @@ export const host = {
           space: p.space,
           align: p.align,
         }) as RexLabelType
+        if (p.onPointerdown) label.on('pointerdown', p.onPointerdown)
+        return label
       }
       case 'Text': {
         const textProps = props as {
@@ -120,13 +122,16 @@ export const host = {
           y?: number
           text?: string
           style?: Phaser.Types.GameObjects.Text.TextStyle
+          onPointerdown?: () => void
         }
-        return phaserScene.add.text(
+        const text = phaserScene.add.text(
           textProps.x ?? 0,
           textProps.y ?? 0,
           textProps.text ?? '',
           textProps.style
         )
+        if (textProps.onPointerdown) text.on('pointerdown', textProps.onPointerdown)
+        return text
       }
       default:
         throw new Error(`Unknown node type: ${type}`)
