@@ -118,6 +118,12 @@ export function unmount(vnode: VNode) {
  * @param newV - New VNode
  */
 export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
+  console.log('[patchVNode] START', {
+    oldType: oldV.type,
+    newType: newV.type,
+    oldNode: oldV.__node,
+    newNode: newV.__node,
+  })
   // Function components
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {
@@ -165,21 +171,32 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   }
   // Host nodes
   if (oldV.type !== newV.type) {
+    console.log('[patchVNode] Different types, unmount+mount', oldV.type, '->', newV.type)
     unmount(oldV)
     mount(parent, newV)
     return
   }
+  console.log('patching host node', oldV.type, { oldProps: oldV.props, newProps: newV.props })
   newV.__node = oldV.__node
   host.patch(oldV.__node, oldV.props ?? {}, newV.props ?? {})
   const a = oldV.children ?? []
   const b = newV.children ?? []
   const len = Math.max(a.length, b.length)
+  console.log('patching children', oldV.type, a.length, b.length)
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
       c2 = b[i]
-    if (!c1 && c2) mount(oldV.__node as ParentType, c2)
-    else if (c1 && !c2) unmount(c1)
-    else if (c1 && c2) patchVNode(oldV.__node as ParentType, c1, c2)
+    console.log('patching child', i, { c1Type: c1?.type, c2Type: c2?.type, c1Node: c1?.__node })
+    if (!c1 && c2) {
+      console.log('[patchVNode] Mounting new child', i, c2.type)
+      mount(oldV.__node as ParentType, c2)
+    } else if (c1 && !c2) {
+      console.log('[patchVNode] Unmounting child', i, c1.type)
+      unmount(c1)
+    } else if (c1 && c2) {
+      console.log('[patchVNode] Patching child', i, c1.type, '->', c2.type)
+      patchVNode(oldV.__node as ParentType, c1, c2)
+    }
   }
   host.layout(oldV.__node)
 }

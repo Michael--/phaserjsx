@@ -3,7 +3,7 @@
  * It is independent from React/Preact renderers.
  */
 import type { ParentType } from './types'
-import { mount, unmount } from './vdom'
+import { patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
 
@@ -57,13 +57,16 @@ export function useState<T>(initial: T): [T, (v: T | ((p: T) => T)) => void] {
   const i = c.index++
   if (i >= c.slots.length)
     c.slots[i] = typeof initial === 'function' ? (initial as () => T)() : initial
+  const value = c.slots[i] as T
+  console.log('useState', i, value)
   const set = (v: T | ((p: T) => T)) => {
     const next = typeof v === 'function' ? (v as (p: T) => T)(c.slots[i] as T) : v
     if (Object.is(next, c.slots[i])) return
     c.slots[i] = next
+    console.log('setState', i, next)
     scheduleUpdate(c)
   }
-  return [c.slots[i] as T, set]
+  return [value, set]
 }
 
 /**
@@ -148,29 +151,29 @@ function scheduleUpdate(c: Ctx) {
   c.updater = () => {
     console.log('performing scheduled update')
     c.updater = undefined
-    const prevVNode = c.vnode
     // Use component VNode props, merging with children
     const componentProps = c.componentVNode.props ?? {}
     const propsWithChildren = c.componentVNode.children?.length
       ? { ...componentProps, children: c.componentVNode.children }
       : componentProps
 
+    console.log('c.function', typeof c.function, c.function?.name)
     // Render the component to get the new VNode
+    console.log('rendering component', c.function.name, propsWithChildren)
     const nextVNode = withHooks(c, () => c.function(propsWithChildren))
 
-    // Unmount old rendered tree
-    unmount(prevVNode)
-
-    // Mount new rendered tree
-    // IMPORTANT: Clear CURRENT to avoid hook context pollution
-    const prevCurrent = CURRENT
-    CURRENT = null
-    mount(c.parent, nextVNode)
-    CURRENT = prevCurrent
+    console.log('calling patchVNode', {
+      parent: c.parent,
+      oldType: c.vnode.type,
+      newType: nextVNode.type,
+      oldNode: c.vnode.__node,
+    })
+    // Patch the existing rendered tree
+    patchVNode(c.parent, c.vnode, nextVNode)
 
     c.vnode = nextVNode
 
-    // Run effects after mounting
+    // Run effects after patching
     for (const run of c.effects) run()
   }
   queueMicrotask(c.updater)

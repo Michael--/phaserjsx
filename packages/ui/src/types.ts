@@ -53,7 +53,8 @@ export type RexSizerType = Phaser.GameObjects.Container & {
  * rexUI Label type (text with optional background)
  */
 export type RexLabelType = Phaser.GameObjects.Container & {
-  // rexUI specific properties can be added here
+  text: Phaser.GameObjects.Text
+  setText: (text: string) => void
 }
 
 /**

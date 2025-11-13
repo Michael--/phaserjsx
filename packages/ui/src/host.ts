@@ -190,9 +190,11 @@ export const host = {
    * @param next - New props
    */
   patch(node: unknown, prev: Record<string, unknown>, next: Record<string, unknown>) {
+    console.log('[host.patch] START', { node, prev, next })
     const nodeObj = node as {
       x?: number
       y?: number
+      text?: Phaser.GameObjects.Text
       setText?: (text: string) => void
       setStyle?: (style: unknown) => void
       off?: (event: string, handler: unknown) => void
@@ -203,8 +205,18 @@ export const host = {
     if (prev.y !== next.y && typeof next.y === 'number') nodeObj.y = next.y
 
     // Text-like props
-    if ('text' in next && prev.text !== next.text && typeof next.text === 'string')
+    if ('text' in next) {
+      console.log('text in next', {
+        prevText: prev.text,
+        nextText: next.text,
+        equal: prev.text === next.text,
+        type: typeof next.text,
+      })
+    }
+    if ('text' in next && prev.text !== next.text && typeof next.text === 'string') {
+      console.log('updating text to', next.text)
       nodeObj.setText?.(next.text)
+    }
     if (next.textStyle && JSON.stringify(prev.textStyle) !== JSON.stringify(next.textStyle)) {
       nodeObj.setStyle?.(next.textStyle)
     }
