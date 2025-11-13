@@ -122,7 +122,7 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {
       const ctx = (oldV as VNode & { __ctx?: Ctx }).__ctx
-      if (!ctx || ctx.isFactory) {
+      if (!ctx) {
         // No context means this is a VNode factory (like RexSizer), not a real component
         // Render both and patch the results
         const propsWithChildren = newV.children?.length
@@ -142,6 +142,8 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       if (newV.children !== undefined) {
         ctx.componentVNode.children = newV.children
       }
+      // Transfer context to newV so future patches work
+      ;(newV as VNode & { __ctx?: Ctx }).__ctx = ctx
       // Re-render with updated props
       const propsWithChildren = ctx.componentVNode.children?.length
         ? { ...(ctx.componentVNode.props ?? {}), children: ctx.componentVNode.children }
