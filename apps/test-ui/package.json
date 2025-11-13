@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@phaserjsx/ui": "workspace:*",
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "phaser3-rex-plugins": "^1.80.17"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

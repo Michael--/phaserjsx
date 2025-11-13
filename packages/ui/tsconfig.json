@@ -11,7 +11,11 @@
 
     // Generate declaration files
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+
+    // JSX configuration
+    "jsx": "react-jsx",
+    "jsxImportSource": "."
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
