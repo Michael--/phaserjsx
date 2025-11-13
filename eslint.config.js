@@ -46,7 +46,7 @@ export default [
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'warn',
       'prettier/prettier': 'warn',
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      // 'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-undef': 'off',
       semi: ['error', 'never'],
     },
