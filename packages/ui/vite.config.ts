@@ -29,6 +29,7 @@ export default defineConfig({
       },
     },
     sourcemap: true,
+    minify: false, // Don't minify to keep console.logs and readable code
     // Target modern browsers
     target: 'es2022',
   },

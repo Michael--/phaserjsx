@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
 // Vite configuration for development app
 // Provides HMR dev server for testing @phaserjsx/ui
@@ -14,4 +14,4 @@ export default defineConfig({
     sourcemap: true,
     target: 'es2022',
   },
-});
+})
