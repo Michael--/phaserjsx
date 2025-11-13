@@ -336,6 +336,26 @@ export const host = {
       }
     }
 
+    // Background color changes for RexUI containers
+    if (isRexContainer(node)) {
+      const prevBg = (prev as { background?: { color?: number } }).background
+      const nextBg = (next as { background?: { color?: number } }).background
+      if (prevBg?.color !== nextBg?.color && nextBg?.color !== undefined) {
+        const rexNode = node as {
+          backgroundChildren?: Phaser.GameObjects.GameObject[]
+        }
+        // RexUI Sizer stores background as first child in backgroundChildren array
+        const bgShape = rexNode.backgroundChildren?.[0] as
+          | {
+              setFillStyle?: (color: number, alpha?: number) => void
+            }
+          | undefined
+        if (bgShape?.setFillStyle) {
+          bgShape.setFillStyle(nextBg.color)
+        }
+      }
+    }
+
     if (isRexContainer(node) && affectsLayout(prev, next)) scheduleLayout(node)
   },
 

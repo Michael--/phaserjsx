@@ -116,14 +116,12 @@ export function App() {
       {/* Navigation */}
       <RexSizer orientation="x" space={{ item: 10 }} align="center">
         <Button
-          key={`btn-0-${currentExample === 0}`}
           onClick={() => setCurrentExample(0)}
           background={{ radius: 6, color: currentExample === 0 ? 0x00ff00 : 0x555555 }}
         >
           <RexLabel text={'Counters'} textStyle={{ fontSize: 18 }} />
         </Button>
         <Button
-          key={`btn-1-${currentExample === 1}`}
           onClick={() => setCurrentExample(1)}
           background={{ radius: 6, color: currentExample === 1 ? 0x00ff00 : 0x555555 }}
         >
