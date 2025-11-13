@@ -111,27 +111,29 @@ export function App() {
   const [currentExample, setCurrentExample] = useState(0)
 
   return (
-    <RexSizer x={400} y={300} orientation="y" space={{ item: 20 }} align="center">
-      <RexLabel text={`Select Example:${currentExample}`} textStyle={{ fontSize: 24 }} />
-      {/* Navigation */}
-      <RexSizer orientation="x" space={{ item: 10 }} align="center">
+    <RexSizer x={400} y={300} orientation="x" space={{ item: 20 }} align="left">
+      {/* Left sidebar - Navigation buttons */}
+      <RexSizer orientation="y" space={{ item: 10 }} align="left">
+        <RexLabel text="Examples:" textStyle={{ fontSize: 20 }} />
         <Button
           onClick={() => setCurrentExample(0)}
           background={{ radius: 6, color: currentExample === 0 ? 0x00ff00 : 0x555555 }}
         >
-          <RexLabel text={'Counters'} textStyle={{ fontSize: 18 }} />
+          <RexLabel text="Counters" textStyle={{ fontSize: 16 }} />
         </Button>
         <Button
           onClick={() => setCurrentExample(1)}
           background={{ radius: 6, color: currentExample === 1 ? 0x00ff00 : 0x555555 }}
         >
-          <RexLabel text={'RexLabel'} textStyle={{ fontSize: 18 }} />
+          <RexLabel text="RexLabel" textStyle={{ fontSize: 16 }} />
         </Button>
       </RexSizer>
 
-      {/* Current example - conditional rendering to force unmount on change */}
-      {currentExample === 0 && <CountersExample />}
-      {currentExample === 1 && <RexLabelExamples />}
+      {/* Right side - Current example display (prominent) */}
+      <RexSizer orientation="y" space={{ item: 10 }} align="center">
+        {currentExample === 0 && <CountersExample />}
+        {currentExample === 1 && <RexLabelExamples />}
+      </RexSizer>
     </RexSizer>
   )
 }
