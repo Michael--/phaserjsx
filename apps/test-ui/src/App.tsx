@@ -2,7 +2,7 @@
  * Demo: two independent counters using the custom hooks + rexUI widgets.
  * Assumes the Scene has rexUI plugin installed as "rexUI".
  */
-import { RexLabel, RexSizer, useState } from '@phaserjsx/ui'
+import { RexLabel, RexSizer, useState, type VNode } from '@phaserjsx/ui'
 
 /**
  * Counter component with configurable step
@@ -27,6 +27,33 @@ export function Counter(props: { step?: number; label?: string; x?: number; y?: 
 }
 
 /**
+ * Button component using RexSizer as interactive container
+ * @param props - Button properties
+ * @returns Button component JSX
+ */
+export function Button(props: {
+  children?: VNode | VNode[] | null | undefined
+  onClick?: () => void
+  x?: number
+  y?: number
+}) {
+  return (
+    <RexSizer
+      x={props.x ?? 0}
+      y={props.y ?? 0}
+      width={100}
+      height={50}
+      background={{ radius: 6, color: 0x555555 }}
+      onPointerdown={props.onClick}
+      space={{ left: 10, right: 10, top: 10, bottom: 10 }}
+      align="center"
+    >
+      {props.children}
+    </RexSizer>
+  )
+}
+
+/**
  * Main app component with two independent counters
  * @returns App component JSX
  */
@@ -36,6 +63,9 @@ export function App() {
       <RexLabel text="Two independent counters:" textStyle={{ fontSize: 28 }} />
       <Counter step={1} label="A" />
       <Counter step={5} label="B" />
+      <Button onClick={() => console.log('Button clicked')}>
+        <RexLabel text="Click me" />
+      </Button>
     </RexSizer>
   )
 }

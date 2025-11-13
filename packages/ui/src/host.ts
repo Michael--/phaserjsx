@@ -2,7 +2,7 @@
  * Host bridge that maps declarative nodes to Phaser/rexUI objects.
  * Keep this small; extend gradually as needed.
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
 import { RexLabel, RexSizer, Text } from './widgets'
 
@@ -88,8 +88,33 @@ export const host = {
           orientation: p.orientation ?? 'y',
           space: p.space,
           align: p.align,
-        })
-        return sizer as RexSizerType
+          width: p.width,
+          height: p.height,
+        }) as RexSizerType
+        const background = p.background
+          ? (phaserScene.rexUI?.add.roundRectangle(
+              0,
+              0,
+              p.width ?? 0,
+              p.height ?? 0,
+              p.background.radius ?? 6,
+              p.background.color ?? 0x2a2a2a
+            ) as Phaser.GameObjects.GameObject)
+          : undefined
+        if (background) {
+          sizer.add(background)
+        }
+        console.log('Created RexSizer with props:', p)
+        if (p.onPointerdown) {
+          const interactiveLabel = sizer as {
+            setInteractive?: () => void
+            // input?: { cursor?: string }
+          }
+          interactiveLabel.setInteractive?.()
+          // if (interactiveLabel.input) interactiveLabel.input.cursor = 'pointer'
+          sizer.on('pointerdown', p.onPointerdown)
+        }
+        return sizer
       }
       case 'RexLabel': {
         const p = props as RexLabelProps

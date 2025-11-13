@@ -27,6 +27,8 @@ export interface RexSizerProps {
   align?: string
   width?: number
   height?: number
+  background?: { radius?: number; color?: number }
+  onPointerdown?: () => void
 }
 
 /**
