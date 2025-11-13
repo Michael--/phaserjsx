@@ -70,27 +70,60 @@ class MainScene extends Phaser.Scene {
     }) as unknown as Phaser.GameObjects.Container & {
       add: (child: unknown, config?: unknown) => unknown
       layout: () => void
+      addBackground: (bg: unknown) => void
     }
+
+    // Add blue background to outerBox
+    const outerBg = this.rexUI.add.roundRectangle(
+      0,
+      0,
+      width,
+      height,
+      0,
+      0x0000ff
+    ) as Phaser.GameObjects.Shape
+    outerBg.setAlpha(0.3)
+    outerBox.addBackground(outerBg)
 
     const midBox = this.rexUI.add.sizer({
       orientation: 'x',
     }) as unknown as Phaser.GameObjects.Container & {
       add: (child: unknown, config?: unknown) => unknown
+      addBackground: (bg: unknown) => void
     }
 
+    // Add green background to midBox
+    const midBg = this.rexUI.add.roundRectangle(0, 0, 0, 0, 0, 0x00ff00) as Phaser.GameObjects.Shape
+    midBg.setAlpha(0.3)
+    midBox.addBackground(midBg)
+
     // Vertical centering: top spacer, content, bottom spacer
-    outerBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
-    outerBox.add(midBox, { expand: true })
-    outerBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
+    outerBox.add(this.add.zone(0, 0, 1, 1), { proportion: 0, align: 'center' })
+    outerBox.add(midBox, { proportion: 1, expand: true })
+    outerBox.add(this.add.zone(0, 0, 1, 1), { proportion: 0, align: 'center' })
 
     const innerBox = this.rexUI.add.sizer({
       orientation: 'y',
-    }) as unknown as Phaser.GameObjects.Container
+    }) as unknown as Phaser.GameObjects.Container & {
+      addBackground: (bg: unknown) => void
+    }
+
+    // Add yellow background to innerBox
+    const innerBg = this.rexUI.add.roundRectangle(
+      0,
+      0,
+      0,
+      0,
+      0,
+      0xffff00
+    ) as Phaser.GameObjects.Shape
+    innerBg.setAlpha(0.5)
+    innerBox.addBackground(innerBg)
 
     // Horizontal centering: left spacer, content, right spacer
-    midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
-    midBox.add(innerBox, { expand: true })
-    midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
+    midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 0, align: 'center' })
+    midBox.add(innerBox, { proportion: 1, expand: true })
+    midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 0, align: 'center' })
 
     return { outerBox, innerBox }
   }

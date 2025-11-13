@@ -128,8 +128,8 @@ export const host = {
         const sizer = phaserScene.rexUI.add.sizer({
           x: p.x,
           y: p.y,
-          width: p.width,
-          height: p.height,
+          width: p.expand ? undefined : p.width,
+          height: p.expand ? undefined : p.height,
           orientation: p.orientation ?? 'x',
           rtl: p.rtl ?? false,
           space: p.space,
@@ -139,8 +139,8 @@ export const host = {
           ? (phaserScene.rexUI?.add.roundRectangle(
               0,
               0,
-              p.width ?? 0,
-              p.height ?? 0,
+              p.expand ? 1 : (p.width ?? 0),
+              p.expand ? 1 : (p.height ?? 0),
               p.background.radius ?? 6,
               p.background.color ?? 0x2a2a2a
             ) as Phaser.GameObjects.GameObject)

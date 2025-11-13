@@ -5,7 +5,7 @@
 import type Phaser from 'phaser'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
-import type { ParentType, RexLabelType, RexSizerType } from './types'
+import type { ParentType, RexLabelType, RexSizerType, RexUIAddConfig } from './types'
 import { RexLabel, RexSizer, Text } from './widgets'
 
 export type VNodeLike = VNode | VNode[] | null
@@ -96,11 +96,22 @@ export function mount(
   )
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
+
+  // Merge add config already captured by the JSX runtime with inline props
+  const addConfig: RexUIAddConfig = { ...(vnode.__addConfig ?? {}) }
+  const layoutProps = vnode.props as Partial<RexUIAddConfig> | undefined
+  if (layoutProps?.align !== undefined) addConfig.align = layoutProps.align
+  if (layoutProps?.padding !== undefined) addConfig.padding = layoutProps.padding
+
+  if (Object.keys(addConfig).length > 0) {
+    vnode.__addConfig = addConfig
+  }
   host.append(parentOrScene, node, vnode.__addConfig)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
   })
-  host.layout(node)
+  //host.layout(node) // this cause issue, because insufficient layout info at this point
+  //node.getTopmostSizer()?.layout() // may this helps, but may not really necessary
   return node
 }
 

@@ -115,8 +115,9 @@ export function App() {
       orientation="x"
       space={{ item: 20 }}
       align="left"
-      background={{ color: 0x822222 }}
-      expand={true}
+      background={{ radius: 40, color: 0x822222 }}
+      expand={true} // fill available space in X-Direction
+      proportion={1} // maximize use of available space, also in V-Direction
     >
       {/* Left sidebar - Navigation buttons */}
       <RexSizer orientation="y" space={{ item: 10 }} align="left">
