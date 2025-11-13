@@ -6,7 +6,7 @@
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/apps/test-ui"
+      "webRoot": "${workspaceFolder}"
     },
     {
       "name": "Vite Dev Server",

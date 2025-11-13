@@ -4,14 +4,13 @@
  */
 import type Phaser from 'phaser'
 import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
+import { RexLabel, RexSizer, Text } from './widgets'
 
-type RexSizer = RexSizerType
-
-function isRexContainer(n: unknown): n is RexSizer {
+function isRexContainer(n: unknown): n is RexSizerType {
   return !!(
-    (n as RexSizer | null)?.layout &&
-    (n as RexSizer | null)?.add &&
-    (n as RexSizer | null)?.remove
+    (n as RexSizerType | null)?.layout &&
+    (n as RexSizerType | null)?.add &&
+    (n as RexSizerType | null)?.remove
   )
 }
 
@@ -53,7 +52,7 @@ export const host = {
    * @throws Error if node type is unknown
    */
   create(
-    type: string,
+    type: typeof RexSizer | typeof RexLabel | typeof Text,
     props: Record<string, unknown>,
     scene: Phaser.Scene
   ): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {

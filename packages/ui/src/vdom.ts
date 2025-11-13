@@ -6,6 +6,7 @@ import type Phaser from 'phaser'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import type { ParentType, RexLabelType, RexSizerType } from './types'
+import { RexLabel, RexSizer, Text } from './widgets'
 
 export type VNodeLike = VNode | VNode[] | null
 
@@ -42,10 +43,14 @@ export function mount(
       slots: [],
       effects: [],
       cleanups: [],
-      vnode,
+      vnode, // Will be updated to rendered VNode below
+      componentVNode: vnode, // Keep reference to component VNode
       parent: parentOrScene,
       function: vnode.type as (props: unknown) => VNode,
+      isFactory: false,
     }
+    // Store context on the component vnode for patching
+    ;(vnode as VNode & { __ctx?: Ctx }).__ctx = ctx
     // Pass children to the component via props
     const propsWithChildren = vnode.children?.length
       ? { ...(vnode.props ?? {}), children: vnode.children }
@@ -53,6 +58,17 @@ export function mount(
     const rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
+
+    // Check if this is a VNode factory (renders immediately without using hooks)
+    if (ctx.slots.length === 0 && ctx.effects.length === 0) {
+      // This is a simple factory function, not a real component
+      ctx.isFactory = true
+      // Keep reference to the rendered output so unmounting works without recursion
+      ctx.vnode = rendered
+      // Mount the rendered VNode directly without creating a component context
+      return mount(parentOrScene, rendered)
+    }
+
     const node = mount(parentOrScene, rendered)
     ctx.cleanups.push(() => unmount(rendered))
     ctx.vnode = rendered
@@ -65,7 +81,11 @@ export function mount(
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  const node = host.create(String(vnode.type), vnode.props ?? {}, scene)
+  const node = host.create(
+    vnode.type as typeof RexSizer | typeof RexLabel | typeof Text,
+    vnode.props ?? {},
+    scene
+  )
   vnode.__node = node
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => mount(node as ParentType, c))
@@ -102,12 +122,37 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {
       const ctx = (oldV as VNode & { __ctx?: Ctx }).__ctx
-      if (!ctx) return
-      if (newV.props !== undefined) {
-        ctx.vnode.props = newV.props
+      if (!ctx || ctx.isFactory) {
+        // No context means this is a VNode factory (like RexSizer), not a real component
+        // Render both and patch the results
+        console.log('patchVNode: VNode factory detected', {
+          type: (newV.type as { name?: string }).name,
+          newVProps: newV.props,
+          newVChildren: newV.children,
+        })
+        const propsWithChildren = newV.children?.length
+          ? { ...(newV.props ?? {}), children: newV.children }
+          : newV.props
+        const oldRendered = (oldV.type as (props: unknown) => VNode)(
+          oldV.children?.length ? { ...(oldV.props ?? {}), children: oldV.children } : oldV.props
+        )
+        const newRendered = (newV.type as (props: unknown) => VNode)(propsWithChildren)
+        patchVNode(parent, oldRendered, newRendered)
+        return
       }
+      // Real component with context - update component VNode props if changed
+      if (newV.props !== undefined) {
+        ctx.componentVNode.props = newV.props
+      }
+      if (newV.children !== undefined) {
+        ctx.componentVNode.children = newV.children
+      }
+      // Re-render with updated props
+      const propsWithChildren = ctx.componentVNode.children?.length
+        ? { ...(ctx.componentVNode.props ?? {}), children: ctx.componentVNode.children }
+        : ctx.componentVNode.props
       const renderedNext = withHooks(ctx, () =>
-        (newV.type as (props: unknown) => VNode)(newV.props)
+        (newV.type as (props: unknown) => VNode)(propsWithChildren)
       )
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext

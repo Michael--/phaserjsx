@@ -2,7 +2,7 @@
  * Tests for hooks functionality
  * Tests useState, useRef, useEffect, and withHooks
  */
-import { describe, it, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 // Mock host before imports
 vi.mock('./host', () => ({
@@ -20,21 +20,27 @@ vi.mock('phaser', () => ({
   Scene: vi.fn(),
 }))
 
-import { useState, useRef, useEffect, withHooks, type Ctx } from './hooks'
+import { useEffect, useRef, useState, withHooks, type Ctx } from './hooks'
+import type { ParentType } from './types'
 import { createElement } from './vdom'
+
+const makeMockCtx = (overrides: Partial<Ctx> = {}): Ctx => ({
+  index: 0,
+  slots: [],
+  effects: [],
+  cleanups: [],
+  vnode: createElement('div', {}),
+  componentVNode: createElement('component', {}),
+  parent: {} as ParentType,
+  function: vi.fn(() => createElement('div', {})),
+  isFactory: false,
+  ...overrides,
+})
 
 describe('Hooks', () => {
   describe('useState', () => {
     it('should return initial value and setter', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
       const result = withHooks(mockCtx, () => {
         return useState('initial')
@@ -45,17 +51,9 @@ describe('Hooks', () => {
     })
 
     it('should update state when setter is called', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as unknown as ParentType,
-        function: vi.fn(() => createElement('div', {})),
-      }
+      const mockCtx = makeMockCtx()
 
-      let value: number
+      let value = 0
       let setValue: (v: number | ((p: number) => number)) => void
 
       withHooks(mockCtx, () => {
@@ -73,15 +71,7 @@ describe('Hooks', () => {
     })
 
     it('should handle function updates', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(() => createElement('div', {})),
-      }
+      const mockCtx = makeMockCtx()
 
       let value: number = 0
       let setValue: (v: number | ((p: number) => number)) => void = () => {}
@@ -102,15 +92,7 @@ describe('Hooks', () => {
 
   describe('useRef', () => {
     it('should return ref object with initial value', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
       const result = withHooks(mockCtx, () => {
         return useRef('initial')
@@ -120,19 +102,9 @@ describe('Hooks', () => {
     })
 
     it('should allow mutation of current value', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
-      const ref = withHooks(mockCtx, () => {
-        return useRef(null)
-      })
+      const ref = withHooks(mockCtx, () => useRef<string | null>(null))
       ref.current = 'updated'
 
       expect(ref.current).toBe('updated')
@@ -141,15 +113,7 @@ describe('Hooks', () => {
 
   describe('useEffect', () => {
     it('should add effect to context', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as unknown as ParentType,
-        function: vi.fn(() => createElement('div', {})),
-      }
+      const mockCtx = makeMockCtx()
 
       const effect = vi.fn()
       withHooks(mockCtx, () => {
@@ -160,15 +124,7 @@ describe('Hooks', () => {
     })
 
     it('should handle cleanup function', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
       const cleanup = vi.fn()
       const effect = vi.fn(() => cleanup)
@@ -184,15 +140,7 @@ describe('Hooks', () => {
 
   describe('withHooks', () => {
     it('should execute function with hooks context', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
       const mockFunction = vi.fn(() => 'result')
       const result = withHooks(mockCtx, mockFunction)
@@ -202,15 +150,7 @@ describe('Hooks', () => {
     })
 
     it('should reset context index after execution', () => {
-      const mockCtx: Ctx = {
-        index: 0,
-        slots: [],
-        effects: [],
-        cleanups: [],
-        vnode: createElement('div', {}),
-        parent: {} as any,
-        function: vi.fn(),
-      }
+      const mockCtx = makeMockCtx({ function: vi.fn() })
 
       const initialIndex = mockCtx.index
       withHooks(mockCtx, () => {

@@ -3,7 +3,7 @@
  * It is independent from React/Preact renderers.
  */
 import type { ParentType } from './types'
-import { patchVNode } from './vdom'
+import { mount, unmount } from './vdom'
 
 type Cleanup = void | (() => void)
 
@@ -12,10 +12,12 @@ export type Ctx = {
   slots: unknown[]
   effects: (() => Cleanup)[]
   cleanups: Cleanup[]
-  vnode: VNode
+  vnode: VNode // The rendered VNode (output of component function)
+  componentVNode: VNode // The component VNode itself (with type = function)
   parent: ParentType
   function: (props: unknown) => VNode
   updater?: (() => void) | undefined
+  isFactory: boolean
 }
 
 let CURRENT: Ctx | null = null
@@ -141,21 +143,38 @@ function depsChanged(a?: readonly unknown[], b?: readonly unknown[]) {
  * @param c - Component context to update
  */
 function scheduleUpdate(c: Ctx) {
+  console.log('scheduleUpdate called')
   if (c.updater) return
   c.updater = () => {
+    console.log('performing scheduled update')
     c.updater = undefined
     const prevVNode = c.vnode
-    const nextVNode = withHooks(c, () => c.function(c.vnode.props))
-    // link ctx for next render tree
-    ;(nextVNode as VNode & { __ctx?: Ctx }).__ctx = c
-    patchVNode(c.parent, prevVNode, nextVNode)
+    // Use component VNode props, merging with children
+    const componentProps = c.componentVNode.props ?? {}
+    const propsWithChildren = c.componentVNode.children?.length
+      ? { ...componentProps, children: c.componentVNode.children }
+      : componentProps
+
+    // Render the component to get the new VNode
+    const nextVNode = withHooks(c, () => c.function(propsWithChildren))
+
+    // Unmount old rendered tree
+    unmount(prevVNode)
+
+    // Mount new rendered tree
+    // IMPORTANT: Clear CURRENT to avoid hook context pollution
+    const prevCurrent = CURRENT
+    CURRENT = null
+    mount(c.parent, nextVNode)
+    CURRENT = prevCurrent
+
     c.vnode = nextVNode
+
+    // Run effects after mounting
     for (const run of c.effects) run()
   }
   queueMicrotask(c.updater)
-}
-
-/**
+} /**
  * Disposes component context and runs cleanups
  * @param c - Context to dispose
  */

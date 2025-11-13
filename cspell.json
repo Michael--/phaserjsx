@@ -18,6 +18,7 @@
     "editorconfig",
     "gitattributes",
     "prettierrc",
+    "vnode",
     "prettierignore",
     "eslintrc",
     "devserver"
