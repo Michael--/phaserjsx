@@ -30,16 +30,28 @@ function affectsLayout(prev: Record<string, unknown>, next: Record<string, unkno
   )
 }
 
+// Set to track nodes that need layout in current frame
+const layoutQueue = new Set<RexSizerType>()
+let layoutScheduled = false
+
 /**
  * Schedules layout update on next tick/frame
  * @param node - Node to layout
  */
-function scheduleLayout(node: {
-  scene?: { time?: { delayedCall?: (delay: number, callback: () => void) => void } }
-  layout: () => void
-}) {
-  // Debounce to next tick/frame
-  node.scene?.time?.delayedCall?.(0, () => node.layout())
+function scheduleLayout(node: RexSizerType) {
+  layoutQueue.add(node)
+  if (layoutScheduled) return
+  layoutScheduled = true
+  queueMicrotask(() => {
+    layoutScheduled = false
+    const nodes = Array.from(layoutQueue)
+    layoutQueue.clear()
+    // Process from leaf to root to avoid redundant layouts
+    for (const n of nodes) {
+      if (!n.scene) continue // Skip if destroyed
+      n.layout()
+    }
+  })
 }
 
 export const host = {
@@ -259,8 +271,7 @@ export const host = {
    */
   layout(node: unknown) {
     if (isRexContainer(node)) {
-      console.log('[host.layout] Calling layout on:', node.constructor.name)
-      node.layout()
+      scheduleLayout(node)
     }
   },
 }
