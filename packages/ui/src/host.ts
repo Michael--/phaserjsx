@@ -102,7 +102,8 @@ export const host = {
             ) as Phaser.GameObjects.GameObject)
           : undefined
         if (background) {
-          sizer.add(background)
+          const sizerWithBg = sizer as RexSizerType & { addBackground?: (bg: unknown) => void }
+          sizerWithBg.addBackground?.(background)
         }
         if (p.onPointerdown) {
           const interactiveLabel = sizer as {
@@ -179,8 +180,9 @@ export const host = {
    * @param child - Child node to append
    */
   append(parent: ParentType, child: Phaser.GameObjects.GameObject) {
-    if (isRexContainer(parent)) parent.add(child)
-    else {
+    if (isRexContainer(parent)) {
+      parent.add(child)
+    } else {
       const parentObj = parent as {
         scene?: {
           sys?: { game?: { constructor?: unknown } }
@@ -256,6 +258,9 @@ export const host = {
    * @param node - Node to layout
    */
   layout(node: unknown) {
-    if (isRexContainer(node)) node.layout()
+    if (isRexContainer(node)) {
+      console.log('[host.layout] Calling layout on:', node.constructor.name)
+      node.layout()
+    }
   },
 }

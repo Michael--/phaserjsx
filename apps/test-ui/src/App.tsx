@@ -43,6 +43,7 @@ export function Button(props: {
       y={props.y ?? 0}
       width={100}
       height={50}
+      orientation="x"
       background={{ radius: 6, color: 0x555555 }}
       onPointerdown={props.onClick}
       space={{ left: 10, right: 10, top: 10, bottom: 10 }}
