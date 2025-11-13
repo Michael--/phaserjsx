@@ -10,7 +10,8 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter @phaserjsx/test-ui dev",
+    "dev": "pnpm --parallel --filter \"packages/*\" dev & pnpm --filter @phaserjsx/test-ui dev",
+    "dev:app": "pnpm --filter @phaserjsx/test-ui dev",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",

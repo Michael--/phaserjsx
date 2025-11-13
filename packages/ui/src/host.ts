@@ -104,13 +104,14 @@ export const host = {
         if (background) {
           sizer.add(background)
         }
-        console.log('Created RexSizer with props:', p)
+        console.log('YYYYY Created RexSizer with props:', p)
         if (p.onPointerdown) {
           const interactiveLabel = sizer as {
             setInteractive?: () => void
             // input?: { cursor?: string }
           }
           interactiveLabel.setInteractive?.()
+          console.log('Set RexSizer as interactive')
           // if (interactiveLabel.input) interactiveLabel.input.cursor = 'pointer'
           sizer.on('pointerdown', p.onPointerdown)
         }
