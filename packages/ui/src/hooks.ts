@@ -58,12 +58,10 @@ export function useState<T>(initial: T): [T, (v: T | ((p: T) => T)) => void] {
   if (i >= c.slots.length)
     c.slots[i] = typeof initial === 'function' ? (initial as () => T)() : initial
   const value = c.slots[i] as T
-  console.log('useState', i, value)
   const set = (v: T | ((p: T) => T)) => {
     const next = typeof v === 'function' ? (v as (p: T) => T)(c.slots[i] as T) : v
     if (Object.is(next, c.slots[i])) return
     c.slots[i] = next
-    console.log('setState', i, next)
     scheduleUpdate(c)
   }
   return [value, set]
@@ -146,10 +144,8 @@ function depsChanged(a?: readonly unknown[], b?: readonly unknown[]) {
  * @param c - Component context to update
  */
 function scheduleUpdate(c: Ctx) {
-  console.log('scheduleUpdate called')
   if (c.updater) return
   c.updater = () => {
-    console.log('performing scheduled update')
     c.updater = undefined
     // Use component VNode props, merging with children
     const componentProps = c.componentVNode.props ?? {}
@@ -157,17 +153,9 @@ function scheduleUpdate(c: Ctx) {
       ? { ...componentProps, children: c.componentVNode.children }
       : componentProps
 
-    console.log('c.function', typeof c.function, c.function?.name)
     // Render the component to get the new VNode
-    console.log('rendering component', c.function.name, propsWithChildren)
     const nextVNode = withHooks(c, () => c.function(propsWithChildren))
 
-    console.log('calling patchVNode', {
-      parent: c.parent,
-      oldType: c.vnode.type,
-      newType: nextVNode.type,
-      oldNode: c.vnode.__node,
-    })
     // Patch the existing rendered tree
     patchVNode(c.parent, c.vnode, nextVNode)
 

@@ -36,10 +36,9 @@ class MainScene extends Phaser.Scene {
     console.log('Scene plugins:', Object.keys(this))
 
     // Install a simple bridge for pointerdown mapped in host.patch
-    this.input.on('gameobjectdown', (_p: unknown, go: { onPointerdown?: () => void }) => {
-      console.log('Game object pointerdown event')
+    this.input.on('gameobjectdown', (_p: unknown, go: { onPointerdown?: () => void }) =>
       go?.onPointerdown?.()
-    })
+    )
 
     console.log('Mounting App...')
     const tree = { type: App, props: {}, children: [] }
