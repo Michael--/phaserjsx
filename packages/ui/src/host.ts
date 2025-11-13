@@ -3,19 +3,10 @@
  * Keep this small; extend gradually as needed.
  */
 import type Phaser from 'phaser'
-import type { RexLabelProps, RexSizerProps } from './types'
+import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
 
-type RexSizer = {
-  layout: () => void
-  add: (child: unknown) => void
-  remove: (child: unknown, destroy?: boolean) => void
-}
+type RexSizer = RexSizerType
 
-/**
- * Checks if node is a rexUI container with layout capabilities
- * @param n - Node to check
- * @returns true if node is a RexSizer
- */
 function isRexContainer(n: unknown): n is RexSizer {
   return !!(
     (n as RexSizer | null)?.layout &&
@@ -61,8 +52,11 @@ export const host = {
    * @returns Created Phaser/rexUI object
    * @throws Error if node type is unknown
    */
-  create(type: string, props: Record<string, unknown>, scene: unknown): unknown {
-    console.log('host.create called:', type, props)
+  create(
+    type: string,
+    props: Record<string, unknown>,
+    scene: Phaser.Scene
+  ): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {
     const phaserScene = scene as Phaser.Scene & {
       rexUI?: {
         add: {
@@ -88,11 +82,6 @@ export const host = {
     switch (type) {
       case 'RexSizer': {
         const p = props as RexSizerProps
-        console.log('Creating RexSizer with config:', {
-          x: p.x ?? 0,
-          y: p.y ?? 0,
-          orientation: p.orientation ?? 'y',
-        })
         // rexUI scene plugin must be installed in the Scene as "rexUI"
         const sizer = phaserScene.rexUI.add.sizer({
           x: p.x ?? 0,
@@ -101,8 +90,7 @@ export const host = {
           space: p.space,
           align: p.align,
         })
-        console.log('Created sizer:', sizer)
-        return sizer
+        return sizer as RexSizerType
       }
       case 'RexLabel': {
         const p = props as RexLabelProps
@@ -124,7 +112,7 @@ export const host = {
           background,
           space: p.space,
           align: p.align,
-        })
+        }) as RexLabelType
       }
       case 'Text': {
         const textProps = props as {
@@ -150,7 +138,7 @@ export const host = {
    * @param parent - Parent container or scene
    * @param child - Child node to append
    */
-  append(parent: unknown, child: unknown) {
+  append(parent: ParentType, child: Phaser.GameObjects.GameObject) {
     if (isRexContainer(parent)) parent.add(child)
     else {
       const parentObj = parent as {
@@ -174,7 +162,7 @@ export const host = {
    * @param parent - Parent container
    * @param child - Child node to remove
    */
-  remove(parent: unknown, child: unknown) {
+  remove(parent: ParentType, child: Phaser.GameObjects.GameObject) {
     if (isRexContainer(parent)) parent.remove(child, true)
     ;(child as { destroy?: (destroyChildren?: boolean) => void }).destroy?.(true)
   },

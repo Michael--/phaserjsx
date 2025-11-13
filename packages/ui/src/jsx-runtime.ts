@@ -2,9 +2,11 @@
  * Minimal JSX runtime for the TS "react-jsx" automatic runtime.
  * This builds plain VNode objects consumed by our custom mount/patch.
  */
+import type { VNode } from './hooks'
 import type { VNodeLike } from './vdom'
 
-export const Fragment = (props: { children?: unknown }): VNodeLike | null => props?.children ?? null
+export const Fragment = (props: { children?: VNode | VNode[] | null }): VNodeLike =>
+  props?.children ?? null
 
 /**
  * JSX factory for automatic runtime

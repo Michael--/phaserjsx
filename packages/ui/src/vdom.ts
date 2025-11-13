@@ -2,10 +2,12 @@
  * VDOM + mount/patch/unmount and host integration.
  * This file glues JSX VNodes to Phaser/rexUI objects using the host bridge.
  */
+import type Phaser from 'phaser'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
+import type { ParentType, RexLabelType, RexSizerType } from './types'
 
-export type VNodeLike = any
+export type VNodeLike = VNode | VNode[] | null
 
 /**
  * Creates a VNode element (alternative to JSX)
@@ -15,9 +17,9 @@ export type VNodeLike = any
  * @returns VNode object
  */
 export function createElement(
-  type: unknown,
+  type: string | ((props: Record<string, unknown>) => VNode),
   props: Record<string, unknown> | null,
-  ...children: unknown[]
+  ...children: VNode[]
 ): VNode {
   const flat = ([] as unknown[]).concat(...children).filter((c) => c != null)
   return { type, props: props ?? {}, children: flat as VNode[] }
@@ -29,11 +31,12 @@ export function createElement(
  * @param vnode - VNode to mount
  * @returns Created Phaser/rexUI object
  */
-export function mount(parentOrScene: unknown, vnode: VNode): unknown {
+export function mount(
+  parentOrScene: ParentType,
+  vnode: VNode
+): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {
   // Function component
   if (typeof vnode.type === 'function') {
-    console.log('Mounting function component:', (vnode.type as { name?: string }).name)
-    console.log('VNode has children:', vnode.children?.length ?? 0)
     const ctx: Ctx = {
       index: 0,
       slots: [],
@@ -46,7 +49,6 @@ export function mount(parentOrScene: unknown, vnode: VNode): unknown {
     const propsWithChildren = vnode.children?.length
       ? { ...(vnode.props ?? {}), children: vnode.children }
       : vnode.props
-    console.log('Calling component with props:', propsWithChildren)
     const rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
@@ -75,7 +77,7 @@ export function mount(parentOrScene: unknown, vnode: VNode): unknown {
   console.log('Created node:', node)
   vnode.__node = node
   host.append(parentOrScene, node)
-  vnode.children?.forEach((c) => mount(node, c))
+  vnode.children?.forEach((c) => mount(node as ParentType, c))
   host.layout(node)
   return node
 }
@@ -95,7 +97,7 @@ export function unmount(vnode: VNode) {
   const parent =
     (vnode.__node as { parentContainer?: unknown; scene?: unknown } | undefined)?.parentContainer ??
     (vnode.__node as { scene?: unknown } | undefined)?.scene
-  if (parent) host.remove(parent, vnode.__node)
+  if (parent) host.remove(parent as ParentType, vnode.__node as Phaser.GameObjects.GameObject)
 }
 
 /**
@@ -104,7 +106,7 @@ export function unmount(vnode: VNode) {
  * @param oldV - Previous VNode
  * @param newV - New VNode
  */
-export function patchVNode(parent: unknown, oldV: VNode, newV: VNode) {
+export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   // Function components
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {
@@ -139,9 +141,9 @@ export function patchVNode(parent: unknown, oldV: VNode, newV: VNode) {
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
       c2 = b[i]
-    if (!c1 && c2) mount(oldV.__node, c2)
+    if (!c1 && c2) mount(oldV.__node as ParentType, c2)
     else if (c1 && !c2) unmount(c1)
-    else if (c1 && c2) patchVNode(oldV.__node, c1, c2)
+    else if (c1 && c2) patchVNode(oldV.__node as ParentType, c1, c2)
   }
   host.layout(oldV.__node)
 }

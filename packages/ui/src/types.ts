@@ -28,3 +28,35 @@ export interface RexSizerProps {
   width?: number
   height?: number
 }
+
+/**
+ * Props for Phaser Text game object
+ */
+export interface TextProps {
+  x?: number
+  y?: number
+  text?: string
+  style?: Phaser.Types.GameObjects.Text.TextStyle
+  onPointerdown?: () => void
+}
+
+/**
+ * rexUI Sizer type (layout container)
+ */
+export type RexSizerType = Phaser.GameObjects.Container & {
+  layout: () => void
+  add: (child: Phaser.GameObjects.GameObject) => void
+  remove: (child: Phaser.GameObjects.GameObject, destroy?: boolean) => void
+}
+
+/**
+ * rexUI Label type (text with optional background)
+ */
+export type RexLabelType = Phaser.GameObjects.Container & {
+  // rexUI specific properties can be added here
+}
+
+/**
+ * Type for parent objects that can contain children
+ */
+export type ParentType = Phaser.Scene | Phaser.GameObjects.Container | RexSizerType

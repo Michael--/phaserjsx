@@ -2,6 +2,7 @@
  * Tiny hook runtime to enable function components with local subtree re-render.
  * It is independent from React/Preact renderers.
  */
+import type { ParentType } from './types'
 import { patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
@@ -12,7 +13,7 @@ export type Ctx = {
   effects: (() => Cleanup)[]
   cleanups: Cleanup[]
   vnode: VNode
-  parent: unknown
+  parent: ParentType
   updater?: (() => void) | undefined
 }
 
