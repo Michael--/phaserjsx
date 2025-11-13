@@ -12,16 +12,20 @@ export const Fragment = (props: { children?: VNode | VNode[] | null }): VNodeLik
  * JSX factory for automatic runtime
  * @param type - Element type (string or component function)
  * @param props - Props including children
- * @param _key - Optional key (unused)
+ * @param key - Optional key for identity tracking
  * @returns VNode object
  */
 export function jsx(
   type: unknown,
   props: Record<string, unknown> | null,
-  _key?: unknown
+  key?: unknown
 ): VNodeLike {
   const { children, ...rest } = props ?? {}
   const kids = children == null ? [] : Array.isArray(children) ? children : [children]
-  return { type, props: rest, children: kids }
+  const vnode: VNode = { type, props: rest, children: kids }
+  if (key !== undefined && key !== null) {
+    vnode.__key = typeof key === 'string' || typeof key === 'number' ? key : String(key)
+  }
+  return vnode
 }
 export const jsxs = jsx

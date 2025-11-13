@@ -29,6 +29,7 @@ export type VNode = {
   __node?: unknown
   __ctx?: Ctx
   __parent?: unknown
+  __key?: string | number | null
 }
 
 /**

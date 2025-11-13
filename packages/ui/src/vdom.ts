@@ -122,6 +122,12 @@ export function unmount(vnode: VNode | null | undefined | false): void {
  * @param newV - New VNode
  */
 export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
+  // Check if keys differ - if so, unmount old and mount new
+  if (oldV.__key !== newV.__key) {
+    unmount(oldV)
+    mount(parent, newV)
+    return
+  }
   // Function components
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {

@@ -10,6 +10,7 @@ export type Size = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge
  * Props for RexLabel widget
  */
 export interface RexLabelProps {
+  key?: string | number
   x?: number
   y?: number
   text?: string
@@ -31,6 +32,7 @@ export interface RexLabelProps {
  * Props for RexSizer layout container
  */
 export interface RexSizerProps {
+  key?: string | number
   x?: number
   y?: number
   width?: number
@@ -54,6 +56,7 @@ export interface RexSizerProps {
  * Props for Phaser Text game object
  */
 export interface TextProps {
+  key?: string | number
   x?: number
   y?: number
   text?: string
