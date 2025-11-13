@@ -4,6 +4,8 @@ import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
 
+export type Size = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'
+
 /**
  * Props for RexLabel widget
  */
@@ -17,6 +19,12 @@ export interface RexLabelProps {
   align?: 'left' | 'center' | 'right' | 'justify'
   onPointerdown?: () => void
   children?: VNode[]
+  size?: Size
+  textColor?: string
+  backgroundColor?: string
+  wordWrap?: Phaser.Types.GameObjects.Text.TextWordWrap
+  weight?: 'bold' | 'normal'
+  shadow?: boolean
 }
 
 /**

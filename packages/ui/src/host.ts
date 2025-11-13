@@ -5,9 +5,34 @@ import type {
   RexLabelType,
   RexSizerProps,
   RexSizerType,
+  Size,
   TextProps,
 } from './types'
 import { RexLabel, RexSizer, Text } from './widgets'
+
+/**
+ * Get font size based on size enum
+ * @param s - Size enum
+ * @returns Font size in pixels
+ */
+function fontSize(s: Size | undefined): number {
+  const base = 24 // Base font size
+  switch (s) {
+    case 'xsmall':
+      return base * 0.5
+    case 'small':
+      return base * 0.75
+    default:
+    case 'medium':
+      return base * 1.0
+    case 'large':
+      return base * 1.5
+    case 'xlarge':
+      return base * 2.5
+    case 'xxlarge':
+      return base * 3.5
+  }
+}
 
 type ComponentType = typeof RexSizer | typeof RexLabel | typeof Text
 type ComponentProps = RexSizerProps | RexLabelProps | TextProps
@@ -137,6 +162,27 @@ export const host = {
       }
       case 'RexLabel': {
         const p = props as RexLabelProps
+        const fs = fontSize(p.size)
+        const weight = p.weight ? { fontStyle: p.weight } : {}
+        const shadow = p.shadow
+          ? {
+              shadow: {
+                offsetX: fs * 0.08,
+                offsetY: fs * 0.08,
+                blur: fs * 0.1,
+                fill: true,
+              },
+            }
+          : {}
+        const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
+          ...p.textStyle,
+          ...weight,
+          ...shadow,
+          fontSize: fs,
+          color: p.textColor ?? '#ffffff',
+          ...(p.wordWrap && { wordWrap: p.wordWrap }),
+          ...(p.backgroundColor && { backgroundColor: p.backgroundColor }),
+        }
         const background = p.background
           ? phaserScene.rexUI?.add.roundRectangle(
               0,
@@ -147,7 +193,7 @@ export const host = {
               p.background.color ?? 0x2a2a2a
             )
           : undefined
-        const textObject = phaserScene.add.text(0, 0, p.text ?? '', p.textStyle)
+        const textObject = phaserScene.add.text(0, 0, p.text ?? '', textStyle)
         const label = phaserScene.rexUI?.add.label({
           x: p.x ?? 0,
           y: p.y ?? 0,

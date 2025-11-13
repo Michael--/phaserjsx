@@ -75,6 +75,13 @@ export function App() {
         <RexLabel text="Click me" />
         <RexLabel text={`Clicked: ${count}`} textStyle={{ fontSize: 16 }} />
       </Button>
+      {/* Test new RexLabel props */}
+      <RexLabel text="Small text" size="small" />
+      <RexLabel text="Large bold text" size="large" weight="bold" />
+      <RexLabel text="Shadow text" shadow={true} />
+      <RexLabel text="Colored text" textColor="#ff0000" />
+      <RexLabel text="Background text" backgroundColor="#ffff00" />
+      <RexLabel text="Word wrapped text" wordWrap={{ width: 200 }} />
     </RexSizer>
   )
 }
