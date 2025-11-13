@@ -89,7 +89,7 @@ class MainScene extends Phaser.Scene {
 
     // Horizontal centering: left spacer, content, right spacer
     midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
-    midBox.add(innerBox, { align: 'center' })
+    midBox.add(innerBox, { expand: true })
     midBox.add(this.add.zone(0, 0, 1, 1), { proportion: 1, align: 'center' })
 
     return { outerBox, innerBox }

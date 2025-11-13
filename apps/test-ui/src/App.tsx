@@ -111,7 +111,13 @@ export function App() {
   const [currentExample, setCurrentExample] = useState(0)
 
   return (
-    <RexSizer orientation="x" space={{ item: 20 }} align="left">
+    <RexSizer
+      orientation="x"
+      space={{ item: 20 }}
+      align="left"
+      background={{ color: 0x822222 }}
+      expand={true}
+    >
       {/* Left sidebar - Navigation buttons */}
       <RexSizer orientation="y" space={{ item: 10 }} align="left">
         <RexLabel text="Examples:" textStyle={{ fontSize: 20 }} />

@@ -7,9 +7,20 @@ export type SignalLike<T> = { value: T } | T
 export type Size = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'
 
 /**
+ * RexUI Sizer add() configuration
+ * These are NOT properties of the widget itself, but parameters for parent.add(child, config)
+ */
+export interface RexUIAddConfig {
+  expand?: boolean
+  proportion?: number
+  align?: 'left' | 'center' | 'right' | 'top' | 'bottom' | string
+  padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
+}
+
+/**
  * Props for RexLabel widget
  */
-export interface RexLabelProps {
+export interface RexLabelProps extends RexUIAddConfig {
   key?: string | number
   x?: number
   y?: number
@@ -31,7 +42,7 @@ export interface RexLabelProps {
 /**
  * Props for RexSizer layout container
  */
-export interface RexSizerProps {
+export interface RexSizerProps extends RexUIAddConfig {
   key?: string | number
   x?: number
   y?: number
@@ -55,7 +66,7 @@ export interface RexSizerProps {
 /**
  * Props for Phaser Text game object
  */
-export interface TextProps {
+export interface TextProps extends RexUIAddConfig {
   key?: string | number
   x?: number
   y?: number

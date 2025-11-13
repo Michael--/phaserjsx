@@ -30,6 +30,12 @@ export type VNode = {
   __ctx?: Ctx
   __parent?: unknown
   __key?: string | number | null
+  __addConfig?: {
+    expand?: boolean
+    proportion?: number
+    align?: string
+    padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
+  }
 }
 
 /**

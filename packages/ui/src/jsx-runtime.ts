@@ -20,12 +20,25 @@ export function jsx(
   props: Record<string, unknown> | null,
   key?: unknown
 ): VNodeLike {
-  const { children, ...rest } = props ?? {}
+  const { children, expand, proportion, padding, ...rest } = props ?? {}
   const kids = children == null ? [] : Array.isArray(children) ? children : [children]
   const vnode: VNode = { type, props: rest, children: kids }
+
+  // Extract key
   if (key !== undefined && key !== null) {
     vnode.__key = typeof key === 'string' || typeof key === 'number' ? key : String(key)
   }
+
+  // Extract RexUI add() config and store separately (removed from props)
+  if (expand !== undefined || proportion !== undefined || padding !== undefined) {
+    vnode.__addConfig = {}
+    if (expand !== undefined) vnode.__addConfig.expand = expand as boolean
+    if (proportion !== undefined) vnode.__addConfig.proportion = proportion as number
+    if (padding !== undefined) {
+      vnode.__addConfig.padding = padding as number | Record<string, number>
+    }
+  }
+
   return vnode
 }
 export const jsxs = jsx

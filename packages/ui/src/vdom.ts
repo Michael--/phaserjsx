@@ -65,10 +65,18 @@ export function mount(
       ctx.isFactory = true
       // Keep reference to the rendered output so unmounting works without recursion
       ctx.vnode = rendered
+      // Copy __addConfig from component VNode to rendered VNode
+      if (vnode.__addConfig) {
+        rendered.__addConfig = vnode.__addConfig
+      }
       // Mount the rendered VNode directly without creating a component context
       return mount(parentOrScene, rendered)
     }
 
+    // Copy __addConfig from component VNode to rendered VNode
+    if (vnode.__addConfig) {
+      rendered.__addConfig = vnode.__addConfig
+    }
     const node = mount(parentOrScene, rendered)
     ctx.cleanups.push(() => unmount(rendered))
     ctx.vnode = rendered
@@ -88,7 +96,7 @@ export function mount(
   )
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
-  host.append(parentOrScene, node)
+  host.append(parentOrScene, node, vnode.__addConfig)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
   })

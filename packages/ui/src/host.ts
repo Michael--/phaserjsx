@@ -243,10 +243,21 @@ export const host = {
    * Appends child node to parent container
    * @param parent - Parent container or scene
    * @param child - Child node to append
+   * @param addConfig - Optional RexUI add() configuration (expand, proportion, etc.)
    */
-  append(parent: ParentType, child: Phaser.GameObjects.GameObject) {
+  append(
+    parent: ParentType,
+    child: Phaser.GameObjects.GameObject,
+    addConfig?: {
+      expand?: boolean
+      proportion?: number
+      align?: string
+      padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
+    }
+  ) {
     if (isRexContainer(parent)) {
-      parent.add(child)
+      // RexUI containers accept add config
+      ;(parent as { add: (child: unknown, config?: unknown) => void }).add(child, addConfig)
     } else {
       const parentObj = parent as {
         scene?: {
