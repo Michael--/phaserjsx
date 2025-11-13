@@ -1,10 +1,16 @@
-/**
- * Host bridge that maps declarative nodes to Phaser/rexUI objects.
- * Keep this small; extend gradually as needed.
- */
 import Phaser from 'phaser'
-import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
+import type {
+  ParentType,
+  RexLabelProps,
+  RexLabelType,
+  RexSizerProps,
+  RexSizerType,
+  TextProps,
+} from './types'
 import { RexLabel, RexSizer, Text } from './widgets'
+
+type ComponentType = typeof RexSizer | typeof RexLabel | typeof Text
+type ComponentProps = RexSizerProps | RexLabelProps | TextProps
 
 function isRexContainer(n: unknown): n is RexSizerType {
   return !!(
@@ -20,14 +26,14 @@ function isRexContainer(n: unknown): n is RexSizerType {
  * @param next - New props
  * @returns true if layout-affecting props changed
  */
-function affectsLayout(prev: Record<string, unknown>, next: Record<string, unknown>) {
-  return (
-    prev.space !== next.space ||
-    prev.align !== next.align ||
-    prev.orientation !== next.orientation ||
-    prev.width !== next.width ||
-    prev.height !== next.height
-  )
+function affectsLayout(prev: ComponentProps, next: ComponentProps) {
+  if ('space' in prev && 'space' in next && prev.space !== next.space) return true
+  if ('align' in prev && 'align' in next && prev.align !== next.align) return true
+  if ('orientation' in prev && 'orientation' in next && prev.orientation !== next.orientation)
+    return true
+  if ('width' in prev && 'width' in next && prev.width !== next.width) return true
+  if ('height' in prev && 'height' in next && prev.height !== next.height) return true
+  return false
 }
 
 // Set to track nodes that need layout in current frame
@@ -64,8 +70,8 @@ export const host = {
    * @throws Error if node type is unknown
    */
   create(
-    type: typeof RexSizer | typeof RexLabel | typeof Text,
-    props: Record<string, unknown>,
+    type: ComponentType,
+    props: ComponentProps,
     scene: Phaser.Scene
   ): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {
     const phaserScene = scene as Phaser.Scene & {
@@ -243,10 +249,18 @@ export const host = {
     if (prev.y !== next.y && typeof next.y === 'number') nodeObj.y = next.y
 
     // Text-like props
-    if ('text' in next && prev.text !== next.text && typeof next.text === 'string') {
+    if (
+      'text' in next &&
+      typeof next.text === 'string' &&
+      (prev as Record<string, unknown>).text !== next.text
+    ) {
       nodeObj.setText?.(next.text)
     }
-    if (next.textStyle && JSON.stringify(prev.textStyle) !== JSON.stringify(next.textStyle)) {
+    if (
+      'textStyle' in next &&
+      next.textStyle &&
+      JSON.stringify((prev as Record<string, unknown>).textStyle) !== JSON.stringify(next.textStyle)
+    ) {
       nodeObj.setStyle?.(next.textStyle)
     }
 
