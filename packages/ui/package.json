@@ -68,6 +68,7 @@
     }
   },
   "dependencies": {
-    "@preact/signals-core": "^1.12.1"
+    "@preact/signals-core": "^1.12.1",
+    "phaser3-rex-plugins": "^1.80.17"
   }
 }

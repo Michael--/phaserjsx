@@ -66,7 +66,6 @@ export function App() {
       <RexLabel text="Two independent counters:" textStyle={{ fontSize: 28 }} />
       <Counter step={1} label="A" />
       <Counter step={5} label="B" />
-      <RexLabel text={`Clicked: ${count}`} textStyle={{ fontSize: 16 }} />
       <Button
         onClick={() => {
           console.log('Button clicked')
@@ -74,6 +73,7 @@ export function App() {
         }}
       >
         <RexLabel text="Click me" />
+        <RexLabel text={`Clicked: ${count}`} textStyle={{ fontSize: 16 }} />
       </Button>
     </RexSizer>
   )

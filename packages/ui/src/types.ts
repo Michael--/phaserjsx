@@ -1,4 +1,5 @@
 import type Phaser from 'phaser'
+import { Sizer } from 'phaser3-rex-plugins/templates/ui/ui-components'
 import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
@@ -24,11 +25,18 @@ export interface RexLabelProps {
 export interface RexSizerProps {
   x?: number
   y?: number
-  orientation?: 'x' | 'y'
-  space?: Partial<Record<'left' | 'right' | 'top' | 'bottom' | 'item', number>>
-  align?: 'left' | 'center' | 'right' | 'justify'
   width?: number
   height?: number
+  orientation?: Sizer.OrientationTypes
+  rtl?: boolean
+  space?: {
+    left?: number
+    right?: number
+    top?: number
+    bottom?: number
+    item?: number
+  }
+  align?: 'left' | 'center' | 'right' | 'justify'
   background?: { radius?: number; color?: number }
   onPointerdown?: (() => void) | undefined
   children?: VNode | VNode[] | null | undefined

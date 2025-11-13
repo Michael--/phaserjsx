@@ -111,6 +111,9 @@ importers:
       phaser:
         specifier: ^3.90.0
         version: 3.90.0
+      phaser3-rex-plugins:
+        specifier: ^1.80.17
+        version: 1.80.17(graphology-types@0.24.8)
     devDependencies:
       '@types/node':
         specifier: ^24.10.1

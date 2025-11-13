@@ -95,13 +95,14 @@ export const host = {
         const p = props as RexSizerProps
         // rexUI scene plugin must be installed in the Scene as "rexUI"
         const sizer = phaserScene.rexUI.add.sizer({
-          x: p.x ?? 0,
-          y: p.y ?? 0,
-          orientation: p.orientation ?? 'y',
-          space: p.space,
-          align: p.align,
+          x: p.x,
+          y: p.y,
           width: p.width,
           height: p.height,
+          orientation: p.orientation,
+          rtl: p.rtl,
+          space: p.space,
+          align: p.align,
         }) as RexSizerType
         const background = p.background
           ? (phaserScene.rexUI?.add.roundRectangle(
