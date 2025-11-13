@@ -33,7 +33,10 @@ describe('Host', () => {
       expect(mockScene.rexUI.add.sizer).toHaveBeenCalledWith({
         x: 10,
         y: 20,
-        orientation: 'y',
+        width: undefined,
+        height: undefined,
+        orientation: undefined,
+        rtl: undefined,
         space: undefined,
         align: undefined,
       })
@@ -194,14 +197,18 @@ describe('Host', () => {
   })
 
   describe('layout', () => {
-    it('should call layout on sizer', () => {
+    it('should call layout on sizer', async () => {
       const mockSizer = {
         layout: vi.fn(),
         add: vi.fn(),
         remove: vi.fn(),
+        scene: {} as Phaser.Scene,
       }
 
       host.layout(mockSizer as unknown as ParentType)
+
+      // Wait for microtask to complete
+      await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
 
       expect(mockSizer.layout).toHaveBeenCalled()
     })
