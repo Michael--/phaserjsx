@@ -83,6 +83,7 @@ export type RexSizerType = Phaser.GameObjects.Container & {
   layout: () => void
   add: (child: Phaser.GameObjects.GameObject) => void
   remove: (child: Phaser.GameObjects.GameObject, destroy?: boolean) => void
+  getTopmostSizer?: () => RexSizerType
 }
 
 /**

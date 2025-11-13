@@ -120,7 +120,7 @@ export function App() {
       proportion={1} // maximize use of available space, also in V-Direction
     >
       {/* Left sidebar - Navigation buttons */}
-      <RexSizer orientation="y" space={{ item: 10 }} align="left">
+      <RexSizer orientation="y" space={{ item: 10 }} align="left" background={{ color: 0x208020 }}>
         <RexLabel text="Examples:" textStyle={{ fontSize: 20 }} />
         <Button
           onClick={() => setCurrentExample(0)}
@@ -137,7 +137,13 @@ export function App() {
       </RexSizer>
 
       {/* Right side - Current example display (prominent) */}
-      <RexSizer orientation="y" space={{ item: 10 }} align="center">
+      <RexSizer
+        orientation="y"
+        space={{ item: 10 }}
+        align="center"
+        proportion={1}
+        background={{ color: 0x444444 }}
+      >
         {currentExample === 0 && <CountersExample />}
         {currentExample === 1 && <RexLabelExamples />}
       </RexSizer>

@@ -11,6 +11,19 @@ import { RexLabel, RexSizer, Text } from './widgets'
 export type VNodeLike = VNode | VNode[] | null
 
 /**
+ * Global root sizer for layout updates
+ */
+let rootLayoutSizer: RexSizerType | null = null
+
+/**
+ * Sets the root layout sizer that will be relayouted after updates
+ * @param sizer - The root sizer to use for layout updates
+ */
+export function setRootLayoutSizer(sizer: RexSizerType | null) {
+  rootLayoutSizer = sizer
+}
+
+/**
  * Creates a VNode element (alternative to JSX)
  * @param type - Element type (string or component)
  * @param props - Element props
@@ -110,8 +123,15 @@ export function mount(
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
   })
-  //host.layout(node) // this cause issue, because insufficient layout info at this point
-  //node.getTopmostSizer()?.layout() // may this helps, but may not really necessary
+  host.layout(node)
+
+  // Trigger root layout after mount
+  queueMicrotask(() => {
+    if (rootLayoutSizer) {
+      host.layout(rootLayoutSizer)
+    }
+  })
+
   return node
 }
 
@@ -183,6 +203,14 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()
+
+      // Trigger root layout after component update
+      queueMicrotask(() => {
+        if (rootLayoutSizer) {
+          host.layout(rootLayoutSizer)
+        }
+      })
+
       return
     }
     unmount(oldV)

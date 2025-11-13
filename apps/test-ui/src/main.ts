@@ -2,7 +2,7 @@
  * Minimal Phaser bootstrap that mounts the JSX tree into a Scene.
  * Installs rexUI scene plugin under the "rexUI" key.
  */
-import { mount } from '@phaserjsx/ui'
+import { mount, setRootLayoutSizer, type RexSizerType } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin'
 import { App } from './App'
@@ -44,6 +44,9 @@ class MainScene extends Phaser.Scene {
     const { width, height } = this.scale
     const centerContainer = this.createCenterContentBox(width, height)
 
+    // Set root layout sizer for automatic relayout after updates
+    setRootLayoutSizer(centerContainer.outerBox as unknown as RexSizerType)
+
     console.log('Mounting App...')
     const tree = { type: App, props: {}, children: [] }
     const result = mount(centerContainer.innerBox, tree)
@@ -52,6 +55,12 @@ class MainScene extends Phaser.Scene {
 
     // Layout the outer container to fill the scene
     centerContainer.outerBox.layout()
+
+    // for testing purpose, add a interval and layout repeatedly
+    // this is a hack to check correct layout after resize
+    //setInterval(() => {
+    //  centerContainer.outerBox.layout()
+    //}, 2000)
   }
 
   /**
