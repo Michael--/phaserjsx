@@ -1,28 +1,23 @@
 /**
- * Demo: two independent counters using the custom hooks + rexUI widgets.
- * Assumes the Scene has rexUI plugin installed as "rexUI".
+ * Demo: two independent counters using custom hooks + native Phaser primitives.
  */
-import { RexLabel, RexSizer, useState } from '@phaserjsx/ui'
+import { Text, View, useState } from '@phaserjsx/ui'
 
 /**
  * Counter component with configurable step
  * @param props - Counter properties
  * @returns Counter component JSX
  */
-export function Counter(props: { step?: number; label?: string; x?: number; y?: number }) {
-  const [n, setN] = useState(0)
-  const step = props.step ?? 1
+export function Counter(props: { step?: number; label?: string }) {
+  const [n] = useState(0)
+  // const step = props.step ?? 1
+  // TODO: Add pointer interaction support later
+  // setN((v) => v + step)
   return (
-    <RexSizer orientation="y">
-      <RexLabel text={`${props.label ?? 'Count'}: ${n}`} />
-      <RexLabel
-        text={`Add +${step}`}
-        background={{ radius: 6, color: 0x555555 }}
-        onPointerdown={() => {
-          setN((v) => v + step)
-        }}
-      />
-    </RexSizer>
+    <View y={0}>
+      <Text text={`${props.label ?? 'Count'}: ${n}`} y={0} />
+      <Text text={`Add +${props.step ?? 1}`} y={30} />
+    </View>
   )
 }
 
@@ -32,11 +27,15 @@ export function Counter(props: { step?: number; label?: string; x?: number; y?: 
  */
 export function CountersExample() {
   return (
-    <RexSizer orientation="y">
-      <RexLabel text="Two independent counters" />
-      <Counter step={1} label="A" />
-      <Counter step={5} label="B" />
-    </RexSizer>
+    <View x={100} y={100}>
+      <Text text="Two independent counters" y={0} />
+      <View y={40}>
+        <Counter step={1} label="A" />
+      </View>
+      <View y={120}>
+        <Counter step={5} label="B" />
+      </View>
+    </View>
   )
 }
 

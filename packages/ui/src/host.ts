@@ -1,170 +1,112 @@
 import Phaser from 'phaser'
-import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
-import { RexLabel, RexSizer } from './widgets'
+import type { NodeInstance, NodeProps, NodeType } from './core-types'
 
-type ComponentType = typeof RexSizer | typeof RexLabel | typeof Text
-type ComponentProps = RexSizerProps | RexLabelProps
+/**
+ * Host creator function type - creates a node instance from props
+ */
+export type HostCreator<T extends NodeType> = (
+  scene: Phaser.Scene,
+  props: NodeProps<T>
+) => NodeInstance<T>
 
-function isRexContainer(n: unknown): n is RexSizerType {
-  return !!(
-    (n as RexSizerType | null)?.layout &&
-    (n as RexSizerType | null)?.add &&
-    (n as RexSizerType | null)?.remove
-  )
+/**
+ * Internal registry of creators for each node type
+ */
+type CreatorRegistry = {
+  [K in NodeType]: HostCreator<K>
 }
 
 /**
- * Checks if props affect layout and require re-layout
- * @param prev - Previous props
- * @param next - New props
- * @returns true if layout-affecting props changed
+ * Creator registry - maps node types to their factory functions
  */
-function affectsLayout(prev: ComponentProps, next: ComponentProps) {
-  if ('space' in prev && 'space' in next && prev.space !== next.space) return true
-  if ('align' in prev && 'align' in next && prev.align !== next.align) return true
-  if ('orientation' in prev && 'orientation' in next && prev.orientation !== next.orientation)
-    return true
-  if ('width' in prev && 'width' in next && prev.width !== next.width) return true
-  if ('height' in prev && 'height' in next && prev.height !== next.height) return true
-  return false
-}
-
-// Set to track nodes that need layout in current frame
-const layoutQueue = new Set<RexSizerType>()
-let layoutScheduled = false
+const creators: Partial<CreatorRegistry> = {}
 
 /**
- * Schedules layout update on next tick/frame
- * @param node - Node to layout
+ * Creates a View (Phaser Container) node
+ * @param scene - Phaser scene
+ * @param props - View properties
+ * @returns Container instance
  */
-function scheduleLayout(node: RexSizerType) {
-  layoutQueue.add(node)
-  if (layoutScheduled) return
-  layoutScheduled = true
-  queueMicrotask(() => {
-    layoutScheduled = false
-    const nodes = Array.from(layoutQueue)
-    layoutQueue.clear()
-    // Process from leaf to root to avoid redundant layouts
-    for (const n of nodes) {
-      if (!n.scene) continue // Skip if destroyed
-      n.layout()
-    }
-  })
+function createView(scene: Phaser.Scene, props: NodeProps<'View'>): NodeInstance<'View'> {
+  const container = scene.add.container(props.x ?? 0, props.y ?? 0)
+  if (props.visible !== undefined) container.visible = props.visible
+  if (props.depth !== undefined) container.setDepth(props.depth)
+  if (props.alpha !== undefined) container.setAlpha(props.alpha)
+  if (props.scaleX !== undefined || props.scaleY !== undefined) {
+    container.setScale(props.scaleX ?? 1, props.scaleY ?? 1)
+  }
+  if (props.rotation !== undefined) container.setRotation(props.rotation)
+  return container
 }
+
+/**
+ * Creates a Text (Phaser Text) node
+ * @param scene - Phaser scene
+ * @param props - Text properties
+ * @returns Text instance
+ */
+function createText(scene: Phaser.Scene, props: NodeProps<'Text'>): NodeInstance<'Text'> {
+  const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
+  if (props.visible !== undefined) text.visible = props.visible
+  if (props.depth !== undefined) text.setDepth(props.depth)
+  if (props.alpha !== undefined) text.setAlpha(props.alpha)
+  if (props.scaleX !== undefined || props.scaleY !== undefined) {
+    text.setScale(props.scaleX ?? 1, props.scaleY ?? 1)
+  }
+  if (props.rotation !== undefined) text.setRotation(props.rotation)
+  return text
+}
+
+// Initialize creator registry with native Phaser primitives
+creators.View = createView
+creators.Text = createText
 
 export const host = {
   /**
-   * Creates a Phaser/rexUI object from node type and props
-   * @param type - Node type (RexSizer, RexLabel, Text)
+   * Creates a node instance using the registered creator for the given type
+   * @param type - Node type name
    * @param props - Node properties
    * @param scene - Phaser scene
-   * @returns Created Phaser/rexUI object
-   * @throws Error if node type is unknown
+   * @returns Created node instance
+   * @throws Error if no creator registered for the type
    */
-  create(
-    type: ComponentType,
-    props: ComponentProps,
-    scene: Phaser.Scene
-  ): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {
-    const phaserScene = scene as Phaser.Scene & {
-      rexUI?: {
-        add: {
-          sizer: (config: unknown) => unknown
-          roundRectangle: (
-            x: number,
-            y: number,
-            w: number,
-            h: number,
-            r: number,
-            color: number
-          ) => unknown
-          label: (config: unknown) => unknown
-        }
-      }
+  create<T extends NodeType>(type: T, props: NodeProps<T>, scene: Phaser.Scene): NodeInstance<T> {
+    const creator = creators[type] as HostCreator<T> | undefined
+    if (!creator) {
+      throw new Error(`No host creator registered for node type "${String(type)}"`)
     }
+    return creator(scene, props)
+  },
 
-    if (!phaserScene.rexUI) {
-      console.error('rexUI plugin not found on scene!', phaserScene)
-      throw new Error('rexUI plugin not installed. Make sure the scene has rexUI plugin.')
-    }
-
-    switch (type) {
-      case 'RexSizer': {
-        const p = props as RexSizerProps
-        // rexUI scene plugin must be installed in the Scene as "rexUI"
-        const sizer = phaserScene.rexUI.add.sizer({
-          orientation: p.orientation ?? 'x',
-          align: p.align,
-        }) as RexSizerType
-        return sizer
-      }
-      case 'RexLabel': {
-        const p = props as RexLabelProps
-        const background = p.background
-          ? phaserScene.rexUI?.add.roundRectangle(
-              0,
-              0,
-              0,
-              0,
-              p.background.radius ?? 6,
-              p.background.color ?? 0x2a2a2a
-            )
-          : undefined
-        const textObject = phaserScene.add.text(0, 0, p.text ?? '')
-        const label = phaserScene.rexUI?.add.label({
-          text: textObject,
-          background,
-          align: p.align,
-        }) as RexLabelType
-        if (p.onPointerdown) {
-          const interactiveLabel = label as {
-            setInteractive?: () => void
-            input?: { cursor?: string }
-          }
-          interactiveLabel.setInteractive?.()
-          if (interactiveLabel.input) interactiveLabel.input.cursor = 'pointer'
-          label.on('pointerdown', p.onPointerdown)
-        }
-        return label
-      }
-      default:
-        throw new Error(`Unknown node type: ${type}`)
-    }
+  /**
+   * Registers a creator function for a custom node type
+   * @param type - Node type name
+   * @param creator - Creator function
+   */
+  register<T extends NodeType>(type: T, creator: HostCreator<T>): void {
+    creators[type] = creator as CreatorRegistry[T]
   },
 
   /**
    * Appends child node to parent container
    * @param parent - Parent container or scene
    * @param child - Child node to append
-   * @param addConfig - Optional RexUI add() configuration (expand, proportion, etc.)
    */
-  append(
-    parent: ParentType,
-    child: Phaser.GameObjects.GameObject,
-    addConfig?: {
-      expand?: boolean
-      proportion?: number
-      align?: string
-      padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
+  append(parent: unknown, child: unknown) {
+    // Parent is a Container
+    if (parent instanceof Phaser.GameObjects.Container) {
+      parent.add(child as Phaser.GameObjects.GameObject)
     }
-  ) {
-    if (isRexContainer(parent)) {
-      // RexUI containers accept add config
-      ;(parent as { add: (child: unknown, config?: unknown) => void }).add(child, addConfig)
-    } else {
-      const parentObj = parent as {
-        scene?: {
-          sys?: { game?: { constructor?: unknown } }
-          children?: { add?: (child: unknown) => void }
-        }
-        add?: { existing?: (child: unknown) => void }
-      }
-      const game = parentObj.scene?.sys?.game
-      if (game && parent instanceof (game.constructor as { new (): unknown })) {
-        parentObj.add?.existing?.(child)
-      } else {
-        parentObj.scene?.children?.add?.(child)
+    // Parent is a Scene
+    else if (parent && typeof parent === 'object' && 'sys' in parent) {
+      const scene = parent as Phaser.Scene
+      scene.add.existing(child as Phaser.GameObjects.GameObject)
+    }
+    // Fallback: try to add to display list
+    else if (parent && typeof parent === 'object' && 'scene' in parent) {
+      const gameObject = parent as Phaser.GameObjects.GameObject
+      if (gameObject.scene?.children) {
+        gameObject.scene.children.add(child as Phaser.GameObjects.GameObject)
       }
     }
   },
@@ -174,22 +116,21 @@ export const host = {
    * @param parent - Parent container
    * @param child - Child node to remove
    */
-  remove(parent: ParentType, child: Phaser.GameObjects.GameObject) {
-    // Check if child still has a scene (not already destroyed)
-    const childObj = child as {
-      scene?: Phaser.Scene | null
-      destroy?: (destroyChildren?: boolean) => void
-    }
+  remove(parent: unknown, child: unknown) {
+    const childObj = child as Phaser.GameObjects.GameObject & { scene?: Phaser.Scene | null }
 
+    // Check if child still has a scene (not already destroyed)
     if (!childObj.scene) return
 
     // Remove from parent container first
-    if (isRexContainer(parent)) {
-      parent.remove(child, false)
+    if (parent instanceof Phaser.GameObjects.Container) {
+      parent.remove(childObj, false)
     }
 
-    // Destroy the child WITHOUT destroying its children (we handle that separately in unmount)
-    childObj.destroy?.(false)
+    // Destroy the child WITHOUT destroying its children (VDOM handles that)
+    if (childObj.destroy) {
+      childObj.destroy(false)
+    }
   },
 
   /**
@@ -199,78 +140,62 @@ export const host = {
    * @param next - New props
    */
   patch(node: unknown, prev: Record<string, unknown>, next: Record<string, unknown>) {
-    const nodeObj = node as {
+    const gameObject = node as {
       x?: number
       y?: number
-      text?: Phaser.GameObjects.Text
+      visible?: boolean
+      scaleX?: number
+      scaleY?: number
+      setDepth?: (depth: number) => void
+      setAlpha?: (alpha: number) => void
+      setScale?: (x: number, y: number) => void
+      setRotation?: (rotation: number) => void
       setText?: (text: string) => void
-      setStyle?: (style: unknown) => void
-      off?: (event: string, handler: unknown) => void
-      on?: (event: string, handler: unknown) => void
-      setInteractive?: () => void
+      setStyle?: (style: Phaser.Types.GameObjects.Text.TextStyle) => void
     }
-    if (prev.x !== next.x && typeof next.x === 'number') nodeObj.x = next.x
-    if (prev.y !== next.y && typeof next.y === 'number') nodeObj.y = next.y
 
-    // Text-like props
+    // Common transform props
+    if (prev.x !== next.x && typeof next.x === 'number') gameObject.x = next.x
+    if (prev.y !== next.y && typeof next.y === 'number') gameObject.y = next.y
+    if (prev.visible !== next.visible && typeof next.visible === 'boolean') {
+      gameObject.visible = next.visible
+    }
+    if (prev.depth !== next.depth && typeof next.depth === 'number') {
+      gameObject.setDepth?.(next.depth)
+    }
+    if (prev.alpha !== next.alpha && typeof next.alpha === 'number') {
+      gameObject.setAlpha?.(next.alpha)
+    }
     if (
-      'text' in next &&
-      typeof next.text === 'string' &&
-      (prev as Record<string, unknown>).text !== next.text
+      (prev.scaleX !== next.scaleX && typeof next.scaleX === 'number') ||
+      (prev.scaleY !== next.scaleY && typeof next.scaleY === 'number')
     ) {
-      nodeObj.setText?.(next.text)
+      const scaleX = typeof next.scaleX === 'number' ? next.scaleX : (gameObject.scaleX ?? 1)
+      const scaleY = typeof next.scaleY === 'number' ? next.scaleY : (gameObject.scaleY ?? 1)
+      gameObject.setScale?.(scaleX, scaleY)
+    }
+    if (prev.rotation !== next.rotation && typeof next.rotation === 'number') {
+      gameObject.setRotation?.(next.rotation)
+    }
+
+    // Text-specific props
+    if ('text' in next && prev.text !== next.text && typeof next.text === 'string') {
+      gameObject.setText?.(next.text)
     }
     if (
-      'textStyle' in next &&
-      next.textStyle &&
-      JSON.stringify((prev as Record<string, unknown>).textStyle) !== JSON.stringify(next.textStyle)
+      'style' in next &&
+      next.style &&
+      JSON.stringify(prev.style) !== JSON.stringify(next.style)
     ) {
-      nodeObj.setStyle?.(next.textStyle)
+      gameObject.setStyle?.(next.style as Phaser.Types.GameObjects.Text.TextStyle)
     }
-
-    // Pointer events
-    const prevPointer = (prev as { onPointerdown?: () => void }).onPointerdown
-    const nextPointer = (next as { onPointerdown?: () => void }).onPointerdown
-    if (prevPointer !== nextPointer) {
-      if (prevPointer) nodeObj.off?.('pointerdown', prevPointer)
-      if (nextPointer) {
-        nodeObj.setInteractive?.()
-        const interactiveNode = node as { input?: { cursor?: string } }
-        if (interactiveNode.input) interactiveNode.input.cursor = 'pointer'
-        nodeObj.on?.('pointerdown', nextPointer)
-      }
-    }
-
-    // Background color changes for RexUI containers
-    if (isRexContainer(node)) {
-      const prevBg = (prev as { background?: { color?: number } }).background
-      const nextBg = (next as { background?: { color?: number } }).background
-      if (prevBg?.color !== nextBg?.color && nextBg?.color !== undefined) {
-        const rexNode = node as {
-          backgroundChildren?: Phaser.GameObjects.GameObject[]
-        }
-        // RexUI Sizer stores background as first child in backgroundChildren array
-        const bgShape = rexNode.backgroundChildren?.[0] as
-          | {
-              setFillStyle?: (color: number, alpha?: number) => void
-            }
-          | undefined
-        if (bgShape?.setFillStyle) {
-          bgShape.setFillStyle(nextBg.color)
-        }
-      }
-    }
-
-    if (isRexContainer(node) && affectsLayout(prev, next)) scheduleLayout(node)
   },
 
   /**
-   * Performs layout update on container
-   * @param node - Node to layout
+   * Performs layout update on container (no-op for native Phaser)
    */
-  layout(node: unknown) {
-    if (isRexContainer(node)) {
-      scheduleLayout(node)
-    }
+  layout() {
+    // Native Phaser containers don't have automatic layout
+    // This is a no-op but kept for API compatibility
   },
 }

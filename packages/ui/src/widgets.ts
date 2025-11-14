@@ -1,12 +1,8 @@
 /**
- * VNode factories for JSX usage. They do NOT create Phaser objects directly.
+ * VNode factories for JSX usage with native Phaser primitives
+ * These create VNode objects that will be mounted by the VDOM system
  */
-import type { VNode } from './hooks'
 
 // Use strings as types to avoid function component mounting
-export const RexSizer = 'RexSizer' as const
-export const RexLabel = 'RexLabel' as const
-
-// Helper types for TypeScript
-export type RexSizerElement = VNode & { type: typeof RexSizer }
-export type RexLabelElement = VNode & { type: typeof RexLabel }
+export const View = 'View' as const
+export const Text = 'Text' as const

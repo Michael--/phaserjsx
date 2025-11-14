@@ -1,27 +1,14 @@
 /**
  * VDOM + mount/patch/unmount and host integration.
- * This file glues JSX VNodes to Phaser/rexUI objects using the host bridge.
+ * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
 import type Phaser from 'phaser'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
-import type { ParentType, RexLabelType, RexSizerType, RexUIAddConfig } from './types'
-import { RexLabel, RexSizer } from './widgets'
+import type { ParentType } from './types'
+import { Text, View } from './widgets'
 
 export type VNodeLike = VNode | VNode[] | null
-
-/**
- * Global root sizer for layout updates
- */
-let rootLayoutSizer: RexSizerType | null = null
-
-/**
- * Sets the root layout sizer that will be relayouted after updates
- * @param sizer - The root sizer to use for layout updates
- */
-export function setRootLayoutSizer(sizer: RexSizerType | null) {
-  rootLayoutSizer = sizer
-}
 
 /**
  * Creates a VNode element (alternative to JSX)
@@ -43,12 +30,9 @@ export function createElement(
  * Mounts a VNode into a Phaser scene or parent container
  * @param parentOrScene - Phaser scene or parent container
  * @param vnode - VNode to mount
- * @returns Created Phaser/rexUI object
+ * @returns Created Phaser GameObject
  */
-export function mount(
-  parentOrScene: ParentType,
-  vnode: VNode
-): Phaser.GameObjects.GameObject | RexSizerType | RexLabelType {
+export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
   // Function component
   if (typeof vnode.type === 'function') {
     const ctx: Ctx = {
@@ -102,34 +86,13 @@ export function mount(
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  const node = host.create(
-    vnode.type as typeof RexSizer | typeof RexLabel | typeof Text,
-    vnode.props ?? {},
-    scene
-  )
+  const node = host.create(vnode.type as typeof View | typeof Text, vnode.props ?? {}, scene)
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
 
-  // Merge add config already captured by the JSX runtime with inline props
-  const addConfig: RexUIAddConfig = { ...(vnode.__addConfig ?? {}) }
-  const layoutProps = vnode.props as Partial<RexUIAddConfig> | undefined
-  if (layoutProps?.align !== undefined) addConfig.align = layoutProps.align
-  if (layoutProps?.padding !== undefined) addConfig.padding = layoutProps.padding
-
-  if (Object.keys(addConfig).length > 0) {
-    vnode.__addConfig = addConfig
-  }
-  host.append(parentOrScene, node, vnode.__addConfig)
+  host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
-  })
-  host.layout(node)
-
-  // Trigger root layout after mount
-  queueMicrotask(() => {
-    if (rootLayoutSizer) {
-      host.layout(rootLayoutSizer)
-    }
   })
 
   return node
@@ -204,13 +167,6 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()
 
-      // Trigger root layout after component update
-      queueMicrotask(() => {
-        if (rootLayoutSizer) {
-          host.layout(rootLayoutSizer)
-        }
-      })
-
       return
     }
     unmount(oldV)
@@ -242,5 +198,4 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       patchVNode(oldV.__node as ParentType, c1, c2)
     }
   }
-  host.layout(oldV.__node)
 }

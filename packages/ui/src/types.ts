@@ -1,5 +1,4 @@
 import type Phaser from 'phaser'
-import { Sizer } from 'phaser3-rex-plugins/templates/ui/ui-components'
 import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
@@ -7,66 +6,51 @@ export type SignalLike<T> = { value: T } | T
 export type Size = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'
 
 /**
- * RexUI Sizer add() configuration
- * These are NOT properties of the widget itself, but parameters for parent.add(child, config)
+ * Type for parent objects that can contain children
  */
-export interface RexUIAddConfig {
-  expand?: boolean
-  proportion?: number
-  align?: 'left' | 'center' | 'right' | 'top' | 'bottom' | string
-  padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
-}
+export type ParentType = Phaser.Scene | Phaser.GameObjects.Container
 
 /**
- * Props for RexLabel widget
+ * Props for View (Container) component
  */
-export interface RexLabelProps extends RexUIAddConfig {
+export interface ViewProps {
   key?: string | number
-  text?: string
-  background?: { radius?: number; color?: number }
-  onPointerdown?: () => void
-  children?: VNode[]
-}
-
-/**
- * Props for RexSizer layout container
- */
-export interface RexSizerProps extends RexUIAddConfig {
-  key?: string | number
-  orientation?: Sizer.OrientationTypes
+  x?: number
+  y?: number
+  visible?: boolean
+  depth?: number
+  alpha?: number
+  scaleX?: number
+  scaleY?: number
+  rotation?: number
   children?: VNode | VNode[] | null | undefined
 }
 
 /**
- * rexUI Sizer type (layout container)
+ * Props for Text component
  */
-export type RexSizerType = Phaser.GameObjects.Container & {
-  layout: () => void
-  add: (child: Phaser.GameObjects.GameObject) => void
-  remove: (child: Phaser.GameObjects.GameObject, destroy?: boolean) => void
-  getTopmostSizer?: () => RexSizerType
+export interface TextProps {
+  key?: string | number
+  x?: number
+  y?: number
+  text: string
+  style?: Phaser.Types.GameObjects.Text.TextStyle
+  visible?: boolean
+  depth?: number
+  alpha?: number
+  scaleX?: number
+  scaleY?: number
+  rotation?: number
+  children?: VNode | VNode[] | null | undefined
 }
-
-/**
- * rexUI Label type (text with optional background)
- */
-export type RexLabelType = Phaser.GameObjects.Container & {
-  text: Phaser.GameObjects.Text
-  setText: (text: string) => void
-}
-
-/**
- * Type for parent objects that can contain children
- */
-export type ParentType = Phaser.Scene | Phaser.GameObjects.Container | RexSizerType
 
 // JSX type definitions for type-safe props
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      RexSizer: RexSizerProps
-      RexLabel: RexLabelProps
+      View: ViewProps
+      Text: TextProps
     }
   }
 }
