@@ -5,6 +5,28 @@ import Phaser from 'phaser'
 import type { HostCreator, HostPatcher } from '../host'
 
 /**
+ * Base props for View (Container) - without JSX-specific props
+ */
+export interface ViewBaseProps {
+  x?: number
+  y?: number
+  visible?: boolean
+  depth?: number
+  alpha?: number
+  scaleX?: number
+  scaleY?: number
+  rotation?: number
+  width?: number
+  height?: number
+  backgroundColor?: number
+  backgroundAlpha?: number
+  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
+  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
+}
+
+/**
  * View creator - creates a Phaser Container with optional background and interaction
  */
 export const viewCreator: HostCreator<'View'> = (scene, props) => {

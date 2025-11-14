@@ -1,7 +1,24 @@
 /**
  * Text component implementation - native Phaser Text GameObject
  */
+import type Phaser from 'phaser'
 import type { HostCreator, HostPatcher } from '../host'
+
+/**
+ * Base props for Text - without JSX-specific props
+ */
+export interface TextBaseProps {
+  x?: number
+  y?: number
+  text: string
+  style?: Phaser.Types.GameObjects.Text.TextStyle
+  visible?: boolean
+  depth?: number
+  alpha?: number
+  scaleX?: number
+  scaleY?: number
+  rotation?: number
+}
 
 /**
  * Text creator - creates a Phaser Text object

@@ -1,6 +1,6 @@
 /**
  * Built-in component implementations
- * Exports creators, patchers and registration function for View and Text components
+ * Exports creators, patchers, props and registration function for View and Text components
  */
 import { register } from '../host'
 import { textCreator, textPatcher } from './text'
@@ -14,3 +14,9 @@ export function registerBuiltins() {
   register('View', { create: viewCreator, patch: viewPatcher })
   register('Text', { create: textCreator, patch: textPatcher })
 }
+
+// Re-export View component
+export { viewCreator, viewPatcher, type ViewBaseProps } from './view'
+
+// Re-export Text component
+export { textCreator, textPatcher, type TextBaseProps } from './text'

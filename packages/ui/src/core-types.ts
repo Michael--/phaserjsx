@@ -3,6 +3,8 @@
  * Defines the mapping between node type names and their corresponding Phaser types
  */
 import type Phaser from 'phaser'
+import type { TextBaseProps } from './components/text'
+import type { ViewBaseProps } from './components/view'
 
 /**
  * Maps node type names to Phaser GameObject classes
@@ -10,44 +12,6 @@ import type Phaser from 'phaser'
 export interface NodeMap {
   View: Phaser.GameObjects.Container
   Text: Phaser.GameObjects.Text
-}
-
-/**
- * Base props for View (Container) - without JSX-specific props
- */
-export interface ViewBaseProps {
-  x?: number
-  y?: number
-  visible?: boolean
-  depth?: number
-  alpha?: number
-  scaleX?: number
-  scaleY?: number
-  rotation?: number
-  width?: number
-  height?: number
-  backgroundColor?: number
-  backgroundAlpha?: number
-  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
-  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
-}
-
-/**
- * Base props for Text - without JSX-specific props
- */
-export interface TextBaseProps {
-  x?: number
-  y?: number
-  text: string
-  style?: Phaser.Types.GameObjects.Text.TextStyle
-  visible?: boolean
-  depth?: number
-  alpha?: number
-  scaleX?: number
-  scaleY?: number
-  rotation?: number
 }
 
 /**

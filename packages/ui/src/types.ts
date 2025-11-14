@@ -1,5 +1,6 @@
 import type Phaser from 'phaser'
-import type { TextBaseProps, ViewBaseProps } from './core-types'
+import type { TextBaseProps } from './components/text'
+import type { ViewBaseProps } from './components/view'
 import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
