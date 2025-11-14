@@ -1,4 +1,5 @@
 import type Phaser from 'phaser'
+import type { TextBaseProps, ViewBaseProps } from './core-types'
 import type { VNode } from './hooks'
 
 export type SignalLike<T> = { value: T } | T
@@ -11,44 +12,18 @@ export type Size = 'xsmall' | 'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge
 export type ParentType = Phaser.Scene | Phaser.GameObjects.Container
 
 /**
- * Props for View (Container) component
+ * Props for View (Container) component - extends base props with JSX-specific props
  */
-export interface ViewProps {
+export interface ViewProps extends ViewBaseProps {
   key?: string | number
-  x?: number
-  y?: number
-  visible?: boolean
-  depth?: number
-  alpha?: number
-  scaleX?: number
-  scaleY?: number
-  rotation?: number
-  width?: number
-  height?: number
-  backgroundColor?: number
-  backgroundAlpha?: number
-  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
-  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
   children?: VNode | VNode[] | null | undefined
 }
 
 /**
- * Props for Text component
+ * Props for Text component - extends base props with JSX-specific props
  */
-export interface TextProps {
+export interface TextProps extends TextBaseProps {
   key?: string | number
-  x?: number
-  y?: number
-  text: string
-  style?: Phaser.Types.GameObjects.Text.TextStyle
-  visible?: boolean
-  depth?: number
-  alpha?: number
-  scaleX?: number
-  scaleY?: number
-  rotation?: number
   children?: VNode | VNode[] | null | undefined
 }
 
