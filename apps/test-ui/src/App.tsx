@@ -13,11 +13,11 @@ export function Counter(props: { step?: number; label?: string }) {
   const step = props.step ?? 1
   return (
     <View
-      margin={{ top: 10, bottom: 20 }}
+      margin={{ top: 10, bottom: 10 }}
       backgroundColor={0x008800}
-      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
+      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+      direction="row"
     >
-      <Text text={`${props.label ?? 'Count'}: ${n}`} />
       <View
         backgroundColor={0x880000}
         onPointerDown={() => {
@@ -30,6 +30,7 @@ export function Counter(props: { step?: number; label?: string }) {
           margin={{ left: 10, top: 10, right: 10, bottom: 10 }}
         />
       </View>
+      <Text text={`${props.label ?? 'Count'}: ${n}`} />
     </View>
   )
 }

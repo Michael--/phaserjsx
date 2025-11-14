@@ -63,6 +63,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
       }
     >
 
+    const direction = props.direction ?? 'column'
     const padding = props.padding ?? {}
     const paddingLeft = padding.left ?? 0
     const paddingTop = padding.top ?? 0
@@ -70,9 +71,13 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
     const paddingBottom = padding.bottom ?? 0
 
     let maxWidth = 0
+    let maxHeight = 0
+    let totalWidth = paddingLeft
     let totalHeight = paddingTop
 
-    console.log(`[View.__getLayoutSize] Computing for container with ${children.length} children`)
+    console.log(
+      `[View.__getLayoutSize] Computing for container with ${children.length} children, direction: ${direction}`
+    )
 
     for (const child of children) {
       if (child.__isBackground) {
@@ -100,13 +105,25 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
         console.log('  [View.__getLayoutSize] Child (static):', childSize)
       }
 
-      const childTotalWidth = marginLeft + childSize.width + marginRight
-      maxWidth = Math.max(maxWidth, childTotalWidth)
-      totalHeight += marginTop + childSize.height + marginBottom
+      if (direction === 'row') {
+        // Horizontal layout
+        totalWidth += marginLeft + childSize.width + marginRight
+        const childTotalHeight = marginTop + childSize.height + marginBottom
+        maxHeight = Math.max(maxHeight, childTotalHeight)
+      } else {
+        // Vertical layout (column)
+        const childTotalWidth = marginLeft + childSize.width + marginRight
+        maxWidth = Math.max(maxWidth, childTotalWidth)
+        totalHeight += marginTop + childSize.height + marginBottom
+      }
     }
 
-    const finalWidth = props.width ?? maxWidth + paddingLeft + paddingRight
-    const finalHeight = props.height ?? totalHeight + paddingBottom
+    const finalWidth =
+      props.width ??
+      (direction === 'row' ? totalWidth + paddingRight : maxWidth + paddingLeft + paddingRight)
+    const finalHeight =
+      props.height ??
+      (direction === 'row' ? maxHeight + paddingTop + paddingBottom : totalHeight + paddingBottom)
 
     console.log(`[View.__getLayoutSize] Result: ${finalWidth} x ${finalHeight}`)
 
@@ -255,6 +272,7 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
       }
     >
 
+    const direction = next.direction ?? 'column'
     const padding = next.padding ?? {}
     const paddingLeft = padding.left ?? 0
     const paddingTop = padding.top ?? 0
@@ -262,6 +280,8 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     const paddingBottom = padding.bottom ?? 0
 
     let maxWidth = 0
+    let maxHeight = 0
+    let totalWidth = paddingLeft
     let totalHeight = paddingTop
 
     for (const child of children) {
@@ -285,14 +305,28 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
         }
       }
 
-      const childTotalWidth = marginLeft + childSize.width + marginRight
-      maxWidth = Math.max(maxWidth, childTotalWidth)
-      totalHeight += marginTop + childSize.height + marginBottom
+      if (direction === 'row') {
+        // Horizontal layout
+        totalWidth += marginLeft + childSize.width + marginRight
+        const childTotalHeight = marginTop + childSize.height + marginBottom
+        maxHeight = Math.max(maxHeight, childTotalHeight)
+      } else {
+        // Vertical layout (column)
+        const childTotalWidth = marginLeft + childSize.width + marginRight
+        maxWidth = Math.max(maxWidth, childTotalWidth)
+        totalHeight += marginTop + childSize.height + marginBottom
+      }
     }
 
     return {
-      width: next.width ?? maxWidth + paddingLeft + paddingRight,
-      height: next.height ?? totalHeight + paddingBottom,
+      width:
+        next.width ??
+        (direction === 'row' ? totalWidth + paddingRight : maxWidth + paddingLeft + paddingRight),
+      height:
+        next.height ??
+        (direction === 'row'
+          ? maxHeight + paddingTop + paddingBottom
+          : totalHeight + paddingBottom),
     }
   }
 }

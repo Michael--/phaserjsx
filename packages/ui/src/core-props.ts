@@ -36,6 +36,12 @@ export interface LayoutProps {
   height?: number
   margin?: EdgeInsets
   padding?: EdgeInsets
+  /**
+   * Layout direction for children
+   * - 'column': Stack children vertically (default, like SwiftUI's VStack)
+   * - 'row': Stack children horizontally (like SwiftUI's HStack)
+   */
+  direction?: 'row' | 'column'
 }
 
 /**

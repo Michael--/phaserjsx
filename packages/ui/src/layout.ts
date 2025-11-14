@@ -76,7 +76,7 @@ function getChildSize(child: GameObjectWithLayout): { width: number; height: num
 
 /**
  * Calculate layout for a container and its children
- * Uses vertical stacking with margin support
+ * Supports both vertical (column) and horizontal (row) stacking
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
  */
@@ -96,6 +96,7 @@ export function calculateLayout(
 
   if (!children || !Array.isArray(children)) return
 
+  const direction = containerProps.direction ?? 'column'
   const padding = containerProps.padding ?? {}
   const paddingLeft = padding.left ?? 0
   const paddingTop = padding.top ?? 0
@@ -103,15 +104,17 @@ export function calculateLayout(
   const paddingBottom = padding.bottom ?? 0
 
   if (debug)
-    console.log('  Padding:', {
+    console.log('  Direction:', direction, 'Padding:', {
       top: paddingTop,
       left: paddingLeft,
       right: paddingRight,
       bottom: paddingBottom,
     })
 
+  let currentX = paddingLeft
   let currentY = paddingTop
   let maxWidth = 0
+  let maxHeight = 0
 
   for (const child of children) {
     // Skip background rectangles
@@ -147,27 +150,50 @@ export function calculateLayout(
         right: marginRight,
       })
 
-    // Update max width including margins
-    const childTotalWidth = marginLeft + size.width + marginRight
-    maxWidth = Math.max(maxWidth, childTotalWidth)
+    if (direction === 'row') {
+      // Horizontal layout (row)
+      currentX += marginLeft
 
-    // Position child
-    currentY += marginTop
+      if (child.setPosition) {
+        const y = paddingTop + marginTop
+        if (debug) console.log(`  Setting child position: (${currentX}, ${y})`)
+        child.setPosition(currentX, y)
+      }
 
-    if (child.setPosition) {
-      const x = paddingLeft + marginLeft
-      if (debug) console.log(`  Setting child position: (${x}, ${currentY})`)
-      child.setPosition(x, currentY)
+      // Update max height including margins
+      const childTotalHeight = marginTop + size.height + marginBottom
+      maxHeight = Math.max(maxHeight, childTotalHeight)
+
+      // Move to next position
+      currentX += size.width + marginRight
+      if (debug) console.log('  Next X position:', currentX)
+    } else {
+      // Vertical layout (column) - default
+      currentY += marginTop
+
+      if (child.setPosition) {
+        const x = paddingLeft + marginLeft
+        if (debug) console.log(`  Setting child position: (${x}, ${currentY})`)
+        child.setPosition(x, currentY)
+      }
+
+      // Update max width including margins
+      const childTotalWidth = marginLeft + size.width + marginRight
+      maxWidth = Math.max(maxWidth, childTotalWidth)
+
+      // Move to next position
+      currentY += size.height + marginBottom
+      if (debug) console.log('  Next Y position:', currentY)
     }
-
-    // Move to next position
-    currentY += size.height + marginBottom
-    if (debug) console.log('  Next Y position:', currentY)
   }
 
   // Calculate container dimensions if not explicitly set
-  const containerWidth = containerProps.width ?? maxWidth + paddingLeft + paddingRight
-  const containerHeight = containerProps.height ?? currentY + paddingBottom
+  const containerWidth =
+    containerProps.width ??
+    (direction === 'row' ? currentX + paddingRight : maxWidth + paddingLeft + paddingRight)
+  const containerHeight =
+    containerProps.height ??
+    (direction === 'row' ? maxHeight + paddingTop + paddingBottom : currentY + paddingBottom)
 
   // Set container dimensions
   ;(container as GameObjectWithLayout).width = containerWidth
