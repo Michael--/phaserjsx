@@ -3,6 +3,7 @@
  * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
 import type Phaser from 'phaser'
+import type { NodeType } from './core-types'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import type { ParentType } from './types'
@@ -179,8 +180,10 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     mount(parent, newV)
     return
   }
+  const nodeType = oldV.type as NodeType
   newV.__node = oldV.__node
-  host.patch(oldV.__node, oldV.props ?? {}, newV.props ?? {})
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  host.patch(nodeType, oldV.__node as any, oldV.props ?? {}, newV.props ?? {})
   const a = oldV.children ?? []
   const b = newV.children ?? []
   const len = Math.max(a.length, b.length)

@@ -10,24 +10,38 @@ export type HostCreator<T extends NodeType> = (
 ) => NodeInstance<T>
 
 /**
- * Internal registry of creators for each node type
+ * Host patcher function type - updates node properties
  */
-type CreatorRegistry = {
-  [K in NodeType]: HostCreator<K>
+export type HostPatcher<T extends NodeType> = (
+  node: NodeInstance<T>,
+  prev: NodeProps<T>,
+  next: NodeProps<T>
+) => void
+
+/**
+ * Node descriptor combining creator and patcher
+ */
+export interface NodeDescriptor<T extends NodeType> {
+  create: HostCreator<T>
+  patch: HostPatcher<T>
 }
 
 /**
- * Creator registry - maps node types to their factory functions
+ * Internal registry of node descriptors
  */
-const creators: Partial<CreatorRegistry> = {}
+type NodeRegistry = {
+  [K in NodeType]: NodeDescriptor<K>
+}
 
 /**
- * Creates a View (Phaser Container) node
- * @param scene - Phaser scene
- * @param props - View properties
- * @returns Container instance
+ * Node registry - maps node types to their descriptors
  */
-function createView(scene: Phaser.Scene, props: NodeProps<'View'>): NodeInstance<'View'> {
+const nodeRegistry: Partial<NodeRegistry> = {}
+
+/**
+ * View creator - creates a Phaser Container with optional background and interaction
+ */
+const viewCreator: HostCreator<'View'> = (scene, props) => {
   const container = scene.add.container(props.x ?? 0, props.y ?? 0)
   if (props.visible !== undefined) container.visible = props.visible
   if (props.depth !== undefined) container.setDepth(props.depth)
@@ -67,12 +81,132 @@ function createView(scene: Phaser.Scene, props: NodeProps<'View'>): NodeInstance
 }
 
 /**
- * Creates a Text (Phaser Text) node
- * @param scene - Phaser scene
- * @param props - Text properties
- * @returns Text instance
+ * View patcher - updates View properties
  */
-function createText(scene: Phaser.Scene, props: NodeProps<'Text'>): NodeInstance<'Text'> {
+const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
+  // Common transform props
+  if (prev.x !== next.x && next.x !== undefined) node.x = next.x
+  if (prev.y !== next.y && next.y !== undefined) node.y = next.y
+  if (prev.visible !== next.visible && next.visible !== undefined) node.visible = next.visible
+  if (prev.depth !== next.depth && next.depth !== undefined) node.setDepth(next.depth)
+  if (prev.alpha !== next.alpha && next.alpha !== undefined) node.setAlpha(next.alpha)
+  if (
+    (prev.scaleX !== next.scaleX && next.scaleX !== undefined) ||
+    (prev.scaleY !== next.scaleY && next.scaleY !== undefined)
+  ) {
+    node.setScale(next.scaleX ?? node.scaleX, next.scaleY ?? node.scaleY)
+  }
+  if (prev.rotation !== next.rotation && next.rotation !== undefined) {
+    node.setRotation(next.rotation)
+  }
+
+  // Background updates
+  const container = node as Phaser.GameObjects.Container & {
+    __background?: Phaser.GameObjects.Rectangle
+  }
+
+  const prevBgColor = prev.backgroundColor
+  const nextBgColor = next.backgroundColor
+  const prevBgAlpha = prev.backgroundAlpha ?? 1
+  const nextBgAlpha = next.backgroundAlpha ?? 1
+  const prevWidth = prev.width ?? 100
+  const nextWidth = next.width ?? 100
+  const prevHeight = prev.height ?? 100
+  const nextHeight = next.height ?? 100
+
+  if (prevBgColor !== undefined && nextBgColor === undefined) {
+    // Remove background
+    if (container.__background) {
+      container.__background.destroy()
+      delete container.__background
+    }
+  } else if (prevBgColor === undefined && nextBgColor !== undefined) {
+    // Add background
+    if (container.scene) {
+      const background = container.scene.add.rectangle(
+        0,
+        0,
+        nextWidth,
+        nextHeight,
+        nextBgColor,
+        nextBgAlpha
+      )
+      background.setOrigin(0, 0)
+      container.add(background)
+      container.__background = background
+    }
+  } else if (container.__background && nextBgColor !== undefined) {
+    // Update existing background
+    if (prevBgColor !== nextBgColor) {
+      container.__background.setFillStyle(nextBgColor, nextBgAlpha)
+    }
+    if (prevBgAlpha !== nextBgAlpha) {
+      container.__background.setAlpha(nextBgAlpha)
+    }
+    if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
+      container.__background.setSize(nextWidth, nextHeight)
+    }
+  }
+
+  // Pointer event handlers
+  const prevDown = prev.onPointerDown
+  const nextDown = next.onPointerDown
+  const prevUp = prev.onPointerUp
+  const nextUp = next.onPointerUp
+  const prevOver = prev.onPointerOver
+  const nextOver = next.onPointerOver
+  const prevOut = prev.onPointerOut
+  const nextOut = next.onPointerOut
+
+  const hadAnyEvent = !!(prevDown || prevUp || prevOver || prevOut)
+  const hasAnyEvent = !!(nextDown || nextUp || nextOver || nextOut)
+
+  // Update interactive state if needed
+  if (!hadAnyEvent && hasAnyEvent) {
+    // Enable interaction
+    const width = next.width ?? 100
+    const height = next.height ?? 100
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
+    container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    if (container.input) container.input.cursor = 'pointer'
+  } else if (hadAnyEvent && !hasAnyEvent) {
+    // Disable interaction
+    container.removeInteractive()
+  } else if (hasAnyEvent) {
+    // Update hit area size if width/height changed
+    if (
+      (prev.width !== next.width || prev.height !== next.height) &&
+      container.input?.hitArea instanceof Phaser.Geom.Rectangle
+    ) {
+      const width = next.width ?? 100
+      const height = next.height ?? 100
+      container.input.hitArea.setTo(0, 0, width, height)
+    }
+  }
+
+  // Update event listeners
+  if (prevDown !== nextDown) {
+    if (prevDown) container.off('pointerdown', prevDown)
+    if (nextDown) container.on('pointerdown', nextDown)
+  }
+  if (prevUp !== nextUp) {
+    if (prevUp) container.off('pointerup', prevUp)
+    if (nextUp) container.on('pointerup', nextUp)
+  }
+  if (prevOver !== nextOver) {
+    if (prevOver) container.off('pointerover', prevOver)
+    if (nextOver) container.on('pointerover', nextOver)
+  }
+  if (prevOut !== nextOut) {
+    if (prevOut) container.off('pointerout', prevOut)
+    if (nextOut) container.on('pointerout', nextOut)
+  }
+}
+
+/**
+ * Text creator - creates a Phaser Text object
+ */
+const textCreator: HostCreator<'Text'> = (scene, props) => {
   const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
   if (props.visible !== undefined) text.visible = props.visible
   if (props.depth !== undefined) text.setDepth(props.depth)
@@ -84,9 +218,38 @@ function createText(scene: Phaser.Scene, props: NodeProps<'Text'>): NodeInstance
   return text
 }
 
-// Initialize creator registry with native Phaser primitives
-creators.View = createView
-creators.Text = createText
+/**
+ * Text patcher - updates Text properties
+ */
+const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
+  // Common transform props
+  if (prev.x !== next.x && next.x !== undefined) node.x = next.x
+  if (prev.y !== next.y && next.y !== undefined) node.y = next.y
+  if (prev.visible !== next.visible && next.visible !== undefined) node.visible = next.visible
+  if (prev.depth !== next.depth && next.depth !== undefined) node.setDepth(next.depth)
+  if (prev.alpha !== next.alpha && next.alpha !== undefined) node.setAlpha(next.alpha)
+  if (
+    (prev.scaleX !== next.scaleX && next.scaleX !== undefined) ||
+    (prev.scaleY !== next.scaleY && next.scaleY !== undefined)
+  ) {
+    node.setScale(next.scaleX ?? node.scaleX, next.scaleY ?? node.scaleY)
+  }
+  if (prev.rotation !== next.rotation && next.rotation !== undefined) {
+    node.setRotation(next.rotation)
+  }
+
+  // Text-specific props
+  if (prev.text !== next.text) {
+    node.setText(next.text)
+  }
+  if (prev.style !== next.style && next.style !== undefined) {
+    node.setStyle(next.style)
+  }
+}
+
+// Register built-in node types
+nodeRegistry.View = { create: viewCreator, patch: viewPatcher }
+nodeRegistry.Text = { create: textCreator, patch: textPatcher }
 
 export const host = {
   /**
@@ -98,20 +261,40 @@ export const host = {
    * @throws Error if no creator registered for the type
    */
   create<T extends NodeType>(type: T, props: NodeProps<T>, scene: Phaser.Scene): NodeInstance<T> {
-    const creator = creators[type] as HostCreator<T> | undefined
-    if (!creator) {
-      throw new Error(`No host creator registered for node type "${String(type)}"`)
+    const descriptor = nodeRegistry[type] as NodeDescriptor<T> | undefined
+    if (!descriptor) {
+      throw new Error(`No host descriptor registered for node type "${String(type)}"`)
     }
-    return creator(scene, props)
+    return descriptor.create(scene, props)
   },
 
   /**
-   * Registers a creator function for a custom node type
+   * Registers a node descriptor (creator + patcher) for a custom node type
    * @param type - Node type name
-   * @param creator - Creator function
+   * @param descriptor - Node descriptor with create and patch functions
    */
-  register<T extends NodeType>(type: T, creator: HostCreator<T>): void {
-    creators[type] = creator as CreatorRegistry[T]
+  register<T extends NodeType>(type: T, descriptor: NodeDescriptor<T>): void {
+    nodeRegistry[type] = descriptor as NodeRegistry[T]
+  },
+
+  /**
+   * Patches node properties with updates using the registered patcher
+   * @param type - Node type name
+   * @param node - Node to patch
+   * @param prev - Previous props
+   * @param next - New props
+   */
+  patch<T extends NodeType>(
+    type: T,
+    node: NodeInstance<T>,
+    prev: NodeProps<T>,
+    next: NodeProps<T>
+  ): void {
+    const descriptor = nodeRegistry[type] as NodeDescriptor<T> | undefined
+    if (!descriptor) {
+      throw new Error(`No host descriptor registered for node type "${String(type)}"`)
+    }
+    descriptor.patch(node, prev, next)
   },
 
   /**
@@ -157,178 +340,6 @@ export const host = {
     // Destroy the child WITHOUT destroying its children (VDOM handles that)
     if (childObj.destroy) {
       childObj.destroy(false)
-    }
-  },
-
-  /**
-   * Patches node properties with updates
-   * @param node - Node to patch
-   * @param prev - Previous props
-   * @param next - New props
-   */
-  patch(node: unknown, prev: Record<string, unknown>, next: Record<string, unknown>) {
-    const gameObject = node as {
-      x?: number
-      y?: number
-      visible?: boolean
-      scaleX?: number
-      scaleY?: number
-      input?: { cursor?: string; hitArea?: Phaser.Geom.Rectangle }
-      setDepth?: (depth: number) => void
-      setAlpha?: (alpha: number) => void
-      setScale?: (x: number, y: number) => void
-      setRotation?: (rotation: number) => void
-      setText?: (text: string) => void
-      setStyle?: (style: Phaser.Types.GameObjects.Text.TextStyle) => void
-      setInteractive?: (
-        hitArea?: Phaser.Geom.Rectangle,
-        callback?: Phaser.Types.Input.HitAreaCallback
-      ) => void
-      removeInteractive?: () => void
-      off?: (event: string, fn?: unknown) => void
-      on?: (event: string, fn: unknown) => void
-    }
-
-    // Common transform props
-    if (prev.x !== next.x && typeof next.x === 'number') gameObject.x = next.x
-    if (prev.y !== next.y && typeof next.y === 'number') gameObject.y = next.y
-    if (prev.visible !== next.visible && typeof next.visible === 'boolean') {
-      gameObject.visible = next.visible
-    }
-    if (prev.depth !== next.depth && typeof next.depth === 'number') {
-      gameObject.setDepth?.(next.depth)
-    }
-    if (prev.alpha !== next.alpha && typeof next.alpha === 'number') {
-      gameObject.setAlpha?.(next.alpha)
-    }
-    if (
-      (prev.scaleX !== next.scaleX && typeof next.scaleX === 'number') ||
-      (prev.scaleY !== next.scaleY && typeof next.scaleY === 'number')
-    ) {
-      const scaleX = typeof next.scaleX === 'number' ? next.scaleX : (gameObject.scaleX ?? 1)
-      const scaleY = typeof next.scaleY === 'number' ? next.scaleY : (gameObject.scaleY ?? 1)
-      gameObject.setScale?.(scaleX, scaleY)
-    }
-    if (prev.rotation !== next.rotation && typeof next.rotation === 'number') {
-      gameObject.setRotation?.(next.rotation)
-    }
-
-    // Text-specific props
-    if ('text' in next && prev.text !== next.text && typeof next.text === 'string') {
-      gameObject.setText?.(next.text)
-    }
-    if (
-      'style' in next &&
-      next.style &&
-      JSON.stringify(prev.style) !== JSON.stringify(next.style)
-    ) {
-      gameObject.setStyle?.(next.style as Phaser.Types.GameObjects.Text.TextStyle)
-    }
-
-    // Background updates for View (Container)
-    const container = node as {
-      __background?: Phaser.GameObjects.Rectangle
-      scene?: Phaser.Scene
-      add?: (child: Phaser.GameObjects.GameObject) => void
-    }
-
-    if ('backgroundColor' in prev || 'backgroundColor' in next) {
-      const prevBgColor = prev.backgroundColor as number | undefined
-      const nextBgColor = next.backgroundColor as number | undefined
-      const prevBgAlpha = (prev.backgroundAlpha as number | undefined) ?? 1
-      const nextBgAlpha = (next.backgroundAlpha as number | undefined) ?? 1
-      const prevWidth = (prev.width as number | undefined) ?? 100
-      const nextWidth = (next.width as number | undefined) ?? 100
-      const prevHeight = (prev.height as number | undefined) ?? 100
-      const nextHeight = (next.height as number | undefined) ?? 100
-
-      if (prevBgColor !== undefined && nextBgColor === undefined) {
-        // Remove background
-        if (container.__background) {
-          container.__background.destroy()
-          delete container.__background
-        }
-      } else if (prevBgColor === undefined && nextBgColor !== undefined) {
-        // Add background
-        if (container.scene) {
-          const background = container.scene.add.rectangle(
-            0,
-            0,
-            nextWidth,
-            nextHeight,
-            nextBgColor,
-            nextBgAlpha
-          )
-          background.setOrigin(0, 0)
-          container.add?.(background)
-          container.__background = background
-        }
-      } else if (container.__background && nextBgColor !== undefined) {
-        // Update existing background
-        if (prevBgColor !== nextBgColor) {
-          container.__background.setFillStyle(nextBgColor, nextBgAlpha)
-        }
-        if (prevBgAlpha !== nextBgAlpha) {
-          container.__background.setAlpha(nextBgAlpha)
-        }
-        if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
-          container.__background.setSize(nextWidth, nextHeight)
-        }
-      }
-    }
-
-    // Pointer event handlers for View (Container)
-    const prevDown = prev.onPointerDown as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const nextDown = next.onPointerDown as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const prevUp = prev.onPointerUp as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const nextUp = next.onPointerUp as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const prevOver = prev.onPointerOver as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const nextOver = next.onPointerOver as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const prevOut = prev.onPointerOut as ((pointer: Phaser.Input.Pointer) => void) | undefined
-    const nextOut = next.onPointerOut as ((pointer: Phaser.Input.Pointer) => void) | undefined
-
-    const hadAnyEvent = !!(prevDown || prevUp || prevOver || prevOut)
-    const hasAnyEvent = !!(nextDown || nextUp || nextOver || nextOut)
-
-    // Update interactive state if needed
-    if (!hadAnyEvent && hasAnyEvent) {
-      // Enable interaction
-      const width = (next.width as number | undefined) ?? 100
-      const height = (next.height as number | undefined) ?? 100
-      const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
-      gameObject.setInteractive?.(hitArea, Phaser.Geom.Rectangle.Contains)
-      if (gameObject.input) gameObject.input.cursor = 'pointer'
-    } else if (hadAnyEvent && !hasAnyEvent) {
-      // Disable interaction
-      gameObject.removeInteractive?.()
-    } else if (hasAnyEvent) {
-      // Update hit area size if width/height changed
-      if (
-        (prev.width !== next.width || prev.height !== next.height) &&
-        gameObject.input?.hitArea instanceof Phaser.Geom.Rectangle
-      ) {
-        const width = (next.width as number | undefined) ?? 100
-        const height = (next.height as number | undefined) ?? 100
-        gameObject.input.hitArea.setTo(0, 0, width, height)
-      }
-    }
-
-    // Update event listeners
-    if (prevDown !== nextDown) {
-      if (prevDown) gameObject.off?.('pointerdown', prevDown)
-      if (nextDown) gameObject.on?.('pointerdown', nextDown)
-    }
-    if (prevUp !== nextUp) {
-      if (prevUp) gameObject.off?.('pointerup', prevUp)
-      if (nextUp) gameObject.on?.('pointerup', nextUp)
-    }
-    if (prevOver !== nextOver) {
-      if (prevOver) gameObject.off?.('pointerover', prevOver)
-      if (nextOver) gameObject.on?.('pointerover', nextOver)
-    }
-    if (prevOut !== nextOut) {
-      if (prevOut) gameObject.off?.('pointerout', prevOut)
-      if (nextOut) gameObject.on?.('pointerout', nextOut)
     }
   },
 
