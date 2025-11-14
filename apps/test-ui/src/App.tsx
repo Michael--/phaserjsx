@@ -2,7 +2,20 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { Text, View, useState } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
+
+/**
+ * Props for the root App component
+ */
+export interface AppProps {
+  /** Screen width in pixels */
+  width?: number
+  /** Screen height in pixels */
+  height?: number
+  /** Phaser scene instance for advanced usage */
+  scene?: Phaser.Scene
+}
 
 /**
  * Counter component with configurable step
@@ -78,9 +91,34 @@ export function LayoutExample() {
 
 /**
  * Main app component with example selector
+ * @param props - App props from Phaser scene
  * @returns App component JSX
  */
-export function App() {
-  //return <LayoutExample />
-  return <AdvancedLayoutDemo />
+export function App(props: AppProps) {
+  const width = props.width ?? 800
+  const height = props.height ?? 600
+
+  return (
+    <View
+      width={width}
+      height={height}
+      backgroundColor={0x123456}
+      justifyContent="space-between"
+      alignItems="center"
+    >
+      <View direction="row" alignItems="center" gap={10}>
+        <LayoutExample />
+        <AdvancedLayoutDemo />
+      </View>
+      <View direction="row" justifyContent="end" width={width}>
+        <Text
+          text={`Screen: ${width} x ${height}`}
+          color={'white'}
+          style={{ fontSize: 14 }}
+          x={10}
+          y={10}
+        />
+      </View>
+    </View>
+  )
 }

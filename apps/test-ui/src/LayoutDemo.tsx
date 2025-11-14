@@ -15,6 +15,8 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
       height={props.height ?? 40}
       backgroundColor={props.color}
       padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+      alignItems="center"
+      justifyContent="center"
     >
       <Text text={props.text} style={{ fontSize: 12 }} color={'white'} />
     </View>
@@ -28,11 +30,11 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
 export function GapDemo() {
   return (
     <View
-      backgroundColor={0x1a4a1a}
+      backgroundColor={0x2a2a2a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={15}
     >
-      <Text text="Gap Demo (gap: 15)" color={'yellow'} style={{ fontSize: 14 }} />
+      <Text text="Gap(15)" color={'yellow'} style={{ fontSize: 14 }} />
       <Box color={0xff6b6b} text="Box 1" />
       <Box color={0x4ecdc4} text="Box 2" />
       <Box color={0x45b7d1} text="Box 3" />
@@ -47,7 +49,6 @@ export function GapDemo() {
 export function JustifyContentColumnDemo() {
   return (
     <View
-      width={600}
       backgroundColor={0x2a2a2a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       direction="column"
@@ -137,7 +138,6 @@ export function JustifyContentColumnDemo() {
 export function AlignItemsRowDemo() {
   return (
     <View
-      width={600}
       backgroundColor={0x2a2a2a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       direction="column"
@@ -147,7 +147,6 @@ export function AlignItemsRowDemo() {
 
       {/* Start */}
       <View
-        width={400}
         height={80}
         backgroundColor={0x444444}
         direction="row"
@@ -163,7 +162,6 @@ export function AlignItemsRowDemo() {
 
       {/* Center */}
       <View
-        width={400}
         height={80}
         backgroundColor={0x444444}
         direction="row"
@@ -179,7 +177,6 @@ export function AlignItemsRowDemo() {
 
       {/* End */}
       <View
-        width={400}
         height={80}
         backgroundColor={0x444444}
         direction="row"
@@ -207,9 +204,9 @@ export function AdvancedLayoutDemo() {
     <View
       x={10}
       y={10}
-      gap={50}
+      gap={10}
       backgroundColor={0x000044}
-      padding={{ right: 10, bottom: 10 }}
+      padding={{ top: 10, left: 10, right: 10, bottom: 10 }}
       onPointerDown={() => {
         setN((n) => n + 1)
       }}

@@ -17,7 +17,15 @@ class MainScene extends Phaser.Scene {
     console.log('Scene dimensions:', this.scale.width, 'x', this.scale.height)
 
     console.log('Mounting App...')
-    const tree = { type: App, props: {}, children: [] }
+    const tree = {
+      type: App,
+      props: {
+        width: this.scale.width,
+        height: this.scale.height,
+        scene: this,
+      },
+      children: [],
+    }
     const result = mount(this, tree)
     console.log('Mount result:', result)
     console.log('Scene children count:', this.children.length)
