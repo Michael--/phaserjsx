@@ -4,7 +4,6 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import { calculateLayout } from '../layout'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyTransformProps } from './appliers/applyTransform'
@@ -47,6 +46,9 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
 
   // Attach layout props for layout calculations
   ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
+
+  // Calculate initial layout
+  // calculateLayout(container, props) // TODO: Enable when layout system is properly integrated
 
   return container
 }
@@ -164,13 +166,6 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     if (nextOut) container.on('pointerout', nextOut)
   }
 
-  // Recalculate layout if layout props changed
-  if (
-    prev.width !== next.width ||
-    prev.height !== next.height ||
-    prev.margin !== next.margin ||
-    prev.padding !== next.padding
-  ) {
-    calculateLayout(container, next)
-  }
+  // Always recalculate layout after any changes
+  // calculateLayout(container, next) // TODO: Enable when layout system is properly integrated
 }

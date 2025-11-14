@@ -1,5 +1,5 @@
 /**
- * Demo: two independent counters using custom hooks + native Phaser primitives.
+ * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { Text, View, useState } from '@phaserjsx/ui'
 
@@ -12,12 +12,11 @@ export function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
   const step = props.step ?? 1
   return (
-    <View y={0}>
-      <Text text={`${props.label ?? 'Count'}: ${n}`} y={0} />
+    <View margin={{ top: 5, bottom: 5 }}>
+      <Text text={`${props.label ?? 'Count'}: ${n}`} />
       <View
         width={150}
         height={30}
-        y={30}
         backgroundColor={0x555555}
         onPointerDown={() => {
           setN((v) => v + step)
@@ -30,18 +29,34 @@ export function Counter(props: { step?: number; label?: string }) {
 }
 
 /**
- * Example: Two independent counters
- * @returns Counters example JSX
+ * Example: Layout system demonstration
+ * Shows automatic vertical stacking with margins and padding
+ * @returns Layout demo JSX
  */
-export function CountersExample() {
+export function LayoutExample() {
   return (
-    <View x={100} y={100} width={300} height={250} backgroundColor={0x2a2a2a}>
-      <Text text="Two independent counters" x={10} y={10} color={'green'} />
-      <View y={50} x={10}>
-        <Counter step={1} label="A" />
-      </View>
-      <View y={130} x={10}>
-        <Counter step={5} label="B" />
+    <View
+      x={50}
+      y={50}
+      width={400}
+      height={400}
+      backgroundColor={0x2a2a2a}
+      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
+    >
+      <Text text="Layout System Demo" color={'yellow'} margin={{ bottom: 15 }} />
+      <Text text="Counters are automatically stacked vertically:" margin={{ bottom: 10 }} />
+      <Counter step={1} label="Counter A" />
+      <Counter step={5} label="Counter B" />
+      <Counter step={10} label="Counter C" />
+      <View
+        margin={{ top: 20 }}
+        width={200}
+        height={50}
+        backgroundColor={0x444444}
+        padding={{ left: 10, top: 5 }}
+      >
+        <Text text="Nested container with padding" />
+        <Text text="Children positioned relative to parent" y={20} />
       </View>
     </View>
   )
@@ -52,5 +67,5 @@ export function CountersExample() {
  * @returns App component JSX
  */
 export function App() {
-  return <CountersExample />
+  return <LayoutExample />
 }

@@ -1,5 +1,6 @@
 /**
  * Basic layout system for positioning children within containers
+ * Currently implements simple vertical stacking with margins
  */
 import type Phaser from 'phaser'
 import type { LayoutProps } from './core-props'
@@ -13,43 +14,33 @@ export function calculateLayout(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps
 ): void {
-  const children = container.getAll() as Phaser.GameObjects.GameObject[]
+  const children = container.list as Phaser.GameObjects.GameObject[]
 
   const padding = containerProps.padding ?? {}
-  const innerLeft = padding.left ?? 0
   const innerTop = padding.top ?? 0
 
-  // For now: simple stacking layout (vertical)
+  // Simple vertical stacking - accumulate Y positions
   let currentY = innerTop
 
   for (const child of children) {
     // Skip background rectangles
-    if ((child as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground)
+    if ((child as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground) {
       continue
-
-    // Get child layout props
-    const childProps = (child as Phaser.GameObjects.GameObject & { __layoutProps?: LayoutProps })
-      .__layoutProps
-
-    // Calculate child position
-    let childX = innerLeft
-    let childY = currentY
-
-    // Apply child margin
-    const margin = childProps?.margin ?? {}
-    childX += margin.left ?? 0
-    childY += margin.top ?? 0
-
-    // Position the child
-    if ('setPosition' in child) {
-      ;(
-        child as Phaser.GameObjects.GameObject & { setPosition: (x: number, y: number) => void }
-      ).setPosition(childX, childY)
     }
 
-    // Move to next position (vertical stacking)
-    const childHeight =
-      childProps?.height ?? ('height' in child ? (child as { height: number }).height : 20)
-    currentY = childY + childHeight + (margin.bottom ?? 0)
+    // For now, just stack vertically with some spacing
+    // TODO: Use actual child layout props when available
+    if ('setPosition' in child) {
+      const x = 'x' in child ? (child as { x: number }).x : 0
+      ;(
+        child as Phaser.GameObjects.GameObject & {
+          setPosition: (x: number, y: number) => void
+        }
+      ).setPosition(x, currentY)
+    }
+
+    // Estimate child height (very basic)
+    const estimatedHeight = ('height' in child ? (child as { height: number }).height : 20) + 10
+    currentY += estimatedHeight
   }
 }
