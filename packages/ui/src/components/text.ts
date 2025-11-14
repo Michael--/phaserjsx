@@ -69,14 +69,3 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
     node.setStyle(next.style)
   }
 }
-
-// JSX type definitions for type-safe props
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      Text: TextProps
-    }
-  }
-}
-/* eslint-enable @typescript-eslint/no-namespace */

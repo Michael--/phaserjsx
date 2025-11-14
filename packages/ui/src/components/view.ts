@@ -196,14 +196,3 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     if (nextOut) container.on('pointerout', nextOut)
   }
 }
-
-// JSX type definitions for type-safe props
-/* eslint-disable @typescript-eslint/no-namespace */
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      View: ViewProps
-    }
-  }
-}
-/* eslint-enable @typescript-eslint/no-namespace */
