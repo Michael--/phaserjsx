@@ -13,7 +13,7 @@ export function Counter(props: { step?: number; label?: string }) {
   const step = props.step ?? 1
   return (
     <View margin={{ top: 10, bottom: 10 }} height={60}>
-      <Text text={`${props.label ?? 'Count'}: ${n}`} height={20} />
+      <Text text={`${props.label ?? 'Count'}: ${n}`} />
       <View
         width={150}
         height={30}
@@ -23,7 +23,7 @@ export function Counter(props: { step?: number; label?: string }) {
           setN((v) => v + step)
         }}
       >
-        <Text text={`Add +${step}`} margin={{ left: 10, top: 5 }} height={20} />
+        <Text text={`Add +${step}`} margin={{ left: 10, top: 5 }} />
       </View>
     </View>
   )
@@ -40,24 +40,24 @@ export function LayoutExample() {
       x={50}
       y={50}
       width={600}
-      height={400}
+      height={500}
       backgroundColor={0x2a2a2a}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
     >
-      <Text text="Layout System Demo" color={'yellow'} margin={{ bottom: 10 }} height={20} />
-      <Text text="Automatic vertical stacking:" margin={{ bottom: 15 }} height={20} />
+      <Text text="Layout System Demo" color={'yellow'} />
+      <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />
       <Counter step={5} label="Counter B" />
       <Counter step={10} label="Counter C" />
       <View
-        margin={{ top: 20 }}
+        margin={{ top: 20, left: 20 }}
         width={300}
         height={100}
         backgroundColor={0x444444}
         padding={{ left: 15, top: 15 }}
       >
-        <Text text="Nested container" color={'cyan'} height={20} margin={{ bottom: 5 }} />
-        <Text text="With padding and margins" height={20} />
+        <Text text="Nested container" color={'cyan'} margin={{ bottom: 10 }} />
+        <Text text="With padding and margins" />
       </View>
     </View>
   )

@@ -61,10 +61,18 @@ export function calculateLayout(
   const padding = containerProps.padding ?? {}
   const paddingLeft = padding.left ?? 0
   const paddingTop = padding.top ?? 0
+  const paddingRight = padding.right ?? 0
+  const paddingBottom = padding.bottom ?? 0
 
-  console.log('  Padding:', { top: paddingTop, left: paddingLeft })
+  console.log('  Padding:', {
+    top: paddingTop,
+    left: paddingLeft,
+    right: paddingRight,
+    bottom: paddingBottom,
+  })
 
   let currentY = paddingTop
+  let maxWidth = 0
 
   for (const child of children) {
     // Skip background rectangles
@@ -72,6 +80,21 @@ export function calculateLayout(
       console.log('  Skipping background')
       continue
     }
+
+    // If child is a container, recursively calculate its layout first to get its size
+    if ('list' in child && Array.isArray((child as Phaser.GameObjects.Container).list)) {
+      const childContainer = child as Phaser.GameObjects.Container
+      const childLayoutProps = (child as GameObjectWithLayout).__layoutProps ?? {}
+      console.log('  -> Child is a container, calculating nested layout first')
+      calculateLayout(childContainer, childLayoutProps)
+    }
+
+    // Get child size after potential recursive layout
+    const size = getChildSize(child)
+    console.log('  Child size:', size)
+
+    // Update max width
+    maxWidth = Math.max(maxWidth, size.width)
 
     // Get child margin
     const margin = getMargin(child)
@@ -90,18 +113,18 @@ export function calculateLayout(
       child.setPosition(x, currentY)
     }
 
-    // If child is also a container, recursively calculate its layout
-    if ('list' in child && Array.isArray((child as Phaser.GameObjects.Container).list)) {
-      const childContainer = child as Phaser.GameObjects.Container
-      const childLayoutProps = (child as GameObjectWithLayout).__layoutProps ?? {}
-      console.log('  -> Child is a container, calculating nested layout')
-      calculateLayout(childContainer, childLayoutProps)
-    }
-
     // Move to next position
-    const size = getChildSize(child)
-    console.log('  Child size:', size)
     currentY += size.height + marginBottom
     console.log('  Next Y position:', currentY)
   }
+
+  // Calculate container dimensions if not explicitly set
+  const containerWidth = containerProps.width ?? maxWidth + paddingLeft + paddingRight
+  const containerHeight = containerProps.height ?? currentY - paddingTop + paddingBottom
+
+  // Set container dimensions
+  ;(container as GameObjectWithLayout).width = containerWidth
+  ;(container as GameObjectWithLayout).height = containerHeight
+
+  console.log('  Container dimensions set to:', { width: containerWidth, height: containerHeight })
 }
