@@ -1,14 +1,32 @@
 /**
  * Tests for host functionality
- * Tests Phaser object creation and management
+ * Tests Phaser GameObject creation and management
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ParentType } from './types'
+import { registerBuiltins } from './components'
 
 // Mock Phaser
 vi.mock('phaser', () => ({
-  Scene: vi.fn(),
+  default: {
+    GameObjects: {
+      Container: class Container {
+        add = vi.fn()
+        remove = vi.fn()
+      },
+    },
+    Geom: {
+      Rectangle: class Rectangle {
+        constructor(
+          public x: number,
+          public y: number,
+          public width: number,
+          public height: number
+        ) {}
+        static Contains = vi.fn(() => true)
+      },
+    },
+  },
 }))
 
 import { host } from './host'
@@ -16,146 +34,115 @@ import { host } from './host'
 describe('Host', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Register built-in components before each test
+    registerBuiltins()
   })
 
   describe('create', () => {
-    it('should create RexSizer', () => {
-      const mockSizer = { id: 'sizer' }
-      const mockScene = {
-        rexUI: {
-          add: {
-            sizer: vi.fn(() => mockSizer),
-          },
-        },
-      }
-      const result = host.create('RexSizer', {}, mockScene as unknown as Phaser.Scene)
-
-      expect(mockScene.rexUI.add.sizer).toHaveBeenCalledWith({
-        orientation: 'x',
-      })
-      expect(result).toBe(mockSizer)
-    })
-
-    it('should create RexLabel', () => {
-      const mockLabel = { id: 'label' }
-      const mockText = { id: 'text' }
-      const mockScene = {
-        rexUI: {
-          add: {
-            roundRectangle: vi.fn(),
-            label: vi.fn(() => mockLabel),
-          },
-        },
-        add: {
-          text: vi.fn(() => mockText),
-        },
-      }
-      const result = host.create(
-        'RexLabel',
-        { text: 'hello' },
-        mockScene as unknown as Phaser.Scene
-      )
-
-      expect(mockScene.add.text).toHaveBeenCalledWith(0, 0, 'hello')
-      expect(mockScene.rexUI.add.label).toHaveBeenCalled()
-      expect(result).toBe(mockLabel)
-    })
-
-    it('should attach pointerdown handler for RexLabel when provided', () => {
-      const handler = vi.fn()
-      const mockLabel = {
-        on: vi.fn(),
+    it('should create View (Container)', () => {
+      const mockContainer = {
+        id: 'container',
+        visible: true,
+        setDepth: vi.fn(),
+        setAlpha: vi.fn(),
+        setScale: vi.fn(),
+        setRotation: vi.fn(),
+        add: vi.fn(),
         setInteractive: vi.fn(),
-        input: { cursor: undefined as string | undefined },
-      }
-      const mockText = { id: 'text' }
-      const mockScene = {
-        rexUI: {
-          add: {
-            roundRectangle: vi.fn(),
-            label: vi.fn(() => mockLabel),
-          },
-        },
-        add: {
-          text: vi.fn(() => mockText),
-        },
-      }
-
-      host.create(
-        'RexLabel',
-        { text: 'hello', onPointerdown: handler },
-        mockScene as unknown as Phaser.Scene
-      )
-
-      expect(mockLabel.setInteractive).toHaveBeenCalled()
-      expect(mockLabel.input?.cursor).toBe('pointer')
-      expect(mockLabel.on).toHaveBeenCalledWith('pointerdown', handler)
-    })
-
-    it('should attach pointerdown handler for Text when provided', () => {
-      const handler = vi.fn()
-      const mockText = {
-        setInteractive: vi.fn(() => {
-          mockText.input = { cursor: undefined }
-        }),
         on: vi.fn(),
         input: { cursor: undefined as string | undefined },
       }
       const mockScene = {
-        rexUI: {
-          add: {
-            sizer: vi.fn(),
-            label: vi.fn(),
-          },
+        add: {
+          container: vi.fn(() => mockContainer),
+          rectangle: vi.fn(),
         },
+      }
+
+      const result = host.create('View', { x: 10, y: 20 }, mockScene as unknown as Phaser.Scene)
+
+      expect(mockScene.add.container).toHaveBeenCalledWith(10, 20)
+      expect(result).toBe(mockContainer)
+    })
+
+    it('should create Text', () => {
+      const mockText = {
+        id: 'text',
+        visible: true,
+        setDepth: vi.fn(),
+        setAlpha: vi.fn(),
+        setScale: vi.fn(),
+        setRotation: vi.fn(),
+        setText: vi.fn(),
+        setStyle: vi.fn(),
+      }
+      const mockScene = {
         add: {
           text: vi.fn(() => mockText),
         },
       }
 
-      host.create(
+      const result = host.create(
         'Text',
-        { text: 'hello', onPointerdown: handler },
+        { x: 5, y: 15, text: 'hello' },
         mockScene as unknown as Phaser.Scene
       )
 
-      expect(mockText.setInteractive).toHaveBeenCalled()
-      expect(mockText.input?.cursor).toBe('pointer')
-      expect(mockText.on).toHaveBeenCalledWith('pointerdown', handler)
+      expect(mockScene.add.text).toHaveBeenCalledWith(5, 15, 'hello', undefined)
+      expect(result).toBe(mockText)
+    })
+
+    it('should attach pointer handlers for View when provided', () => {
+      const handler = vi.fn()
+      const mockContainer = {
+        visible: true,
+        setDepth: vi.fn(),
+        setAlpha: vi.fn(),
+        setScale: vi.fn(),
+        setRotation: vi.fn(),
+        add: vi.fn(),
+        setInteractive: vi.fn(),
+        on: vi.fn(),
+        input: { cursor: undefined as string | undefined },
+      }
+      const mockScene = {
+        add: {
+          container: vi.fn(() => mockContainer),
+          rectangle: vi.fn(),
+        },
+      }
+
+      host.create(
+        'View',
+        { x: 0, y: 0, width: 100, height: 50, onPointerDown: handler },
+        mockScene as unknown as Phaser.Scene
+      )
+
+      expect(mockContainer.setInteractive).toHaveBeenCalled()
+      expect(mockContainer.input?.cursor).toBe('pointer')
+      expect(mockContainer.on).toHaveBeenCalledWith('pointerdown', handler)
     })
   })
 
   describe('append', () => {
-    it('should add child to sizer', () => {
-      const mockSizer = {
-        layout: vi.fn(),
-        add: vi.fn(),
-        remove: vi.fn(),
-      }
+    it('should add child to Container', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mockContainer = new Phaser.GameObjects.Container({} as any)
       const mockChild = { id: 'child' }
 
-      host.append(
-        mockSizer as unknown as ParentType,
-        mockChild as unknown as Phaser.GameObjects.GameObject
-      )
+      host.append(mockContainer, mockChild)
 
-      expect(mockSizer.add).toHaveBeenCalledWith(mockChild, undefined)
+      expect(mockContainer.add).toHaveBeenCalledWith(mockChild)
     })
   })
 
   describe('remove', () => {
     it('should remove child from parent', () => {
-      const mockParent = {
-        layout: vi.fn(),
-        add: vi.fn(),
-        remove: vi.fn(),
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const mockParent = new Phaser.GameObjects.Container({} as any)
       const mockChild = { id: 'child', destroy: vi.fn(), scene: {} }
 
-      host.remove(
-        mockParent as unknown as ParentType,
-        mockChild as unknown as Phaser.GameObjects.GameObject
-      )
+      host.remove(mockParent, mockChild)
 
       expect(mockParent.remove).toHaveBeenCalledWith(mockChild, false)
       expect(mockChild.destroy).toHaveBeenCalledWith(false)
@@ -163,46 +150,37 @@ describe('Host', () => {
   })
 
   describe('layout', () => {
-    it('should call layout on sizer', async () => {
-      const mockSizer = {
-        layout: vi.fn(),
-        add: vi.fn(),
-        remove: vi.fn(),
-        scene: {} as Phaser.Scene,
-      }
-
-      host.layout(mockSizer as unknown as ParentType)
-
-      // Wait for microtask to complete
-      await new Promise<void>((resolve) => queueMicrotask(() => resolve()))
-
-      expect(mockSizer.layout).toHaveBeenCalled()
+    it('should be no-op for native Phaser (no layout system)', () => {
+      // Native Phaser containers don't have automatic layout
+      // This is just kept for API compatibility
+      expect(() => host.layout()).not.toThrow()
     })
   })
 
   describe('patch', () => {
-    it('should update pointer handlers', () => {
-      const handlerA = vi.fn()
-      const handlerB = vi.fn()
-      const node = {
-        setInteractive: vi.fn(),
-        on: vi.fn(),
-        off: vi.fn(),
-        input: { cursor: undefined as string | undefined },
+    it('should update View props', () => {
+      const mockContainer = {
+        x: 0,
+        y: 0,
+        visible: true,
+        setDepth: vi.fn(),
+        setAlpha: vi.fn(),
+        setScale: vi.fn(),
+        setRotation: vi.fn(),
+        scaleX: 1,
+        scaleY: 1,
       }
 
       host.patch(
-        node,
-        { onPointerdown: handlerA } as Record<string, unknown>,
-        {
-          onPointerdown: handlerB,
-        } as Record<string, unknown>
+        'View',
+        mockContainer as unknown as Phaser.GameObjects.Container,
+        { x: 0, y: 0 },
+        { x: 10, y: 20, alpha: 0.5 }
       )
 
-      expect(node.off).toHaveBeenCalledWith('pointerdown', handlerA)
-      expect(node.setInteractive).toHaveBeenCalled()
-      expect(node.input.cursor).toBe('pointer')
-      expect(node.on).toHaveBeenCalledWith('pointerdown', handlerB)
+      expect(mockContainer.x).toBe(10)
+      expect(mockContainer.y).toBe(20)
+      expect(mockContainer.setAlpha).toHaveBeenCalledWith(0.5)
     })
   })
 })

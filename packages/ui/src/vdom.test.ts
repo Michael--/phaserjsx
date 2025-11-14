@@ -52,22 +52,19 @@ describe('VDOM', () => {
     it('should mount a host component', () => {
       // Mock scene with sys property
       const mockSceneWithSys = { sys: {} }
-      vi.mocked(host.create).mockReturnValue({ id: 'mounted' })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(host.create).mockReturnValue({ id: 'mounted' } as any)
 
-      const vnode = createElement('RexSizer', { x: 10, y: 20 })
+      const vnode = createElement('View', { x: 10, y: 20 })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = mount(mockSceneWithSys as any, vnode)
 
       expect(vi.mocked(host.create)).toHaveBeenCalledWith(
-        'RexSizer',
+        'View',
         { x: 10, y: 20 },
         mockSceneWithSys
       )
-      expect(vi.mocked(host.append)).toHaveBeenCalledWith(
-        mockSceneWithSys,
-        { id: 'mounted' },
-        undefined
-      )
-      expect(vi.mocked(host.layout)).toHaveBeenCalledWith({ id: 'mounted' })
+      expect(vi.mocked(host.append)).toHaveBeenCalledWith(mockSceneWithSys, { id: 'mounted' })
       expect(result).toBeDefined()
     })
 
@@ -75,6 +72,7 @@ describe('VDOM', () => {
       const mockComponent = vi.fn(() => createElement('div', {}))
       const vnode = createElement(mockComponent, { test: 'value' })
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       mount(mockScene as any, vnode)
 
       expect(mockComponent).toHaveBeenCalledWith({ test: 'value' })
@@ -98,13 +96,17 @@ describe('VDOM', () => {
     it('should unmount function components', () => {
       const mockComponent = vi.fn(() => createElement('div', {}))
       const vnode = createElement(mockComponent, {})
+      const renderedVNode = createElement('div', {})
       vnode.__ctx = {
         cleanups: [vi.fn()],
-        vnode: createElement('div', {}),
+        vnode: renderedVNode,
+        componentVNode: vnode,
+        isFactory: false,
         index: 0,
         slots: [],
         effects: [],
-        parent: mockScene,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        parent: mockScene as any,
         function: mockComponent,
       }
 
@@ -118,22 +120,19 @@ describe('VDOM', () => {
   describe('patchVNode', () => {
     it('should replace components with different types', () => {
       const mockSceneWithSys = { sys: {} }
-      const oldVNode = createElement('RexSizer', { x: 10 })
+      const oldVNode = createElement('View', { x: 10 })
       oldVNode.__node = { id: 'old', parentContainer: mockSceneWithSys }
       oldVNode.__parent = mockSceneWithSys
-      const newVNode = createElement('RexLabel', { text: 'new' })
+      const newVNode = createElement('Text', { text: 'new' })
 
-      patchVNode(mockSceneWithSys, oldVNode, newVNode)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      patchVNode(mockSceneWithSys as any, oldVNode, newVNode)
 
       expect(vi.mocked(host.remove)).toHaveBeenCalledWith(mockSceneWithSys, {
         id: 'old',
         parentContainer: mockSceneWithSys,
       })
-      expect(vi.mocked(host.create)).toHaveBeenCalledWith(
-        'RexLabel',
-        { text: 'new' },
-        mockSceneWithSys
-      )
+      expect(vi.mocked(host.create)).toHaveBeenCalledWith('Text', { text: 'new' }, mockSceneWithSys)
     })
   })
 })
