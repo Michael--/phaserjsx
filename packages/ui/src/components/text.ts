@@ -48,9 +48,5 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
   )
 
   // Apply text-specific props (text content, color, font, etc.)
-  applyTextProps(
-    node,
-    prev as unknown as Record<string, unknown>,
-    next as unknown as Record<string, unknown>
-  )
+  applyTextProps(node, prev, next)
 }

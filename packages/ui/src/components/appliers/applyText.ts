@@ -2,6 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
+import type { TextSpecificProps } from '../../core-props'
 
 /**
  * Generic node type with text capabilities
@@ -20,8 +21,8 @@ type TextNode = {
  */
 export function applyTextProps<T extends TextNode>(
   node: T,
-  prev: Record<string, unknown>,
-  next: Record<string, unknown>
+  prev: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>,
+  next: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>
 ): void {
   // Text content
   if (prev.text !== next.text && typeof next.text === 'string') {
