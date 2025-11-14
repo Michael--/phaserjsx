@@ -24,7 +24,11 @@ export function Counter(props: { step?: number; label?: string }) {
           setN((v) => v + step)
         }}
       >
-        <Text text={`Add +${step}`} style={{ fontSize: 20 }} margin={{ left: 20, top: 20 }} />
+        <Text
+          text={`Add +${step}`}
+          style={{ fontSize: 20 }}
+          margin={{ left: 10, top: 10, right: 10, bottom: 10 }}
+        />
       </View>
     </View>
   )

@@ -157,7 +157,7 @@ export function calculateLayout(
 
   // Calculate container dimensions if not explicitly set
   const containerWidth = containerProps.width ?? maxWidth + paddingLeft + paddingRight
-  const containerHeight = containerProps.height ?? currentY - paddingTop + paddingBottom
+  const containerHeight = containerProps.height ?? currentY + paddingBottom
 
   // Set container dimensions
   ;(container as GameObjectWithLayout).width = containerWidth
