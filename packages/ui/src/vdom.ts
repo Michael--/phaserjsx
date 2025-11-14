@@ -97,7 +97,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   })
 
   // Calculate layout after all children are mounted
-  if (vnode.type === 'View' && 'children' in node) {
+  // Check if this is a Container (has list property)
+  if (node && 'list' in node && Array.isArray((node as Phaser.GameObjects.Container).list)) {
     calculateLayout(node as Phaser.GameObjects.Container, vnode.props ?? {})
   }
 

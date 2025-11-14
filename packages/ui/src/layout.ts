@@ -52,11 +52,9 @@ export function calculateLayout(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps
 ): void {
-  const children = (
-    container as Phaser.GameObjects.Container & {
-      children: GameObjectWithLayout[]
-    }
-  ).children
+  const children = container.list as GameObjectWithLayout[]
+
+  // console.log('Calculating layout for container with children:', children?.length ?? 0)
 
   if (!children || !Array.isArray(children)) return
 
