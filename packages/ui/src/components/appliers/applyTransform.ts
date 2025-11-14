@@ -2,6 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
+import type { TransformProps } from '../../core-props'
 
 /**
  * Generic node type with transform capabilities
@@ -26,8 +27,8 @@ type TransformNode = {
  */
 export function applyTransformProps<T extends Partial<TransformNode>>(
   node: T,
-  prev: Record<string, unknown>,
-  next: Record<string, unknown>
+  prev: Partial<TransformProps>,
+  next: Partial<TransformProps>
 ): void {
   // Position
   if (prev.x !== next.x && typeof next.x === 'number') {

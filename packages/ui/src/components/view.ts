@@ -44,13 +44,13 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   const container = scene.add.container(props.x ?? 0, props.y ?? 0)
 
   // Apply transform props (visible, depth, alpha, scale, rotation)
-  applyTransformPropsOnCreate(container, props as unknown as Record<string, unknown>)
+  applyTransformPropsOnCreate(container, props)
 
   // Add background if backgroundColor is provided
   createBackground(
     scene,
     container as typeof container & { __background?: Phaser.GameObjects.Rectangle },
-    props as unknown as Record<string, unknown>
+    props
   )
 
   // Setup pointer interaction if any event handlers are provided
@@ -74,22 +74,14 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
  */
 export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   // Apply transform props (position, rotation, scale, alpha, depth, visibility)
-  applyTransformProps(
-    node,
-    prev as unknown as Record<string, unknown>,
-    next as unknown as Record<string, unknown>
-  )
+  applyTransformProps(node, prev, next)
 
   // Background updates
   const container = node as Phaser.GameObjects.Container & {
     __background?: Phaser.GameObjects.Rectangle
   }
 
-  applyBackgroundProps(
-    container,
-    prev as unknown as Record<string, unknown>,
-    next as unknown as Record<string, unknown>
-  )
+  applyBackgroundProps(container, prev, next)
 
   const prevBgColor = prev.backgroundColor
   const nextBgColor = next.backgroundColor

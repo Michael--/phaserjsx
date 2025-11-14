@@ -31,7 +31,7 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
   const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
 
   // Apply transform props (visible, depth, alpha, scale, rotation)
-  applyTransformPropsOnCreate(text, props as unknown as Record<string, unknown>)
+  applyTransformPropsOnCreate(text, props)
 
   return text
 }
@@ -41,11 +41,7 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
  */
 export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
   // Apply transform props (position, rotation, scale, alpha, depth, visibility)
-  applyTransformProps(
-    node,
-    prev as unknown as Record<string, unknown>,
-    next as unknown as Record<string, unknown>
-  )
+  applyTransformProps(node, prev, next)
 
   // Apply text-specific props (text content, color, font, etc.)
   applyTextProps(node, prev, next)

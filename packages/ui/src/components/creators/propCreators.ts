@@ -3,6 +3,7 @@
  * These functions avoid code duplication when creating nodes with initial properties
  */
 import type Phaser from 'phaser'
+import type { BackgroundProps, TransformProps } from '../../core-props'
 
 /**
  * Apply transform properties during node creation
@@ -17,7 +18,7 @@ export function applyTransformPropsOnCreate<
     setScale: (x: number, y: number) => void
     setRotation: (rotation: number) => void
   },
->(node: T, props: Record<string, unknown>): void {
+>(node: T, props: Partial<TransformProps>): void {
   if (props.visible !== undefined) {
     node.visible = props.visible as boolean
   }
@@ -47,7 +48,7 @@ export function applyTransformPropsOnCreate<
 export function createBackground(
   scene: Phaser.Scene,
   container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Rectangle },
-  props: Record<string, unknown>
+  props: Partial<BackgroundProps & { width?: number; height?: number }>
 ): void {
   if (props.backgroundColor !== undefined) {
     const width = (props.width as number | undefined) ?? 100

@@ -2,6 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
+import type { BackgroundProps } from '../../core-props'
 
 /**
  * Applies background properties (color, alpha, corner radius)
@@ -12,8 +13,8 @@
  */
 export function applyBackgroundProps(
   _node: unknown,
-  prev: Record<string, unknown>,
-  next: Record<string, unknown>
+  prev: Partial<BackgroundProps>,
+  next: Partial<BackgroundProps>
 ): void {
   // Check if background props changed
   if (
