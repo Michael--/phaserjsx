@@ -1,0 +1,176 @@
+/**
+ * Shared property appliers for component patching
+ * These functions avoid code duplication when updating node properties
+ */
+
+/**
+ * Generic node type with transform capabilities
+ */
+type TransformNode = {
+  x: number
+  y: number
+  rotation: number
+  scaleX: number
+  scaleY: number
+  visible: boolean
+  setScale: (x: number, y: number) => void
+  setAlpha: (alpha: number) => void
+  setDepth: (depth: number) => void
+}
+
+/**
+ * Generic node type with text capabilities
+ */
+type TextNode = {
+  setText: (text: string) => void
+  setStyle: (style: object) => void
+  setWordWrapWidth: (width: number, useAdvancedWrap: boolean) => void
+}
+
+/**
+ * Applies transform properties (position, rotation, scale, alpha, depth, visibility)
+ * @param node - Node with transform properties
+ * @param prev - Previous props
+ * @param next - New props
+ */
+export function applyTransformProps<T extends Partial<TransformNode>>(
+  node: T,
+  prev: Record<string, unknown>,
+  next: Record<string, unknown>
+): void {
+  // Position
+  if (prev.x !== next.x && typeof next.x === 'number') {
+    node.x = next.x
+  }
+  if (prev.y !== next.y && typeof next.y === 'number') {
+    node.y = next.y
+  }
+
+  // Rotation
+  if (prev.rotation !== next.rotation && typeof next.rotation === 'number') {
+    node.rotation = next.rotation
+  }
+
+  // Scale - handle both unified scale and separate scaleX/scaleY
+  const nextScale = next.scale as number | undefined
+  const nextScaleX = next.scaleX as number | undefined
+  const nextScaleY = next.scaleY as number | undefined
+  const prevScale = prev.scale as number | undefined
+  const prevScaleX = prev.scaleX as number | undefined
+  const prevScaleY = prev.scaleY as number | undefined
+
+  if (nextScale !== undefined && nextScale !== prevScale) {
+    node.setScale?.(nextScale, nextScale)
+  } else if (nextScaleX !== prevScaleX || nextScaleY !== prevScaleY) {
+    const currentScaleX = node.scaleX ?? 1
+    const currentScaleY = node.scaleY ?? 1
+    const sx = nextScaleX ?? currentScaleX
+    const sy = nextScaleY ?? currentScaleY
+    node.setScale?.(sx, sy)
+  }
+
+  // Alpha
+  if (prev.alpha !== next.alpha && typeof next.alpha === 'number') {
+    node.setAlpha?.(next.alpha)
+  }
+
+  // Depth
+  if (prev.depth !== next.depth && typeof next.depth === 'number') {
+    node.setDepth?.(next.depth)
+  }
+
+  // Visibility
+  if (prev.visible !== next.visible && typeof next.visible === 'boolean') {
+    node.visible = next.visible
+  }
+}
+
+/**
+ * Applies background properties (color, alpha, corner radius)
+ * Currently checks for changes only - actual rendering is component-specific
+ * @param _node - Node with potential background
+ * @param prev - Previous props
+ * @param next - New props
+ */
+export function applyBackgroundProps(
+  _node: unknown,
+  prev: Record<string, unknown>,
+  next: Record<string, unknown>
+): void {
+  // Check if background props changed
+  if (
+    prev.backgroundColor === next.backgroundColor &&
+    prev.backgroundAlpha === next.backgroundAlpha &&
+    prev.cornerRadius === next.cornerRadius
+  ) {
+    return
+  }
+
+  // Background rendering is component-specific and handled in component patchers
+  // This function serves as a placeholder for future unified background system
+}
+
+/**
+ * Applies text-specific properties (text content, color, font, alignment)
+ * @param node - Phaser Text GameObject
+ * @param prev - Previous props
+ * @param next - New props
+ */
+export function applyTextProps<T extends TextNode>(
+  node: T,
+  prev: Record<string, unknown>,
+  next: Record<string, unknown>
+): void {
+  // Text content
+  if (prev.text !== next.text && typeof next.text === 'string') {
+    node.setText(next.text)
+  }
+
+  // Build style object for properties that changed
+  const style: Phaser.Types.GameObjects.Text.TextStyle = {}
+
+  if (next.color !== prev.color && next.color !== undefined) {
+    style.color = toCssColor(next.color as string | number)
+  }
+  if (next.fontSize !== prev.fontSize && typeof next.fontSize === 'number') {
+    style.fontSize = `${next.fontSize}px`
+  }
+  if (next.fontFamily !== prev.fontFamily && typeof next.fontFamily === 'string') {
+    style.fontFamily = next.fontFamily
+  }
+  if (next.fontStyle !== prev.fontStyle && typeof next.fontStyle === 'string') {
+    style.fontStyle = next.fontStyle
+  }
+  if (
+    next.align !== prev.align &&
+    (next.align === 'left' || next.align === 'center' || next.align === 'right')
+  ) {
+    style.align = next.align
+  }
+
+  // Apply style changes if any
+  if (Object.keys(style).length > 0) {
+    node.setStyle(style)
+  }
+
+  // Word wrap width
+  if (next.maxWidth !== prev.maxWidth && typeof next.maxWidth === 'number') {
+    node.setWordWrapWidth(next.maxWidth, true)
+  }
+
+  // Legacy: Support direct Phaser style object
+  if (prev.style !== next.style && next.style !== undefined) {
+    node.setStyle(next.style as Phaser.Types.GameObjects.Text.TextStyle)
+  }
+}
+
+/**
+ * Converts color value to CSS color string
+ * @param c - Color as hex number or CSS string
+ * @returns CSS color string
+ */
+function toCssColor(c: string | number): string {
+  if (typeof c === 'string') return c
+  const hex = c.toString(16).padStart(6, '0')
+  return `#${hex}`
+}

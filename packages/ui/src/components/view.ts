@@ -2,30 +2,34 @@
  * View component implementation - native Phaser Container with background and interaction support
  */
 import Phaser from 'phaser'
+import type { BackgroundProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
+import { applyBackgroundProps, applyTransformProps } from '../propAppliers'
+import { applyTransformPropsOnCreate, createBackground } from '../propCreators'
 import type { PropsExtension } from '../types'
 
 /**
- * Base props for View (Container) - without JSX-specific props
+ * Interaction props for pointer events
  */
-export interface ViewBaseProps {
-  x?: number
-  y?: number
-  visible?: boolean
-  depth?: number
-  alpha?: number
-  scaleX?: number
-  scaleY?: number
-  rotation?: number
-  width?: number
-  height?: number
-  backgroundColor?: number
-  backgroundAlpha?: number
+export interface InteractionProps {
   onPointerDown?: (pointer: Phaser.Input.Pointer) => void
   onPointerUp?: (pointer: Phaser.Input.Pointer) => void
   onPointerOver?: (pointer: Phaser.Input.Pointer) => void
   onPointerOut?: (pointer: Phaser.Input.Pointer) => void
 }
+
+/**
+ * Base props for View - composing shared prop groups
+ */
+export interface ViewBaseProps
+  extends TransformProps,
+    LayoutProps,
+    BackgroundProps,
+    InteractionProps {}
+
+/**
+
+
 
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
@@ -37,26 +41,16 @@ export interface ViewProps extends ViewBaseProps, PropsExtension {}
  */
 export const viewCreator: HostCreator<'View'> = (scene, props) => {
   const container = scene.add.container(props.x ?? 0, props.y ?? 0)
-  if (props.visible !== undefined) container.visible = props.visible
-  if (props.depth !== undefined) container.setDepth(props.depth)
-  if (props.alpha !== undefined) container.setAlpha(props.alpha)
-  if (props.scaleX !== undefined || props.scaleY !== undefined) {
-    container.setScale(props.scaleX ?? 1, props.scaleY ?? 1)
-  }
-  if (props.rotation !== undefined) container.setRotation(props.rotation)
+
+  // Apply transform props (visible, depth, alpha, scale, rotation)
+  applyTransformPropsOnCreate(container, props as unknown as Record<string, unknown>)
 
   // Add background if backgroundColor is provided
-  if (props.backgroundColor !== undefined) {
-    const width = props.width ?? 100
-    const height = props.height ?? 100
-    const bgAlpha = props.backgroundAlpha ?? 1
-    const background = scene.add.rectangle(0, 0, width, height, props.backgroundColor, bgAlpha)
-    background.setOrigin(0, 0)
-    container.add(background)
-    // Store reference for later updates
-    ;(container as unknown as { __background?: Phaser.GameObjects.Rectangle }).__background =
-      background
-  }
+  createBackground(
+    scene,
+    container as typeof container & { __background?: Phaser.GameObjects.Rectangle },
+    props as unknown as Record<string, unknown>
+  )
 
   // Setup pointer interaction if any event handlers are provided
   if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
@@ -78,26 +72,23 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
  * View patcher - updates View properties
  */
 export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
-  // Common transform props
-  if (prev.x !== next.x && next.x !== undefined) node.x = next.x
-  if (prev.y !== next.y && next.y !== undefined) node.y = next.y
-  if (prev.visible !== next.visible && next.visible !== undefined) node.visible = next.visible
-  if (prev.depth !== next.depth && next.depth !== undefined) node.setDepth(next.depth)
-  if (prev.alpha !== next.alpha && next.alpha !== undefined) node.setAlpha(next.alpha)
-  if (
-    (prev.scaleX !== next.scaleX && next.scaleX !== undefined) ||
-    (prev.scaleY !== next.scaleY && next.scaleY !== undefined)
-  ) {
-    node.setScale(next.scaleX ?? node.scaleX, next.scaleY ?? node.scaleY)
-  }
-  if (prev.rotation !== next.rotation && next.rotation !== undefined) {
-    node.setRotation(next.rotation)
-  }
+  // Apply transform props (position, rotation, scale, alpha, depth, visibility)
+  applyTransformProps(
+    node,
+    prev as unknown as Record<string, unknown>,
+    next as unknown as Record<string, unknown>
+  )
 
   // Background updates
   const container = node as Phaser.GameObjects.Container & {
     __background?: Phaser.GameObjects.Rectangle
   }
+
+  applyBackgroundProps(
+    container,
+    prev as unknown as Record<string, unknown>,
+    next as unknown as Record<string, unknown>
+  )
 
   const prevBgColor = prev.backgroundColor
   const nextBgColor = next.backgroundColor
