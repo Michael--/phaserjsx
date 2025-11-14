@@ -36,7 +36,7 @@ export function Counter(props: { step?: number; label?: string }) {
 export function CountersExample() {
   return (
     <View x={100} y={100} width={300} height={250} backgroundColor={0x2a2a2a}>
-      <Text text="Two independent counters" x={10} y={10} />
+      <Text text="Two independent counters" x={10} y={10} color={'green'} />
       <View y={50} x={10}>
         <Counter step={1} label="A" />
       </View>

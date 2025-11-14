@@ -42,12 +42,49 @@ export type CrossAxisAlign = 'start' | 'center' | 'end' | 'stretch'
  * Layout properties - margins, padding, alignment, sizing
  */
 export interface LayoutProps {
-  margin?: EdgeInsets
+  // Layout engine mode
+  layout?: 'none' | 'row' | 'column' | 'stack' | 'grid'
+
+  // orientation
+  direction?: 'row' | 'column' // optional alias
+
+  // spacing
   padding?: EdgeInsets
-  alignMain?: MainAxisAlign
-  alignCross?: CrossAxisAlign
+  margin?: EdgeInsets
+  gap?: number
+
+  // alignment
+  justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around'
+
+  align?: 'start' | 'center' | 'end' | 'stretch'
+
+  // sizing rules
   width?: number
   height?: number
+  minWidth?: number
+  maxWidth?: number
+  minHeight?: number
+  maxHeight?: number
+  flex?: number
+
+  // absolute children positioning
+  position?: 'static' | 'absolute'
+  left?: number
+  right?: number
+  top?: number
+  bottom?: number
+
+  // stack alignment (optional)
+  stackAlign?:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'center-left'
+    | 'center'
+    | 'center-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
 }
 
 /**
