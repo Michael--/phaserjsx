@@ -7,7 +7,7 @@ import type { HostCreator, HostPatcher } from '../host'
 import type { PropsExtension } from '../types'
 import { applyTextProps } from './appliers/applyText'
 import { applyTransformProps } from './appliers/applyTransform'
-import { applyTransformPropsOnCreate } from './creators/propCreators'
+import { createTransform } from './creators/createTransform'
 
 /**
  * Base props for Text - composing shared prop groups
@@ -31,7 +31,7 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
   const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
 
   // Apply transform props (visible, depth, alpha, scale, rotation)
-  applyTransformPropsOnCreate(text, props)
+  createTransform(text, props)
 
   return text
 }

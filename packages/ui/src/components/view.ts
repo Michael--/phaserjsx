@@ -7,7 +7,8 @@ import type { HostCreator, HostPatcher } from '../host'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyTransformProps } from './appliers/applyTransform'
-import { applyTransformPropsOnCreate, createBackground } from './creators/propCreators'
+import { createBackground } from './creators/createBackground'
+import { createTransform } from './creators/createTransform'
 
 /**
  * Interaction props for pointer events
@@ -44,7 +45,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   const container = scene.add.container(props.x ?? 0, props.y ?? 0)
 
   // Apply transform props (visible, depth, alpha, scale, rotation)
-  applyTransformPropsOnCreate(container, props)
+  createTransform(container, props)
 
   // Add background if backgroundColor is provided
   createBackground(
