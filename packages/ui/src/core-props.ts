@@ -71,3 +71,13 @@ export interface TextSpecificProps {
   align?: 'left' | 'center' | 'right'
   maxWidth?: number
 }
+
+/**
+ * Interaction props for pointer events
+ */
+export interface InteractionProps {
+  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
+  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
+}

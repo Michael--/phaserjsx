@@ -2,23 +2,14 @@
  * View component implementation - native Phaser Container with background and interaction support
  */
 import Phaser from 'phaser'
-import type { BackgroundProps, LayoutProps, TransformProps } from '../core-props'
+import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createBackground } from './creators/createBackground'
+import { createInteraction } from './creators/createInteraction'
 import { createTransform } from './creators/createTransform'
-
-/**
- * Interaction props for pointer events
- */
-export interface InteractionProps {
-  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
-  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
-}
 
 /**
  * Base props for View - composing shared prop groups
@@ -28,10 +19,6 @@ export interface ViewBaseProps
     LayoutProps,
     BackgroundProps,
     InteractionProps {}
-
-/**
-
-
 
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
@@ -55,17 +42,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   )
 
   // Setup pointer interaction if any event handlers are provided
-  if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
-    // Create an invisible interactive zone that covers the container size
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, props.width ?? 100, props.height ?? 100)
-    container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
-    if (container.input) container.input.cursor = 'pointer'
-
-    if (props.onPointerDown) container.on('pointerdown', props.onPointerDown)
-    if (props.onPointerUp) container.on('pointerup', props.onPointerUp)
-    if (props.onPointerOver) container.on('pointerover', props.onPointerOver)
-    if (props.onPointerOut) container.on('pointerout', props.onPointerOut)
-  }
+  createInteraction(container, props)
 
   return container
 }
