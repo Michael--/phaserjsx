@@ -218,7 +218,8 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     // Enable interaction
     const width = next.width ?? 100
     const height = next.height ?? 100
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
+    // Create hit area centered around container's origin
+    const hitArea = new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height)
     container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
     if (container.input) container.input.cursor = 'pointer'
   } else if (hadAnyEvent && !hasAnyEvent) {
@@ -232,7 +233,9 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     ) {
       const width = next.width ?? 100
       const height = next.height ?? 100
-      container.input.hitArea.setTo(0, 0, width, height)
+      // Reposition and resize centered around origin
+      container.input.hitArea.setPosition(-width / 2, -height / 2)
+      container.input.hitArea.setSize(width, height)
     }
   }
 

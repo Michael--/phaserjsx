@@ -15,8 +15,11 @@ export function createInteraction(
   props: Partial<InteractionProps & { width?: number; height?: number }>
 ): void {
   if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
-    // Create an invisible interactive zone that covers the container size
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, props.width ?? 100, props.height ?? 100)
+    const width = props.width ?? 100
+    const height = props.height ?? 100
+    // Create hit area centered around container's origin
+    // Phaser containers treat hit areas relative to their center
+    const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height)
     container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
     if (container.input) container.input.cursor = 'pointer'
 

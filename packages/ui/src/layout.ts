@@ -2,10 +2,10 @@
  * Layout system for positioning children within containers
  * Implements vertical stacking with margins and padding support
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from './core-props'
 
-const debug = false
+const debug = true
 
 /**
  * Size information for layout calculations
@@ -211,5 +211,31 @@ export function calculateLayout(
     background.setSize(containerWidth, containerHeight)
     if (debug)
       console.log('  Background resized to:', { width: containerWidth, height: containerHeight })
+  }
+
+  // Update hit area if container is interactive
+  if (container.input?.hitArea && 'setSize' in container.input.hitArea) {
+    const hitArea = container.input.hitArea as Phaser.Geom.Rectangle
+    const oldWidth = hitArea.width
+    const oldHeight = hitArea.height
+
+    // Only update if dimensions actually changed
+    if (oldWidth !== containerWidth || oldHeight !== containerHeight) {
+      // Position hit area centered around origin (container's local 0,0)
+      // This is needed because Phaser containers treat hit areas relative to their center
+      hitArea.setPosition(containerWidth / 2, containerHeight / 2)
+      hitArea.setSize(containerWidth, containerHeight)
+      if (debug) {
+        console.log('  Hit area resized:', {
+          from: { x: hitArea.x, y: hitArea.y, width: oldWidth, height: oldHeight },
+          to: {
+            x: containerWidth / 2,
+            y: containerHeight / 2,
+            width: containerWidth,
+            height: containerHeight,
+          },
+        })
+      }
+    }
   }
 }
