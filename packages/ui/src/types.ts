@@ -23,6 +23,12 @@ export interface ViewProps {
   scaleX?: number
   scaleY?: number
   rotation?: number
+  width?: number
+  height?: number
+  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
+  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
+  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
   children?: VNode | VNode[] | null | undefined
 }
 

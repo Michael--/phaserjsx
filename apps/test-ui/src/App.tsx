@@ -9,14 +9,21 @@ import { Text, View, useState } from '@phaserjsx/ui'
  * @returns Counter component JSX
  */
 export function Counter(props: { step?: number; label?: string }) {
-  const [n] = useState(0)
-  // const step = props.step ?? 1
-  // TODO: Add pointer interaction support later
-  // setN((v) => v + step)
+  const [n, setN] = useState(0)
+  const step = props.step ?? 1
   return (
     <View y={0}>
       <Text text={`${props.label ?? 'Count'}: ${n}`} y={0} />
-      <Text text={`Add +${props.step ?? 1}`} y={30} />
+      <View
+        width={150}
+        height={30}
+        y={30}
+        onPointerDown={() => {
+          setN((v) => v + step)
+        }}
+      >
+        <Text text={`Add +${step}`} />
+      </View>
     </View>
   )
 }

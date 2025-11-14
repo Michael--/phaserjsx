@@ -36,6 +36,20 @@ function createView(scene: Phaser.Scene, props: NodeProps<'View'>): NodeInstance
     container.setScale(props.scaleX ?? 1, props.scaleY ?? 1)
   }
   if (props.rotation !== undefined) container.setRotation(props.rotation)
+
+  // Setup pointer interaction if any event handlers are provided
+  if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
+    // Create an invisible interactive zone that covers the container size
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, props.width ?? 100, props.height ?? 100)
+    container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
+    if (container.input) container.input.cursor = 'pointer'
+
+    if (props.onPointerDown) container.on('pointerdown', props.onPointerDown)
+    if (props.onPointerUp) container.on('pointerup', props.onPointerUp)
+    if (props.onPointerOver) container.on('pointerover', props.onPointerOver)
+    if (props.onPointerOut) container.on('pointerout', props.onPointerOut)
+  }
+
   return container
 }
 
@@ -146,12 +160,20 @@ export const host = {
       visible?: boolean
       scaleX?: number
       scaleY?: number
+      input?: { cursor?: string; hitArea?: Phaser.Geom.Rectangle }
       setDepth?: (depth: number) => void
       setAlpha?: (alpha: number) => void
       setScale?: (x: number, y: number) => void
       setRotation?: (rotation: number) => void
       setText?: (text: string) => void
       setStyle?: (style: Phaser.Types.GameObjects.Text.TextStyle) => void
+      setInteractive?: (
+        hitArea?: Phaser.Geom.Rectangle,
+        callback?: Phaser.Types.Input.HitAreaCallback
+      ) => void
+      removeInteractive?: () => void
+      off?: (event: string, fn?: unknown) => void
+      on?: (event: string, fn: unknown) => void
     }
 
     // Common transform props
@@ -188,6 +210,60 @@ export const host = {
       JSON.stringify(prev.style) !== JSON.stringify(next.style)
     ) {
       gameObject.setStyle?.(next.style as Phaser.Types.GameObjects.Text.TextStyle)
+    }
+
+    // Pointer event handlers for View (Container)
+    const prevDown = prev.onPointerDown as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const nextDown = next.onPointerDown as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const prevUp = prev.onPointerUp as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const nextUp = next.onPointerUp as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const prevOver = prev.onPointerOver as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const nextOver = next.onPointerOver as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const prevOut = prev.onPointerOut as ((pointer: Phaser.Input.Pointer) => void) | undefined
+    const nextOut = next.onPointerOut as ((pointer: Phaser.Input.Pointer) => void) | undefined
+
+    const hadAnyEvent = !!(prevDown || prevUp || prevOver || prevOut)
+    const hasAnyEvent = !!(nextDown || nextUp || nextOver || nextOut)
+
+    // Update interactive state if needed
+    if (!hadAnyEvent && hasAnyEvent) {
+      // Enable interaction
+      const width = (next.width as number | undefined) ?? 100
+      const height = (next.height as number | undefined) ?? 100
+      const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
+      gameObject.setInteractive?.(hitArea, Phaser.Geom.Rectangle.Contains)
+      if (gameObject.input) gameObject.input.cursor = 'pointer'
+    } else if (hadAnyEvent && !hasAnyEvent) {
+      // Disable interaction
+      gameObject.removeInteractive?.()
+    } else if (hasAnyEvent) {
+      // Update hit area size if width/height changed
+      if (
+        (prev.width !== next.width || prev.height !== next.height) &&
+        gameObject.input?.hitArea instanceof Phaser.Geom.Rectangle
+      ) {
+        const width = (next.width as number | undefined) ?? 100
+        const height = (next.height as number | undefined) ?? 100
+        gameObject.input.hitArea.setTo(0, 0, width, height)
+      }
+    }
+
+    // Update event listeners
+    if (prevDown !== nextDown) {
+      if (prevDown) gameObject.off?.('pointerdown', prevDown)
+      if (nextDown) gameObject.on?.('pointerdown', nextDown)
+    }
+    if (prevUp !== nextUp) {
+      if (prevUp) gameObject.off?.('pointerup', prevUp)
+      if (nextUp) gameObject.on?.('pointerup', nextUp)
+    }
+    if (prevOver !== nextOver) {
+      if (prevOver) gameObject.off?.('pointerover', prevOver)
+      if (nextOver) gameObject.on?.('pointerover', nextOver)
+    }
+    if (prevOut !== nextOut) {
+      if (prevOut) gameObject.off?.('pointerout', prevOut)
+      if (nextOut) gameObject.on?.('pointerout', nextOut)
     }
   },
 
