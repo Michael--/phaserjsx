@@ -60,6 +60,9 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
   // Apply text-specific props (text content, color, font, etc.)
   applyTextProps(node, prev, next)
 
+  // Update layout props to trigger parent layout recalculation
+  ;(node as Phaser.GameObjects.Text & { __layoutProps?: TextProps }).__layoutProps = next
+
   // Update size provider if text content or style changed
   if (prev.text !== next.text || prev.style !== next.style) {
     ;(node as Phaser.GameObjects.Text & { __getLayoutSize?: () => LayoutSize }).__getLayoutSize =

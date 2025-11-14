@@ -197,6 +197,7 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   const a = oldV.children ?? []
   const b = newV.children ?? []
   const len = Math.max(a.length, b.length)
+  let childrenChanged = false
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
       c2 = b[i]
@@ -205,10 +206,23 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     const isValidC2 = c2 != null && c2 !== false
     if (!isValidC1 && isValidC2) {
       mount(oldV.__node as ParentType, c2)
+      childrenChanged = true
     } else if (isValidC1 && !isValidC2) {
       unmount(c1)
+      childrenChanged = true
     } else if (isValidC1 && isValidC2) {
       patchVNode(oldV.__node as ParentType, c1, c2)
+      childrenChanged = true
+    }
+  }
+
+  // Recalculate layout if children changed and this is a container
+  if (childrenChanged && oldV.__node && typeof oldV.__node === 'object' && 'list' in oldV.__node) {
+    const container = oldV.__node as Phaser.GameObjects.Container & {
+      __layoutProps?: Record<string, unknown>
+    }
+    if (container.__layoutProps) {
+      calculateLayout(container, container.__layoutProps)
     }
   }
 }

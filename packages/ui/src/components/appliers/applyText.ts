@@ -11,6 +11,7 @@ type TextNode = {
   setText: (text: string) => void
   setStyle: (style: object) => void
   setWordWrapWidth: (width: number, useAdvancedWrap: boolean) => void
+  updateText?: () => void // Force Phaser to recalculate text metrics immediately
 }
 
 /**
@@ -24,9 +25,12 @@ export function applyTextProps<T extends TextNode>(
   prev: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>,
   next: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>
 ): void {
+  let needsUpdate = false
+
   // Text content
   if (prev.text !== next.text && typeof next.text === 'string') {
     node.setText(next.text)
+    needsUpdate = true
   }
 
   // Build style object for properties that changed
@@ -54,16 +58,25 @@ export function applyTextProps<T extends TextNode>(
   // Apply style changes if any
   if (Object.keys(style).length > 0) {
     node.setStyle(style)
+    needsUpdate = true
   }
 
   // Word wrap width
   if (next.maxWidth !== prev.maxWidth && typeof next.maxWidth === 'number') {
     node.setWordWrapWidth(next.maxWidth, true)
+    needsUpdate = true
   }
 
   // Legacy: Support direct Phaser style object
   if (prev.style !== next.style && next.style !== undefined) {
     node.setStyle(next.style as Phaser.Types.GameObjects.Text.TextStyle)
+    needsUpdate = true
+  }
+
+  // Force Phaser to recalculate text metrics immediately
+  // This ensures getBounds() returns updated dimensions for layout calculations
+  if (needsUpdate && node.updateText) {
+    node.updateText()
   }
 }
 
