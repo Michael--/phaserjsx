@@ -28,17 +28,10 @@ describe('Host', () => {
           },
         },
       }
-      const result = host.create('RexSizer', { x: 10, y: 20 }, mockScene as unknown as Phaser.Scene)
+      const result = host.create('RexSizer', {}, mockScene as unknown as Phaser.Scene)
 
       expect(mockScene.rexUI.add.sizer).toHaveBeenCalledWith({
-        x: 10,
-        y: 20,
-        width: undefined,
-        height: undefined,
         orientation: 'x',
-        rtl: false,
-        space: undefined,
-        align: undefined,
       })
       expect(result).toBe(mockSizer)
     })
@@ -63,7 +56,7 @@ describe('Host', () => {
         mockScene as unknown as Phaser.Scene
       )
 
-      expect(mockScene.add.text).toHaveBeenCalledWith(0, 0, 'hello', undefined)
+      expect(mockScene.add.text).toHaveBeenCalledWith(0, 0, 'hello')
       expect(mockScene.rexUI.add.label).toHaveBeenCalled()
       expect(result).toBe(mockLabel)
     })
@@ -97,33 +90,6 @@ describe('Host', () => {
       expect(mockLabel.setInteractive).toHaveBeenCalled()
       expect(mockLabel.input?.cursor).toBe('pointer')
       expect(mockLabel.on).toHaveBeenCalledWith('pointerdown', handler)
-    })
-
-    it('should create Phaser Text', () => {
-      const mockText = {
-        id: 'text',
-        setInteractive: vi.fn(),
-        input: {} as { cursor?: string },
-      }
-      const mockScene = {
-        rexUI: {
-          add: {
-            sizer: vi.fn(),
-            label: vi.fn(),
-          },
-        },
-        add: {
-          text: vi.fn(() => mockText),
-        },
-      }
-      const result = host.create(
-        'Text',
-        { x: 0, y: 0, text: 'hello' },
-        mockScene as unknown as Phaser.Scene
-      )
-
-      expect(mockScene.add.text).toHaveBeenCalledWith(0, 0, 'hello', undefined)
-      expect(result).toBe(mockText)
     })
 
     it('should attach pointerdown handler for Text when provided', () => {
@@ -173,7 +139,7 @@ describe('Host', () => {
         mockChild as unknown as Phaser.GameObjects.GameObject
       )
 
-      expect(mockSizer.add).toHaveBeenCalledWith(mockChild)
+      expect(mockSizer.add).toHaveBeenCalledWith(mockChild, undefined)
     })
   })
 
@@ -184,15 +150,15 @@ describe('Host', () => {
         add: vi.fn(),
         remove: vi.fn(),
       }
-      const mockChild = { id: 'child', destroy: vi.fn() }
+      const mockChild = { id: 'child', destroy: vi.fn(), scene: {} }
 
       host.remove(
         mockParent as unknown as ParentType,
         mockChild as unknown as Phaser.GameObjects.GameObject
       )
 
-      expect(mockParent.remove).toHaveBeenCalledWith(mockChild, true)
-      expect(mockChild.destroy).toHaveBeenCalledWith(true)
+      expect(mockParent.remove).toHaveBeenCalledWith(mockChild, false)
+      expect(mockChild.destroy).toHaveBeenCalledWith(false)
     })
   })
 

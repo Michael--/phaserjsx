@@ -44,4 +44,6 @@ yarn-error.log*
 # Miscellaneous
 .turbo/
 .eslintcache
-/packages/ui/src/samples/RexUIScene.ts
+
+
+prompt.txt

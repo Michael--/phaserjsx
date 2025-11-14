@@ -22,21 +22,10 @@ export interface RexUIAddConfig {
  */
 export interface RexLabelProps extends RexUIAddConfig {
   key?: string | number
-  x?: number
-  y?: number
   text?: string
-  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
   background?: { radius?: number; color?: number }
-  space?: Partial<Record<'left' | 'right' | 'top' | 'bottom' | 'item', number>>
-  align?: 'left' | 'center' | 'right' | 'justify'
   onPointerdown?: () => void
   children?: VNode[]
-  size?: Size
-  textColor?: string
-  backgroundColor?: string
-  wordWrap?: Phaser.Types.GameObjects.Text.TextWordWrap
-  weight?: 'bold' | 'normal'
-  shadow?: boolean
 }
 
 /**
@@ -44,35 +33,7 @@ export interface RexLabelProps extends RexUIAddConfig {
  */
 export interface RexSizerProps extends RexUIAddConfig {
   key?: string | number
-  x?: number
-  y?: number
-  width?: number
-  height?: number
   orientation?: Sizer.OrientationTypes
-  rtl?: boolean
-  space?: {
-    left?: number
-    right?: number
-    top?: number
-    bottom?: number
-    item?: number
-  }
-  align?: 'left' | 'center' | 'right' | 'justify'
-  background?: { radius?: number; color?: number }
-  onPointerdown?: (() => void) | undefined
-  children?: VNode | VNode[] | null | undefined
-}
-
-/**
- * Props for Phaser Text game object
- */
-export interface TextProps extends RexUIAddConfig {
-  key?: string | number
-  x?: number
-  y?: number
-  text?: string
-  style?: Phaser.Types.GameObjects.Text.TextStyle
-  onPointerdown?: () => void
   children?: VNode | VNode[] | null | undefined
 }
 
@@ -106,7 +67,6 @@ declare global {
     interface IntrinsicElements {
       RexSizer: RexSizerProps
       RexLabel: RexLabelProps
-      Text: TextProps
     }
   }
 }

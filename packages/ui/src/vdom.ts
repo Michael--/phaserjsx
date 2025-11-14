@@ -6,7 +6,7 @@ import type Phaser from 'phaser'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import type { ParentType, RexLabelType, RexSizerType, RexUIAddConfig } from './types'
-import { RexLabel, RexSizer, Text } from './widgets'
+import { RexLabel, RexSizer } from './widgets'
 
 export type VNodeLike = VNode | VNode[] | null
 

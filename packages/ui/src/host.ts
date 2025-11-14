@@ -1,41 +1,9 @@
 import Phaser from 'phaser'
-import type {
-  ParentType,
-  RexLabelProps,
-  RexLabelType,
-  RexSizerProps,
-  RexSizerType,
-  Size,
-  TextProps,
-} from './types'
-import { RexLabel, RexSizer, Text } from './widgets'
-
-/**
- * Get font size based on size enum
- * @param s - Size enum
- * @returns Font size in pixels
- */
-function fontSize(s: Size | undefined): number {
-  const base = 24 // Base font size
-  switch (s) {
-    case 'xsmall':
-      return base * 0.5
-    case 'small':
-      return base * 0.75
-    default:
-    case 'medium':
-      return base * 1.0
-    case 'large':
-      return base * 1.5
-    case 'xlarge':
-      return base * 2.5
-    case 'xxlarge':
-      return base * 3.5
-  }
-}
+import type { ParentType, RexLabelProps, RexLabelType, RexSizerProps, RexSizerType } from './types'
+import { RexLabel, RexSizer } from './widgets'
 
 type ComponentType = typeof RexSizer | typeof RexLabel | typeof Text
-type ComponentProps = RexSizerProps | RexLabelProps | TextProps
+type ComponentProps = RexSizerProps | RexLabelProps
 
 function isRexContainer(n: unknown): n is RexSizerType {
   return !!(
@@ -126,63 +94,13 @@ export const host = {
         const p = props as RexSizerProps
         // rexUI scene plugin must be installed in the Scene as "rexUI"
         const sizer = phaserScene.rexUI.add.sizer({
-          x: p.x,
-          y: p.y,
-          width: p.expand ? undefined : p.width,
-          height: p.expand ? undefined : p.height,
           orientation: p.orientation ?? 'x',
-          rtl: p.rtl ?? false,
-          space: p.space,
           align: p.align,
         }) as RexSizerType
-        const background = p.background
-          ? (phaserScene.rexUI?.add.roundRectangle(
-              0,
-              0,
-              p.expand ? 1 : (p.width ?? 0),
-              p.expand ? 1 : (p.height ?? 0),
-              p.background.radius ?? 6,
-              p.background.color ?? 0x2a2a2a
-            ) as Phaser.GameObjects.GameObject)
-          : undefined
-        if (background) {
-          const sizerWithBg = sizer as RexSizerType & { addBackground?: (bg: unknown) => void }
-          sizerWithBg.addBackground?.(background)
-        }
-        if (p.onPointerdown) {
-          const interactiveLabel = sizer as {
-            setInteractive?: () => void
-            // input?: { cursor?: string }
-          }
-          interactiveLabel.setInteractive?.()
-          // if (interactiveLabel.input) interactiveLabel.input.cursor = 'pointer'
-          sizer.on('pointerdown', p.onPointerdown)
-        }
         return sizer
       }
       case 'RexLabel': {
         const p = props as RexLabelProps
-        const fs = fontSize(p.size)
-        const weight = p.weight ? { fontStyle: p.weight } : {}
-        const shadow = p.shadow
-          ? {
-              shadow: {
-                offsetX: fs * 0.08,
-                offsetY: fs * 0.08,
-                blur: fs * 0.1,
-                fill: true,
-              },
-            }
-          : {}
-        const textStyle: Phaser.Types.GameObjects.Text.TextStyle = {
-          ...p.textStyle,
-          ...weight,
-          ...shadow,
-          fontSize: fs,
-          color: p.textColor ?? '#ffffff',
-          ...(p.wordWrap && { wordWrap: p.wordWrap }),
-          ...(p.backgroundColor && { backgroundColor: p.backgroundColor }),
-        }
         const background = p.background
           ? phaserScene.rexUI?.add.roundRectangle(
               0,
@@ -193,13 +111,10 @@ export const host = {
               p.background.color ?? 0x2a2a2a
             )
           : undefined
-        const textObject = phaserScene.add.text(0, 0, p.text ?? '', textStyle)
+        const textObject = phaserScene.add.text(0, 0, p.text ?? '')
         const label = phaserScene.rexUI?.add.label({
-          x: p.x ?? 0,
-          y: p.y ?? 0,
           text: textObject,
           background,
-          space: p.space,
           align: p.align,
         }) as RexLabelType
         if (p.onPointerdown) {
@@ -212,27 +127,6 @@ export const host = {
           label.on('pointerdown', p.onPointerdown)
         }
         return label
-      }
-      case 'Text': {
-        const textProps = props as {
-          x?: number
-          y?: number
-          text?: string
-          style?: Phaser.Types.GameObjects.Text.TextStyle
-          onPointerdown?: () => void
-        }
-        const text = phaserScene.add.text(
-          textProps.x ?? 0,
-          textProps.y ?? 0,
-          textProps.text ?? '',
-          textProps.style
-        )
-        if (textProps.onPointerdown) {
-          text.setInteractive()
-          if (text.input) text.input.cursor = 'pointer'
-          text.on('pointerdown', textProps.onPointerdown)
-        }
-        return text
       }
       default:
         throw new Error(`Unknown node type: ${type}`)

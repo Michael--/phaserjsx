@@ -51,7 +51,7 @@ describe('VDOM', () => {
   describe('mount', () => {
     it('should mount a host component', () => {
       // Mock scene with sys property
-      const mockSceneWithSys = { ...mockScene, sys: {} }
+      const mockSceneWithSys = { sys: {} }
       vi.mocked(host.create).mockReturnValue({ id: 'mounted' })
 
       const vnode = createElement('RexSizer', { x: 10, y: 20 })
@@ -62,7 +62,11 @@ describe('VDOM', () => {
         { x: 10, y: 20 },
         mockSceneWithSys
       )
-      expect(vi.mocked(host.append)).toHaveBeenCalledWith(mockSceneWithSys, { id: 'mounted' })
+      expect(vi.mocked(host.append)).toHaveBeenCalledWith(
+        mockSceneWithSys,
+        { id: 'mounted' },
+        undefined
+      )
       expect(vi.mocked(host.layout)).toHaveBeenCalledWith({ id: 'mounted' })
       expect(result).toBeDefined()
     })
@@ -81,6 +85,7 @@ describe('VDOM', () => {
     it('should unmount host components', () => {
       const vnode = createElement('RexSizer', { x: 10 })
       vnode.__node = { id: 'to-remove', parentContainer: mockScene }
+      vnode.__parent = mockScene
 
       unmount(vnode)
 
@@ -112,9 +117,10 @@ describe('VDOM', () => {
 
   describe('patchVNode', () => {
     it('should replace components with different types', () => {
-      const mockSceneWithSys = { ...mockScene, sys: {} }
+      const mockSceneWithSys = { sys: {} }
       const oldVNode = createElement('RexSizer', { x: 10 })
       oldVNode.__node = { id: 'old', parentContainer: mockSceneWithSys }
+      oldVNode.__parent = mockSceneWithSys
       const newVNode = createElement('RexLabel', { text: 'new' })
 
       patchVNode(mockSceneWithSys, oldVNode, newVNode)
