@@ -5,6 +5,8 @@
 import type Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from './core-props'
 
+const debug = false
+
 /**
  * Size information for layout calculations
  */
@@ -84,7 +86,13 @@ export function calculateLayout(
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
-  console.log('[Layout] Container with', children?.length ?? 0, 'children, props:', containerProps)
+  if (debug)
+    console.log(
+      '[Layout] Container with',
+      children?.length ?? 0,
+      'children, props:',
+      containerProps
+    )
 
   if (!children || !Array.isArray(children)) return
 
@@ -94,12 +102,13 @@ export function calculateLayout(
   const paddingRight = padding.right ?? 0
   const paddingBottom = padding.bottom ?? 0
 
-  console.log('  Padding:', {
-    top: paddingTop,
-    left: paddingLeft,
-    right: paddingRight,
-    bottom: paddingBottom,
-  })
+  if (debug)
+    console.log('  Padding:', {
+      top: paddingTop,
+      left: paddingLeft,
+      right: paddingRight,
+      bottom: paddingBottom,
+    })
 
   let currentY = paddingTop
   let maxWidth = 0
@@ -107,7 +116,7 @@ export function calculateLayout(
   for (const child of children) {
     // Skip background rectangles
     if (child.__isBackground) {
-      console.log('  Skipping background')
+      if (debug) console.log('  Skipping background')
       continue
     }
 
@@ -115,13 +124,13 @@ export function calculateLayout(
     if ('list' in child && Array.isArray((child as Phaser.GameObjects.Container).list)) {
       const childContainer = child as Phaser.GameObjects.Container
       const childLayoutProps = (child as GameObjectWithLayout).__layoutProps ?? {}
-      console.log('  -> Child is a container, calculating nested layout first')
+      if (debug) console.log('  -> Child is a container, calculating nested layout first')
       calculateLayout(childContainer, childLayoutProps)
     }
 
     // Get child size after potential recursive layout
     const size = getChildSize(child)
-    console.log('  Child size:', size)
+    if (debug) console.log('  Child size:', size)
 
     // Get child margin
     const margin = getMargin(child)
@@ -130,12 +139,13 @@ export function calculateLayout(
     const marginLeft = margin.left ?? 0
     const marginRight = margin.right ?? 0
 
-    console.log('  Child margin:', {
-      top: marginTop,
-      bottom: marginBottom,
-      left: marginLeft,
-      right: marginRight,
-    })
+    if (debug)
+      console.log('  Child margin:', {
+        top: marginTop,
+        bottom: marginBottom,
+        left: marginLeft,
+        right: marginRight,
+      })
 
     // Update max width including margins
     const childTotalWidth = marginLeft + size.width + marginRight
@@ -146,13 +156,13 @@ export function calculateLayout(
 
     if (child.setPosition) {
       const x = paddingLeft + marginLeft
-      console.log(`  Setting child position: (${x}, ${currentY})`)
+      if (debug) console.log(`  Setting child position: (${x}, ${currentY})`)
       child.setPosition(x, currentY)
     }
 
     // Move to next position
     currentY += size.height + marginBottom
-    console.log('  Next Y position:', currentY)
+    if (debug) console.log('  Next Y position:', currentY)
   }
 
   // Calculate container dimensions if not explicitly set
@@ -163,12 +173,17 @@ export function calculateLayout(
   ;(container as GameObjectWithLayout).width = containerWidth
   ;(container as GameObjectWithLayout).height = containerHeight
 
-  console.log('  Container dimensions set to:', { width: containerWidth, height: containerHeight })
+  if (debug)
+    console.log('  Container dimensions set to:', {
+      width: containerWidth,
+      height: containerHeight,
+    })
 
   // Update background size if present
   const background = (container as GameObjectWithLayout).__background
   if (background) {
     background.setSize(containerWidth, containerHeight)
-    console.log('  Background resized to:', { width: containerWidth, height: containerHeight })
+    if (debug)
+      console.log('  Background resized to:', { width: containerWidth, height: containerHeight })
   }
 }

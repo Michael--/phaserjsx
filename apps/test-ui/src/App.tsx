@@ -42,8 +42,8 @@ export function Counter(props: { step?: number; label?: string }) {
 export function LayoutExample() {
   return (
     <View
-      x={50}
-      y={50}
+      x={20}
+      y={20}
       backgroundColor={0x2a2a2a}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
     >
@@ -55,7 +55,7 @@ export function LayoutExample() {
       <View
         margin={{ top: 20, left: 20 }}
         backgroundColor={0x444444}
-        padding={{ left: 15, top: 15 }}
+        padding={{ left: 15, top: 15, right: 15, bottom: 15 }}
       >
         <Text
           style={{ fontSize: 30 }}
