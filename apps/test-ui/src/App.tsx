@@ -18,11 +18,12 @@ export function Counter(props: { step?: number; label?: string }) {
         width={150}
         height={30}
         y={30}
+        backgroundColor={0x555555}
         onPointerDown={() => {
           setN((v) => v + step)
         }}
       >
-        <Text text={`Add +${step}`} />
+        <Text text={`Add +${step}`} x={10} y={7} />
       </View>
     </View>
   )
@@ -34,12 +35,12 @@ export function Counter(props: { step?: number; label?: string }) {
  */
 export function CountersExample() {
   return (
-    <View x={100} y={100}>
-      <Text text="Two independent counters" y={0} />
-      <View y={40}>
+    <View x={100} y={100} width={300} height={250} backgroundColor={0x2a2a2a}>
+      <Text text="Two independent counters" x={10} y={10} />
+      <View y={50} x={10}>
         <Counter step={1} label="A" />
       </View>
-      <View y={120}>
+      <View y={130} x={10}>
         <Counter step={5} label="B" />
       </View>
     </View>

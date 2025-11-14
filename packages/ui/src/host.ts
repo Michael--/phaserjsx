@@ -37,6 +37,19 @@ function createView(scene: Phaser.Scene, props: NodeProps<'View'>): NodeInstance
   }
   if (props.rotation !== undefined) container.setRotation(props.rotation)
 
+  // Add background if backgroundColor is provided
+  if (props.backgroundColor !== undefined) {
+    const width = props.width ?? 100
+    const height = props.height ?? 100
+    const bgAlpha = props.backgroundAlpha ?? 1
+    const background = scene.add.rectangle(0, 0, width, height, props.backgroundColor, bgAlpha)
+    background.setOrigin(0, 0)
+    container.add(background)
+    // Store reference for later updates
+    ;(container as unknown as { __background?: Phaser.GameObjects.Rectangle }).__background =
+      background
+  }
+
   // Setup pointer interaction if any event handlers are provided
   if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
     // Create an invisible interactive zone that covers the container size
@@ -210,6 +223,58 @@ export const host = {
       JSON.stringify(prev.style) !== JSON.stringify(next.style)
     ) {
       gameObject.setStyle?.(next.style as Phaser.Types.GameObjects.Text.TextStyle)
+    }
+
+    // Background updates for View (Container)
+    const container = node as {
+      __background?: Phaser.GameObjects.Rectangle
+      scene?: Phaser.Scene
+      add?: (child: Phaser.GameObjects.GameObject) => void
+    }
+
+    if ('backgroundColor' in prev || 'backgroundColor' in next) {
+      const prevBgColor = prev.backgroundColor as number | undefined
+      const nextBgColor = next.backgroundColor as number | undefined
+      const prevBgAlpha = (prev.backgroundAlpha as number | undefined) ?? 1
+      const nextBgAlpha = (next.backgroundAlpha as number | undefined) ?? 1
+      const prevWidth = (prev.width as number | undefined) ?? 100
+      const nextWidth = (next.width as number | undefined) ?? 100
+      const prevHeight = (prev.height as number | undefined) ?? 100
+      const nextHeight = (next.height as number | undefined) ?? 100
+
+      if (prevBgColor !== undefined && nextBgColor === undefined) {
+        // Remove background
+        if (container.__background) {
+          container.__background.destroy()
+          delete container.__background
+        }
+      } else if (prevBgColor === undefined && nextBgColor !== undefined) {
+        // Add background
+        if (container.scene) {
+          const background = container.scene.add.rectangle(
+            0,
+            0,
+            nextWidth,
+            nextHeight,
+            nextBgColor,
+            nextBgAlpha
+          )
+          background.setOrigin(0, 0)
+          container.add?.(background)
+          container.__background = background
+        }
+      } else if (container.__background && nextBgColor !== undefined) {
+        // Update existing background
+        if (prevBgColor !== nextBgColor) {
+          container.__background.setFillStyle(nextBgColor, nextBgAlpha)
+        }
+        if (prevBgAlpha !== nextBgAlpha) {
+          container.__background.setAlpha(nextBgAlpha)
+        }
+        if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
+          container.__background.setSize(nextWidth, nextHeight)
+        }
+      }
     }
 
     // Pointer event handlers for View (Container)

@@ -27,6 +27,8 @@ export interface NodePropsMap {
     rotation?: number
     width?: number
     height?: number
+    backgroundColor?: number
+    backgroundAlpha?: number
     onPointerDown?: (pointer: Phaser.Input.Pointer) => void
     onPointerUp?: (pointer: Phaser.Input.Pointer) => void
     onPointerOver?: (pointer: Phaser.Input.Pointer) => void
