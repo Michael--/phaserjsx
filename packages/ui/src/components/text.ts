@@ -33,6 +33,9 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
   // Apply transform props (visible, depth, alpha, scale, rotation)
   createTransform(text, props)
 
+  // Attach layout props for layout calculations
+  ;(text as Phaser.GameObjects.Text & { __layoutProps?: TextProps }).__layoutProps = props
+
   return text
 }
 

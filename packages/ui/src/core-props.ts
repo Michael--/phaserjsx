@@ -29,62 +29,13 @@ export interface EdgeInsets {
 }
 
 /**
- * Main axis alignment options for flex-like layouts
- */
-export type MainAxisAlign = 'start' | 'center' | 'end' | 'space-between' | 'space-around'
-
-/**
- * Cross axis alignment options for flex-like layouts
- */
-export type CrossAxisAlign = 'start' | 'center' | 'end' | 'stretch'
-
-/**
- * Layout properties - margins, padding, alignment, sizing
+ * Layout properties - basic sizing and spacing (minimal for now)
  */
 export interface LayoutProps {
-  // Layout engine mode
-  layout?: 'none' | 'row' | 'column' | 'stack' | 'grid'
-
-  // orientation
-  direction?: 'row' | 'column' // optional alias
-
-  // spacing
-  padding?: EdgeInsets
-  margin?: EdgeInsets
-  gap?: number
-
-  // alignment
-  justify?: 'start' | 'center' | 'end' | 'space-between' | 'space-around'
-
-  align?: 'start' | 'center' | 'end' | 'stretch'
-
-  // sizing rules
   width?: number
   height?: number
-  minWidth?: number
-  maxWidth?: number
-  minHeight?: number
-  maxHeight?: number
-  flex?: number
-
-  // absolute children positioning
-  position?: 'static' | 'absolute'
-  left?: number
-  right?: number
-  top?: number
-  bottom?: number
-
-  // stack alignment (optional)
-  stackAlign?:
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'center-left'
-    | 'center'
-    | 'center-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right'
+  margin?: EdgeInsets
+  padding?: EdgeInsets
 }
 
 /**

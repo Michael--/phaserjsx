@@ -4,6 +4,7 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
+import { calculateLayout } from '../layout'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyTransformProps } from './appliers/applyTransform'
@@ -43,6 +44,9 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
 
   // Setup pointer interaction if any event handlers are provided
   createInteraction(container, props)
+
+  // Attach layout props for layout calculations
+  ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
 
   return container
 }
@@ -90,6 +94,8 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
       background.setOrigin(0, 0)
       container.add(background)
       container.__background = background
+      ;(background as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground =
+        true
     }
   } else if (container.__background && nextBgColor !== undefined) {
     // Update existing background
@@ -156,5 +162,15 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   if (prevOut !== nextOut) {
     if (prevOut) container.off('pointerout', prevOut)
     if (nextOut) container.on('pointerout', nextOut)
+  }
+
+  // Recalculate layout if layout props changed
+  if (
+    prev.width !== next.width ||
+    prev.height !== next.height ||
+    prev.margin !== next.margin ||
+    prev.padding !== next.padding
+  ) {
+    calculateLayout(container, next)
   }
 }
