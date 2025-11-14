@@ -14,7 +14,12 @@ export function calculateLayout(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps
 ): void {
-  const children = container.list as Phaser.GameObjects.GameObject[]
+  const children = (
+    container as Phaser.GameObjects.Container & { children: Phaser.GameObjects.GameObject[] }
+  ).children
+
+  // Ensure it's an array
+  const childArray = Array.isArray(children) ? children : []
 
   const padding = containerProps.padding ?? {}
   const innerTop = padding.top ?? 0
@@ -22,7 +27,7 @@ export function calculateLayout(
   // Simple vertical stacking - accumulate Y positions
   let currentY = innerTop
 
-  for (const child of children) {
+  for (const child of childArray) {
     // Skip background rectangles
     if ((child as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground) {
       continue
