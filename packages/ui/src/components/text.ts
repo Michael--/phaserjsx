@@ -2,7 +2,7 @@
  * Text component implementation - native Phaser Text GameObject
  */
 import type Phaser from 'phaser'
-import type { BackgroundProps, EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
+import type { EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsExtension } from '../types'
 import { applyTextProps } from './appliers/applyText'
@@ -13,7 +13,7 @@ import { createTransform } from './creators/createTransform'
  * Base props for Text - composing shared prop groups
  * Includes optional margin for layout engine use
  */
-export interface TextBaseProps extends TransformProps, BackgroundProps, TextSpecificProps {
+export interface TextBaseProps extends TransformProps, TextSpecificProps {
   margin?: EdgeInsets
   // Legacy: support Phaser's style object directly
   style?: Phaser.Types.GameObjects.Text.TextStyle
