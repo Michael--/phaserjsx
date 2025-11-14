@@ -2,7 +2,7 @@
  * Layout creator for initializing container layout system
  */
 import type { LayoutProps } from '../../core-props'
-import type { LayoutSize } from '../../layout'
+import { getChildSize, type GameObjectWithLayout, type LayoutSize } from '../../layout'
 
 /**
  * Creates layout infrastructure for a container
@@ -22,15 +22,7 @@ export function createLayout(
 
   // Attach dynamic size provider
   container.__getLayoutSize = () => {
-    const children = container.list as Array<
-      Phaser.GameObjects.GameObject & {
-        __isBackground?: boolean
-        __layoutProps?: LayoutProps
-        __getLayoutSize?: () => LayoutSize
-        width?: number
-        height?: number
-      }
-    >
+    const children = container.list as GameObjectWithLayout[]
 
     const direction = props.direction ?? 'column'
     const padding = props.padding ?? {}
@@ -55,17 +47,7 @@ export function createLayout(
       const marginLeft = margin.left ?? 0
       const marginRight = margin.right ?? 0
 
-      let childSize: LayoutSize
-      if (child.__getLayoutSize) {
-        childSize = child.__getLayoutSize()
-      } else {
-        const layoutWidth = child.__layoutProps?.width
-        const layoutHeight = child.__layoutProps?.height
-        childSize = {
-          width: layoutWidth ?? child.width ?? 100,
-          height: layoutHeight ?? child.height ?? 20,
-        }
-      }
+      const childSize = getChildSize(child)
 
       if (direction === 'row') {
         // Horizontal layout

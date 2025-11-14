@@ -5,7 +5,7 @@
 import Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from './core-props'
 
-const debug = true
+const debug = false
 
 /**
  * Size information for layout calculations
@@ -31,7 +31,7 @@ export interface LayoutSizeProvider {
 /**
  * Extended GameObject with layout metadata
  */
-type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
+export type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __layoutProps?: LayoutProps
   __isBackground?: boolean
   __background?: Phaser.GameObjects.Rectangle
@@ -48,7 +48,7 @@ type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
  * @param child - Child game object
  * @returns Edge insets
  */
-function getMargin(child: GameObjectWithLayout): EdgeInsets {
+export function getMargin(child: GameObjectWithLayout): EdgeInsets {
   return child.__layoutProps?.margin ?? {}
 }
 
@@ -58,7 +58,7 @@ function getMargin(child: GameObjectWithLayout): EdgeInsets {
  * @param child - Child game object
  * @returns Width and height
  */
-function getChildSize(child: GameObjectWithLayout): { width: number; height: number } {
+export function getChildSize(child: GameObjectWithLayout): { width: number; height: number } {
   // Use dynamic size provider if available
   if (child.__getLayoutSize) {
     return child.__getLayoutSize()
