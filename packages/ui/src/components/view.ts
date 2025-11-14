@@ -3,6 +3,7 @@
  */
 import Phaser from 'phaser'
 import type { HostCreator, HostPatcher } from '../host'
+import type { PropsExtension } from '../types'
 
 /**
  * Base props for View (Container) - without JSX-specific props
@@ -25,6 +26,11 @@ export interface ViewBaseProps {
   onPointerOver?: (pointer: Phaser.Input.Pointer) => void
   onPointerOut?: (pointer: Phaser.Input.Pointer) => void
 }
+
+/**
+ * Props for View (Container) component - extends base props with JSX-specific props
+ */
+export interface ViewProps extends ViewBaseProps, PropsExtension {}
 
 /**
  * View creator - creates a Phaser Container with optional background and interaction
@@ -190,3 +196,14 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     if (nextOut) container.on('pointerout', nextOut)
   }
 }
+
+// JSX type definitions for type-safe props
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      View: ViewProps
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */

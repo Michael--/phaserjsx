@@ -3,6 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { HostCreator, HostPatcher } from '../host'
+import type { PropsExtension } from '../types'
 
 /**
  * Base props for Text - without JSX-specific props
@@ -19,6 +20,11 @@ export interface TextBaseProps {
   scaleY?: number
   rotation?: number
 }
+
+/**
+ * Props for Text component - extends base props with JSX-specific props
+ */
+export interface TextProps extends TextBaseProps, PropsExtension {}
 
 /**
  * Text creator - creates a Phaser Text object
@@ -63,3 +69,14 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
     node.setStyle(next.style)
   }
 }
+
+// JSX type definitions for type-safe props
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      Text: TextProps
+    }
+  }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
