@@ -4,12 +4,13 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import { calculateLayout, type LayoutSize } from '../layout'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
+import { applyLayoutProps } from './appliers/applyLayout'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createBackground } from './creators/createBackground'
 import { createInteraction } from './creators/createInteraction'
+import { createLayout } from './creators/createLayout'
 import { createTransform } from './creators/createTransform'
 
 /**
@@ -45,93 +46,8 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Setup pointer interaction if any event handlers are provided
   createInteraction(container, props)
 
-  // Attach layout props for layout calculations
-  ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
-
-  // Attach dynamic size provider
-  ;(
-    container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
-  ).__getLayoutSize = () => {
-    // Otherwise, compute from children
-    const children = container.list as Array<
-      Phaser.GameObjects.GameObject & {
-        __isBackground?: boolean
-        __layoutProps?: LayoutProps
-        __getLayoutSize?: () => LayoutSize
-        width?: number
-        height?: number
-      }
-    >
-
-    const direction = props.direction ?? 'column'
-    const padding = props.padding ?? {}
-    const paddingLeft = padding.left ?? 0
-    const paddingTop = padding.top ?? 0
-    const paddingRight = padding.right ?? 0
-    const paddingBottom = padding.bottom ?? 0
-
-    let maxWidth = 0
-    let maxHeight = 0
-    let totalWidth = paddingLeft
-    let totalHeight = paddingTop
-
-    console.log(
-      `[View.__getLayoutSize] Computing for container with ${children.length} children, direction: ${direction}`
-    )
-
-    for (const child of children) {
-      if (child.__isBackground) {
-        console.log('  [View.__getLayoutSize] Skipping background')
-        continue
-      }
-
-      const margin = child.__layoutProps?.margin ?? {}
-      const marginTop = margin.top ?? 0
-      const marginBottom = margin.bottom ?? 0
-      const marginLeft = margin.left ?? 0
-      const marginRight = margin.right ?? 0
-
-      let childSize: LayoutSize
-      if (child.__getLayoutSize) {
-        childSize = child.__getLayoutSize()
-        console.log('  [View.__getLayoutSize] Child (dynamic):', childSize)
-      } else {
-        const layoutWidth = child.__layoutProps?.width
-        const layoutHeight = child.__layoutProps?.height
-        childSize = {
-          width: layoutWidth ?? child.width ?? 100,
-          height: layoutHeight ?? child.height ?? 20,
-        }
-        console.log('  [View.__getLayoutSize] Child (static):', childSize)
-      }
-
-      if (direction === 'row') {
-        // Horizontal layout
-        totalWidth += marginLeft + childSize.width + marginRight
-        const childTotalHeight = marginTop + childSize.height + marginBottom
-        maxHeight = Math.max(maxHeight, childTotalHeight)
-      } else {
-        // Vertical layout (column)
-        const childTotalWidth = marginLeft + childSize.width + marginRight
-        maxWidth = Math.max(maxWidth, childTotalWidth)
-        totalHeight += marginTop + childSize.height + marginBottom
-      }
-    }
-
-    const finalWidth =
-      props.width ??
-      (direction === 'row' ? totalWidth + paddingRight : maxWidth + paddingLeft + paddingRight)
-    const finalHeight =
-      props.height ??
-      (direction === 'row' ? maxHeight + paddingTop + paddingBottom : totalHeight + paddingBottom)
-
-    console.log(`[View.__getLayoutSize] Result: ${finalWidth} x ${finalHeight}`)
-
-    return {
-      width: finalWidth,
-      height: finalHeight,
-    }
-  }
+  // Setup layout system (props and size provider)
+  createLayout(container, props)
 
   // Debug: Log what we're storing
   if (props.padding) {
@@ -257,79 +173,6 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     if (nextOut) container.on('pointerout', nextOut)
   }
 
-  // Recalculate layout after any changes
-  calculateLayout(container, next)
-
-  // Update size provider if children or dimensions changed
-  ;(
-    container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
-  ).__getLayoutSize = () => {
-    // Otherwise, compute from children
-    const children = container.list as Array<
-      Phaser.GameObjects.GameObject & {
-        __isBackground?: boolean
-        __layoutProps?: LayoutProps
-        __getLayoutSize?: () => LayoutSize
-        width?: number
-        height?: number
-      }
-    >
-
-    const direction = next.direction ?? 'column'
-    const padding = next.padding ?? {}
-    const paddingLeft = padding.left ?? 0
-    const paddingTop = padding.top ?? 0
-    const paddingRight = padding.right ?? 0
-    const paddingBottom = padding.bottom ?? 0
-
-    let maxWidth = 0
-    let maxHeight = 0
-    let totalWidth = paddingLeft
-    let totalHeight = paddingTop
-
-    for (const child of children) {
-      if (child.__isBackground) continue
-
-      const margin = child.__layoutProps?.margin ?? {}
-      const marginTop = margin.top ?? 0
-      const marginBottom = margin.bottom ?? 0
-      const marginLeft = margin.left ?? 0
-      const marginRight = margin.right ?? 0
-
-      let childSize: LayoutSize
-      if (child.__getLayoutSize) {
-        childSize = child.__getLayoutSize()
-      } else {
-        const layoutWidth = child.__layoutProps?.width
-        const layoutHeight = child.__layoutProps?.height
-        childSize = {
-          width: layoutWidth ?? child.width ?? 100,
-          height: layoutHeight ?? child.height ?? 20,
-        }
-      }
-
-      if (direction === 'row') {
-        // Horizontal layout
-        totalWidth += marginLeft + childSize.width + marginRight
-        const childTotalHeight = marginTop + childSize.height + marginBottom
-        maxHeight = Math.max(maxHeight, childTotalHeight)
-      } else {
-        // Vertical layout (column)
-        const childTotalWidth = marginLeft + childSize.width + marginRight
-        maxWidth = Math.max(maxWidth, childTotalWidth)
-        totalHeight += marginTop + childSize.height + marginBottom
-      }
-    }
-
-    return {
-      width:
-        next.width ??
-        (direction === 'row' ? totalWidth + paddingRight : maxWidth + paddingLeft + paddingRight),
-      height:
-        next.height ??
-        (direction === 'row'
-          ? maxHeight + paddingTop + paddingBottom
-          : totalHeight + paddingBottom),
-    }
-  }
+  // Apply layout props and recalculate if needed
+  applyLayoutProps(container, prev, next)
 }
