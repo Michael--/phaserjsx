@@ -42,6 +42,32 @@ export interface LayoutProps {
    * - 'row': Stack children horizontally (like SwiftUI's HStack)
    */
   direction?: 'row' | 'column'
+
+  /**
+   * Gap between children (uniform spacing)
+   * Applied between each child along the main axis
+   */
+  gap?: number
+
+  /**
+   * Main axis alignment (along direction)
+   * - 'start': Align children to start (top for column, left for row)
+   * - 'center': Center children along main axis
+   * - 'end': Align children to end (bottom for column, right for row)
+   * - 'space-between': Distribute children evenly, first at start, last at end
+   * - 'space-around': Distribute children evenly with space around each
+   * - 'space-evenly': Distribute children with equal space between and around
+   */
+  justifyContent?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'space-evenly'
+
+  /**
+   * Cross axis alignment (perpendicular to direction)
+   * - 'start': Align to start (left for column, top for row)
+   * - 'center': Center along cross axis
+   * - 'end': Align to end (right for column, bottom for row)
+   * - 'stretch': Stretch children to fill cross axis (requires fixed container size)
+   */
+  alignItems?: 'start' | 'center' | 'end' | 'stretch'
 }
 
 /**

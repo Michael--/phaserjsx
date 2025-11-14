@@ -47,25 +47,25 @@ export function LayoutExample() {
       y={20}
       backgroundColor={0x2a2a2a}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
+      gap={10}
+      justifyContent="start"
     >
-      <Text text="Layout System Demo" color={'yellow'} />
+      <Text text="Layout System Demo (gap: 10)" color={'yellow'} />
       <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />
       <Counter step={5} label="Counter B" />
       <Counter step={10} label="Counter C" />
       <View
-        margin={{ top: 20, left: 20 }}
+        margin={{ top: 20 }}
         backgroundColor={0x444444}
         padding={{ left: 15, top: 15, right: 15, bottom: 15 }}
+        direction="row"
+        gap={15}
+        alignItems="center"
       >
-        <Text
-          style={{ fontSize: 30 }}
-          text="Nested container"
-          color={'cyan'}
-          // margin={{ bottom: 10 }}
-        />
-        <Text style={{ fontSize: 10 }} text="With padding and margins" />
-        <Text style={{ fontSize: 30 }} text="FAT at least" />
+        <Text style={{ fontSize: 20 }} text="Row" color={'cyan'} />
+        <Text style={{ fontSize: 30 }} text="Layout" color={'lime'} />
+        <Text style={{ fontSize: 15 }} text="Demo" color={'orange'} />
       </View>
     </View>
   )

@@ -77,6 +77,7 @@ export function getChildSize(child: GameObjectWithLayout): { width: number; heig
 /**
  * Calculate layout for a container and its children
  * Supports both vertical (column) and horizontal (row) stacking
+ * with flexbox-style alignment and distribution
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
  */
@@ -102,6 +103,9 @@ export function calculateLayout(
   const paddingTop = padding.top ?? 0
   const paddingRight = padding.right ?? 0
   const paddingBottom = padding.bottom ?? 0
+  const gap = containerProps.gap ?? 0
+  const justifyContent = containerProps.justifyContent ?? 'start'
+  const alignItems = containerProps.alignItems ?? 'start'
 
   if (debug)
     console.log('  Direction:', direction, 'Padding:', {
@@ -111,10 +115,16 @@ export function calculateLayout(
       bottom: paddingBottom,
     })
 
-  let currentX = paddingLeft
-  let currentY = paddingTop
+  // Filter out background children and prepare size data
+  const layoutChildren: Array<{
+    child: GameObjectWithLayout
+    size: { width: number; height: number }
+    margin: EdgeInsets
+  }> = []
+
   let maxWidth = 0
   let maxHeight = 0
+  let totalMainSize = 0
 
   for (const child of children) {
     // Skip background rectangles
@@ -123,7 +133,7 @@ export function calculateLayout(
       continue
     }
 
-    // If child is a container, recursively calculate its layout first to get its size
+    // If child is a container, recursively calculate its layout first
     if ('list' in child && Array.isArray((child as Phaser.GameObjects.Container).list)) {
       const childContainer = child as Phaser.GameObjects.Container
       const childLayoutProps = (child as GameObjectWithLayout).__layoutProps ?? {}
@@ -131,69 +141,150 @@ export function calculateLayout(
       calculateLayout(childContainer, childLayoutProps)
     }
 
-    // Get child size after potential recursive layout
     const size = getChildSize(child)
-    if (debug) console.log('  Child size:', size)
-
-    // Get child margin
     const margin = getMargin(child)
     const marginTop = margin.top ?? 0
     const marginBottom = margin.bottom ?? 0
     const marginLeft = margin.left ?? 0
     const marginRight = margin.right ?? 0
 
-    if (debug)
-      console.log('  Child margin:', {
-        top: marginTop,
-        bottom: marginBottom,
-        left: marginLeft,
-        right: marginRight,
-      })
+    layoutChildren.push({ child, size, margin })
 
     if (direction === 'row') {
-      // Horizontal layout (row)
-      currentX += marginLeft
-
-      if (child.setPosition) {
-        const y = paddingTop + marginTop
-        if (debug) console.log(`  Setting child position: (${currentX}, ${y})`)
-        child.setPosition(currentX, y)
-      }
-
-      // Update max height including margins
+      totalMainSize += marginLeft + size.width + marginRight
       const childTotalHeight = marginTop + size.height + marginBottom
       maxHeight = Math.max(maxHeight, childTotalHeight)
-
-      // Move to next position
-      currentX += size.width + marginRight
-      if (debug) console.log('  Next X position:', currentX)
     } else {
-      // Vertical layout (column) - default
-      currentY += marginTop
-
-      if (child.setPosition) {
-        const x = paddingLeft + marginLeft
-        if (debug) console.log(`  Setting child position: (${x}, ${currentY})`)
-        child.setPosition(x, currentY)
-      }
-
-      // Update max width including margins
       const childTotalWidth = marginLeft + size.width + marginRight
       maxWidth = Math.max(maxWidth, childTotalWidth)
-
-      // Move to next position
-      currentY += size.height + marginBottom
-      if (debug) console.log('  Next Y position:', currentY)
+      totalMainSize += marginTop + size.height + marginBottom
     }
   }
 
-  // Calculate container dimensions if not explicitly set
+  // Add gaps to total main size
+  if (layoutChildren.length > 1) {
+    totalMainSize += gap * (layoutChildren.length - 1)
+  }
+
+  // Calculate container dimensions
   const containerWidth =
     containerProps.width ??
-    (direction === 'row' ? currentX + paddingRight : maxWidth + paddingLeft + paddingRight)
+    (direction === 'row'
+      ? totalMainSize + paddingLeft + paddingRight
+      : maxWidth + paddingLeft + paddingRight)
   const containerHeight =
     containerProps.height ??
-    (direction === 'row' ? maxHeight + paddingTop + paddingBottom : currentY + paddingBottom)
+    (direction === 'row'
+      ? maxHeight + paddingTop + paddingBottom
+      : totalMainSize + paddingTop + paddingBottom)
+
+  // Calculate available space for justifyContent
+  const contentAreaWidth = containerWidth - paddingLeft - paddingRight
+  const contentAreaHeight = containerHeight - paddingTop - paddingBottom
+  const availableMainSpace = direction === 'row' ? contentAreaWidth : contentAreaHeight
+  const remainingSpace = availableMainSpace - totalMainSize
+
+  // Calculate starting position and spacing based on justifyContent
+  let mainStart = 0
+  let spaceBetween = 0
+
+  switch (justifyContent) {
+    case 'start':
+      mainStart = 0
+      break
+    case 'center':
+      mainStart = Math.max(0, remainingSpace / 2)
+      break
+    case 'end':
+      mainStart = Math.max(0, remainingSpace)
+      break
+    case 'space-between':
+      mainStart = 0
+      spaceBetween = layoutChildren.length > 1 ? remainingSpace / (layoutChildren.length - 1) : 0
+      break
+    case 'space-around':
+      spaceBetween = layoutChildren.length > 0 ? remainingSpace / layoutChildren.length : 0
+      mainStart = spaceBetween / 2
+      break
+    case 'space-evenly':
+      spaceBetween = layoutChildren.length > 0 ? remainingSpace / (layoutChildren.length + 1) : 0
+      mainStart = spaceBetween
+      break
+  }
+
+  // Position children
+  let currentMain = mainStart
+  let childIndex = 0
+  for (const item of layoutChildren) {
+    const { child, size, margin } = item
+    const marginTop = margin.top ?? 0
+    const marginBottom = margin.bottom ?? 0
+    const marginLeft = margin.left ?? 0
+    const marginRight = margin.right ?? 0
+
+    let x = 0
+    let y = 0
+
+    if (direction === 'row') {
+      // Main axis (horizontal)
+      currentMain += marginLeft
+      x = paddingLeft + currentMain
+
+      // Cross axis (vertical) - alignItems
+      switch (alignItems) {
+        case 'start':
+          y = paddingTop + marginTop
+          break
+        case 'center':
+          y = paddingTop + (contentAreaHeight - size.height) / 2
+          break
+        case 'end':
+          y = paddingTop + contentAreaHeight - size.height - marginBottom
+          break
+        case 'stretch':
+          y = paddingTop + marginTop
+          // TODO: Stretch height if possible
+          break
+      }
+
+      currentMain += size.width + marginRight
+    } else {
+      // Main axis (vertical)
+      currentMain += marginTop
+      y = paddingTop + currentMain
+
+      // Cross axis (horizontal) - alignItems
+      switch (alignItems) {
+        case 'start':
+          x = paddingLeft + marginLeft
+          break
+        case 'center':
+          x = paddingLeft + (contentAreaWidth - size.width) / 2
+          break
+        case 'end':
+          x = paddingLeft + contentAreaWidth - size.width - marginRight
+          break
+        case 'stretch':
+          x = paddingLeft + marginLeft
+          // TODO: Stretch width if possible
+          break
+      }
+
+      currentMain += size.height + marginBottom
+    }
+
+    // Add gap and space-between spacing
+    if (childIndex < layoutChildren.length - 1) {
+      currentMain += gap + spaceBetween
+    }
+
+    if (child.setPosition) {
+      if (debug) console.log(`  Setting child ${childIndex} position: (${x}, ${y})`)
+      child.setPosition(x, y)
+    }
+
+    childIndex++
+  }
 
   // Set container dimensions
   ;(container as GameObjectWithLayout).width = containerWidth
