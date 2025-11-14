@@ -4,9 +4,10 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import { applyBackgroundProps, applyTransformProps } from '../propAppliers'
-import { applyTransformPropsOnCreate, createBackground } from '../propCreators'
 import type { PropsExtension } from '../types'
+import { applyBackgroundProps } from './appliers/applyBackground'
+import { applyTransformProps } from './appliers/applyTransform'
+import { applyTransformPropsOnCreate, createBackground } from './creators/propCreators'
 
 /**
  * Interaction props for pointer events

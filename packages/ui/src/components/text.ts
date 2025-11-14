@@ -4,9 +4,10 @@
 import type Phaser from 'phaser'
 import type { BackgroundProps, EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import { applyTextProps, applyTransformProps } from '../propAppliers'
-import { applyTransformPropsOnCreate } from '../propCreators'
 import type { PropsExtension } from '../types'
+import { applyTextProps } from './appliers/applyText'
+import { applyTransformProps } from './appliers/applyTransform'
+import { applyTransformPropsOnCreate } from './creators/propCreators'
 
 /**
  * Base props for Text - composing shared prop groups
