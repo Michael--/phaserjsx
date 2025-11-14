@@ -6,6 +6,7 @@ import type Phaser from 'phaser'
 import type { NodeType } from './core-types'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
+import { Fragment } from './jsx-runtime'
 import { calculateLayout } from './layout'
 import type { ParentType } from './types'
 
@@ -34,6 +35,26 @@ export function createElement(
  * @returns Created Phaser GameObject
  */
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
+  // Fragment - mount children directly without creating a container
+  if (vnode.type === Fragment) {
+    // Mount all children directly to parent
+    let firstNode: Phaser.GameObjects.GameObject | undefined
+    vnode.children?.forEach((c) => {
+      if (c != null && c !== false) {
+        const childNode = mount(parentOrScene, c)
+        if (!firstNode) firstNode = childNode
+      }
+    })
+    // Store a marker so we know this is a fragment during unmount/patch
+    vnode.__node = firstNode
+    vnode.__parent = parentOrScene
+    // Fragment must have at least one child to work properly
+    if (!firstNode) {
+      throw new Error('Fragment must have at least one child element')
+    }
+    return firstNode
+  }
+
   // Function component
   if (typeof vnode.type === 'function') {
     const ctx: Ctx = {
@@ -115,6 +136,13 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
  */
 export function unmount(vnode: VNode | null | undefined | false): void {
   if (!vnode || (vnode as unknown) === false) return
+
+  // Fragment - just unmount children
+  if (vnode.type === Fragment) {
+    vnode.children?.forEach(unmount)
+    return
+  }
+
   if (typeof vnode.type === 'function') {
     const ctx = (vnode as VNode & { __ctx?: Ctx }).__ctx
     if (ctx) disposeCtx(ctx)
@@ -141,6 +169,28 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     mount(parent, newV)
     return
   }
+
+  // Fragment - patch children directly
+  if (oldV.type === Fragment && newV.type === Fragment) {
+    const a = oldV.children ?? []
+    const b = newV.children ?? []
+    const len = Math.max(a.length, b.length)
+    for (let i = 0; i < len; i++) {
+      const c1 = a[i]
+      const c2 = b[i]
+      const isValidC1 = c1 != null && c1 !== false
+      const isValidC2 = c2 != null && c2 !== false
+      if (!isValidC1 && isValidC2) {
+        mount(parent, c2)
+      } else if (isValidC1 && !isValidC2) {
+        unmount(c1)
+      } else if (isValidC1 && isValidC2) {
+        patchVNode(parent, c1, c2)
+      }
+    }
+    return
+  }
+
   // Function components
   if (typeof oldV.type === 'function' || typeof newV.type === 'function') {
     if (oldV.type === newV.type) {

@@ -26,8 +26,8 @@ class MainScene extends Phaser.Scene {
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 1200,
+  height: 1000,
   backgroundColor: '#1d1d1d',
   parent: 'app',
   scene: [MainScene],
