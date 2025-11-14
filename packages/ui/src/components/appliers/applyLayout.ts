@@ -7,31 +7,24 @@ import { calculateLayout } from '../../layout'
 /**
  * Applies layout property changes to a container
  * Handles width, height, direction, padding, margin updates
- * Triggers layout recalculation if needed
+ * Always triggers layout recalculation since children may have changed
+ * (e.g., text content, child dimensions, added/removed children)
  * @param node - Phaser container node
- * @param prev - Previous layout props
+ * @param _prev - Previous layout props (unused, kept for API consistency)
  * @param next - New layout props
  */
 export function applyLayoutProps(
   node: Phaser.GameObjects.Container & { __layoutProps?: LayoutProps },
-  prev: Partial<LayoutProps>,
+  _prev: Partial<LayoutProps>,
   next: Partial<LayoutProps>
 ): void {
-  // Check if any layout prop changed
-  const layoutChanged =
-    prev.width !== next.width ||
-    prev.height !== next.height ||
-    prev.direction !== next.direction ||
-    JSON.stringify(prev.padding) !== JSON.stringify(next.padding) ||
-    JSON.stringify(prev.margin) !== JSON.stringify(next.margin)
-
-  if (!layoutChanged) {
-    return
-  }
-
   // Update stored layout props
   node.__layoutProps = next as LayoutProps
 
-  // Recalculate layout with new props
+  // Always recalculate layout
+  // This is necessary because:
+  // - Container props may have changed (width, padding, direction)
+  // - Children may have changed (text grew, child added/removed, child resized)
+  // - Parent patcher is called whenever children update via VDOM
   calculateLayout(node, next)
 }
