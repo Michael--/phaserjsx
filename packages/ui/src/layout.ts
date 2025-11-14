@@ -32,6 +32,7 @@ export interface LayoutSizeProvider {
 type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __layoutProps?: LayoutProps
   __isBackground?: boolean
+  __background?: Phaser.GameObjects.Rectangle
   __getLayoutSize?: () => LayoutSize
   x?: number
   y?: number
@@ -156,4 +157,11 @@ export function calculateLayout(
   ;(container as GameObjectWithLayout).height = containerHeight
 
   console.log('  Container dimensions set to:', { width: containerWidth, height: containerHeight })
+
+  // Update background size if present
+  const background = (container as GameObjectWithLayout).__background
+  if (background) {
+    background.setSize(containerWidth, containerHeight)
+    console.log('  Background resized to:', { width: containerWidth, height: containerHeight })
+  }
 }

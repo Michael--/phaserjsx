@@ -52,14 +52,6 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   ;(
     container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
   ).__getLayoutSize = () => {
-    // If explicit dimensions are provided, use them
-    if (props.width !== undefined && props.height !== undefined) {
-      return {
-        width: props.width,
-        height: props.height,
-      }
-    }
-
     // Otherwise, compute from children
     const children = container.list as Array<
       Phaser.GameObjects.GameObject & {
@@ -80,8 +72,13 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
     let maxWidth = 0
     let totalHeight = paddingTop
 
+    console.log(`[View.__getLayoutSize] Computing for container with ${children.length} children`)
+
     for (const child of children) {
-      if (child.__isBackground) continue
+      if (child.__isBackground) {
+        console.log('  [View.__getLayoutSize] Skipping background')
+        continue
+      }
 
       const margin = child.__layoutProps?.margin ?? {}
       const marginTop = margin.top ?? 0
@@ -90,6 +87,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
       let childSize: LayoutSize
       if (child.__getLayoutSize) {
         childSize = child.__getLayoutSize()
+        console.log('  [View.__getLayoutSize] Child (dynamic):', childSize)
       } else {
         const layoutWidth = child.__layoutProps?.width
         const layoutHeight = child.__layoutProps?.height
@@ -97,15 +95,21 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
           width: layoutWidth ?? child.width ?? 100,
           height: layoutHeight ?? child.height ?? 20,
         }
+        console.log('  [View.__getLayoutSize] Child (static):', childSize)
       }
 
       maxWidth = Math.max(maxWidth, childSize.width)
       totalHeight += marginTop + childSize.height + marginBottom
     }
 
+    const finalWidth = props.width ?? maxWidth + paddingLeft + paddingRight
+    const finalHeight = props.height ?? totalHeight + paddingBottom
+
+    console.log(`[View.__getLayoutSize] Result: ${finalWidth} x ${finalHeight}`)
+
     return {
-      width: props.width ?? maxWidth + paddingLeft + paddingRight,
-      height: props.height ?? totalHeight + paddingBottom,
+      width: finalWidth,
+      height: finalHeight,
     }
   }
 
@@ -237,14 +241,6 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   ;(
     container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
   ).__getLayoutSize = () => {
-    // If explicit dimensions are provided, use them
-    if (next.width !== undefined && next.height !== undefined) {
-      return {
-        width: next.width,
-        height: next.height,
-      }
-    }
-
     // Otherwise, compute from children
     const children = container.list as Array<
       Phaser.GameObjects.GameObject & {

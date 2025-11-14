@@ -12,18 +12,15 @@ export function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
   const step = props.step ?? 1
   return (
-    <View margin={{ top: 10, bottom: 10 }} height={60}>
+    <View margin={{ top: 10, bottom: 20 }} backgroundColor={0x008800} width={200}>
       <Text text={`${props.label ?? 'Count'}: ${n}`} />
       <View
-        width={150}
-        height={30}
-        margin={{ top: 5 }}
-        backgroundColor={0x555555}
+        backgroundColor={0x880000}
         onPointerDown={() => {
           setN((v) => v + step)
         }}
       >
-        <Text text={`Add +${step}`} margin={{ left: 10, top: 5 }} />
+        <Text text={`Add +${step}`} style={{ fontSize: 20 }} margin={{ left: 10, top: 5 }} />
       </View>
     </View>
   )
@@ -39,8 +36,6 @@ export function LayoutExample() {
     <View
       x={50}
       y={50}
-      width={600}
-      height={500}
       backgroundColor={0x2a2a2a}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
     >
@@ -51,13 +46,17 @@ export function LayoutExample() {
       <Counter step={10} label="Counter C" />
       <View
         margin={{ top: 20, left: 20 }}
-        width={300}
-        height={100}
         backgroundColor={0x444444}
         padding={{ left: 15, top: 15 }}
       >
-        <Text text="Nested container" color={'cyan'} margin={{ bottom: 10 }} />
-        <Text text="With padding and margins" />
+        <Text
+          style={{ fontSize: 30 }}
+          text="Nested container"
+          color={'cyan'}
+          // margin={{ bottom: 10 }}
+        />
+        <Text style={{ fontSize: 10 }} text="With padding and margins" />
+        <Text style={{ fontSize: 30 }} text="FAT at least" />
       </View>
     </View>
   )
