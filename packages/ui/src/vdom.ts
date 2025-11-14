@@ -6,6 +6,7 @@ import type Phaser from 'phaser'
 import type { NodeType } from './core-types'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
+import { calculateLayout } from './layout'
 import type { ParentType } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
@@ -94,6 +95,11 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
   })
+
+  // Calculate layout after all children are mounted
+  if (vnode.type === 'View' && 'children' in node) {
+    calculateLayout(node as Phaser.GameObjects.Container, vnode.props ?? {})
+  }
 
   return node
 }

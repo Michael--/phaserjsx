@@ -1,12 +1,50 @@
 /**
- * Basic layout system for positioning children within containers
- * Currently implements simple vertical stacking with margins
+ * Layout system for positioning children within containers
+ * Implements vertical stacking with margins and padding support
  */
 import type Phaser from 'phaser'
-import type { LayoutProps } from './core-props'
+import type { EdgeInsets, LayoutProps } from './core-props'
+
+/**
+ * Extended GameObject with layout metadata
+ */
+type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
+  __layoutProps?: LayoutProps
+  __isBackground?: boolean
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  setPosition?: (x: number, y: number) => void
+}
+
+/**
+ * Get effective margin for a child
+ * @param child - Child game object
+ * @returns Edge insets
+ */
+function getMargin(child: GameObjectWithLayout): EdgeInsets {
+  return child.__layoutProps?.margin ?? {}
+}
+
+/**
+ * Get effective size of a child
+ * @param child - Child game object
+ * @returns Width and height
+ */
+function getChildSize(child: GameObjectWithLayout): { width: number; height: number } {
+  const layoutWidth = child.__layoutProps?.width
+  const layoutHeight = child.__layoutProps?.height
+
+  return {
+    width: layoutWidth ?? child.width ?? 100,
+    height: layoutHeight ?? child.height ?? 20,
+  }
+}
 
 /**
  * Calculate layout for a container and its children
+ * Uses vertical stacking with margin support
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
  */
@@ -15,37 +53,39 @@ export function calculateLayout(
   containerProps: LayoutProps
 ): void {
   const children = (
-    container as Phaser.GameObjects.Container & { children: Phaser.GameObjects.GameObject[] }
+    container as Phaser.GameObjects.Container & {
+      children: GameObjectWithLayout[]
+    }
   ).children
 
-  // Ensure it's an array
-  const childArray = Array.isArray(children) ? children : []
+  if (!children || !Array.isArray(children)) return
 
   const padding = containerProps.padding ?? {}
-  const innerTop = padding.top ?? 0
+  const paddingLeft = padding.left ?? 0
+  const paddingTop = padding.top ?? 0
 
-  // Simple vertical stacking - accumulate Y positions
-  let currentY = innerTop
+  let currentY = paddingTop
 
-  for (const child of childArray) {
+  for (const child of children) {
     // Skip background rectangles
-    if ((child as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground) {
-      continue
+    if (child.__isBackground) continue
+
+    // Get child margin
+    const margin = getMargin(child)
+    const marginTop = margin.top ?? 0
+    const marginBottom = margin.bottom ?? 0
+    const marginLeft = margin.left ?? 0
+
+    // Position child
+    currentY += marginTop
+
+    if (child.setPosition) {
+      const x = paddingLeft + marginLeft
+      child.setPosition(x, currentY)
     }
 
-    // For now, just stack vertically with some spacing
-    // TODO: Use actual child layout props when available
-    if ('setPosition' in child) {
-      const x = 'x' in child ? (child as { x: number }).x : 0
-      ;(
-        child as Phaser.GameObjects.GameObject & {
-          setPosition: (x: number, y: number) => void
-        }
-      ).setPosition(x, currentY)
-    }
-
-    // Estimate child height (very basic)
-    const estimatedHeight = ('height' in child ? (child as { height: number }).height : 20) + 10
-    currentY += estimatedHeight
+    // Move to next position
+    const size = getChildSize(child)
+    currentY += size.height + marginBottom
   }
 }

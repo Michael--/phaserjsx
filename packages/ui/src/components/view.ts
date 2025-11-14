@@ -48,9 +48,6 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Attach layout props for layout calculations
   ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
 
-  // Calculate initial layout
-  calculateLayout(container, props)
-
   return container
 }
 
@@ -167,6 +164,6 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
     if (nextOut) container.on('pointerout', nextOut)
   }
 
-  // Always recalculate layout after any changes
+  // Recalculate layout after any changes
   calculateLayout(container, next)
 }
