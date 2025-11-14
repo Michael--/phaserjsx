@@ -14,7 +14,3 @@ export function registerBuiltins() {
   register('View', { create: viewCreator, patch: viewPatcher })
   register('Text', { create: textCreator, patch: textPatcher })
 }
-
-// Re-export individual creators/patchers for external use
-export { textCreator, textPatcher } from './text'
-export { viewCreator, viewPatcher } from './view'
