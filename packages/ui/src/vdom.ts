@@ -7,7 +7,6 @@ import type { NodeType } from './core-types'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import type { ParentType } from './types'
-import { Text, View } from './widgets'
 
 export type VNodeLike = VNode | VNode[] | null
 
@@ -87,7 +86,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  const node = host.create(vnode.type as typeof View | typeof Text, vnode.props ?? {}, scene)
+  const node = host.create(vnode.type as NodeType, vnode.props ?? {}, scene)
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
 

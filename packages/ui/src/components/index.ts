@@ -7,6 +7,12 @@ import { textCreator, textPatcher } from './text'
 import { viewCreator, viewPatcher } from './view'
 
 /**
+ * Component type constants for JSX usage
+ */
+export const View = 'View' as const
+export const Text = 'Text' as const
+
+/**
  * Registers all built-in components (View, Text) with the host
  * This should be called during library initialization
  */
@@ -16,7 +22,7 @@ export function registerBuiltins() {
 }
 
 // Re-export View component
-export { viewCreator, viewPatcher, type ViewBaseProps } from './view'
+export { viewCreator, viewPatcher, type ViewBaseProps, type ViewProps } from './view'
 
 // Re-export Text component
-export { textCreator, textPatcher, type TextBaseProps } from './text'
+export { textCreator, textPatcher, type TextBaseProps, type TextProps } from './text'

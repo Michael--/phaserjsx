@@ -12,7 +12,9 @@ export * from './hooks'
 export * from './host'
 export * from './types'
 export * from './vdom'
-export * from './widgets'
+
+// Re-export component creators/patchers for advanced usage
+export * from './components'
 
 /**
  * Consumers can import JSX runtime from here:
