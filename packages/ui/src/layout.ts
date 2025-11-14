@@ -6,11 +6,33 @@ import type Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from './core-props'
 
 /**
+ * Size information for layout calculations
+ */
+export interface LayoutSize {
+  width: number
+  height: number
+}
+
+/**
+ * Interface for nodes that can provide their layout dimensions dynamically
+ */
+export interface LayoutSizeProvider {
+  /**
+   * Get the layout size of this node
+   * This can be computed dynamically (e.g., from text bounds, children, etc.)
+   * or return fixed dimensions
+   * @returns Width and height for layout calculations
+   */
+  __getLayoutSize: () => LayoutSize
+}
+
+/**
  * Extended GameObject with layout metadata
  */
 type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __layoutProps?: LayoutProps
   __isBackground?: boolean
+  __getLayoutSize?: () => LayoutSize
   x?: number
   y?: number
   width?: number
@@ -29,10 +51,17 @@ function getMargin(child: GameObjectWithLayout): EdgeInsets {
 
 /**
  * Get effective size of a child
+ * Calls __getLayoutSize if available, otherwise falls back to layoutProps or default
  * @param child - Child game object
  * @returns Width and height
  */
 function getChildSize(child: GameObjectWithLayout): { width: number; height: number } {
+  // Use dynamic size provider if available
+  if (child.__getLayoutSize) {
+    return child.__getLayoutSize()
+  }
+
+  // Fallback to layout props or dimensions
   const layoutWidth = child.__layoutProps?.width
   const layoutHeight = child.__layoutProps?.height
 

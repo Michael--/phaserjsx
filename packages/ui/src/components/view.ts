@@ -4,7 +4,7 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import { calculateLayout } from '../layout'
+import { calculateLayout, type LayoutSize } from '../layout'
 import type { PropsExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyTransformProps } from './appliers/applyTransform'
@@ -47,6 +47,67 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
 
   // Attach layout props for layout calculations
   ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
+
+  // Attach dynamic size provider
+  ;(
+    container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
+  ).__getLayoutSize = () => {
+    // If explicit dimensions are provided, use them
+    if (props.width !== undefined && props.height !== undefined) {
+      return {
+        width: props.width,
+        height: props.height,
+      }
+    }
+
+    // Otherwise, compute from children
+    const children = container.list as Array<
+      Phaser.GameObjects.GameObject & {
+        __isBackground?: boolean
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => LayoutSize
+        width?: number
+        height?: number
+      }
+    >
+
+    const padding = props.padding ?? {}
+    const paddingLeft = padding.left ?? 0
+    const paddingTop = padding.top ?? 0
+    const paddingRight = padding.right ?? 0
+    const paddingBottom = padding.bottom ?? 0
+
+    let maxWidth = 0
+    let totalHeight = paddingTop
+
+    for (const child of children) {
+      if (child.__isBackground) continue
+
+      const margin = child.__layoutProps?.margin ?? {}
+      const marginTop = margin.top ?? 0
+      const marginBottom = margin.bottom ?? 0
+
+      let childSize: LayoutSize
+      if (child.__getLayoutSize) {
+        childSize = child.__getLayoutSize()
+      } else {
+        const layoutWidth = child.__layoutProps?.width
+        const layoutHeight = child.__layoutProps?.height
+        childSize = {
+          width: layoutWidth ?? child.width ?? 100,
+          height: layoutHeight ?? child.height ?? 20,
+        }
+      }
+
+      maxWidth = Math.max(maxWidth, childSize.width)
+      totalHeight += marginTop + childSize.height + marginBottom
+    }
+
+    return {
+      width: props.width ?? maxWidth + paddingLeft + paddingRight,
+      height: props.height ?? totalHeight + paddingBottom,
+    }
+  }
 
   // Debug: Log what we're storing
   if (props.padding) {
@@ -171,4 +232,65 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
 
   // Recalculate layout after any changes
   calculateLayout(container, next)
+
+  // Update size provider if children or dimensions changed
+  ;(
+    container as Phaser.GameObjects.Container & { __getLayoutSize?: () => LayoutSize }
+  ).__getLayoutSize = () => {
+    // If explicit dimensions are provided, use them
+    if (next.width !== undefined && next.height !== undefined) {
+      return {
+        width: next.width,
+        height: next.height,
+      }
+    }
+
+    // Otherwise, compute from children
+    const children = container.list as Array<
+      Phaser.GameObjects.GameObject & {
+        __isBackground?: boolean
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => LayoutSize
+        width?: number
+        height?: number
+      }
+    >
+
+    const padding = next.padding ?? {}
+    const paddingLeft = padding.left ?? 0
+    const paddingTop = padding.top ?? 0
+    const paddingRight = padding.right ?? 0
+    const paddingBottom = padding.bottom ?? 0
+
+    let maxWidth = 0
+    let totalHeight = paddingTop
+
+    for (const child of children) {
+      if (child.__isBackground) continue
+
+      const margin = child.__layoutProps?.margin ?? {}
+      const marginTop = margin.top ?? 0
+      const marginBottom = margin.bottom ?? 0
+
+      let childSize: LayoutSize
+      if (child.__getLayoutSize) {
+        childSize = child.__getLayoutSize()
+      } else {
+        const layoutWidth = child.__layoutProps?.width
+        const layoutHeight = child.__layoutProps?.height
+        childSize = {
+          width: layoutWidth ?? child.width ?? 100,
+          height: layoutHeight ?? child.height ?? 20,
+        }
+      }
+
+      maxWidth = Math.max(maxWidth, childSize.width)
+      totalHeight += marginTop + childSize.height + marginBottom
+    }
+
+    return {
+      width: next.width ?? maxWidth + paddingLeft + paddingRight,
+      height: next.height ?? totalHeight + paddingBottom,
+    }
+  }
 }
