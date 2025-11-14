@@ -54,7 +54,7 @@ export function calculateLayout(
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
-  // console.log('Calculating layout for container with children:', children?.length ?? 0)
+  console.log('[Layout] Container with', children?.length ?? 0, 'children, props:', containerProps)
 
   if (!children || !Array.isArray(children)) return
 
@@ -62,11 +62,16 @@ export function calculateLayout(
   const paddingLeft = padding.left ?? 0
   const paddingTop = padding.top ?? 0
 
+  console.log('  Padding:', { top: paddingTop, left: paddingLeft })
+
   let currentY = paddingTop
 
   for (const child of children) {
     // Skip background rectangles
-    if (child.__isBackground) continue
+    if (child.__isBackground) {
+      console.log('  Skipping background')
+      continue
+    }
 
     // Get child margin
     const margin = getMargin(child)
@@ -74,16 +79,29 @@ export function calculateLayout(
     const marginBottom = margin.bottom ?? 0
     const marginLeft = margin.left ?? 0
 
+    console.log('  Child margin:', { top: marginTop, bottom: marginBottom, left: marginLeft })
+
     // Position child
     currentY += marginTop
 
     if (child.setPosition) {
       const x = paddingLeft + marginLeft
+      console.log(`  Setting child position: (${x}, ${currentY})`)
       child.setPosition(x, currentY)
+    }
+
+    // If child is also a container, recursively calculate its layout
+    if ('list' in child && Array.isArray((child as Phaser.GameObjects.Container).list)) {
+      const childContainer = child as Phaser.GameObjects.Container
+      const childLayoutProps = (child as GameObjectWithLayout).__layoutProps ?? {}
+      console.log('  -> Child is a container, calculating nested layout')
+      calculateLayout(childContainer, childLayoutProps)
     }
 
     // Move to next position
     const size = getChildSize(child)
+    console.log('  Child size:', size)
     currentY += size.height + marginBottom
+    console.log('  Next Y position:', currentY)
   }
 }

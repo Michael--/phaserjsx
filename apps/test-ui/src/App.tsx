@@ -39,8 +39,8 @@ export function LayoutExample() {
     <View
       x={50}
       y={50}
-      width={400}
-      height={500}
+      width={600}
+      height={400}
       backgroundColor={0x2a2a2a}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
     >

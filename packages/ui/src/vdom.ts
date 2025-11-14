@@ -99,7 +99,11 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   // Calculate layout after all children are mounted
   // Check if this is a Container (has list property)
   if (node && 'list' in node && Array.isArray((node as Phaser.GameObjects.Container).list)) {
-    calculateLayout(node as Phaser.GameObjects.Container, vnode.props ?? {})
+    const container = node as Phaser.GameObjects.Container & {
+      __layoutProps?: Record<string, unknown>
+    }
+    console.log('[VDOM] About to calculate layout, __layoutProps:', container.__layoutProps)
+    calculateLayout(container, container.__layoutProps ?? {})
   }
 
   return node

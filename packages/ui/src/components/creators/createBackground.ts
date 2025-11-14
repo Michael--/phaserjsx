@@ -31,5 +31,8 @@ export function createBackground(
     background.setOrigin(0, 0)
     container.add(background)
     container.__background = background
+    // Mark as background so layout system can skip it
+    ;(background as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground =
+      true
   }
 }

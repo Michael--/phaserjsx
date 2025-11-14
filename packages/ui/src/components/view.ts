@@ -48,6 +48,11 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Attach layout props for layout calculations
   ;(container as Phaser.GameObjects.Container & { __layoutProps?: ViewProps }).__layoutProps = props
 
+  // Debug: Log what we're storing
+  if (props.padding) {
+    console.log('[View Creator] Storing __layoutProps with padding:', props.padding)
+  }
+
   return container
 }
 
