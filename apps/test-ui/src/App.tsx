@@ -12,7 +12,11 @@ export function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
   const step = props.step ?? 1
   return (
-    <View margin={{ top: 10, bottom: 20 }} backgroundColor={0x008800} width={200}>
+    <View
+      margin={{ top: 10, bottom: 20 }}
+      backgroundColor={0x008800}
+      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
+    >
       <Text text={`${props.label ?? 'Count'}: ${n}`} />
       <View
         backgroundColor={0x880000}
@@ -20,7 +24,7 @@ export function Counter(props: { step?: number; label?: string }) {
           setN((v) => v + step)
         }}
       >
-        <Text text={`Add +${step}`} style={{ fontSize: 20 }} margin={{ left: 10, top: 5 }} />
+        <Text text={`Add +${step}`} style={{ fontSize: 20 }} margin={{ left: 20, top: 20 }} />
       </View>
     </View>
   )

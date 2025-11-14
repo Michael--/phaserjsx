@@ -83,6 +83,8 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
       const margin = child.__layoutProps?.margin ?? {}
       const marginTop = margin.top ?? 0
       const marginBottom = margin.bottom ?? 0
+      const marginLeft = margin.left ?? 0
+      const marginRight = margin.right ?? 0
 
       let childSize: LayoutSize
       if (child.__getLayoutSize) {
@@ -98,7 +100,8 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
         console.log('  [View.__getLayoutSize] Child (static):', childSize)
       }
 
-      maxWidth = Math.max(maxWidth, childSize.width)
+      const childTotalWidth = marginLeft + childSize.width + marginRight
+      maxWidth = Math.max(maxWidth, childTotalWidth)
       totalHeight += marginTop + childSize.height + marginBottom
     }
 
@@ -267,6 +270,8 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
       const margin = child.__layoutProps?.margin ?? {}
       const marginTop = margin.top ?? 0
       const marginBottom = margin.bottom ?? 0
+      const marginLeft = margin.left ?? 0
+      const marginRight = margin.right ?? 0
 
       let childSize: LayoutSize
       if (child.__getLayoutSize) {
@@ -280,7 +285,8 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
         }
       }
 
-      maxWidth = Math.max(maxWidth, childSize.width)
+      const childTotalWidth = marginLeft + childSize.width + marginRight
+      maxWidth = Math.max(maxWidth, childTotalWidth)
       totalHeight += marginTop + childSize.height + marginBottom
     }
 

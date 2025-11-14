@@ -123,16 +123,23 @@ export function calculateLayout(
     const size = getChildSize(child)
     console.log('  Child size:', size)
 
-    // Update max width
-    maxWidth = Math.max(maxWidth, size.width)
-
     // Get child margin
     const margin = getMargin(child)
     const marginTop = margin.top ?? 0
     const marginBottom = margin.bottom ?? 0
     const marginLeft = margin.left ?? 0
+    const marginRight = margin.right ?? 0
 
-    console.log('  Child margin:', { top: marginTop, bottom: marginBottom, left: marginLeft })
+    console.log('  Child margin:', {
+      top: marginTop,
+      bottom: marginBottom,
+      left: marginLeft,
+      right: marginRight,
+    })
+
+    // Update max width including margins
+    const childTotalWidth = marginLeft + size.width + marginRight
+    maxWidth = Math.max(maxWidth, childTotalWidth)
 
     // Position child
     currentY += marginTop
