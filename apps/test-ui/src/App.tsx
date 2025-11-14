@@ -2,6 +2,7 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { Text, View, useState } from '@phaserjsx/ui'
+import { AdvancedLayoutDemo } from './LayoutDemo'
 
 /**
  * Counter component with configurable step
@@ -80,5 +81,6 @@ export function LayoutExample() {
  * @returns App component JSX
  */
 export function App() {
-  return <LayoutExample />
+  //return <LayoutExample />
+  return <AdvancedLayoutDemo />
 }

@@ -208,10 +208,10 @@ export function AlignItemsRowDemo() {
  */
 export function AdvancedLayoutDemo() {
   return (
-    <>
+    <View>
       <GapDemo />
       <JustifyContentColumnDemo />
       <AlignItemsRowDemo />
-    </>
+    </View>
   )
 }
