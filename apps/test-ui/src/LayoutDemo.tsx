@@ -1,7 +1,7 @@
 /**
  * Advanced Layout Demo - showcasing gap, justifyContent, alignItems
  */
-import { Text, View } from '@phaserjsx/ui'
+import { Text, useState, View } from '@phaserjsx/ui'
 
 /**
  * Demo box component for visual testing
@@ -28,9 +28,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
 export function GapDemo() {
   return (
     <View
-      x={20}
-      y={20}
-      backgroundColor={0x1a1a1a}
+      backgroundColor={0x1a4a1a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={15}
     >
@@ -49,8 +47,6 @@ export function GapDemo() {
 export function JustifyContentColumnDemo() {
   return (
     <View
-      x={20}
-      y={200}
       width={600}
       backgroundColor={0x2a2a2a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
@@ -141,8 +137,6 @@ export function JustifyContentColumnDemo() {
 export function AlignItemsRowDemo() {
   return (
     <View
-      x={20}
-      y={350}
       width={600}
       backgroundColor={0x2a2a2a}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
@@ -207,11 +201,23 @@ export function AlignItemsRowDemo() {
  * @returns Layout demo
  */
 export function AdvancedLayoutDemo() {
+  const [n, setN] = useState(0)
+
   return (
-    <>
+    <View
+      x={10}
+      y={10}
+      gap={50}
+      backgroundColor={0x000044}
+      padding={{ right: 10, bottom: 10 }}
+      onPointerDown={() => {
+        setN((n) => n + 1)
+      }}
+    >
+      <Text text={`Pointer Down Count: ${n}`} color={'white'} style={{ fontSize: 18 }} />
       <GapDemo />
       <JustifyContentColumnDemo />
       <AlignItemsRowDemo />
-    </>
+    </View>
   )
 }

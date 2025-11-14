@@ -14,6 +14,8 @@ export function createLayout(
   container: Phaser.GameObjects.Container & {
     __layoutProps?: LayoutProps
     __getLayoutSize?: () => LayoutSize
+    width?: number
+    height?: number
   },
   props: Partial<LayoutProps>
 ): void {
@@ -21,6 +23,7 @@ export function createLayout(
   container.__layoutProps = props as LayoutProps
 
   // Attach dynamic size provider
+  // This returns the calculated dimensions after layout
   container.__getLayoutSize = () => {
     const children = container.list as GameObjectWithLayout[]
 
@@ -30,16 +33,21 @@ export function createLayout(
     const paddingTop = padding.top ?? 0
     const paddingRight = padding.right ?? 0
     const paddingBottom = padding.bottom ?? 0
+    const gap = props.gap ?? 0
 
     let maxWidth = 0
     let maxHeight = 0
-    let totalWidth = paddingLeft
-    let totalHeight = paddingTop
+    let totalMainSize = 0
+
+    // Count non-background children
+    let childCount = 0
 
     for (const child of children) {
       if (child.__isBackground) {
         continue
       }
+
+      childCount++
 
       const margin = child.__layoutProps?.margin ?? {}
       const marginTop = margin.top ?? 0
@@ -51,23 +59,32 @@ export function createLayout(
 
       if (direction === 'row') {
         // Horizontal layout
-        totalWidth += marginLeft + childSize.width + marginRight
+        totalMainSize += marginLeft + childSize.width + marginRight
         const childTotalHeight = marginTop + childSize.height + marginBottom
         maxHeight = Math.max(maxHeight, childTotalHeight)
       } else {
         // Vertical layout (column)
         const childTotalWidth = marginLeft + childSize.width + marginRight
         maxWidth = Math.max(maxWidth, childTotalWidth)
-        totalHeight += marginTop + childSize.height + marginBottom
+        totalMainSize += marginTop + childSize.height + marginBottom
       }
+    }
+
+    // Add gaps to total main size
+    if (childCount > 1) {
+      totalMainSize += gap * (childCount - 1)
     }
 
     const finalWidth =
       props.width ??
-      (direction === 'row' ? totalWidth + paddingRight : maxWidth + paddingLeft + paddingRight)
+      (direction === 'row'
+        ? totalMainSize + paddingLeft + paddingRight
+        : maxWidth + paddingLeft + paddingRight)
     const finalHeight =
       props.height ??
-      (direction === 'row' ? maxHeight + paddingTop + paddingBottom : totalHeight + paddingBottom)
+      (direction === 'row'
+        ? maxHeight + paddingTop + paddingBottom
+        : totalMainSize + paddingTop + paddingBottom)
 
     return {
       width: finalWidth,
