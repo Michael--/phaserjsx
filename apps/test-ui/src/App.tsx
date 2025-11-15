@@ -217,13 +217,14 @@ export function FlexDemo() {
       backgroundColor={0x2a2a2a}
       padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
       gap={25}
+      width={700}
     >
       <Text text="Flex Layout Examples" color={'yellow'} style={{ fontSize: 20 }} />
 
       {/* Example 1: Basic flex */}
-      <View gap={8}>
+      <View gap={8} backgroundColor={0x123492} width={'fill'}>
         <Text text="1. Basic Flex - Fixed + Flexible" color={'cyan'} style={{ fontSize: 16 }} />
-        <View direction="row" gap={10} backgroundColor={0x005588} width={600}>
+        <View direction="row" gap={10} backgroundColor={0x005588} width={'fill'}>
           <View
             width={100}
             backgroundColor={0xcc3333}

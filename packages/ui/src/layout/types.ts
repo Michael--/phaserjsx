@@ -79,9 +79,9 @@ export interface ContentArea {
  * Parsed size representation
  */
 export interface ParsedSize {
-  /** Size type: fixed pixels, percentage of parent, auto (content-based), or calc expression */
-  type: 'fixed' | 'percent' | 'auto' | 'calc'
-  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto/calc */
+  /** Size type: fixed pixels, percentage of parent, auto (content-based), calc expression, or fill (parent content-area) */
+  type: 'fixed' | 'percent' | 'auto' | 'calc' | 'fill'
+  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto/calc/fill */
   value?: number
   /** Calc expression data (only for type='calc') */
   calc?: CalcExpression

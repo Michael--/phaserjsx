@@ -34,11 +34,13 @@ const strategies: Record<string, LayoutStrategy> = {
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
  * @param parentSize - Optional parent dimensions for percentage resolution
+ * @param parentPadding - Optional parent padding for 'fill' resolution
  */
 export function calculateLayout(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps,
-  parentSize?: { width: number; height: number }
+  parentSize?: { width: number; height: number },
+  parentPadding?: { horizontal: number; vertical: number }
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
@@ -76,8 +78,18 @@ export function calculateLayout(
         }
       : undefined
 
+  // Calculate available content size (container minus padding) for child size resolution
+  // This allows 'fill' and percentage sizes to resolve correctly relative to content area
+  const availableContentSize = currentContainerSize
+    ? {
+        width: currentContainerSize.width - padding.left - padding.right,
+        height: currentContainerSize.height - padding.top - padding.bottom,
+      }
+    : undefined
+
   if (debug && currentContainerSize) {
     console.log('  Pre-calculated container size for percentage resolution:', currentContainerSize)
+    console.log('  Available content size (for fill):', availableContentSize)
   }
 
   // 2. Prepare layout children (filter backgrounds, process nested containers)
@@ -93,11 +105,25 @@ export function calculateLayout(
     // Skip processing nested containers with flex (they need parent size first)
     const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
     if (!hasFlex) {
-      // Process nested containers (pass current container size for percentage resolution)
-      processNestedContainer(child, calculateLayout, currentContainerSize ?? parentSize)
+      // Process nested containers (pass current container size and padding for resolution)
+      const currentPaddingForChild = currentContainerSize
+        ? { horizontal: padding.left + padding.right, vertical: padding.top + padding.bottom }
+        : undefined
+      processNestedContainer(
+        child,
+        calculateLayout,
+        currentContainerSize ?? parentSize,
+        currentPaddingForChild ?? parentPadding
+      )
     }
 
-    const size = getChildSize(child, currentContainerSize ?? parentSize)
+    // Get child size - pass total container size and padding so both % and fill work correctly
+    // Percentages resolve relative to total size, fill resolves relative to content-area
+    const parentPaddingForChild = {
+      horizontal: padding.left + padding.right,
+      vertical: padding.top + padding.bottom,
+    }
+    const size = getChildSize(child, currentContainerSize ?? parentSize, parentPaddingForChild)
     const margin = getMargin(child)
 
     layoutChildren.push({ child, size, margin })
@@ -121,7 +147,7 @@ export function calculateLayout(
   // 5. Calculate metrics using strategy
   const metrics = strategy.calculateMetrics(layoutChildren, contextPartial as LayoutContext)
 
-  // 6. Calculate container dimensions (with parent size for percentage resolution)
+  // 6. Calculate container dimensions (with parent size and padding for resolution)
   const { width: containerWidth, height: containerHeight } = calculateContainerSize(
     containerProps,
     metrics,
@@ -129,7 +155,8 @@ export function calculateLayout(
     direction,
     gap,
     layoutChildren.length,
-    parentSize
+    parentSize,
+    parentPadding
   )
 
   // 6a. Distribute flex space if there are flex children
@@ -164,10 +191,18 @@ export function calculateLayout(
           }
         }
 
-        processNestedContainer(layoutChild.child, calculateLayout, {
-          width: containerWidth,
-          height: containerHeight,
-        })
+        processNestedContainer(
+          layoutChild.child,
+          calculateLayout,
+          {
+            width: containerWidth,
+            height: containerHeight,
+          },
+          {
+            horizontal: padding.left + padding.right,
+            vertical: padding.top + padding.bottom,
+          }
+        )
 
         // Restore original props
         layoutChild.child.__layoutProps = originalProps

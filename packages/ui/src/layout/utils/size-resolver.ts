@@ -83,6 +83,10 @@ export function parseSize(size: number | string | undefined): ParsedSize {
     return { type: 'auto' }
   }
 
+  if (size === 'fill') {
+    return { type: 'fill' }
+  }
+
   // Calc expression: "calc(100% - 40px)"
   const calcMatch = size.match(/^calc\((.+)\)$/)
   if (calcMatch && calcMatch[1]) {
@@ -101,7 +105,7 @@ export function parseSize(size: number | string | undefined): ParsedSize {
 
   // Unknown format
   throw new Error(
-    `[Size] Invalid size format: "${size}". Supported formats: number, "X%", "calc(...)", "auto", undefined`
+    `[Size] Invalid size format: "${size}". Supported formats: number, "X%", "calc(...)", "auto", "fill", undefined`
   )
 }
 
@@ -158,6 +162,7 @@ function resolveCalcExpression(calc: CalcExpression, parentSize?: number): numbe
  * @param parsed - Parsed size information
  * @param parentSize - Parent dimension in pixels (required for percentage and calc)
  * @param contentSize - Content dimension in pixels (fallback for auto)
+ * @param parentPadding - Parent padding in the relevant direction (for fill)
  * @returns Resolved size in pixels
  *
  * @example
@@ -165,8 +170,14 @@ function resolveCalcExpression(calc: CalcExpression, parentSize?: number): numbe
  * resolveSize({ type: 'percent', value: 50 }, 200)                   // 100 (50% of 200)
  * resolveSize({ type: 'calc', calc: {...} }, 200)                    // calc result
  * resolveSize({ type: 'auto' }, 200, 150)                            // 150 (content size)
+ * resolveSize({ type: 'fill' }, 200, undefined, 40)                  // 160 (200 - 40)
  */
-export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize?: number): number {
+export function resolveSize(
+  parsed: ParsedSize,
+  parentSize?: number,
+  contentSize?: number,
+  parentPadding?: number
+): number {
   switch (parsed.type) {
     case 'fixed':
       return parsed.value ?? 100
@@ -199,6 +210,19 @@ export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize
       }
       return contentSize
 
+    case 'fill': {
+      if (parentSize === undefined) {
+        console.warn('[Size] Fill size without parent size, using fallback 100px')
+        return 100
+      }
+      // Fill = parent size minus padding (content-area)
+      if (parentPadding !== undefined && parentPadding > 0) {
+        return Math.max(0, parentSize - parentPadding)
+      }
+      // No padding or already content-area
+      return parentSize
+    }
+
     default:
       // Should never happen with proper typing
       console.error(`[Size] Unknown size type: ${(parsed as ParsedSize).type}`)
@@ -212,7 +236,7 @@ export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize
  * @returns True if size requires parent dimension
  */
 export function requiresParent(parsed: ParsedSize): boolean {
-  if (parsed.type === 'percent') {
+  if (parsed.type === 'percent' || parsed.type === 'fill') {
     return true
   }
 
@@ -230,5 +254,10 @@ export function requiresParent(parsed: ParsedSize): boolean {
  * @returns True if size is explicitly defined (not auto)
  */
 export function isExplicit(parsed: ParsedSize): boolean {
-  return parsed.type === 'fixed' || parsed.type === 'percent' || parsed.type === 'calc'
+  return (
+    parsed.type === 'fixed' ||
+    parsed.type === 'percent' ||
+    parsed.type === 'calc' ||
+    parsed.type === 'fill'
+  )
 }

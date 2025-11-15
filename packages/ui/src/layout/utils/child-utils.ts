@@ -23,11 +23,13 @@ export function getMargin(child: GameObjectWithLayout): EdgeInsets {
  * Note: String sizes (percentages) are resolved later with parent context
  * @param child - Child game object
  * @param parentSize - Optional parent dimensions for percentage resolution
+ * @param parentPadding - Optional parent padding for 'fill' resolution
  * @returns Width and height in pixels
  */
 export function getChildSize(
   child: GameObjectWithLayout,
-  parentSize?: { width: number; height: number }
+  parentSize?: { width: number; height: number },
+  parentPadding?: { horizontal: number; vertical: number }
 ): LayoutSize {
   // For flex children, we still need to calculate their actual size
   // (especially for cross-axis dimension in row/column layouts)
@@ -43,11 +45,21 @@ export function getChildSize(
 
     // Resolve width
     const parsedWidth = parseSize(layoutWidth)
-    const width = resolveSize(parsedWidth, parentSize?.width, child.width ?? 100)
+    const width = resolveSize(
+      parsedWidth,
+      parentSize?.width,
+      child.width ?? 100,
+      parentPadding?.horizontal
+    )
 
     // Resolve height
     const parsedHeight = parseSize(layoutHeight)
-    const height = resolveSize(parsedHeight, parentSize?.height, child.height ?? 20)
+    const height = resolveSize(
+      parsedHeight,
+      parentSize?.height,
+      child.height ?? 20,
+      parentPadding?.vertical
+    )
 
     return { width, height }
   }
@@ -69,15 +81,18 @@ export function getChildSize(
  * @param child - Child game object to process
  * @param calculateLayoutFn - Layout calculation function (passed to avoid circular dependency)
  * @param parentSize - Optional parent dimensions for percentage resolution
+ * @param parentPadding - Optional parent padding for 'fill' resolution
  */
 export function processNestedContainer(
   child: GameObjectWithLayout,
   calculateLayoutFn: (
     container: Phaser.GameObjects.Container,
     props: LayoutProps,
-    parentSize?: { width: number; height: number }
+    parentSize?: { width: number; height: number },
+    parentPadding?: { horizontal: number; vertical: number }
   ) => void,
-  parentSize?: { width: number; height: number }
+  parentSize?: { width: number; height: number },
+  parentPadding?: { horizontal: number; vertical: number }
 ): void {
   if (!('list' in child) || !Array.isArray((child as Phaser.GameObjects.Container).list)) {
     return
@@ -88,7 +103,7 @@ export function processNestedContainer(
 
   if (debug) console.log('  -> Child is a container, calculating nested layout first')
 
-  calculateLayoutFn(childContainer, childLayoutProps, parentSize)
+  calculateLayoutFn(childContainer, childLayoutProps, parentSize, parentPadding)
 }
 
 /**

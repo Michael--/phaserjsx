@@ -49,18 +49,9 @@ export function calculateContentDimensions(
 
     // Check if this child has flex property
     const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
-    console.log('[DimCalc] Child:', { hasFlex, flex: child.__layoutProps?.flex, width: size.width })
 
     if (direction === 'row') {
       const childWidth = hasFlex ? FLEX_CHILD_MIN_SIZE : size.width
-      if (hasFlex) {
-        console.log(
-          '[DimCalc] Using min size for flex child:',
-          FLEX_CHILD_MIN_SIZE,
-          'instead of',
-          size.width
-        )
-      }
       totalMainSize += marginLeft + childWidth + marginRight
       const childTotalHeight = marginTop + size.height + marginBottom
       maxHeight = Math.max(maxHeight, childTotalHeight)
@@ -90,6 +81,7 @@ export function calculateContentDimensions(
  * @param gap - Gap between children
  * @param childCount - Number of children
  * @param parentSize - Parent dimensions for percentage resolution
+ * @param parentPadding - Parent padding for 'fill' resolution
  * @returns Container width and height in pixels
  */
 export function calculateContainerSize(
@@ -99,7 +91,8 @@ export function calculateContainerSize(
   direction: 'row' | 'column' | 'stack',
   gap: number,
   childCount: number,
-  parentSize?: { width: number; height: number }
+  parentSize?: { width: number; height: number },
+  parentPadding?: { horizontal: number; vertical: number }
 ): { width: number; height: number } {
   // Add gaps to total main size (not applicable for stack)
   let totalMainSizeWithGaps = metrics.totalMainSize
@@ -120,11 +113,16 @@ export function calculateContainerSize(
 
   // Resolve width
   const parsedWidth = parseSize(props.width)
-  const width = resolveSize(parsedWidth, parentSize?.width, contentWidth)
+  const width = resolveSize(parsedWidth, parentSize?.width, contentWidth, parentPadding?.horizontal)
 
   // Resolve height
   const parsedHeight = parseSize(props.height)
-  const height = resolveSize(parsedHeight, parentSize?.height, contentHeight)
+  const height = resolveSize(
+    parsedHeight,
+    parentSize?.height,
+    contentHeight,
+    parentPadding?.vertical
+  )
 
   return { width, height }
 }
