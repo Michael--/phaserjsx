@@ -20,9 +20,24 @@ export function applyChildPositions(
 
     if (!childData || !position) continue
 
-    const { child } = childData
+    const { child, size } = childData
     const { x, y } = position
 
+    // Apply size (resolved from layout props, including percentages)
+    if ('setSize' in child && typeof child.setSize === 'function') {
+      if (size.width !== child.width || size.height !== child.height) {
+        if (debug) console.log(`  Setting child ${i} size: ${size.width}x${size.height}`)
+        ;(child as { setSize: (w: number, h: number) => unknown }).setSize(size.width, size.height)
+      }
+    } else {
+      // Fallback: directly set width/height
+      child.width = size.width
+      child.height = size.height
+      if ('displayWidth' in child) (child as { displayWidth: number }).displayWidth = size.width
+      if ('displayHeight' in child) (child as { displayHeight: number }).displayHeight = size.height
+    }
+
+    // Apply position
     if (child.setPosition) {
       if (debug) console.log(`  Setting child ${i} position: (${x}, ${y})`)
       child.setPosition(x, y)

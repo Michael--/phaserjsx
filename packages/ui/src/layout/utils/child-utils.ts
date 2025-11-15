@@ -29,24 +29,35 @@ export function getChildSize(
   child: GameObjectWithLayout,
   parentSize?: { width: number; height: number }
 ): LayoutSize {
+  // If __layoutProps exists, use it (has priority for explicit layout configuration)
+  if (
+    child.__layoutProps &&
+    (child.__layoutProps.width !== undefined || child.__layoutProps.height !== undefined)
+  ) {
+    const layoutWidth = child.__layoutProps.width
+    const layoutHeight = child.__layoutProps.height
+
+    // Resolve width
+    const parsedWidth = parseSize(layoutWidth)
+    const width = resolveSize(parsedWidth, parentSize?.width, child.width ?? 100)
+
+    // Resolve height
+    const parsedHeight = parseSize(layoutHeight)
+    const height = resolveSize(parsedHeight, parentSize?.height, child.height ?? 20)
+
+    return { width, height }
+  }
+
   // Use dynamic size provider if available
   if (child.__getLayoutSize) {
     return child.__getLayoutSize()
   }
 
-  // Fallback to layout props or dimensions
-  const layoutWidth = child.__layoutProps?.width
-  const layoutHeight = child.__layoutProps?.height
-
-  // Resolve width
-  const parsedWidth = parseSize(layoutWidth)
-  const width = resolveSize(parsedWidth, parentSize?.width, child.width ?? 100)
-
-  // Resolve height
-  const parsedHeight = parseSize(layoutHeight)
-  const height = resolveSize(parsedHeight, parentSize?.height, child.height ?? 20)
-
-  return { width, height }
+  // Fallback to current dimensions or default
+  return {
+    width: child.width ?? 100,
+    height: child.height ?? 20,
+  }
 }
 
 /**

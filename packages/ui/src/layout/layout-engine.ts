@@ -60,6 +60,25 @@ export function calculateLayout(
 
   if (debug) console.log('  Direction:', direction, 'Padding:', padding)
 
+  // 2a. Pre-calculate container size if explicitly set (needed for percentage children)
+  //     This allows percentage-based child sizes to resolve correctly
+  const explicitContainerWidth =
+    typeof containerProps.width === 'number' ? containerProps.width : undefined
+  const explicitContainerHeight =
+    typeof containerProps.height === 'number' ? containerProps.height : undefined
+
+  const currentContainerSize =
+    explicitContainerWidth !== undefined || explicitContainerHeight !== undefined
+      ? {
+          width: explicitContainerWidth ?? container.width,
+          height: explicitContainerHeight ?? container.height,
+        }
+      : undefined
+
+  if (debug && currentContainerSize) {
+    console.log('  Pre-calculated container size for percentage resolution:', currentContainerSize)
+  }
+
   // 2. Prepare layout children (filter backgrounds, process nested containers)
   const layoutChildren: LayoutChild[] = []
 
@@ -70,10 +89,10 @@ export function calculateLayout(
       continue
     }
 
-    // Process nested containers (pass parent size for percentage resolution)
-    processNestedContainer(child, calculateLayout, parentSize)
+    // Process nested containers (pass current container size for percentage resolution)
+    processNestedContainer(child, calculateLayout, currentContainerSize ?? parentSize)
 
-    const size = getChildSize(child, parentSize)
+    const size = getChildSize(child, currentContainerSize ?? parentSize)
     const margin = getMargin(child)
 
     layoutChildren.push({ child, size, margin })
