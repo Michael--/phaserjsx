@@ -1,9 +1,10 @@
 /**
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
-import { RadioGroup, Sidebar, Text, View, useState, type RadioGroupOption } from '@phaserjsx/ui'
+import { Text, View, useState } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
+import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
 
 /**
  * Props for the root App component

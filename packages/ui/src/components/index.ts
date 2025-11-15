@@ -26,8 +26,3 @@ export { viewCreator, viewPatcher, type ViewBaseProps, type ViewProps } from './
 
 // Re-export Text component
 export { textCreator, textPatcher, type TextBaseProps, type TextProps } from './text'
-
-// Re-export composite components
-export { RadioButton, type RadioButtonProps } from './radio-button'
-export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './radio-group'
-export { Sidebar, type SidebarProps } from './sidebar'

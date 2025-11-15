@@ -1,9 +1,8 @@
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
-import type { VNode } from '../hooks'
-import { View } from './index'
-import type { ViewProps } from './view'
+import type { ViewProps } from '@phaserjsx/ui'
+import { View } from '@phaserjsx/ui'
 
 /**
  * Props for Sidebar component
@@ -11,6 +10,7 @@ import type { ViewProps } from './view'
 export interface SidebarProps {
   /** Width of the sidebar (default: 200) */
   width?: number | string
+  /** Height of the sidebar */
   height?: number | string
   /** Background color (default: 0x1e1e1e) */
   backgroundColor?: number
@@ -19,17 +19,16 @@ export interface SidebarProps {
   /** Gap between children (default: 10) */
   gap?: number
   /** Children to display in sidebar */
-  children?: VNode | VNode[] | null
+  children?: ViewProps['children']
 }
 
 /**
  * Sidebar component - pre-configured container for navigation/options
  * @param props - Sidebar properties
- * @returns Sidebar VNode
+ * @returns Sidebar JSX element
  */
-export function Sidebar(props: SidebarProps): VNode {
+export function Sidebar(props: SidebarProps) {
   const width = props.width ?? 200
-  const height = props.height ?? undefined
   const backgroundColor = props.backgroundColor ?? 0x1e1e1e
   const gap = props.gap ?? 10
 
@@ -47,23 +46,17 @@ export function Sidebar(props: SidebarProps): VNode {
     padding = { top: 10, right: 10, bottom: 10, left: 10 }
   }
 
-  const children = props.children
-    ? Array.isArray(props.children)
-      ? props.children
-      : [props.children]
-    : []
-
-  return {
-    type: View,
-    props: {
-      width,
-      height,
-      backgroundColor,
-      padding,
-      gap,
-      direction: 'column' as const,
-      alignItems: 'start' as const,
-    },
-    children,
-  }
+  return (
+    <View
+      width={width}
+      height={props.height}
+      backgroundColor={backgroundColor}
+      padding={padding}
+      gap={gap}
+      direction="column"
+      alignItems="start"
+    >
+      {props.children}
+    </View>
+  )
 }
