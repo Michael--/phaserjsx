@@ -8,9 +8,23 @@ import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
 import { calculateLayout } from './layout/index'
-import type { ParentType } from './types'
+import type { ParentType, Ref } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
+
+/**
+ * Attaches or detaches a ref to a node
+ * @param ref - Ref callback or object
+ * @param value - Value to set (null for detach)
+ */
+function attachRef<T>(ref: Ref<T> | undefined, value: T | null): void {
+  if (!ref) return
+  if (typeof ref === 'function') {
+    ref(value)
+  } else {
+    ref.current = value
+  }
+}
 
 /**
  * Creates a VNode element (alternative to JSX)
@@ -112,6 +126,10 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
 
+  // Attach ref after node creation
+  const ref = vnode.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
+  attachRef(ref, node)
+
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) mount(node as ParentType, c)
@@ -149,6 +167,11 @@ export function unmount(vnode: VNode | null | undefined | false): void {
     if (ctx?.vnode) unmount(ctx.vnode)
     return
   }
+
+  // Detach ref before cleanup
+  const ref = vnode.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
+  attachRef(ref, null)
+
   // Clean up children FIRST (before removing from parent)
   vnode.children?.forEach(unmount)
   // Then remove from parent/scene
@@ -242,6 +265,15 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   }
   const nodeType = oldV.type as NodeType
   newV.__node = oldV.__node
+
+  // Update ref if it changed
+  const oldRef = oldV.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
+  const newRef = newV.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
+  if (oldRef !== newRef) {
+    attachRef(oldRef, null)
+    attachRef(newRef, oldV.__node as Phaser.GameObjects.GameObject)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldV.props ?? {}, newV.props ?? {})
   const a = oldV.children ?? []

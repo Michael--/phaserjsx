@@ -7,6 +7,7 @@ import { AdvancedLayoutDemo } from './LayoutDemo'
 import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
 import { FlexDemo } from './examples/FlexDemo'
 import { LayoutExample } from './examples/LayoutExample'
+import { RefExample } from './examples/RefExample'
 import { StackDemo } from './examples/StackDemo'
 import { ToggleButtonDemo } from './examples/ToggleButtonDemo'
 
@@ -61,9 +62,10 @@ export function App(props: AppProps) {
     { value: 'toggle', label: 'Toggle Buttons' },
     { value: 'stack', label: 'Stack Demo' },
     { value: 'flex', label: 'Flex vs Spacer' },
+    { value: 'ref', label: 'Ref Example' },
   ]
 
-  const [selectedDemo, setSelectedDemo] = useState('flex')
+  const [selectedDemo, setSelectedDemo] = useState('ref')
 
   return (
     <View
@@ -98,6 +100,7 @@ export function App(props: AppProps) {
           {selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
           {selectedDemo === 'stack' && <StackDemo key="stack" />}
           {selectedDemo === 'flex' && <FlexDemo key="flex" />}
+          {selectedDemo === 'ref' && <RefExample key="ref" />}
         </View>
 
         <View

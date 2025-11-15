@@ -7,8 +7,27 @@ export type SignalLike<T> = { value: T } | T
  * Type for parent objects that can contain children
  */
 export type ParentType = Phaser.Scene | Phaser.GameObjects.Container
-export interface PropsDefaultExtension {
+
+/**
+ * Ref callback that receives the underlying Phaser object instance
+ */
+export type RefCallback<T> = (instance: T | null) => void
+
+/**
+ * Ref object that holds a reference to the underlying Phaser object
+ */
+export interface RefObject<T> {
+  current: T | null
+}
+
+/**
+ * Ref type - can be either a callback or an object
+ */
+export type Ref<T> = RefCallback<T> | RefObject<T>
+
+export interface PropsDefaultExtension<T = unknown> {
   key?: string | number | undefined
+  ref?: Ref<T> | undefined
 }
 export interface PropsContainerExtension {
   children?: VNode | VNode[] | null | undefined

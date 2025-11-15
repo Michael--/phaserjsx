@@ -26,7 +26,10 @@ export interface ViewBaseProps
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
  */
-export interface ViewProps extends ViewBaseProps, PropsDefaultExtension, PropsContainerExtension {}
+export interface ViewProps
+  extends ViewBaseProps,
+    PropsDefaultExtension<Phaser.GameObjects.Container>,
+    PropsContainerExtension {}
 
 /**
  * View creator - creates a Phaser Container with optional background and interaction

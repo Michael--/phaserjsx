@@ -24,7 +24,7 @@ export interface TextBaseProps extends TransformProps, TextSpecificProps {
 /**
  * Props for Text component - extends base props with JSX-specific props
  */
-export interface TextProps extends TextBaseProps, PropsDefaultExtension {}
+export interface TextProps extends TextBaseProps, PropsDefaultExtension<Phaser.GameObjects.Text> {}
 
 /**
  * Text creator - creates a Phaser Text object
