@@ -76,6 +76,16 @@ export interface ContentArea {
 }
 
 /**
+ * Parsed size representation
+ */
+export interface ParsedSize {
+  /** Size type: fixed pixels, percentage of parent, or auto (content-based) */
+  type: 'fixed' | 'percent' | 'auto'
+  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto */
+  value?: number
+}
+
+/**
  * Computed metrics from children analysis
  */
 export interface ContentMetrics {
@@ -93,4 +103,9 @@ export interface LayoutContext {
   contentArea: ContentArea
   gap: number
   children: LayoutChild[]
+  /** Parent dimensions for percentage resolution */
+  parentSize?: {
+    width: number
+    height: number
+  }
 }

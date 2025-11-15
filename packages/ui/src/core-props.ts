@@ -32,8 +32,32 @@ export interface EdgeInsets {
  * Layout properties - basic sizing and spacing (minimal for now)
  */
 export interface LayoutProps {
-  width?: number | undefined
-  height?: number | undefined
+  /**
+   * Width of the container
+   * - number: Fixed width in pixels (e.g., 200)
+   * - string: Relative width (e.g., "50%", "100%")
+   * - undefined: Auto - size to content
+   *
+   * @example
+   * width={200}      // 200px fixed width
+   * width="75%"      // 75% of parent width
+   * width={undefined} // Auto-size to content
+   */
+  width?: number | string | undefined
+
+  /**
+   * Height of the container
+   * - number: Fixed height in pixels (e.g., 100)
+   * - string: Relative height (e.g., "50%", "100%")
+   * - undefined: Auto - size to content
+   *
+   * @example
+   * height={100}      // 100px fixed height
+   * height="50%"      // 50% of parent height
+   * height={undefined} // Auto-size to content
+   */
+  height?: number | string | undefined
+
   margin?: EdgeInsets
   padding?: EdgeInsets
   /**

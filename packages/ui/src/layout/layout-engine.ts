@@ -32,10 +32,12 @@ const strategies: Record<string, LayoutStrategy> = {
  * Main entry point for layout system
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
+ * @param parentSize - Optional parent dimensions for percentage resolution
  */
 export function calculateLayout(
   container: Phaser.GameObjects.Container,
-  containerProps: LayoutProps
+  containerProps: LayoutProps,
+  parentSize?: { width: number; height: number }
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
@@ -68,10 +70,10 @@ export function calculateLayout(
       continue
     }
 
-    // Process nested containers
-    processNestedContainer(child, calculateLayout)
+    // Process nested containers (pass parent size for percentage resolution)
+    processNestedContainer(child, calculateLayout, parentSize)
 
-    const size = getChildSize(child)
+    const size = getChildSize(child, parentSize)
     const margin = getMargin(child)
 
     layoutChildren.push({ child, size, margin })
@@ -95,14 +97,15 @@ export function calculateLayout(
   // 5. Calculate metrics using strategy
   const metrics = strategy.calculateMetrics(layoutChildren, contextPartial as LayoutContext)
 
-  // 6. Calculate container dimensions
+  // 6. Calculate container dimensions (with parent size for percentage resolution)
   const { width: containerWidth, height: containerHeight } = calculateContainerSize(
     containerProps,
     metrics,
     padding,
     direction,
     gap,
-    layoutChildren.length
+    layoutChildren.length,
+    parentSize
   )
 
   // 7. Calculate content area
@@ -115,6 +118,10 @@ export function calculateLayout(
   const context: LayoutContext = {
     ...contextPartial,
     contentArea,
+    parentSize: {
+      width: containerWidth,
+      height: containerHeight,
+    },
   }
 
   // 9. Calculate spacing for justifyContent

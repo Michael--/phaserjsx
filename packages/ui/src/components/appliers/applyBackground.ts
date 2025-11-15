@@ -21,10 +21,10 @@ export function applyBackgroundProps(
   const nextBgColor = next.backgroundColor
   const prevBgAlpha = prev.backgroundAlpha ?? 1
   const nextBgAlpha = next.backgroundAlpha ?? 1
-  const prevWidth = prev.width ?? 100
-  const nextWidth = next.width ?? 100
-  const prevHeight = prev.height ?? 100
-  const nextHeight = next.height ?? 100
+  const prevWidth = typeof prev.width === 'number' ? prev.width : 100
+  const nextWidth = typeof next.width === 'number' ? next.width : 100
+  const prevHeight = typeof prev.height === 'number' ? prev.height : 100
+  const nextHeight = typeof next.height === 'number' ? next.height : 100
 
   if (prevBgColor !== undefined && nextBgColor === undefined) {
     // Remove background

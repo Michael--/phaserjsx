@@ -32,8 +32,8 @@ export function applyInteractionProps(
   // Update interactive state if needed
   if (!hadAnyEvent && hasAnyEvent) {
     // Enable interaction
-    const width = next.width ?? 100
-    const height = next.height ?? 100
+    const width = typeof next.width === 'number' ? next.width : 100
+    const height = typeof next.height === 'number' ? next.height : 100
     // Create hit area centered around container's origin
     const hitArea = new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height)
     container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
@@ -47,8 +47,8 @@ export function applyInteractionProps(
       (prev.width !== next.width || prev.height !== next.height) &&
       container.input?.hitArea instanceof Phaser.Geom.Rectangle
     ) {
-      const width = next.width ?? 100
-      const height = next.height ?? 100
+      const width = typeof next.width === 'number' ? next.width : 100
+      const height = typeof next.height === 'number' ? next.height : 100
       // Reposition and resize centered around origin
       container.input.hitArea.setPosition(-width / 2, -height / 2)
       container.input.hitArea.setSize(width, height)

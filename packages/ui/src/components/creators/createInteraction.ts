@@ -12,11 +12,13 @@ import type { InteractionProps } from '../../core-props'
  */
 export function createInteraction(
   container: Phaser.GameObjects.Container,
-  props: Partial<InteractionProps & { width?: number | undefined; height?: number | undefined }>
+  props: Partial<
+    InteractionProps & { width?: number | string | undefined; height?: number | string | undefined }
+  >
 ): void {
   if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
-    const width = props.width ?? 100
-    const height = props.height ?? 100
+    const width = typeof props.width === 'number' ? props.width : 100
+    const height = typeof props.height === 'number' ? props.height : 100
     // Create hit area centered around container's origin
     // Phaser containers treat hit areas relative to their center
     const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height)

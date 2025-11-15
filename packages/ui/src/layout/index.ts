@@ -20,6 +20,8 @@ export type {
 
 // Utilities
 export { getChildSize, getMargin } from './utils/child-utils'
+export { isExplicit, parseSize, requiresParent, resolveSize } from './utils/size-resolver'
+export type { ParsedSize } from './utils/size-resolver'
 
 // Calculators (for advanced use cases)
 export {

@@ -14,11 +14,13 @@ import type { BackgroundProps } from '../../core-props'
 export function createBackground(
   scene: Phaser.Scene,
   container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Rectangle },
-  props: Partial<BackgroundProps & { width?: number | undefined; height?: number | undefined }>
+  props: Partial<
+    BackgroundProps & { width?: number | string | undefined; height?: number | string | undefined }
+  >
 ): void {
   if (props.backgroundColor !== undefined) {
-    const width = (props.width as number | undefined) ?? 100
-    const height = (props.height as number | undefined) ?? 100
+    const width = typeof props.width === 'number' ? props.width : 100
+    const height = typeof props.height === 'number' ? props.height : 100
     const bgAlpha = (props.backgroundAlpha as number | undefined) ?? 1
     const background = scene.add.rectangle(
       0,

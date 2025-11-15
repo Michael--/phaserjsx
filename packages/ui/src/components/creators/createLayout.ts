@@ -2,7 +2,13 @@
  * Layout creator for initializing container layout system
  */
 import type { LayoutProps } from '../../core-props'
-import { getChildSize, type GameObjectWithLayout, type LayoutSize } from '../../layout/index'
+import {
+  getChildSize,
+  parseSize,
+  resolveSize,
+  type GameObjectWithLayout,
+  type LayoutSize,
+} from '../../layout/index'
 
 /**
  * Creates layout infrastructure for a container
@@ -14,8 +20,8 @@ export function createLayout(
   container: Phaser.GameObjects.Container & {
     __layoutProps?: LayoutProps
     __getLayoutSize?: () => LayoutSize
-    width?: number
-    height?: number
+    width?: number | string
+    height?: number | string
   },
   props: Partial<LayoutProps>
 ): void {
@@ -75,16 +81,22 @@ export function createLayout(
       totalMainSize += gap * (childCount - 1)
     }
 
-    const finalWidth =
-      props.width ??
-      (direction === 'row'
+    const defaultWidth =
+      direction === 'row'
         ? totalMainSize + paddingLeft + paddingRight
-        : maxWidth + paddingLeft + paddingRight)
-    const finalHeight =
-      props.height ??
-      (direction === 'row'
+        : maxWidth + paddingLeft + paddingRight
+    const defaultHeight =
+      direction === 'row'
         ? maxHeight + paddingTop + paddingBottom
-        : totalMainSize + paddingTop + paddingBottom)
+        : totalMainSize + paddingTop + paddingBottom
+
+    // Resolve width (handle percentage and auto)
+    const parsedWidth = parseSize(props.width)
+    const finalWidth = resolveSize(parsedWidth, undefined, defaultWidth)
+
+    // Resolve height (handle percentage and auto)
+    const parsedHeight = parseSize(props.height)
+    const finalHeight = resolveSize(parsedHeight, undefined, defaultHeight)
 
     return {
       width: finalWidth,

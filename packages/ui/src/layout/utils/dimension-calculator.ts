@@ -4,6 +4,7 @@
  */
 import type { EdgeInsets, LayoutProps } from '../../core-props'
 import type { LayoutChild } from '../types'
+import { parseSize, resolveSize } from './size-resolver'
 
 /**
  * Content dimension metrics
@@ -72,7 +73,8 @@ export function calculateContentDimensions(
  * @param direction - Layout direction
  * @param gap - Gap between children
  * @param childCount - Number of children
- * @returns Container width and height
+ * @param parentSize - Parent dimensions for percentage resolution
+ * @returns Container width and height in pixels
  */
 export function calculateContainerSize(
   props: LayoutProps,
@@ -80,7 +82,8 @@ export function calculateContainerSize(
   padding: PaddingValues,
   direction: 'row' | 'column' | 'stack',
   gap: number,
-  childCount: number
+  childCount: number,
+  parentSize?: { width: number; height: number }
 ): { width: number; height: number } {
   // Add gaps to total main size (not applicable for stack)
   let totalMainSizeWithGaps = metrics.totalMainSize
@@ -88,18 +91,24 @@ export function calculateContainerSize(
     totalMainSizeWithGaps += gap * (childCount - 1)
   }
 
-  // Calculate container dimensions
-  const width =
-    props.width ??
-    (direction === 'row'
+  // Calculate content-based default sizes
+  const contentWidth =
+    direction === 'row'
       ? totalMainSizeWithGaps + padding.left + padding.right
-      : metrics.maxWidth + padding.left + padding.right)
+      : metrics.maxWidth + padding.left + padding.right
 
-  const height =
-    props.height ??
-    (direction === 'row'
+  const contentHeight =
+    direction === 'row'
       ? metrics.maxHeight + padding.top + padding.bottom
-      : totalMainSizeWithGaps + padding.top + padding.bottom)
+      : totalMainSizeWithGaps + padding.top + padding.bottom
+
+  // Resolve width
+  const parsedWidth = parseSize(props.width)
+  const width = resolveSize(parsedWidth, parentSize?.width, contentWidth)
+
+  // Resolve height
+  const parsedHeight = parseSize(props.height)
+  const height = resolveSize(parsedHeight, parentSize?.height, contentHeight)
 
   return { width, height }
 }
