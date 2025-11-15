@@ -93,6 +93,28 @@ export interface LayoutProps {
    * - 'stretch': Stretch children to fill cross axis (requires fixed container size)
    */
   alignItems?: 'start' | 'center' | 'end' | 'stretch'
+
+  /**
+   * Flex grow factor - how much of the remaining space this element should take
+   * Similar to CSS flexbox flex-grow
+   * - 0: Don't grow, use explicit width/height
+   * - 1: Take equal share of remaining space
+   * - 2+: Take proportionally more space
+   *
+   * @example
+   * // Sidebar fixed, main content fills rest
+   * <View direction="row">
+   *   <View width={200}>Sidebar</View>
+   *   <View flex={1}>Main</View>
+   * </View>
+   *
+   * // Two columns, second twice as wide
+   * <View direction="row">
+   *   <View flex={1}>Col 1</View>
+   *   <View flex={2}>Col 2</View>
+   * </View>
+   */
+  flex?: number
 }
 
 /**

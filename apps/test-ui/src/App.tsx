@@ -207,6 +207,111 @@ export function LayoutExample() {
 }
 
 /**
+ * Flex vs Spacer Demo
+ * Shows two different approaches to fill remaining space
+ * @returns Flex demo JSX
+ */
+export function FlexDemo() {
+  return (
+    <View
+      backgroundColor={0x2a2a2a}
+      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
+      gap={30}
+    >
+      <Text text="Flex vs Spacer Comparison" color={'yellow'} style={{ fontSize: 18 }} />
+
+      <View gap={10}>
+        <Text text="1. Using flex property (like React Native)" color={'cyan'} />
+        <View direction="row" gap={10} height={60}>
+          <View
+            width={150}
+            backgroundColor={0x880000}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="Fixed 150px" />
+          </View>
+          <View
+            flex={1}
+            backgroundColor={0x008800}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={1} fills rest" />
+          </View>
+        </View>
+      </View>
+
+      <View gap={10}>
+        <Text text="2. Using Spacer component (like SwiftUI)" color={'cyan'} />
+        <View direction="row" gap={10} height={60}>
+          <View
+            width={150}
+            backgroundColor={0x880000}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="Fixed 150px" />
+          </View>
+          <View flex={1} />
+          <View
+            width={200}
+            backgroundColor={0x008800}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="Fixed 200px" />
+          </View>
+        </View>
+      </View>
+
+      <View gap={10}>
+        <Text text="3. Proportional flex values" color={'cyan'} />
+        <View direction="row" gap={10} height={60}>
+          <View
+            flex={1}
+            backgroundColor={0x880000}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={1}" />
+          </View>
+          <View
+            flex={2}
+            backgroundColor={0x008800}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={2} (2x wider)" />
+          </View>
+          <View
+            flex={1}
+            backgroundColor={0x000088}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={1}" />
+          </View>
+        </View>
+      </View>
+
+      <View gap={10}>
+        <Text text="4. Column layout with flex" color={'cyan'} />
+        <View direction="column" gap={10} height={200}>
+          <View
+            flex={1}
+            backgroundColor={0x880000}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={1}" />
+          </View>
+          <View
+            flex={2}
+            backgroundColor={0x008800}
+            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+          >
+            <Text text="flex={2}" />
+          </View>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+/**
  * Main app component with example selector
  * @param props - App props from Phaser scene
  * @returns App component JSX
@@ -220,6 +325,7 @@ export function App(props: AppProps) {
     { value: 'advanced', label: 'Advanced Layouts' },
     { value: 'toggle', label: 'Toggle Buttons' },
     { value: 'stack', label: 'Stack Demo' },
+    { value: 'flex', label: 'Flex vs Spacer' },
   ]
 
   const [selectedDemo, setSelectedDemo] = useState('layout')
@@ -232,7 +338,7 @@ export function App(props: AppProps) {
       direction="row"
       justifyContent="start"
     >
-      <Sidebar width={'20%'} height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
+      <Sidebar width={200} height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
         <Text text="Demos" color={'cyan'} style={{ fontSize: 18 }} />
         <RadioGroup
           options={demoOptions}
@@ -246,6 +352,7 @@ export function App(props: AppProps) {
 
       <View
         height={'100%'}
+        flex={1}
         padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
         justifyContent="space-between"
         backgroundColor={0x764522}
@@ -255,9 +362,16 @@ export function App(props: AppProps) {
           {selectedDemo === 'advanced' && <AdvancedLayoutDemo key="advanced" />}
           {selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
           {selectedDemo === 'stack' && <StackDemo key="stack" />}
+          {selectedDemo === 'flex' && <FlexDemo key="flex" />}
         </View>
 
-        <View direction="row" justifyContent="end" key="footer">
+        <View
+          direction="row"
+          justifyContent="space-between"
+          key="footer"
+          backgroundColor={0x883388}
+        >
+          <View></View>
           <Text
             text={`Screen: ${width} x ${height} | Demo: ${selectedDemo}`}
             color={'white'}

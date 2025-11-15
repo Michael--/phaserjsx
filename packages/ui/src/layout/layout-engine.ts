@@ -14,6 +14,7 @@ import { StackLayoutStrategy } from './strategies/stack-layout'
 import type { GameObjectWithLayout, LayoutChild, LayoutContext, Position } from './types'
 import { getChildSize, getMargin, processNestedContainer } from './utils/child-utils'
 import { calculateContainerSize, normalizePadding } from './utils/dimension-calculator'
+import { distributeFlexSpace, hasFlexChildren } from './utils/flex-distributor'
 import { calculateJustifyContent } from './utils/spacing-calculator'
 
 const debug = false
@@ -127,6 +128,34 @@ export function calculateLayout(
     parentSize
   )
 
+  // 6a. Distribute flex space if there are flex children
+  let finalLayoutChildren = layoutChildren
+  if (hasFlexChildren(layoutChildren)) {
+    const availableMainSpace =
+      direction === 'row'
+        ? containerWidth - padding.left - padding.right
+        : containerHeight - padding.top - padding.bottom
+
+    finalLayoutChildren = distributeFlexSpace(
+      layoutChildren,
+      availableMainSpace,
+      metrics.totalMainSize,
+      direction
+    )
+
+    // Recalculate metrics with updated sizes
+    const updatedMetrics = strategy.calculateMetrics(
+      finalLayoutChildren,
+      contextPartial as LayoutContext
+    )
+    metrics.totalMainSize = updatedMetrics.totalMainSize
+    if (direction === 'column') {
+      metrics.maxWidth = updatedMetrics.maxWidth
+    } else if (direction === 'row') {
+      metrics.maxHeight = updatedMetrics.maxHeight
+    }
+  }
+
   // 7. Calculate content area
   const contentArea = {
     width: containerWidth - padding.left - padding.right,
@@ -136,6 +165,7 @@ export function calculateLayout(
   // 8. Complete layout context
   const context: LayoutContext = {
     ...contextPartial,
+    children: finalLayoutChildren,
     contentArea,
     parentSize: {
       width: containerWidth,
@@ -155,7 +185,7 @@ export function calculateLayout(
     const justifyResult = calculateJustifyContent(
       justifyContent,
       remainingSpace,
-      layoutChildren.length
+      finalLayoutChildren.length
     )
     mainStart = justifyResult.mainStart
     spaceBetween = justifyResult.spaceBetween
@@ -165,8 +195,8 @@ export function calculateLayout(
   const positions: Position[] = []
   let currentMain = mainStart
 
-  for (let i = 0; i < layoutChildren.length; i++) {
-    const child = layoutChildren[i]
+  for (let i = 0; i < finalLayoutChildren.length; i++) {
+    const child = finalLayoutChildren[i]
     if (!child) continue
 
     const result = strategy.positionChild(child, i, context, currentMain)
@@ -175,13 +205,13 @@ export function calculateLayout(
     currentMain = result.nextMain
 
     // Add gap and space-between spacing (not for stack)
-    if (direction !== 'stack' && i < layoutChildren.length - 1) {
+    if (direction !== 'stack' && i < finalLayoutChildren.length - 1) {
       currentMain += gap + spaceBetween
     }
   }
 
   // 11. Apply positions to children
-  applyChildPositions(layoutChildren, positions, debug)
+  applyChildPositions(finalLayoutChildren, positions, debug)
 
   // 12. Apply container dimensions
   applyContainerDimensions(container, containerWidth, containerHeight, debug)
