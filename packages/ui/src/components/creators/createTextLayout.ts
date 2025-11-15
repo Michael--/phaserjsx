@@ -2,7 +2,7 @@
  * Layout creator for text components
  */
 import type Phaser from 'phaser'
-import type { LayoutSize } from '../../layout'
+import type { LayoutSize } from '../../layout/index'
 import type { TextBaseProps } from '../text'
 
 /**

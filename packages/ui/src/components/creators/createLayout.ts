@@ -2,7 +2,7 @@
  * Layout creator for initializing container layout system
  */
 import type { LayoutProps } from '../../core-props'
-import { getChildSize, type GameObjectWithLayout, type LayoutSize } from '../../layout'
+import { getChildSize, type GameObjectWithLayout, type LayoutSize } from '../../layout/index'
 
 /**
  * Creates layout infrastructure for a container

@@ -7,7 +7,7 @@ import type { NodeType } from './core-types'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
-import { calculateLayout } from './layout'
+import { calculateLayout } from './layout/index'
 import type { ParentType } from './types'
 
 export type VNodeLike = VNode | VNode[] | null

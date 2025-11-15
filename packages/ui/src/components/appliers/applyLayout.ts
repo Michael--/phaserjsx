@@ -2,7 +2,7 @@
  * Layout property applier for updating container layout configuration
  */
 import type { LayoutProps } from '../../core-props'
-import { calculateLayout } from '../../layout'
+import { calculateLayout } from '../../layout/index'
 
 /**
  * Applies layout property changes to a container
