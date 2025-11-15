@@ -16,7 +16,7 @@ export function FlexDemo() {
       <Text text="Flex Layout Examples" color={'yellow'} style={{ fontSize: 20 }} />
 
       {/* Example 1: Basic flex */}
-      <View gap={8} backgroundColor={0x123492} width={'fill'}>
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text text="1. Basic Flex - Fixed + Flexible" color={'cyan'} style={{ fontSize: 16 }} />
         <View direction="row" gap={10} backgroundColor={0x005588} width={'fill'}>
           <View
@@ -43,9 +43,9 @@ export function FlexDemo() {
       </View>
 
       {/* Example 2: Spacer pattern */}
-      <View gap={8}>
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text text="2. Spacer Pattern - Push to edges" color={'cyan'} style={{ fontSize: 16 }} />
-        <View direction="row" gap={10} backgroundColor={0x005588} width={600}>
+        <View direction="row" gap={10} backgroundColor={0x005588} width={'fill'}>
           <View
             width={120}
             backgroundColor={0xcc3333}
@@ -74,9 +74,9 @@ export function FlexDemo() {
       </View>
 
       {/* Example 3: Proportional flex */}
-      <View gap={8} key="e3">
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text text="3. Proportional Flex Ratios - 1:2:3" color={'cyan'} style={{ fontSize: 16 }} />
-        <View direction="row" gap={10} backgroundColor={0x555500} width={600}>
+        <View direction="row" gap={10} backgroundColor={0x555500} width={'fill'}>
           <View
             flex={1}
             backgroundColor={0xcc6633}
@@ -111,13 +111,13 @@ export function FlexDemo() {
       </View>
 
       {/* Example 4: Mixed fixed + flex */}
-      <View gap={8}>
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text
           text="4. Mixed Layout - Multiple Fixed + Flex"
           color={'cyan'}
           style={{ fontSize: 16 }}
         />
-        <View direction="row" gap={10} backgroundColor={0x555500} width={600}>
+        <View direction="row" gap={10} backgroundColor={0x555500} width={'fill'}>
           <View width={80} backgroundColor={0xcc3333} alignItems="center" justifyContent="center">
             <Text text="80px" color={'white'} style={{ fontSize: 12 }} />
           </View>
@@ -137,13 +137,13 @@ export function FlexDemo() {
       </View>
 
       {/* Example 5: Column layout */}
-      <View gap={8}>
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text
           text="5. Column Layout with Flex (Vertical)"
           color={'cyan'}
           style={{ fontSize: 16 }}
         />
-        <View direction="column" gap={10} height={250} backgroundColor={0x555500} width={600}>
+        <View direction="column" gap={10} height={250} backgroundColor={0x555500} width={'fill'}>
           <View
             flex={1}
             backgroundColor={0xcc3333}
@@ -179,10 +179,10 @@ export function FlexDemo() {
       </View>
 
       {/* Example 6: Nested flex */}
-      <View gap={8}>
+      <View gap={8} backgroundColor={0x333333} width={'fill'}>
         <Text text="6. Nested Flex Layouts" color={'cyan'} style={{ fontSize: 16 }} />
-        <View direction="column" gap={10} height={130} backgroundColor={0x555500} width={600}>
-          <View direction="row" gap={10} flex={1} backgroundColor={0x0077777} width={600}>
+        <View direction="column" gap={10} height={130} backgroundColor={0x555500} width={'fill'}>
+          <View direction="row" gap={10} flex={1} backgroundColor={0x0077777} width={'fill'}>
             <View flex={1} backgroundColor={0xcc3333} alignItems="center" justifyContent="center">
               <Text text="Top Left" color={'white'} style={{ fontSize: 12 }} />
               <Text text="flex={1}" color={'white'} style={{ fontSize: 10 }} />
@@ -196,7 +196,7 @@ export function FlexDemo() {
               <Text text="flex={1}" color={'white'} style={{ fontSize: 10 }} />
             </View>
           </View>
-          <View direction="row" gap={10} flex={2} backgroundColor={0x0077777} width={600}>
+          <View direction="row" gap={10} flex={2} backgroundColor={0x0077777} width={'fill'}>
             <View flex={2} backgroundColor={0x33cc33} alignItems="center" justifyContent="center">
               <Text text="Bottom Left" color={'white'} style={{ fontSize: 12 }} />
               <Text text="flex={2}" color={'white'} style={{ fontSize: 10 }} />
@@ -213,6 +213,7 @@ export function FlexDemo() {
         backgroundColor={0x333333}
         padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
         gap={5}
+        width={'fill'}
       >
         <Text text="💡 Key Concepts:" color={'yellow'} style={{ fontSize: 14 }} />
         <Text
