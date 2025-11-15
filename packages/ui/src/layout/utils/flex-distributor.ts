@@ -31,11 +31,12 @@ export function distributeFlexSpace(
       flexChildren.push({ child: layoutChild, index, flexValue })
       totalFlex += flexValue
     } else {
-      // Calculate space used by non-flex children
+      // Calculate space used by non-flex children (including margins)
+      const margin = layoutChild.margin
       if (direction === 'row') {
-        nonFlexSpace += layoutChild.size.width
+        nonFlexSpace += layoutChild.size.width + (margin.left ?? 0) + (margin.right ?? 0)
       } else {
-        nonFlexSpace += layoutChild.size.height
+        nonFlexSpace += layoutChild.size.height + (margin.top ?? 0) + (margin.bottom ?? 0)
       }
     }
   })

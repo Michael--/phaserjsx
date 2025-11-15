@@ -27,6 +27,7 @@ export interface PaddingValues {
 
 /**
  * Calculate content dimensions based on children and layout direction
+ * For flex children, uses a minimum default size to avoid chicken-egg sizing issues
  * @param children - Array of layout children with size and margin info
  * @param direction - Layout direction ('row', 'column', or 'stack')
  * @returns Content metrics including max dimensions and total main axis size
@@ -35,24 +36,39 @@ export function calculateContentDimensions(
   children: LayoutChild[],
   direction: 'row' | 'column' | 'stack'
 ): ContentMetrics {
+  const FLEX_CHILD_MIN_SIZE = 100 // Minimum size for flex children in content calculation
   let maxWidth = 0
   let maxHeight = 0
   let totalMainSize = 0
 
-  for (const { size, margin } of children) {
+  for (const { size, margin, child } of children) {
     const marginTop = margin.top ?? 0
     const marginBottom = margin.bottom ?? 0
     const marginLeft = margin.left ?? 0
     const marginRight = margin.right ?? 0
 
+    // Check if this child has flex property
+    const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
+    console.log('[DimCalc] Child:', { hasFlex, flex: child.__layoutProps?.flex, width: size.width })
+
     if (direction === 'row') {
-      totalMainSize += marginLeft + size.width + marginRight
+      const childWidth = hasFlex ? FLEX_CHILD_MIN_SIZE : size.width
+      if (hasFlex) {
+        console.log(
+          '[DimCalc] Using min size for flex child:',
+          FLEX_CHILD_MIN_SIZE,
+          'instead of',
+          size.width
+        )
+      }
+      totalMainSize += marginLeft + childWidth + marginRight
       const childTotalHeight = marginTop + size.height + marginBottom
       maxHeight = Math.max(maxHeight, childTotalHeight)
     } else if (direction === 'column') {
       const childTotalWidth = marginLeft + size.width + marginRight
       maxWidth = Math.max(maxWidth, childTotalWidth)
-      totalMainSize += marginTop + size.height + marginBottom
+      const childHeight = hasFlex ? FLEX_CHILD_MIN_SIZE : size.height
+      totalMainSize += marginTop + childHeight + marginBottom
     } else if (direction === 'stack') {
       // For stack, track max dimensions (children overlay)
       const childTotalWidth = marginLeft + size.width + marginRight

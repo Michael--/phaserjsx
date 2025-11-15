@@ -29,6 +29,12 @@ export function getChildSize(
   child: GameObjectWithLayout,
   parentSize?: { width: number; height: number }
 ): LayoutSize {
+  // If child has flex property, return minimal size (will be calculated during flex distribution)
+  const flexValue = child.__layoutProps?.flex
+  if (flexValue !== undefined && flexValue > 0) {
+    return { width: 1, height: 1 } // Minimal placeholder size for flex children
+  }
+
   // If __layoutProps exists, use it (has priority for explicit layout configuration)
   if (
     child.__layoutProps &&

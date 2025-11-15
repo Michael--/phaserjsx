@@ -13,18 +13,26 @@ import { BaseLayoutStrategy } from './base-strategy'
 export class RowLayoutStrategy extends BaseLayoutStrategy {
   /**
    * Calculate content dimensions for row layout
+   * For flex children, uses a minimum default size to avoid chicken-egg sizing issues
    * @param children - Array of layout children
    * @param context - Layout context
    * @returns Content metrics
    */
   calculateMetrics(children: LayoutChild[], _context: LayoutContext): ContentMetrics {
+    const FLEX_CHILD_MIN_SIZE = 100 // Minimum size for flex children in content calculation
     let maxHeight = 0
     let totalMainSize = 0
 
     for (const child of children) {
       const total = this.getTotalChildSize(child)
       maxHeight = Math.max(maxHeight, total.height)
-      totalMainSize += total.width
+
+      // Check if this child has flex property
+      const hasFlex = (child.child.__layoutProps?.flex ?? 0) > 0
+      // If flex child already has a resolved size (> 10), use it; otherwise use minimum
+      const childWidth = hasFlex && child.size.width <= 10 ? FLEX_CHILD_MIN_SIZE : total.width
+
+      totalMainSize += childWidth
     }
 
     return {

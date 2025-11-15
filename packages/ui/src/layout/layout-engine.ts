@@ -90,8 +90,12 @@ export function calculateLayout(
       continue
     }
 
-    // Process nested containers (pass current container size for percentage resolution)
-    processNestedContainer(child, calculateLayout, currentContainerSize ?? parentSize)
+    // Skip processing nested containers with flex (they need parent size first)
+    const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
+    if (!hasFlex) {
+      // Process nested containers (pass current container size for percentage resolution)
+      processNestedContainer(child, calculateLayout, currentContainerSize ?? parentSize)
+    }
 
     const size = getChildSize(child, currentContainerSize ?? parentSize)
     const margin = getMargin(child)
@@ -141,6 +145,34 @@ export function calculateLayout(
     const availableMainSpace = contentSize - totalGapSpace
 
     finalLayoutChildren = distributeFlexSpace(layoutChildren, availableMainSpace, direction)
+
+    // Process nested flex containers now that they have their size
+    for (const layoutChild of finalLayoutChildren) {
+      const hasFlex = (layoutChild.child.__layoutProps?.flex ?? 0) > 0
+      if (hasFlex) {
+        // Temporarily set explicit size based on flex calculation
+        const originalProps = { ...layoutChild.child.__layoutProps }
+        if (direction === 'row') {
+          layoutChild.child.__layoutProps = {
+            ...layoutChild.child.__layoutProps,
+            width: layoutChild.size.width,
+          }
+        } else {
+          layoutChild.child.__layoutProps = {
+            ...layoutChild.child.__layoutProps,
+            height: layoutChild.size.height,
+          }
+        }
+
+        processNestedContainer(layoutChild.child, calculateLayout, {
+          width: containerWidth,
+          height: containerHeight,
+        })
+
+        // Restore original props
+        layoutChild.child.__layoutProps = originalProps
+      }
+    }
 
     // Recalculate metrics with updated sizes
     const updatedMetrics = strategy.calculateMetrics(
