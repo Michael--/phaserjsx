@@ -1,7 +1,7 @@
 /**
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
-import { Text, View, useState } from '@phaserjsx/ui'
+import { RadioGroup, Sidebar, Text, View, useState, type RadioGroupOption } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
 
@@ -214,30 +214,65 @@ export function App(props: AppProps) {
   const width = props.width ?? 800
   const height = props.height ?? 600
 
+  const demoOptions: RadioGroupOption[] = [
+    { value: 'layout', label: 'Layout System' },
+    { value: 'advanced', label: 'Advanced Layouts' },
+    { value: 'toggle', label: 'Toggle Buttons' },
+    { value: 'stack', label: 'Stack Demo' },
+  ]
+
+  const [selectedDemo, setSelectedDemo] = useState('layout')
+
+  const renderDemo = () => {
+    switch (selectedDemo) {
+      case 'layout':
+        return <LayoutExample />
+      case 'advanced':
+        return <AdvancedLayoutDemo />
+      case 'toggle':
+        return <ToggleButtonDemo />
+      case 'stack':
+        return <StackDemo />
+      default:
+        return <LayoutExample />
+    }
+  }
+
   return (
     <View
       width={width}
       height={height}
       backgroundColor={0x123456}
-      justifyContent="space-between"
-      alignItems="center"
+      direction="row"
+      justifyContent="start"
     >
-      <View direction="row" alignItems="center" gap={10}>
-        <View direction="column" alignItems="center" gap={10}>
-          <ToggleButtonDemo />
-          <StackDemo />
-        </View>
-        <LayoutExample />
-        <AdvancedLayoutDemo />
-      </View>
-      <View direction="row" justifyContent="end" width={width}>
-        <Text
-          text={`Screen: ${width} x ${height}`}
-          color={'white'}
-          style={{ fontSize: 14 }}
-          x={10}
-          y={10}
+      <Sidebar width={'20%'} height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
+        <Text text="Demos" color={'cyan'} style={{ fontSize: 18 }} />
+        <RadioGroup
+          options={demoOptions}
+          value={selectedDemo}
+          onChange={(value) => setSelectedDemo(value)}
+          gap={8}
+          selectedColor={0x4ecdc4}
+          unselectedColor={0x555555}
         />
+      </Sidebar>
+
+      <View
+        height={'100%'} // dit it, but got: [Size] Cannot resolve percentage without parent size. Using content size or fallback.
+        padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
+        justifyContent="space-between"
+        backgroundColor={0x764522}
+      >
+        {renderDemo()}
+
+        <View direction="row" justifyContent="end">
+          <Text
+            text={`Screen: ${width} x ${height} | Demo: ${selectedDemo}`}
+            color={'white'}
+            style={{ fontSize: 14 }}
+          />
+        </View>
       </View>
     </View>
   )
