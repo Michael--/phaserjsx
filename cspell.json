@@ -9,6 +9,7 @@
     "editorconfig",
     "eslintrc",
     "esmodule",
+    "flexbox",
     "gitattributes",
     "jsx",
     "jsxs",
@@ -20,13 +21,15 @@
     "prettierrc",
     "rexui",
     "tsconfig",
+    "tweens",
     "vdom",
     "vite",
     "vitest",
     "vnode",
     "xlarge",
     "xsmall",
-    "xxlarge"
+    "xxlarge",
+    "yoyo"
   ],
   "ignorePaths": [
     "**/dist/**",
