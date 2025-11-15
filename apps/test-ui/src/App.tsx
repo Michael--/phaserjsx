@@ -5,6 +5,7 @@ import { Text, View, useState } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
 import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
+import { BorderDemo } from './examples/BorderDemo'
 import { FlexDemo } from './examples/FlexDemo'
 import { LayoutExample } from './examples/LayoutExample'
 import { RefExample } from './examples/RefExample'
@@ -62,10 +63,11 @@ export function App(props: AppProps) {
     { value: 'toggle', label: 'Toggle Buttons' },
     { value: 'stack', label: 'Stack Demo' },
     { value: 'flex', label: 'Flex vs Spacer' },
+    { value: 'border', label: 'Border & Corners' },
     { value: 'ref', label: 'Ref Example' },
   ]
 
-  const [selectedDemo, setSelectedDemo] = useState('ref')
+  const [selectedDemo, setSelectedDemo] = useState('border')
 
   return (
     <View
@@ -100,6 +102,7 @@ export function App(props: AppProps) {
           {selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
           {selectedDemo === 'stack' && <StackDemo key="stack" />}
           {selectedDemo === 'flex' && <FlexDemo key="flex" />}
+          {selectedDemo === 'border' && <BorderDemo key="border" />}
           {selectedDemo === 'ref' && <RefExample key="ref" />}
         </View>
 

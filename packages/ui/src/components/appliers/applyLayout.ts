@@ -1,7 +1,7 @@
 /**
  * Layout property applier for updating container layout configuration
  */
-import type { LayoutProps } from '../../core-props'
+import type { BackgroundProps, LayoutProps } from '../../core-props'
 import { calculateLayout } from '../../layout/index'
 
 /**
@@ -14,12 +14,12 @@ import { calculateLayout } from '../../layout/index'
  * @param next - New layout props
  */
 export function applyLayoutProps(
-  node: Phaser.GameObjects.Container & { __layoutProps?: LayoutProps },
-  _prev: Partial<LayoutProps>,
-  next: Partial<LayoutProps>
+  node: Phaser.GameObjects.Container & { __layoutProps?: LayoutProps & BackgroundProps },
+  _prev: Partial<LayoutProps & BackgroundProps>,
+  next: Partial<LayoutProps & BackgroundProps>
 ): void {
   // Update stored layout props
-  node.__layoutProps = next as LayoutProps
+  node.__layoutProps = next as LayoutProps & BackgroundProps
 
   // Always recalculate layout
   // This is necessary because:

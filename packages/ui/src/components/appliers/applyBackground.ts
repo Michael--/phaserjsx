@@ -6,14 +6,14 @@ import Phaser from 'phaser'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 
 /**
- * Applies background properties (color, alpha, corner radius)
- * Handles adding, removing, and updating background rectangles on containers
+ * Applies background properties (color, alpha, corner radius, border)
+ * Handles adding, removing, and updating background graphics on containers
  * @param container - Phaser Container with potential background
  * @param prev - Previous props
  * @param next - New props
  */
 export function applyBackgroundProps(
-  container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Rectangle },
+  container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Graphics },
   prev: Partial<BackgroundProps & LayoutProps>,
   next: Partial<BackgroundProps & LayoutProps>
 ): void {
@@ -25,40 +25,98 @@ export function applyBackgroundProps(
   const nextWidth = typeof next.width === 'number' ? next.width : 100
   const prevHeight = typeof prev.height === 'number' ? prev.height : 100
   const nextHeight = typeof next.height === 'number' ? next.height : 100
+  const prevCornerRadius = prev.cornerRadius ?? 0
+  const nextCornerRadius = next.cornerRadius ?? 0
+  const prevBorderWidth = prev.borderWidth ?? 0
+  const nextBorderWidth = next.borderWidth ?? 0
+  const prevBorderColor = prev.borderColor
+  const nextBorderColor = next.borderColor
+  const prevBorderAlpha = prev.borderAlpha ?? 1
+  const nextBorderAlpha = next.borderAlpha ?? 1
 
-  if (prevBgColor !== undefined && nextBgColor === undefined) {
-    // Remove background
+  const prevHasBorder = prevBorderWidth > 0 && prevBorderColor !== undefined
+  const nextHasBorder = nextBorderWidth > 0 && nextBorderColor !== undefined
+  const prevHasGraphics = prevBgColor !== undefined || prevHasBorder
+  const nextHasGraphics = nextBgColor !== undefined || nextHasBorder
+
+  if (prevHasGraphics && !nextHasGraphics) {
+    // Remove background/border graphics entirely
     if (container.__background) {
       container.__background.destroy()
       delete container.__background
     }
-  } else if (prevBgColor === undefined && nextBgColor !== undefined) {
-    // Add background
+  } else if (!prevHasGraphics && nextHasGraphics) {
+    // Add background/border graphics
     if (container.scene) {
-      const background = container.scene.add.rectangle(
-        0,
-        0,
-        nextWidth,
-        nextHeight,
-        nextBgColor,
-        nextBgAlpha
-      )
-      background.setOrigin(0, 0)
+      const background = container.scene.add.graphics()
+
+      if (nextBgColor !== undefined) {
+        background.fillStyle(nextBgColor, nextBgAlpha)
+      }
+
+      if (nextHasBorder) {
+        background.lineStyle(nextBorderWidth, nextBorderColor, nextBorderAlpha)
+      }
+
+      if (nextCornerRadius !== 0) {
+        if (nextBgColor !== undefined) {
+          background.fillRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
+        }
+        if (nextHasBorder) {
+          background.strokeRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
+        }
+      } else {
+        if (nextBgColor !== undefined) {
+          background.fillRect(0, 0, nextWidth, nextHeight)
+        }
+        if (nextHasBorder) {
+          background.strokeRect(0, 0, nextWidth, nextHeight)
+        }
+      }
+
       container.add(background)
       container.__background = background
-      ;(background as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground =
+      ;(background as Phaser.GameObjects.Graphics & { __isBackground?: boolean }).__isBackground =
         true
     }
-  } else if (container.__background && nextBgColor !== undefined) {
-    // Update existing background
-    if (prevBgColor !== nextBgColor) {
-      container.__background.setFillStyle(nextBgColor, nextBgAlpha)
-    }
-    if (prevBgAlpha !== nextBgAlpha) {
-      container.__background.setAlpha(nextBgAlpha)
-    }
-    if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
-      container.__background.setSize(nextWidth, nextHeight)
+  } else if (container.__background && nextHasGraphics) {
+    // Update existing background - Graphics requires clear and redraw
+    const needsRedraw =
+      prevBgColor !== nextBgColor ||
+      prevBgAlpha !== nextBgAlpha ||
+      prevWidth !== nextWidth ||
+      prevHeight !== nextHeight ||
+      prevCornerRadius !== nextCornerRadius ||
+      prevBorderWidth !== nextBorderWidth ||
+      prevBorderColor !== nextBorderColor ||
+      prevBorderAlpha !== nextBorderAlpha
+
+    if (needsRedraw) {
+      container.__background.clear()
+
+      if (nextBgColor !== undefined) {
+        container.__background.fillStyle(nextBgColor, nextBgAlpha)
+      }
+
+      if (nextHasBorder) {
+        container.__background.lineStyle(nextBorderWidth, nextBorderColor, nextBorderAlpha)
+      }
+
+      if (nextCornerRadius !== 0) {
+        if (nextBgColor !== undefined) {
+          container.__background.fillRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
+        }
+        if (nextHasBorder) {
+          container.__background.strokeRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
+        }
+      } else {
+        if (nextBgColor !== undefined) {
+          container.__background.fillRect(0, 0, nextWidth, nextHeight)
+        }
+        if (nextHasBorder) {
+          container.__background.strokeRect(0, 0, nextWidth, nextHeight)
+        }
+      }
     }
   }
 }

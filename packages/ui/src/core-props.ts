@@ -123,7 +123,10 @@ export interface LayoutProps {
 export interface BackgroundProps {
   backgroundColor?: number
   backgroundAlpha?: number
-  cornerRadius?: number
+  cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+  borderWidth?: number
+  borderColor?: number
+  borderAlpha?: number
 }
 
 /**

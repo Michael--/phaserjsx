@@ -43,7 +43,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Add background if backgroundColor is provided
   createBackground(
     scene,
-    container as typeof container & { __background?: Phaser.GameObjects.Rectangle },
+    container as typeof container & { __background?: Phaser.GameObjects.Graphics },
     props
   )
 
@@ -70,7 +70,7 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
 
   // Background updates
   const container = node as Phaser.GameObjects.Container & {
-    __background?: Phaser.GameObjects.Rectangle
+    __background?: Phaser.GameObjects.Graphics
   }
 
   applyBackgroundProps(container, prev, next)

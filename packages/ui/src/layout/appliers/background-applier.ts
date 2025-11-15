@@ -5,7 +5,7 @@ import type Phaser from 'phaser'
 import type { GameObjectWithLayout } from '../types'
 
 /**
- * Update background rectangle size if present
+ * Update background graphics size if present
  * @param container - Phaser container
  * @param width - Background width
  * @param height - Background height
@@ -19,9 +19,47 @@ export function updateBackground(
 ): void {
   const background = (container as GameObjectWithLayout).__background
   if (background) {
-    background.setSize(width, height)
-    if (debug) {
-      console.log('  Background resized to:', { width, height })
+    // Graphics don't have setSize - need to redraw
+    // Get current fill/stroke styles from __layoutProps
+    const layoutProps = (container as GameObjectWithLayout).__layoutProps
+    if (layoutProps) {
+      const bgColor = layoutProps.backgroundColor
+      const bgAlpha = layoutProps.backgroundAlpha ?? 1
+      const cornerRadius = layoutProps.cornerRadius ?? 0
+      const borderWidth = layoutProps.borderWidth ?? 0
+      const borderColor = layoutProps.borderColor
+      const borderAlpha = layoutProps.borderAlpha ?? 1
+      const hasBorder = borderWidth > 0 && borderColor !== undefined
+
+      background.clear()
+
+      if (bgColor !== undefined) {
+        background.fillStyle(bgColor, bgAlpha)
+      }
+
+      if (hasBorder) {
+        background.lineStyle(borderWidth, borderColor, borderAlpha)
+      }
+
+      if (cornerRadius !== 0) {
+        if (bgColor !== undefined) {
+          background.fillRoundedRect(0, 0, width, height, cornerRadius)
+        }
+        if (hasBorder) {
+          background.strokeRoundedRect(0, 0, width, height, cornerRadius)
+        }
+      } else {
+        if (bgColor !== undefined) {
+          background.fillRect(0, 0, width, height)
+        }
+        if (hasBorder) {
+          background.strokeRect(0, 0, width, height)
+        }
+      }
+
+      if (debug) {
+        console.log('  Background redrawn to:', { width, height })
+      }
     }
   }
 }
