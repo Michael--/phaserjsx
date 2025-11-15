@@ -131,17 +131,16 @@ export function calculateLayout(
   // 6a. Distribute flex space if there are flex children
   let finalLayoutChildren = layoutChildren
   if (hasFlexChildren(layoutChildren)) {
-    const availableMainSpace =
+    const contentSize =
       direction === 'row'
         ? containerWidth - padding.left - padding.right
         : containerHeight - padding.top - padding.bottom
 
-    finalLayoutChildren = distributeFlexSpace(
-      layoutChildren,
-      availableMainSpace,
-      metrics.totalMainSize,
-      direction
-    )
+    // Subtract gap space (gap appears between children, so n-1 gaps for n children)
+    const totalGapSpace = layoutChildren.length > 1 ? gap * (layoutChildren.length - 1) : 0
+    const availableMainSpace = contentSize - totalGapSpace
+
+    finalLayoutChildren = distributeFlexSpace(layoutChildren, availableMainSpace, direction)
 
     // Recalculate metrics with updated sizes
     const updatedMetrics = strategy.calculateMetrics(

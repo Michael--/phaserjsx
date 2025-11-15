@@ -8,14 +8,12 @@ import type { LayoutChild } from '../types'
  * Distributes remaining space among flex children proportionally
  * @param children - Layout children
  * @param availableSpace - Total available space on main axis
- * @param usedSpace - Space already used by non-flex children
  * @param direction - Layout direction ('row' or 'column')
  * @returns Updated children with flex sizes resolved
  */
 export function distributeFlexSpace(
   children: LayoutChild[],
   availableSpace: number,
-  usedSpace: number,
   direction: 'row' | 'column' | 'stack'
 ): LayoutChild[] {
   if (direction === 'stack') {
@@ -25,12 +23,20 @@ export function distributeFlexSpace(
   // Find all flex children and calculate total flex value
   const flexChildren: { child: LayoutChild; index: number; flexValue: number }[] = []
   let totalFlex = 0
+  let nonFlexSpace = 0
 
   children.forEach((layoutChild, index) => {
     const flexValue = layoutChild.child.__layoutProps?.flex
     if (flexValue !== undefined && flexValue > 0) {
       flexChildren.push({ child: layoutChild, index, flexValue })
       totalFlex += flexValue
+    } else {
+      // Calculate space used by non-flex children
+      if (direction === 'row') {
+        nonFlexSpace += layoutChild.size.width
+      } else {
+        nonFlexSpace += layoutChild.size.height
+      }
     }
   })
 
@@ -40,7 +46,7 @@ export function distributeFlexSpace(
   }
 
   // Calculate remaining space for flex distribution
-  const remainingSpace = Math.max(0, availableSpace - usedSpace)
+  const remainingSpace = Math.max(0, availableSpace - nonFlexSpace)
 
   // Distribute space proportionally
   const updatedChildren = [...children]
