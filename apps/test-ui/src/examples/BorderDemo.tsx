@@ -105,6 +105,42 @@ export function BorderDemo() {
       >
         <Text text="Border Only" color={'white'} style={{ fontSize: 12 }} />
       </View>
+
+      {/* Overflow hidden - text clipping */}
+      <View
+        width={150}
+        height={60}
+        backgroundColor={0x2a2a2a}
+        borderWidth={2}
+        borderColor={0xff9ff3}
+        cornerRadius={10}
+        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+        overflow="hidden"
+      >
+        <Text
+          text="This is a very long text that will be clipped by the overflow hidden property"
+          color={'white'}
+          style={{ fontSize: 12 }}
+        />
+      </View>
+
+      {/* Overflow visible - comparison */}
+      <View
+        width={150}
+        height={60}
+        backgroundColor={0x2a2a2a}
+        borderWidth={2}
+        borderColor={0x95e1d3}
+        cornerRadius={10}
+        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+        overflow="visible"
+      >
+        <Text
+          text="Same text but overflow visible (default)"
+          color={'white'}
+          style={{ fontSize: 12 }}
+        />
+      </View>
     </View>
   )
 }

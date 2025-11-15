@@ -115,6 +115,18 @@ export interface LayoutProps {
    * </View>
    */
   flex?: number
+
+  /**
+   * Controls how content that overflows the container bounds is displayed
+   * - 'visible': Content can overflow container bounds (default)
+   * - 'hidden': Content is clipped to container bounds using Phaser mask
+   *
+   * @example
+   * <View width={100} height={50} overflow="hidden">
+   *   <Text text="This long text will be clipped" />
+   * </View>
+   */
+  overflow?: 'visible' | 'hidden'
 }
 
 /**

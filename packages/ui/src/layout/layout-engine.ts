@@ -20,6 +20,67 @@ import { calculateJustifyContent } from './utils/spacing-calculator'
 const debug = false
 
 /**
+ * Applies overflow mask to container if overflow='hidden' is set
+ * Creates a geometry mask that clips children to container bounds
+ * @param container - Phaser container to apply mask to
+ * @param containerProps - Layout props containing overflow setting
+ * @param width - Container width
+ * @param height - Container height
+ * @param debug - Debug logging flag
+ */
+function applyOverflowMask(
+  container: Phaser.GameObjects.Container,
+  containerProps: LayoutProps,
+  width: number,
+  height: number,
+  debug: boolean
+): void {
+  const extendedContainer = container as typeof container & {
+    __overflowMask?: Phaser.GameObjects.Graphics | undefined
+  }
+
+  if (containerProps.overflow === 'hidden') {
+    // Create or update mask
+    if (!extendedContainer.__overflowMask) {
+      const maskGraphics = container.scene.add.graphics()
+      extendedContainer.__overflowMask = maskGraphics
+
+      // Create geometry mask
+      const mask = maskGraphics.createGeometryMask()
+      container.setMask(mask)
+
+      if (debug) console.log('[Layout] Created overflow mask')
+    }
+
+    // Update mask shape to match container dimensions
+    // Use world position for mask since Graphics are not children of the container
+    const maskGraphics = extendedContainer.__overflowMask
+    const worldPos = container.getWorldTransformMatrix()
+    // Clear and redraw mask, this would color the mask if needed, currently commented out for future use
+    maskGraphics.clear()
+    maskGraphics.fillStyle(0xff00ff)
+    maskGraphics.alpha = 0.3
+    // when the followline is uncommented, the mask will be invisible
+    maskGraphics.fillRect(worldPos.tx + 200, worldPos.ty, width, height)
+
+    if (debug)
+      console.log('[Layout] Updated overflow mask:', {
+        x: worldPos.tx,
+        y: worldPos.ty,
+        width,
+        height,
+      })
+  } else if (extendedContainer.__overflowMask) {
+    // Remove mask if overflow is not hidden
+    container.clearMask()
+    extendedContainer.__overflowMask.destroy()
+    extendedContainer.__overflowMask = undefined
+
+    if (debug) console.log('[Layout] Removed overflow mask')
+  }
+}
+
+/**
  * Strategy map - reusable strategy instances
  */
 const strategies: Record<string, LayoutStrategy> = {
@@ -285,4 +346,7 @@ export function calculateLayout(
   // 13. Update background and hit area
   updateBackground(container, containerWidth, containerHeight, debug)
   updateHitArea(container, containerWidth, containerHeight, debug)
+
+  // 14. Apply overflow mask if needed
+  applyOverflowMask(container, containerProps, containerWidth, containerHeight, debug)
 }
