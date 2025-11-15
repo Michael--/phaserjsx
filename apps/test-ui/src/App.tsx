@@ -223,21 +223,6 @@ export function App(props: AppProps) {
 
   const [selectedDemo, setSelectedDemo] = useState('layout')
 
-  const renderDemo = () => {
-    switch (selectedDemo) {
-      case 'layout':
-        return <LayoutExample />
-      case 'advanced':
-        return <AdvancedLayoutDemo />
-      case 'toggle':
-        return <ToggleButtonDemo />
-      case 'stack':
-        return <StackDemo />
-      default:
-        return <LayoutExample />
-    }
-  }
-
   return (
     <View
       width={width}
@@ -259,14 +244,19 @@ export function App(props: AppProps) {
       </Sidebar>
 
       <View
-        height={'100%'} // dit it, but got: [Size] Cannot resolve percentage without parent size. Using content size or fallback.
+        height={'100%'}
         padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
         justifyContent="space-between"
         backgroundColor={0x764522}
       >
-        {renderDemo()}
+        <View key="demo-container">
+          {selectedDemo === 'layout' && <LayoutExample key="layout" />}
+          {selectedDemo === 'advanced' && <AdvancedLayoutDemo key="advanced" />}
+          {selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
+          {selectedDemo === 'stack' && <StackDemo key="stack" />}
+        </View>
 
-        <View direction="row" justifyContent="end">
+        <View direction="row" justifyContent="end" key="footer">
           <Text
             text={`Screen: ${width} x ${height} | Demo: ${selectedDemo}`}
             color={'white'}
