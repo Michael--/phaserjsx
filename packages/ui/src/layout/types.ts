@@ -79,10 +79,35 @@ export interface ContentArea {
  * Parsed size representation
  */
 export interface ParsedSize {
-  /** Size type: fixed pixels, percentage of parent, or auto (content-based) */
-  type: 'fixed' | 'percent' | 'auto'
-  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto */
+  /** Size type: fixed pixels, percentage of parent, auto (content-based), or calc expression */
+  type: 'fixed' | 'percent' | 'auto' | 'calc'
+  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto/calc */
   value?: number
+  /** Calc expression data (only for type='calc') */
+  calc?: CalcExpression
+}
+
+/**
+ * Calc expression representation
+ * Supports: calc(50% - 20px), calc(100% + 10px), etc.
+ */
+export interface CalcExpression {
+  /** Left operand */
+  left: CalcOperand
+  /** Operator: +, -, *, / */
+  operator: '+' | '-' | '*' | '/'
+  /** Right operand */
+  right: CalcOperand
+}
+
+/**
+ * Calc operand - can be fixed pixels or percentage
+ */
+export interface CalcOperand {
+  /** Operand type */
+  type: 'fixed' | 'percent'
+  /** Numeric value */
+  value: number
 }
 
 /**

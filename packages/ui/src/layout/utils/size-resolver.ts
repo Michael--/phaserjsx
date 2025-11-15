@@ -1,11 +1,58 @@
 /**
  * Size resolution utilities for handling different size value types
- * Supports fixed pixels, percentages, and auto sizing
+ * Supports fixed pixels, percentages, auto sizing, and calc() expressions
  */
-import type { ParsedSize } from '../types'
+import type { CalcExpression, CalcOperand, ParsedSize } from '../types'
 
 // Re-export for convenience
 export type { ParsedSize } from '../types'
+
+/**
+ * Parse a calc operand (e.g., "50%" or "20px")
+ * @param operand - String operand from calc expression
+ * @returns Parsed operand
+ */
+function parseCalcOperand(operand: string): CalcOperand {
+  const trimmed = operand.trim()
+
+  // Percentage: "50%"
+  const percentMatch = trimmed.match(/^(\d+(?:\.\d+)?)%$/)
+  if (percentMatch && percentMatch[1]) {
+    return { type: 'percent', value: parseFloat(percentMatch[1]) }
+  }
+
+  // Fixed pixels: "20px" or "20"
+  const pixelMatch = trimmed.match(/^(-?\d+(?:\.\d+)?)(?:px)?$/)
+  if (pixelMatch && pixelMatch[1]) {
+    return { type: 'fixed', value: parseFloat(pixelMatch[1]) }
+  }
+
+  throw new Error(`[Size] Invalid calc operand: "${operand}"`)
+}
+
+/**
+ * Parse a calc() expression
+ * @param expr - Calc expression string without "calc(" prefix
+ * @returns Parsed calc expression
+ */
+function parseCalcExpression(expr: string): CalcExpression {
+  // Support: +, -, *, /
+  // Find operator (look for operators not inside parentheses)
+  const operators = ['+', '-', '*', '/']
+
+  for (const op of operators) {
+    const parts = expr.split(op)
+    if (parts.length === 2 && parts[0] && parts[1]) {
+      return {
+        left: parseCalcOperand(parts[0]),
+        operator: op as '+' | '-' | '*' | '/',
+        right: parseCalcOperand(parts[1]),
+      }
+    }
+  }
+
+  throw new Error(`[Size] Invalid calc expression: "calc(${expr})"`)
+}
 
 /**
  * Parse a size value into its components
@@ -14,10 +61,11 @@ export type { ParsedSize } from '../types'
  * @throws Error if string format is invalid
  *
  * @example
- * parseSize(100)      // { type: 'fixed', value: 100 }
- * parseSize('50%')    // { type: 'percent', value: 50 }
- * parseSize(undefined) // { type: 'auto' }
- * parseSize('auto')   // { type: 'auto' }
+ * parseSize(100)                    // { type: 'fixed', value: 100 }
+ * parseSize('50%')                  // { type: 'percent', value: 50 }
+ * parseSize('calc(100% - 40px)')    // { type: 'calc', calc: {...} }
+ * parseSize(undefined)              // { type: 'auto' }
+ * parseSize('auto')                 // { type: 'auto' }
  */
 export function parseSize(size: number | string | undefined): ParsedSize {
   // undefined -> auto (dynamic based on content)
@@ -35,6 +83,12 @@ export function parseSize(size: number | string | undefined): ParsedSize {
     return { type: 'auto' }
   }
 
+  // Calc expression: "calc(100% - 40px)"
+  const calcMatch = size.match(/^calc\((.+)\)$/)
+  if (calcMatch && calcMatch[1]) {
+    return { type: 'calc', calc: parseCalcExpression(calcMatch[1]) }
+  }
+
   // Percentage format: "50%", "75.5%", "100%"
   const percentMatch = size.match(/^(\d+(?:\.\d+)?)%$/)
   if (percentMatch && percentMatch[1]) {
@@ -47,22 +101,70 @@ export function parseSize(size: number | string | undefined): ParsedSize {
 
   // Unknown format
   throw new Error(
-    `[Size] Invalid size format: "${size}". Supported formats: number, "X%", "auto", undefined`
+    `[Size] Invalid size format: "${size}". Supported formats: number, "X%", "calc(...)", "auto", undefined`
   )
+}
+
+/**
+ * Resolve a calc operand to pixel value
+ * @param operand - Calc operand
+ * @param parentSize - Parent dimension for percentage resolution
+ * @returns Resolved pixel value
+ */
+function resolveCalcOperand(operand: CalcOperand, parentSize?: number): number {
+  if (operand.type === 'fixed') {
+    return operand.value
+  }
+
+  // Percentage
+  if (parentSize === undefined) {
+    console.warn(`[Size] Cannot resolve percentage in calc() without parent size. Using 0.`)
+    return 0
+  }
+  return (parentSize * operand.value) / 100
+}
+
+/**
+ * Resolve a calc expression to pixel value
+ * @param calc - Calc expression
+ * @param parentSize - Parent dimension for percentage resolution
+ * @returns Resolved pixel value
+ */
+function resolveCalcExpression(calc: CalcExpression, parentSize?: number): number {
+  const left = resolveCalcOperand(calc.left, parentSize)
+  const right = resolveCalcOperand(calc.right, parentSize)
+
+  switch (calc.operator) {
+    case '+':
+      return left + right
+    case '-':
+      return left - right
+    case '*':
+      return left * right
+    case '/':
+      if (right === 0) {
+        console.error('[Size] Division by zero in calc expression')
+        return 0
+      }
+      return left / right
+    default:
+      console.error(`[Size] Unknown calc operator: ${calc.operator}`)
+      return 0
+  }
 }
 
 /**
  * Resolve a parsed size to actual pixel value
  * @param parsed - Parsed size information
- * @param parentSize - Parent dimension in pixels (required for percentage)
+ * @param parentSize - Parent dimension in pixels (required for percentage and calc)
  * @param contentSize - Content dimension in pixels (fallback for auto)
  * @returns Resolved size in pixels
  *
  * @example
- * resolveSize({ type: 'fixed', value: 100 }, 200)         // 100
- * resolveSize({ type: 'percent', value: 50 }, 200)        // 100 (50% of 200)
- * resolveSize({ type: 'auto' }, 200, 150)                 // 150 (content size)
- * resolveSize({ type: 'percent', value: 75 }, undefined)  // Error: no parent
+ * resolveSize({ type: 'fixed', value: 100 }, 200)                    // 100
+ * resolveSize({ type: 'percent', value: 50 }, 200)                   // 100 (50% of 200)
+ * resolveSize({ type: 'calc', calc: {...} }, 200)                    // calc result
+ * resolveSize({ type: 'auto' }, 200, 150)                            // 150 (content size)
  */
 export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize?: number): number {
   switch (parsed.type) {
@@ -77,6 +179,13 @@ export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize
         return contentSize ?? 100
       }
       return (parentSize * (parsed.value ?? 0)) / 100
+
+    case 'calc':
+      if (!parsed.calc) {
+        console.error('[Size] Calc type without calc expression')
+        return 100
+      }
+      return resolveCalcExpression(parsed.calc, parentSize)
 
     case 'auto':
       if (contentSize === undefined) {
@@ -98,7 +207,16 @@ export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize
  * @returns True if size requires parent dimension
  */
 export function requiresParent(parsed: ParsedSize): boolean {
-  return parsed.type === 'percent'
+  if (parsed.type === 'percent') {
+    return true
+  }
+
+  // Calc expressions might contain percentages
+  if (parsed.type === 'calc' && parsed.calc) {
+    return parsed.calc.left.type === 'percent' || parsed.calc.right.type === 'percent'
+  }
+
+  return false
 }
 
 /**
@@ -107,5 +225,5 @@ export function requiresParent(parsed: ParsedSize): boolean {
  * @returns True if size is explicitly defined (not auto)
  */
 export function isExplicit(parsed: ParsedSize): boolean {
-  return parsed.type === 'fixed' || parsed.type === 'percent'
+  return parsed.type === 'fixed' || parsed.type === 'percent' || parsed.type === 'calc'
 }

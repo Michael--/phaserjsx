@@ -66,6 +66,65 @@ describe('parseSize', () => {
     })
   })
 
+  describe('calc expressions', () => {
+    it('parses calc with percentage minus pixels', () => {
+      const result = parseSize('calc(100% - 40px)')
+      expect(result.type).toBe('calc')
+      expect(result.calc).toEqual({
+        left: { type: 'percent', value: 100 },
+        operator: '-',
+        right: { type: 'fixed', value: 40 },
+      })
+    })
+
+    it('parses calc with percentage plus pixels', () => {
+      const result = parseSize('calc(50% + 20px)')
+      expect(result.type).toBe('calc')
+      expect(result.calc).toEqual({
+        left: { type: 'percent', value: 50 },
+        operator: '+',
+        right: { type: 'fixed', value: 20 },
+      })
+    })
+
+    it('parses calc with fixed multiplication', () => {
+      const result = parseSize('calc(100px * 2)')
+      expect(result.type).toBe('calc')
+      expect(result.calc).toEqual({
+        left: { type: 'fixed', value: 100 },
+        operator: '*',
+        right: { type: 'fixed', value: 2 },
+      })
+    })
+
+    it('parses calc with percentage division', () => {
+      const result = parseSize('calc(75% / 3)')
+      expect(result.type).toBe('calc')
+      expect(result.calc).toEqual({
+        left: { type: 'percent', value: 75 },
+        operator: '/',
+        right: { type: 'fixed', value: 3 },
+      })
+    })
+
+    it('parses calc with numbers without px suffix', () => {
+      const result = parseSize('calc(200 - 50)')
+      expect(result.type).toBe('calc')
+      expect(result.calc).toEqual({
+        left: { type: 'fixed', value: 200 },
+        operator: '-',
+        right: { type: 'fixed', value: 50 },
+      })
+    })
+
+    it('handles spaces in calc expression', () => {
+      const result = parseSize('calc( 100%  -  40px )')
+      expect(result.type).toBe('calc')
+      expect(result.calc?.left.type).toBe('percent')
+      expect(result.calc?.right.value).toBe(40)
+    })
+  })
+
   describe('invalid formats', () => {
     it('throws error for invalid string', () => {
       expect(() => parseSize('invalid')).toThrow(/Invalid size format/)
@@ -176,6 +235,86 @@ describe('resolveSize', () => {
       expect(result).toBe(100)
     })
   })
+
+  describe('calc expressions', () => {
+    it('resolves calc with percentage minus pixels', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'percent' as const, value: 100 },
+          operator: '-' as const,
+          right: { type: 'fixed' as const, value: 40 },
+        },
+      }
+      const result = resolveSize(parsed, 500)
+      expect(result).toBe(460) // 500 - 40
+    })
+
+    it('resolves calc with percentage plus pixels', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'percent' as const, value: 50 },
+          operator: '+' as const,
+          right: { type: 'fixed' as const, value: 20 },
+        },
+      }
+      const result = resolveSize(parsed, 200)
+      expect(result).toBe(120) // 100 + 20
+    })
+
+    it('resolves calc with fixed multiplication', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'fixed' as const, value: 50 },
+          operator: '*' as const,
+          right: { type: 'fixed' as const, value: 3 },
+        },
+      }
+      const result = resolveSize(parsed)
+      expect(result).toBe(150)
+    })
+
+    it('resolves calc with division', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'fixed' as const, value: 300 },
+          operator: '/' as const,
+          right: { type: 'fixed' as const, value: 2 },
+        },
+      }
+      const result = resolveSize(parsed)
+      expect(result).toBe(150)
+    })
+
+    it('handles division by zero', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'fixed' as const, value: 100 },
+          operator: '/' as const,
+          right: { type: 'fixed' as const, value: 0 },
+        },
+      }
+      const result = resolveSize(parsed)
+      expect(result).toBe(0)
+    })
+
+    it('resolves percentage in calc without parent', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'percent' as const, value: 50 },
+          operator: '+' as const,
+          right: { type: 'fixed' as const, value: 10 },
+        },
+      }
+      const result = resolveSize(parsed) // no parent
+      expect(result).toBe(10) // 0 + 10
+    })
+  })
 })
 
 describe('helper functions', () => {
@@ -183,6 +322,30 @@ describe('helper functions', () => {
     it('returns true for percentage', () => {
       const parsed = { type: 'percent' as const, value: 50 }
       expect(requiresParent(parsed)).toBe(true)
+    })
+
+    it('returns true for calc with percentage', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'percent' as const, value: 50 },
+          operator: '+' as const,
+          right: { type: 'fixed' as const, value: 10 },
+        },
+      }
+      expect(requiresParent(parsed)).toBe(true)
+    })
+
+    it('returns false for calc without percentage', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'fixed' as const, value: 100 },
+          operator: '*' as const,
+          right: { type: 'fixed' as const, value: 2 },
+        },
+      }
+      expect(requiresParent(parsed)).toBe(false)
     })
 
     it('returns false for fixed', () => {
@@ -204,6 +367,18 @@ describe('helper functions', () => {
 
     it('returns true for percentage', () => {
       const parsed = { type: 'percent' as const, value: 50 }
+      expect(isExplicit(parsed)).toBe(true)
+    })
+
+    it('returns true for calc', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: { type: 'percent' as const, value: 50 },
+          operator: '+' as const,
+          right: { type: 'fixed' as const, value: 10 },
+        },
+      }
       expect(isExplicit(parsed)).toBe(true)
     })
 
