@@ -120,7 +120,7 @@ export function BorderDemo() {
         <Text
           text="This is a very long text that will be clipped by the overflow hidden property"
           color={'white'}
-          style={{ fontSize: 12 }}
+          style={{ fontSize: 22 }}
         />
       </View>
 

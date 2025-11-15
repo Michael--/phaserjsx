@@ -2,7 +2,7 @@
  * Layout engine - main orchestrator for layout calculations
  * Uses strategy pattern to handle different layout directions
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { LayoutProps } from '../core-props'
 import { updateBackground, updateHitArea } from './appliers/background-applier'
 import { applyContainerDimensions } from './appliers/container-applier'
@@ -37,6 +37,7 @@ function applyOverflowMask(
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
+    __maskUpdateScheduled?: boolean
   }
 
   if (containerProps.overflow === 'hidden') {
@@ -45,28 +46,79 @@ function applyOverflowMask(
       const maskGraphics = container.scene.add.graphics()
       extendedContainer.__overflowMask = maskGraphics
 
+      // DO NOT add as child - mask needs to be independent
+
       // Create geometry mask
       const mask = maskGraphics.createGeometryMask()
       container.setMask(mask)
+
+      // Destroy mask when container is destroyed
+      container.once('destroy', () => {
+        if (extendedContainer.__overflowMask) {
+          extendedContainer.__overflowMask.destroy()
+          extendedContainer.__overflowMask = undefined
+        }
+      })
 
       if (debug) console.log('[Layout] Created overflow mask')
     }
 
     // Update mask shape to match container dimensions
-    // Use world position for mask since Graphics are not children of the container
+    // Use world position since mask is NOT a child of the container
     const maskGraphics = extendedContainer.__overflowMask
-    const worldPos = container.getWorldTransformMatrix()
-    // Clear and redraw mask, this would color the mask if needed, currently commented out for future use
+
+    // Calculate absolute world position by traversing parent chain and accumulating offsets
+    let worldX = 0
+    let worldY = 0
+    let current: Phaser.GameObjects.Container | null = container
+
+    while (current) {
+      worldX += current.x
+      worldY += current.y
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      current = (current as any).parentContainer || null
+    }
+
     maskGraphics.clear()
-    maskGraphics.fillStyle(0xff00ff)
-    maskGraphics.alpha = 0.3
-    // when the followline is uncommented, the mask will be invisible
-    maskGraphics.fillRect(worldPos.tx + 200, worldPos.ty, width, height)
+    maskGraphics.fillStyle(0xff00ff) // Pink for debugging - set to 0xffffff for production
+    maskGraphics.setAlpha(0.3) // Visible for debugging - set to 0 for production
+    // Use accumulated world position
+    maskGraphics.fillRect(worldX, worldY, width, height)
+
+    // Schedule a post-update to fix initial position after all parents are positioned
+    // This ensures the mask is correctly positioned even on first render
+    if (!extendedContainer.__maskUpdateScheduled) {
+      extendedContainer.__maskUpdateScheduled = true
+      container.scene.sys.events.once('postupdate', () => {
+        extendedContainer.__maskUpdateScheduled = false
+        // Recalculate world position after all layouts are complete
+        let finalX = 0
+        let finalY = 0
+        let curr: Phaser.GameObjects.Container | null = container
+        while (curr) {
+          finalX += curr.x
+          finalY += curr.y
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          curr = (curr as any).parentContainer || null
+        }
+        if (extendedContainer.__overflowMask && (finalX !== worldX || finalY !== worldY)) {
+          // following line would color the mask area, need to set alpha a bit greater 0
+          // useful to debug mask position issues
+          //extendedContainer.__overflowMask.clear()
+          //extendedContainer.__overflowMask.fillStyle(0x000000)
+          extendedContainer.__overflowMask.setAlpha(0.0)
+          extendedContainer.__overflowMask.fillRect(finalX - 1, finalY - 1, width + 2, height + 2)
+          if (debug) console.log('[Layout] Post-updated overflow mask:', { x: finalX, y: finalY })
+        }
+      })
+    }
 
     if (debug)
       console.log('[Layout] Updated overflow mask:', {
-        x: worldPos.tx,
-        y: worldPos.ty,
+        x: worldX,
+        y: worldY,
+        containerX: container.x,
+        containerY: container.y,
         width,
         height,
       })
