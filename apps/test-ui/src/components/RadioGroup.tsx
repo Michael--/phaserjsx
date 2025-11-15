@@ -74,9 +74,12 @@ export function RadioGroup(props: RadioGroupProps) {
               alignItems="center"
               justifyContent="center"
             >
-              {isSelected && (
-                <View width={innerSize} height={innerSize} backgroundColor={0xffffff} />
-              )}
+              <View
+                width={innerSize}
+                height={innerSize}
+                backgroundColor={0xffffff}
+                visible={isSelected}
+              />
             </View>
 
             <Text

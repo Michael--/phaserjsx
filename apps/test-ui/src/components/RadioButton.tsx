@@ -50,7 +50,12 @@ export function RadioButton(props: RadioButtonProps) {
         alignItems="center"
         justifyContent="center"
       >
-        {props.selected && <View width={innerSize} height={innerSize} backgroundColor={0xffffff} />}
+        <View
+          width={innerSize}
+          height={innerSize}
+          backgroundColor={0xffffff}
+          visible={props.selected ?? false}
+        />
       </View>
 
       <Text text={props.label} color={props.labelColor ?? 'white'} style={{ fontSize: 14 }} />
