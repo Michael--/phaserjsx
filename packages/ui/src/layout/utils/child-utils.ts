@@ -29,11 +29,9 @@ export function getChildSize(
   child: GameObjectWithLayout,
   parentSize?: { width: number; height: number }
 ): LayoutSize {
-  // If child has flex property, return minimal size (will be calculated during flex distribution)
-  const flexValue = child.__layoutProps?.flex
-  if (flexValue !== undefined && flexValue > 0) {
-    return { width: 1, height: 1 } // Minimal placeholder size for flex children
-  }
+  // For flex children, we still need to calculate their actual size
+  // (especially for cross-axis dimension in row/column layouts)
+  // The main-axis size will be overridden by flex distribution anyway
 
   // If __layoutProps exists, use it (has priority for explicit layout configuration)
   if (
