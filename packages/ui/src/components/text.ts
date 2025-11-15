@@ -4,7 +4,7 @@
 import type Phaser from 'phaser'
 import type { EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import type { PropsExtension } from '../types'
+import type { PropsDefaultExtension } from '../types'
 import { applyTextProps } from './appliers/applyText'
 import { applyTextLayout } from './appliers/applyTextLayout'
 import { applyTransformProps } from './appliers/applyTransform'
@@ -24,7 +24,7 @@ export interface TextBaseProps extends TransformProps, TextSpecificProps {
 /**
  * Props for Text component - extends base props with JSX-specific props
  */
-export interface TextProps extends TextBaseProps, PropsExtension {}
+export interface TextProps extends TextBaseProps, PropsDefaultExtension {}
 
 /**
  * Text creator - creates a Phaser Text object

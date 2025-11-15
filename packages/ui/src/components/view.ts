@@ -4,7 +4,7 @@
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import type { PropsExtension } from '../types'
+import type { PropsContainerExtension, PropsDefaultExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyInteractionProps } from './appliers/applyInteraction'
 import { applyLayoutProps } from './appliers/applyLayout'
@@ -26,7 +26,7 @@ export interface ViewBaseProps
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
  */
-export interface ViewProps extends ViewBaseProps, PropsExtension {}
+export interface ViewProps extends ViewBaseProps, PropsDefaultExtension, PropsContainerExtension {}
 
 /**
  * View creator - creates a Phaser Container with optional background and interaction
