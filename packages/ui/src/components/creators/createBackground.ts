@@ -14,7 +14,7 @@ import type { BackgroundProps } from '../../core-props'
 export function createBackground(
   scene: Phaser.Scene,
   container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Rectangle },
-  props: Partial<BackgroundProps & { width?: number; height?: number }>
+  props: Partial<BackgroundProps & { width?: number | undefined; height?: number | undefined }>
 ): void {
   if (props.backgroundColor !== undefined) {
     const width = (props.width as number | undefined) ?? 100

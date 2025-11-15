@@ -12,7 +12,7 @@ import type { InteractionProps } from '../../core-props'
  */
 export function createInteraction(
   container: Phaser.GameObjects.Container,
-  props: Partial<InteractionProps & { width?: number; height?: number }>
+  props: Partial<InteractionProps & { width?: number | undefined; height?: number | undefined }>
 ): void {
   if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
     const width = props.width ?? 100

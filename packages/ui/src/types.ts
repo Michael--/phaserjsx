@@ -8,6 +8,6 @@ export type SignalLike<T> = { value: T } | T
  */
 export type ParentType = Phaser.Scene | Phaser.GameObjects.Container
 export interface PropsExtension {
-  key?: string | number
+  key?: string | number | undefined
   children?: VNode | VNode[] | null | undefined
 }

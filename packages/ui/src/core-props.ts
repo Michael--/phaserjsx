@@ -32,8 +32,8 @@ export interface EdgeInsets {
  * Layout properties - basic sizing and spacing (minimal for now)
  */
 export interface LayoutProps {
-  width?: number
-  height?: number
+  width?: number | undefined
+  height?: number | undefined
   margin?: EdgeInsets
   padding?: EdgeInsets
   /**
