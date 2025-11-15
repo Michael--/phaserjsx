@@ -71,51 +71,6 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
 
   applyBackgroundProps(container, prev, next)
 
-  const prevBgColor = prev.backgroundColor
-  const nextBgColor = next.backgroundColor
-  const prevBgAlpha = prev.backgroundAlpha ?? 1
-  const nextBgAlpha = next.backgroundAlpha ?? 1
-  const prevWidth = prev.width ?? 100
-  const nextWidth = next.width ?? 100
-  const prevHeight = prev.height ?? 100
-  const nextHeight = next.height ?? 100
-
-  if (prevBgColor !== undefined && nextBgColor === undefined) {
-    // Remove background
-    if (container.__background) {
-      container.__background.destroy()
-      delete container.__background
-    }
-  } else if (prevBgColor === undefined && nextBgColor !== undefined) {
-    // Add background
-    if (container.scene) {
-      const background = container.scene.add.rectangle(
-        0,
-        0,
-        nextWidth,
-        nextHeight,
-        nextBgColor,
-        nextBgAlpha
-      )
-      background.setOrigin(0, 0)
-      container.add(background)
-      container.__background = background
-      ;(background as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground =
-        true
-    }
-  } else if (container.__background && nextBgColor !== undefined) {
-    // Update existing background
-    if (prevBgColor !== nextBgColor) {
-      container.__background.setFillStyle(nextBgColor, nextBgAlpha)
-    }
-    if (prevBgAlpha !== nextBgAlpha) {
-      container.__background.setAlpha(nextBgAlpha)
-    }
-    if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
-      container.__background.setSize(nextWidth, nextHeight)
-    }
-  }
-
   // Pointer event handlers
   const prevDown = prev.onPointerDown
   const nextDown = next.onPointerDown

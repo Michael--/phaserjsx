@@ -2,29 +2,63 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
-import type { BackgroundProps } from '../../core-props'
+import Phaser from 'phaser'
+import type { BackgroundProps, LayoutProps } from '../../core-props'
 
 /**
  * Applies background properties (color, alpha, corner radius)
- * Currently checks for changes only - actual rendering is component-specific
- * @param _node - Node with potential background
+ * Handles adding, removing, and updating background rectangles on containers
+ * @param container - Phaser Container with potential background
  * @param prev - Previous props
  * @param next - New props
  */
 export function applyBackgroundProps(
-  _node: unknown,
-  prev: Partial<BackgroundProps>,
-  next: Partial<BackgroundProps>
+  container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Rectangle },
+  prev: Partial<BackgroundProps & LayoutProps>,
+  next: Partial<BackgroundProps & LayoutProps>
 ): void {
-  // Check if background props changed
-  if (
-    prev.backgroundColor === next.backgroundColor &&
-    prev.backgroundAlpha === next.backgroundAlpha &&
-    prev.cornerRadius === next.cornerRadius
-  ) {
-    return
-  }
+  const prevBgColor = prev.backgroundColor
+  const nextBgColor = next.backgroundColor
+  const prevBgAlpha = prev.backgroundAlpha ?? 1
+  const nextBgAlpha = next.backgroundAlpha ?? 1
+  const prevWidth = prev.width ?? 100
+  const nextWidth = next.width ?? 100
+  const prevHeight = prev.height ?? 100
+  const nextHeight = next.height ?? 100
 
-  // Background rendering is component-specific and handled in component patchers
-  // This function serves as a placeholder for future unified background system
+  if (prevBgColor !== undefined && nextBgColor === undefined) {
+    // Remove background
+    if (container.__background) {
+      container.__background.destroy()
+      delete container.__background
+    }
+  } else if (prevBgColor === undefined && nextBgColor !== undefined) {
+    // Add background
+    if (container.scene) {
+      const background = container.scene.add.rectangle(
+        0,
+        0,
+        nextWidth,
+        nextHeight,
+        nextBgColor,
+        nextBgAlpha
+      )
+      background.setOrigin(0, 0)
+      container.add(background)
+      container.__background = background
+      ;(background as Phaser.GameObjects.Rectangle & { __isBackground?: boolean }).__isBackground =
+        true
+    }
+  } else if (container.__background && nextBgColor !== undefined) {
+    // Update existing background
+    if (prevBgColor !== nextBgColor) {
+      container.__background.setFillStyle(nextBgColor, nextBgAlpha)
+    }
+    if (prevBgAlpha !== nextBgAlpha) {
+      container.__background.setAlpha(nextBgAlpha)
+    }
+    if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
+      container.__background.setSize(nextWidth, nextHeight)
+    }
+  }
 }
