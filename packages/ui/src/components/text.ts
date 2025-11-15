@@ -4,10 +4,11 @@
 import type Phaser from 'phaser'
 import type { EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
-import type { LayoutSize } from '../layout'
 import type { PropsExtension } from '../types'
 import { applyTextProps } from './appliers/applyText'
+import { applyTextLayout } from './appliers/applyTextLayout'
 import { applyTransformProps } from './appliers/applyTransform'
+import { createTextLayout } from './creators/createTextLayout'
 import { createTransform } from './creators/createTransform'
 
 /**
@@ -34,18 +35,8 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
   // Apply transform props (visible, depth, alpha, scale, rotation)
   createTransform(text, props)
 
-  // Attach layout props for layout calculations
-  ;(text as Phaser.GameObjects.Text & { __layoutProps?: TextProps }).__layoutProps = props
-
-  // Attach dynamic size provider using getBounds
-  ;(text as Phaser.GameObjects.Text & { __getLayoutSize?: () => LayoutSize }).__getLayoutSize =
-    () => {
-      const bounds = text.getBounds()
-      return {
-        width: bounds.width,
-        height: bounds.height,
-      }
-    }
+  // Setup layout system (props and size provider)
+  createTextLayout(text, props)
 
   return text
 }
@@ -60,18 +51,6 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
   // Apply text-specific props (text content, color, font, etc.)
   applyTextProps(node, prev, next)
 
-  // Update layout props to trigger parent layout recalculation
-  ;(node as Phaser.GameObjects.Text & { __layoutProps?: TextProps }).__layoutProps = next
-
-  // Update size provider if text content or style changed
-  if (prev.text !== next.text || prev.style !== next.style) {
-    ;(node as Phaser.GameObjects.Text & { __getLayoutSize?: () => LayoutSize }).__getLayoutSize =
-      () => {
-        const bounds = node.getBounds()
-        return {
-          width: bounds.width,
-          height: bounds.height,
-        }
-      }
-  }
+  // Apply layout props and update size provider if needed
+  applyTextLayout(node, prev, next)
 }
