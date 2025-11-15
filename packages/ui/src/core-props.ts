@@ -40,8 +40,9 @@ export interface LayoutProps {
    * Layout direction for children
    * - 'column': Stack children vertically (default, like SwiftUI's VStack)
    * - 'row': Stack children horizontally (like SwiftUI's HStack)
+   * - 'stack': Overlay children at the same position (like SwiftUI's ZStack)
    */
-  direction?: 'row' | 'column'
+  direction?: 'row' | 'column' | 'stack'
 
   /**
    * Gap between children (uniform spacing)

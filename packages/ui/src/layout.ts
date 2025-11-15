@@ -154,15 +154,21 @@ export function calculateLayout(
       totalMainSize += marginLeft + size.width + marginRight
       const childTotalHeight = marginTop + size.height + marginBottom
       maxHeight = Math.max(maxHeight, childTotalHeight)
-    } else {
+    } else if (direction === 'column') {
       const childTotalWidth = marginLeft + size.width + marginRight
       maxWidth = Math.max(maxWidth, childTotalWidth)
       totalMainSize += marginTop + size.height + marginBottom
+    } else if (direction === 'stack') {
+      // For stack, track max dimensions (children overlay)
+      const childTotalWidth = marginLeft + size.width + marginRight
+      const childTotalHeight = marginTop + size.height + marginBottom
+      maxWidth = Math.max(maxWidth, childTotalWidth)
+      maxHeight = Math.max(maxHeight, childTotalHeight)
     }
   }
 
-  // Add gaps to total main size
-  if (layoutChildren.length > 1) {
+  // Add gaps to total main size (not applicable for stack)
+  if (direction !== 'stack' && layoutChildren.length > 1) {
     totalMainSize += gap * (layoutChildren.length - 1)
   }
 
@@ -188,28 +194,31 @@ export function calculateLayout(
   let mainStart = 0
   let spaceBetween = 0
 
-  switch (justifyContent) {
-    case 'start':
-      mainStart = 0
-      break
-    case 'center':
-      mainStart = Math.max(0, remainingSpace / 2)
-      break
-    case 'end':
-      mainStart = Math.max(0, remainingSpace)
-      break
-    case 'space-between':
-      mainStart = 0
-      spaceBetween = layoutChildren.length > 1 ? remainingSpace / (layoutChildren.length - 1) : 0
-      break
-    case 'space-around':
-      spaceBetween = layoutChildren.length > 0 ? remainingSpace / layoutChildren.length : 0
-      mainStart = spaceBetween / 2
-      break
-    case 'space-evenly':
-      spaceBetween = layoutChildren.length > 0 ? remainingSpace / (layoutChildren.length + 1) : 0
-      mainStart = spaceBetween
-      break
+  // For stack direction, justifyContent is not applicable
+  if (direction !== 'stack') {
+    switch (justifyContent) {
+      case 'start':
+        mainStart = 0
+        break
+      case 'center':
+        mainStart = Math.max(0, remainingSpace / 2)
+        break
+      case 'end':
+        mainStart = Math.max(0, remainingSpace)
+        break
+      case 'space-between':
+        mainStart = 0
+        spaceBetween = layoutChildren.length > 1 ? remainingSpace / (layoutChildren.length - 1) : 0
+        break
+      case 'space-around':
+        spaceBetween = layoutChildren.length > 0 ? remainingSpace / layoutChildren.length : 0
+        mainStart = spaceBetween / 2
+        break
+      case 'space-evenly':
+        spaceBetween = layoutChildren.length > 0 ? remainingSpace / (layoutChildren.length + 1) : 0
+        mainStart = spaceBetween
+        break
+    }
   }
 
   // Position children
@@ -225,7 +234,28 @@ export function calculateLayout(
     let x = 0
     let y = 0
 
-    if (direction === 'row') {
+    if (direction === 'stack') {
+      // Stack: overlay all children at the same position, respecting alignItems for alignment
+      switch (alignItems) {
+        case 'start':
+          x = paddingLeft + marginLeft
+          y = paddingTop + marginTop
+          break
+        case 'center':
+          x = paddingLeft + (contentAreaWidth - size.width) / 2
+          y = paddingTop + (contentAreaHeight - size.height) / 2
+          break
+        case 'end':
+          x = paddingLeft + contentAreaWidth - size.width - marginRight
+          y = paddingTop + contentAreaHeight - size.height - marginBottom
+          break
+        case 'stretch':
+          x = paddingLeft + marginLeft
+          y = paddingTop + marginTop
+          // TODO: Stretch both width and height if possible
+          break
+      }
+    } else if (direction === 'row') {
       // Main axis (horizontal)
       currentMain += marginLeft
       x = paddingLeft + currentMain
@@ -273,8 +303,8 @@ export function calculateLayout(
       currentMain += size.height + marginBottom
     }
 
-    // Add gap and space-between spacing
-    if (childIndex < layoutChildren.length - 1) {
+    // Add gap and space-between spacing (not for stack)
+    if (direction !== 'stack' && childIndex < layoutChildren.length - 1) {
       currentMain += gap + spaceBetween
     }
 
