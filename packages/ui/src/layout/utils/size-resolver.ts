@@ -173,10 +173,15 @@ export function resolveSize(parsed: ParsedSize, parentSize?: number, contentSize
 
     case 'percent':
       if (parentSize === undefined) {
-        console.warn(
-          `[Size] Cannot resolve percentage without parent size. Using content size or fallback.`
-        )
-        return contentSize ?? 100
+        // Only warn if we also don't have a fallback content size
+        if (contentSize === undefined) {
+          console.warn(
+            `[Size] Cannot resolve percentage without parent size and no content fallback.`
+          )
+          return 100
+        }
+        // Parent size will be available in next layout pass - use content size for now
+        return contentSize
       }
       return (parentSize * (parsed.value ?? 0)) / 100
 
