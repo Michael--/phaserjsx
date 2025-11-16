@@ -108,7 +108,13 @@ export function NineSliceExample() {
   const buttonRef = useNineSliceRef(64, 64, 48, 48)
 
   return (
-    <View direction="column" gap={30} padding={{ top: 20, left: 20 }} backgroundColor={0x1a1a1a}>
+    <View
+      direction="column"
+      gap={30}
+      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
+      alignItems="center"
+      backgroundColor={0x1a1a1a}
+    >
       <Text text="NineSlice Examples" fontSize={24} color="#ffffff" />
 
       {/* Example 1: Button with NineSlice background - uses ref for inner bounds */}
@@ -185,6 +191,8 @@ export function NineSliceExample() {
         <Text text="3-Slice Progress Bar:" fontSize={16} color="#ffffff" />
         <ProgressBar score={score} />
       </View>
+      {/** TODO: this is a dummy view at end, because nineSlice did not correctly considered when calculate needed size */}
+      <View />
     </View>
   )
 }
