@@ -2,9 +2,9 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { DevPresets, Text, View, useState } from '@phaserjsx/ui'
-import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
 import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
+import { Spacer } from './components/Spacer'
 import { BorderDemo } from './examples/BorderDemo'
 import { FlexDemo } from './examples/FlexDemo'
 import { LayoutExample } from './examples/LayoutExample'
@@ -22,10 +22,17 @@ const demos = {
   ref: { label: 'Ref Example', component: RefExample },
 } as const
 
-type DemoKey = keyof typeof demos
+const debugPresets = {
+  production: { label: 'Production', preset: DevPresets.production },
+  debugLayout: { label: 'Debug Layout', preset: DevPresets.debugLayout },
+  debugOverflow: { label: 'Debug Overflow', preset: DevPresets.debugOverflow },
+  profilePerformance: { label: 'Profile Performance', preset: DevPresets.profilePerformance },
+  debugVDOM: { label: 'Debug VDOM', preset: DevPresets.debugVDOM },
+  debugAll: { label: 'Debug All', preset: DevPresets.debugAll },
+} as const
 
-// Enable overflow debugging preset
-DevPresets.debugOverflow()
+type DemoKey = keyof typeof demos
+type DebugPresetKey = keyof typeof debugPresets
 
 /**
  * Props for the root App component
@@ -93,6 +100,34 @@ export function DemoContainer(props: { selectedDemo: DemoKey }) {
   )
 }
 
+export function DebugSide(props: {
+  selectedPreset: DebugPresetKey
+  onChange: (value: DebugPresetKey) => void
+}) {
+  const presetOptions: RadioGroupOption[] = Object.entries(debugPresets).map(([value, config]) => ({
+    value: value as DebugPresetKey,
+    label: config.label,
+  }))
+
+  return (
+    <>
+      <Text text="Debug Options" color={'cyan'} style={{ fontSize: 18 }} />
+      <RadioGroup
+        options={presetOptions}
+        value={props.selectedPreset}
+        onChange={(value: string) => {
+          const key = value as DebugPresetKey
+          debugPresets[key].preset()
+          props.onChange(key)
+        }}
+        gap={8}
+        selectedColor={0x4ecdc4}
+        unselectedColor={0x555555}
+      />
+    </>
+  )
+}
+
 /**
  * Main app component with example selector
  * @param props - App props from Phaser scene
@@ -103,6 +138,7 @@ export function App(props: AppProps) {
   const height = props.height ?? 600
 
   const [selectedDemo, setSelectedDemo] = useState<DemoKey>('border')
+  const [selectedPreset, setSelectedPreset] = useState<DebugPresetKey>('production')
 
   return (
     <View
@@ -112,8 +148,10 @@ export function App(props: AppProps) {
       direction="row"
       justifyContent="start"
     >
-      <Sidebar width={200} height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
+      <Sidebar height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
         <DemoSide selectedDemo={selectedDemo} onChange={setSelectedDemo} />
+        <Spacer />
+        <DebugSide selectedPreset={selectedPreset} onChange={setSelectedPreset} />
       </Sidebar>
 
       <View
@@ -125,19 +163,10 @@ export function App(props: AppProps) {
       >
         <DemoContainer selectedDemo={selectedDemo} />
 
-        <View
-          direction="row"
-          justifyContent="space-between"
-          key="footer"
-          backgroundColor={0x883388}
-        >
-          <View></View>
-
-          <Text
-            text={`Screen: ${width} x ${height} | Demo: ${selectedDemo}`}
-            color={'white'}
-            style={{ fontSize: 14 }}
-          />
+        <View direction="row" justifyContent="space-between" key="footer" width={'fill'}>
+          <Text text={`Demo: ${selectedDemo}`} color={'white'} style={{ fontSize: 14 }} />
+          <Spacer />
+          <Text text={`Screen: ${width} x ${height}`} color={'white'} style={{ fontSize: 14 }} />
         </View>
       </View>
     </View>

@@ -28,7 +28,7 @@ export interface SidebarProps {
  * @returns Sidebar JSX element
  */
 export function Sidebar(props: SidebarProps) {
-  const width = props.width ?? 200
+  const width = props.width ?? undefined
   const backgroundColor = props.backgroundColor ?? 0x1e1e1e
   const gap = props.gap ?? 10
 
