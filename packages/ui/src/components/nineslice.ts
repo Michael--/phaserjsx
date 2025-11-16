@@ -13,6 +13,148 @@ import { createNineSliceLayout } from './creators/createNineSliceLayout'
 import { createTransform } from './creators/createTransform'
 
 /**
+ * Inner bounds of a NineSlice - the content area excluding slices
+ */
+export interface NineSliceInnerBounds {
+  /**
+   * X offset from left edge (equals leftWidth)
+   */
+  x: number
+  /**
+   * Y offset from top edge (equals topHeight)
+   */
+  y: number
+  /**
+   * Width of inner content area (totalWidth - leftWidth - rightWidth)
+   */
+  width: number
+  /**
+   * Height of inner content area (totalHeight - topHeight - bottomHeight)
+   */
+  height: number
+}
+
+/**
+ * Extended NineSlice reference with slice information and inner bounds
+ */
+export interface NineSliceRef {
+  /**
+   * The underlying Phaser NineSlice GameObject
+   */
+  node: Phaser.GameObjects.NineSlice | null
+  /**
+   * Width of the left slice in pixels
+   */
+  leftWidth: number
+  /**
+   * Width of the right slice in pixels
+   */
+  rightWidth: number
+  /**
+   * Height of the top slice in pixels (0 for 3-slice mode)
+   */
+  topHeight: number
+  /**
+   * Height of the bottom slice in pixels (0 for 3-slice mode)
+   */
+  bottomHeight: number
+  /**
+   * Inner content bounds excluding slices
+   * Useful for positioning content within the NineSlice
+   */
+  innerBounds: NineSliceInnerBounds
+}
+
+/**
+ * Creates a NineSliceRef object with slice information and inner bounds
+ * @param node - Phaser NineSlice GameObject
+ * @param props - NineSlice props containing slice dimensions
+ * @returns NineSliceRef with computed inner bounds
+ */
+export function createNineSliceRef(
+  node: Phaser.GameObjects.NineSlice,
+  props: Partial<NineSliceSpecificProps>
+): NineSliceRef {
+  const leftWidth = props.leftWidth ?? 0
+  const rightWidth = props.rightWidth ?? 0
+  const topHeight = props.topHeight ?? 0
+  const bottomHeight = props.bottomHeight ?? 0
+
+  return {
+    node,
+    leftWidth,
+    rightWidth,
+    topHeight,
+    bottomHeight,
+    get innerBounds(): NineSliceInnerBounds {
+      // Dynamically calculate based on current node dimensions
+      const totalWidth = node.width
+      const totalHeight = node.height
+
+      return {
+        x: leftWidth,
+        y: topHeight,
+        width: Math.max(0, totalWidth - leftWidth - rightWidth),
+        height: Math.max(0, totalHeight - topHeight - bottomHeight),
+      }
+    },
+  }
+}
+
+/**
+ * Helper hook to create a NineSlice ref callback that provides extended information
+ * Use this instead of regular ref to get innerBounds information
+ *
+ * @example
+ * const nineSliceRef = useNineSliceRef()
+ *
+ * <NineSlice texture="ui" frame="button" ref={nineSliceRef.callback} leftWidth={64} rightWidth={64} />
+ *
+ * // Access innerBounds:
+ * const bounds = nineSliceRef.current?.innerBounds
+ * if (bounds) {
+ *   console.log('Inner area:', bounds.width, 'x', bounds.height)
+ * }
+ *
+ * @param leftWidth - Width of left slice
+ * @param rightWidth - Width of right slice
+ * @param topHeight - Height of top slice (optional, for 9-slice)
+ * @param bottomHeight - Height of bottom slice (optional, for 9-slice)
+ * @returns Object with callback and ref
+ */
+export function useNineSliceRef(
+  leftWidth: number,
+  rightWidth: number,
+  topHeight?: number,
+  bottomHeight?: number
+): {
+  callback: (node: Phaser.GameObjects.NineSlice | null) => void
+  current: NineSliceRef | null
+} {
+  let refData: NineSliceRef | null = null
+
+  const callback = (node: Phaser.GameObjects.NineSlice | null) => {
+    if (node) {
+      refData = createNineSliceRef(node, {
+        leftWidth,
+        rightWidth,
+        ...(topHeight !== undefined && { topHeight }),
+        ...(bottomHeight !== undefined && { bottomHeight }),
+      })
+    } else {
+      refData = null
+    }
+  }
+
+  return {
+    callback,
+    get current() {
+      return refData
+    },
+  }
+}
+
+/**
  * NineSlice-specific properties for texture and slice configuration
  */
 export interface NineSliceSpecificProps {

@@ -2,7 +2,12 @@
  * NineSlice component tests
  */
 import { describe, expect, it, vi } from 'vitest'
-import { nineSliceCreator, nineSlicePatcher } from './nineslice'
+import {
+  createNineSliceRef,
+  nineSliceCreator,
+  nineSlicePatcher,
+  useNineSliceRef,
+} from './nineslice'
 
 describe('NineSlice Component', () => {
   describe('nineSliceCreator', () => {
@@ -10,6 +15,7 @@ describe('NineSlice Component', () => {
       const mockScene = {
         add: {
           nineslice: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
             setVisible: vi.fn().mockReturnThis(),
             setDepth: vi.fn().mockReturnThis(),
             setAlpha: vi.fn().mockReturnThis(),
@@ -50,6 +56,7 @@ describe('NineSlice Component', () => {
         48,
         48
       )
+      expect(nineSlice.setOrigin).toHaveBeenCalledWith(0, 0)
       expect(nineSlice).toBeDefined()
     })
 
@@ -57,6 +64,7 @@ describe('NineSlice Component', () => {
       const mockScene = {
         add: {
           nineslice: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
             setVisible: vi.fn().mockReturnThis(),
             setDepth: vi.fn().mockReturnThis(),
             setAlpha: vi.fn().mockReturnThis(),
@@ -83,8 +91,8 @@ describe('NineSlice Component', () => {
         0, // default y
         'ui',
         undefined, // no frame
-        256, // default width
-        256, // default height
+        64, // default width (changed from 256)
+        64, // default height (changed from 256)
         10,
         10,
         undefined, // no topHeight (3-slice mode)
@@ -94,6 +102,7 @@ describe('NineSlice Component', () => {
 
     it('attaches layout infrastructure', () => {
       const mockNineSlice = {
+        setOrigin: vi.fn().mockReturnThis(),
         setVisible: vi.fn().mockReturnThis(),
         setDepth: vi.fn().mockReturnThis(),
         setAlpha: vi.fn().mockReturnThis(),
@@ -241,6 +250,117 @@ describe('NineSlice Component', () => {
       nineSlicePatcher(mockNineSlice, prev, next)
 
       expect(mockNineSlice.setSize).toHaveBeenCalledWith(400, 150)
+    })
+  })
+
+  describe('createNineSliceRef', () => {
+    it('creates a ref object with inner bounds', () => {
+      const mockNineSlice = {
+        width: 300,
+        height: 100,
+      } as Phaser.GameObjects.NineSlice
+
+      const ref = createNineSliceRef(mockNineSlice, {
+        leftWidth: 64,
+        rightWidth: 64,
+        topHeight: 48,
+        bottomHeight: 48,
+      })
+
+      expect(ref.node).toBe(mockNineSlice)
+      expect(ref.leftWidth).toBe(64)
+      expect(ref.rightWidth).toBe(64)
+      expect(ref.topHeight).toBe(48)
+      expect(ref.bottomHeight).toBe(48)
+      expect(ref.innerBounds).toEqual({
+        x: 64,
+        y: 48,
+        width: 172, // 300 - 64 - 64
+        height: 4, // 100 - 48 - 48
+      })
+    })
+
+    it('handles 3-slice mode (no top/bottom)', () => {
+      const mockNineSlice = {
+        width: 200,
+        height: 50,
+      } as Phaser.GameObjects.NineSlice
+
+      const ref = createNineSliceRef(mockNineSlice, {
+        leftWidth: 10,
+        rightWidth: 10,
+      })
+
+      expect(ref.topHeight).toBe(0)
+      expect(ref.bottomHeight).toBe(0)
+      expect(ref.innerBounds).toEqual({
+        x: 10,
+        y: 0,
+        width: 180, // 200 - 10 - 10
+        height: 50, // full height
+      })
+    })
+
+    it('updates inner bounds dynamically when node size changes', () => {
+      const mockNineSlice = {
+        width: 300,
+        height: 100,
+      } as Phaser.GameObjects.NineSlice
+
+      const ref = createNineSliceRef(mockNineSlice, {
+        leftWidth: 64,
+        rightWidth: 64,
+        topHeight: 48,
+        bottomHeight: 48,
+      })
+
+      const initialBounds = ref.innerBounds
+      expect(initialBounds.width).toBe(172)
+
+      // Simulate node resize
+      mockNineSlice.width = 400
+
+      const updatedBounds = ref.innerBounds
+      expect(updatedBounds.width).toBe(272) // 400 - 64 - 64
+    })
+  })
+
+  describe('useNineSliceRef', () => {
+    it('creates a ref callback and accessor', () => {
+      const refHelper = useNineSliceRef(64, 64, 48, 48)
+
+      expect(refHelper.callback).toBeTypeOf('function')
+      expect(refHelper.current).toBeNull()
+    })
+
+    it('populates ref data when callback is called', () => {
+      const refHelper = useNineSliceRef(64, 64, 48, 48)
+
+      const mockNineSlice = {
+        width: 300,
+        height: 100,
+      } as Phaser.GameObjects.NineSlice
+
+      refHelper.callback(mockNineSlice)
+
+      expect(refHelper.current).not.toBeNull()
+      expect(refHelper.current?.node).toBe(mockNineSlice)
+      expect(refHelper.current?.innerBounds.width).toBe(172)
+    })
+
+    it('clears ref data when callback is called with null', () => {
+      const refHelper = useNineSliceRef(64, 64, 48, 48)
+
+      const mockNineSlice = {
+        width: 300,
+        height: 100,
+      } as Phaser.GameObjects.NineSlice
+
+      refHelper.callback(mockNineSlice)
+      expect(refHelper.current).not.toBeNull()
+
+      refHelper.callback(null)
+      expect(refHelper.current).toBeNull()
     })
   })
 })

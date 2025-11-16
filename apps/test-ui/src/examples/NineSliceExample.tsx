@@ -1,7 +1,7 @@
 /**
  * NineSlice Example - demonstrates scalable UI elements using NineSlice
  */
-import { NineSlice, Text, useState, View } from '@phaserjsx/ui'
+import { NineSlice, Text, useNineSliceRef, useState, View } from '@phaserjsx/ui'
 
 /**
  * Example demonstrating NineSlice usage with ZStack pattern for buttons
@@ -10,13 +10,17 @@ export function NineSliceExample() {
   const [score, setScore] = useState(0)
   const [buttonWidth, setButtonWidth] = useState(300)
 
+  // Use NineSlice ref to access inner bounds for perfect text positioning
+  const buttonRef = useNineSliceRef(64, 64, 48, 48)
+
   return (
     <View direction="column" gap={30} padding={{ top: 20, left: 20 }} backgroundColor={0x1a1a1a}>
       <Text text="NineSlice Examples" fontSize={24} color="#ffffff" />
 
-      {/* Example 1: Button with NineSlice background - NineSlice fills parent with 100% */}
+      {/* Example 1: Button with NineSlice background - uses ref for inner bounds */}
       <View direction="stack" width={buttonWidth} height={98} backgroundColor={0x33aa33}>
         <NineSlice
+          ref={buttonRef.callback}
           texture="ui"
           frame="GreenButtonSml"
           width="100%"
@@ -26,7 +30,26 @@ export function NineSliceExample() {
           topHeight={48}
           bottomHeight={48}
         />
-        <Text text={`Score: ${score}`} fontSize={32} color="#ffffff" fontFamily="Courier" />
+        <View
+          direction="column"
+          width="100%"
+          height="100%"
+          padding={{
+            left: buttonRef.current?.leftWidth ?? 0,
+            right: buttonRef.current?.rightWidth ?? 0,
+            top: buttonRef.current?.topHeight ?? 0,
+            bottom: buttonRef.current?.bottomHeight ?? 0,
+          }}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text text={`Score: ${score}`} fontSize={32} color="#ffffff" fontFamily="Courier" />
+          <Text
+            text={`Inner: ${buttonRef.current?.innerBounds.width ?? 0}x${buttonRef.current?.innerBounds.height ?? 0}`}
+            fontSize={12}
+            color="#88ff88"
+          />
+        </View>
       </View>
 
       {/* Example 2: Clickable button */}
