@@ -4,6 +4,7 @@
  */
 import type Phaser from 'phaser'
 import type { NodeType } from './core-types'
+import { DebugLogger } from './dev-config'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
@@ -141,7 +142,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     const container = node as Phaser.GameObjects.Container & {
       __layoutProps?: Record<string, unknown>
     }
-    console.log('[VDOM] About to calculate layout, __layoutProps:', container.__layoutProps)
+    DebugLogger.log('vdom', 'About to calculate layout, __layoutProps:', container.__layoutProps)
     calculateLayout(container, container.__layoutProps ?? {})
   }
 

@@ -2,6 +2,7 @@
  * Background applier - updates background and hit area
  */
 import type Phaser from 'phaser'
+import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout } from '../types'
 
 /**
@@ -9,13 +10,11 @@ import type { GameObjectWithLayout } from '../types'
  * @param container - Phaser container
  * @param width - Background width
  * @param height - Background height
- * @param debug - Enable debug logging
  */
 export function updateBackground(
   container: Phaser.GameObjects.Container,
   width: number,
-  height: number,
-  debug = false
+  height: number
 ): void {
   const background = (container as GameObjectWithLayout).__background
   if (background) {
@@ -57,9 +56,7 @@ export function updateBackground(
         }
       }
 
-      if (debug) {
-        console.log('  Background redrawn to:', { width, height })
-      }
+      DebugLogger.log('layout', 'Background redrawn to:', { width, height })
     }
   }
 }
@@ -69,13 +66,11 @@ export function updateBackground(
  * @param container - Phaser container
  * @param width - Hit area width
  * @param height - Hit area height
- * @param debug - Enable debug logging
  */
 export function updateHitArea(
   container: Phaser.GameObjects.Container,
   width: number,
-  height: number,
-  debug = false
+  height: number
 ): void {
   if (container.input?.hitArea && 'setSize' in container.input.hitArea) {
     const hitArea = container.input.hitArea as Phaser.Geom.Rectangle
@@ -89,17 +84,10 @@ export function updateHitArea(
       hitArea.setPosition(width / 2, height / 2)
       hitArea.setSize(width, height)
 
-      if (debug) {
-        console.log('  Hit area resized:', {
-          from: { x: hitArea.x, y: hitArea.y, width: oldWidth, height: oldHeight },
-          to: {
-            x: width / 2,
-            y: height / 2,
-            width,
-            height,
-          },
-        })
-      }
+      DebugLogger.log('layout', 'Hit area resized:', {
+        from: { x: hitArea.x, y: hitArea.y, width: oldWidth, height: oldHeight },
+        to: { x: width / 2, y: height / 2, width, height },
+      })
     }
   }
 }

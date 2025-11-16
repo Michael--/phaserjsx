@@ -3,10 +3,9 @@
  */
 import type Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from '../../core-props'
+import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout, LayoutChild, LayoutSize } from '../types'
 import { parseSize, resolveSize } from './size-resolver'
-
-const debug = false
 
 /**
  * Get effective margin for a child
@@ -101,7 +100,7 @@ export function processNestedContainer(
   const childContainer = child as Phaser.GameObjects.Container
   const childLayoutProps = child.__layoutProps ?? {}
 
-  if (debug) console.log('  -> Child is a container, calculating nested layout first')
+  DebugLogger.log('layout', 'Child is a container, calculating nested layout first')
 
   calculateLayoutFn(childContainer, childLayoutProps, parentSize, parentPadding)
 }
@@ -122,7 +121,7 @@ export function prepareLayoutChildren(
   for (const child of children) {
     // Skip background rectangles
     if (child.__isBackground) {
-      if (debug) console.log('  Skipping background')
+      DebugLogger.log('layout', 'Skipping background')
       continue
     }
 

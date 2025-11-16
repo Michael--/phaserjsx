@@ -2,6 +2,7 @@
  * Container applier - applies dimensions to container
  */
 import type Phaser from 'phaser'
+import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout } from '../types'
 
 /**
@@ -9,19 +10,15 @@ import type { GameObjectWithLayout } from '../types'
  * @param container - Phaser container
  * @param width - Container width
  * @param height - Container height
- * @param debug - Enable debug logging
  */
 export function applyContainerDimensions(
   container: Phaser.GameObjects.Container,
   width: number,
-  height: number,
-  debug = false
+  height: number
 ): void {
   const gameObject = container as GameObjectWithLayout
   gameObject.width = width
   gameObject.height = height
 
-  if (debug) {
-    console.log('  Container dimensions set to:', { width, height })
-  }
+  DebugLogger.log('layout', 'Container dimensions set to:', { width, height })
 }

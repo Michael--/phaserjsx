@@ -3,6 +3,7 @@
  */
 import Phaser from 'phaser'
 import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
+import { DebugLogger } from '../dev-config'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsContainerExtension, PropsDefaultExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
@@ -53,10 +54,8 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Setup layout system (props and size provider)
   createLayout(container, props)
 
-  // Debug: Log what we're storing
-  if (props.padding) {
-    console.log('[View Creator] Storing __layoutProps with padding:', props.padding)
-  }
+  // Debug: Log layout props storage
+  DebugLogger.log('layout', 'View creator storing __layoutProps with padding:', props.padding)
 
   return container
 }

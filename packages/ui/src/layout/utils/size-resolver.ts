@@ -2,6 +2,7 @@
  * Size resolution utilities for handling different size value types
  * Supports fixed pixels, percentages, auto sizing, and calc() expressions
  */
+import { DebugLogger } from '../../dev-config'
 import type { CalcExpression, CalcOperand, ParsedSize } from '../types'
 
 // Re-export for convenience
@@ -98,7 +99,7 @@ export function parseSize(size: number | string | undefined): ParsedSize {
   if (percentMatch && percentMatch[1]) {
     const value = parseFloat(percentMatch[1])
     if (value < 0 || value > 100) {
-      console.warn(`[Size] Percentage value ${value}% is outside valid range (0-100%)`)
+      DebugLogger.warn('Size', `Percentage value ${value}% is outside valid range (0-100%)`)
     }
     return { type: 'percent', value }
   }
@@ -122,7 +123,7 @@ function resolveCalcOperand(operand: CalcOperand, parentSize?: number): number {
 
   // Percentage
   if (parentSize === undefined) {
-    console.warn(`[Size] Cannot resolve percentage in calc() without parent size. Using 0.`)
+    DebugLogger.warn('Size', 'Cannot resolve percentage in calc() without parent size. Using 0.')
     return 0
   }
   return (parentSize * operand.value) / 100
@@ -147,12 +148,12 @@ function resolveCalcExpression(calc: CalcExpression, parentSize?: number): numbe
       return left * right
     case '/':
       if (right === 0) {
-        console.error('[Size] Division by zero in calc expression')
+        DebugLogger.error('Size', 'Division by zero in calc expression')
         return 0
       }
       return left / right
     default:
-      console.error(`[Size] Unknown calc operator: ${calc.operator}`)
+      DebugLogger.error('Size', `Unknown calc operator: ${calc.operator}`)
       return 0
   }
 }
@@ -186,8 +187,9 @@ export function resolveSize(
       if (parentSize === undefined) {
         // Only warn if we also don't have a fallback content size
         if (contentSize === undefined) {
-          console.warn(
-            `[Size] Cannot resolve percentage without parent size and no content fallback.`
+          DebugLogger.warn(
+            'Size',
+            'Cannot resolve percentage without parent size and no content fallback.'
           )
           return 100
         }
@@ -198,21 +200,21 @@ export function resolveSize(
 
     case 'calc':
       if (!parsed.calc) {
-        console.error('[Size] Calc type without calc expression')
+        DebugLogger.error('Size', 'Calc type without calc expression')
         return 100
       }
       return resolveCalcExpression(parsed.calc, parentSize)
 
     case 'auto':
       if (contentSize === undefined) {
-        console.warn('[Size] Auto size without content size, using fallback 100px')
+        DebugLogger.warn('Size', 'Auto size without content size, using fallback 100px')
         return 100
       }
       return contentSize
 
     case 'fill': {
       if (parentSize === undefined) {
-        console.warn('[Size] Fill size without parent size, using fallback 100px')
+        DebugLogger.warn('Size', 'Fill size without parent size, using fallback 100px')
         return 100
       }
       // Fill = parent size minus padding (content-area)
@@ -225,7 +227,7 @@ export function resolveSize(
 
     default:
       // Should never happen with proper typing
-      console.error(`[Size] Unknown size type: ${(parsed as ParsedSize).type}`)
+      DebugLogger.error('Size', `Unknown size type: ${(parsed as ParsedSize).type}`)
       return 100
   }
 }

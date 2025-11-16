@@ -147,6 +147,26 @@ export class DebugLogger {
   }
 
   /**
+   * Log a warning message (always shown, even if debug disabled)
+   * @param category - Category for context
+   * @param message - Warning message
+   * @param args - Additional arguments
+   */
+  static warn(category: string, message: string, ...args: unknown[]): void {
+    console.warn(`[${category}] ${message}`, ...args)
+  }
+
+  /**
+   * Log an error message (always shown, even if debug disabled)
+   * @param category - Category for context
+   * @param message - Error message
+   * @param args - Additional arguments
+   */
+  static error(category: string, message: string, ...args: unknown[]): void {
+    console.error(`[${category}] ${message}`, ...args)
+  }
+
+  /**
    * Start a collapsed console group
    * @param category - Debug category to check
    * @param label - Group label

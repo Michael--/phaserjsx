@@ -70,7 +70,7 @@ class DeferredLayoutQueue {
       try {
         callback()
       } catch (error) {
-        console.error('[DeferredLayoutQueue] Error in deferred callback:', error)
+        DebugLogger.error('DeferredLayoutQueue', 'Error in deferred callback:', error)
       }
     }
   }
@@ -337,7 +337,7 @@ export function calculateLayout(
   // 3. Select strategy based on direction
   const strategy = strategies[direction]
   if (!strategy) {
-    console.error(`[Layout] Unknown direction: ${direction}`)
+    DebugLogger.error('Layout', `Unknown direction: ${direction}`)
     return
   }
 
@@ -482,14 +482,14 @@ export function calculateLayout(
   }
 
   // 11. Apply positions to children
-  applyChildPositions(finalLayoutChildren, positions, DevConfig.debug.positioning)
+  applyChildPositions(finalLayoutChildren, positions)
 
   // 12. Apply container dimensions
-  applyContainerDimensions(container, containerWidth, containerHeight, DevConfig.debug.layout)
+  applyContainerDimensions(container, containerWidth, containerHeight)
 
   // 13. Update background and hit area
-  updateBackground(container, containerWidth, containerHeight, DevConfig.debug.layout)
-  updateHitArea(container, containerWidth, containerHeight, DevConfig.debug.layout)
+  updateBackground(container, containerWidth, containerHeight)
+  updateHitArea(container, containerWidth, containerHeight)
 
   // 14. Apply overflow mask if needed
   applyOverflowMask(container, containerProps, containerWidth, containerHeight)
