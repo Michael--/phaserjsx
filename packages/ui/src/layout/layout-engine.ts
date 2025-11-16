@@ -20,33 +20,33 @@ import { calculateJustifyContent } from './utils/spacing-calculator'
 const debug = false
 
 /**
- * Central batch processor for deferred mask updates
- * Collects all mask updates and processes them in one requestAnimationFrame call
- * This optimizes performance when many containers need mask updates
+ * Callback function for deferred layout updates
+ * Executed after all layouts are complete in next frame
  */
-class MaskUpdateQueue {
-  private static pending = new Map<
-    Phaser.GameObjects.Container,
-    { width: number; height: number; props: LayoutProps }
-  >()
+type DeferredUpdateCallback = () => void
+
+/**
+ * Central processor for deferred layout updates
+ * Collects all updates that require final world coordinates or completed parent layouts
+ * Executes them in batch via single requestAnimationFrame for optimal performance
+ *
+ * Use cases:
+ * - Overflow mask positioning (needs world coordinates)
+ * - Scroll position updates (needs final content size)
+ * - Animation initialization (needs final positions)
+ * - Custom effects requiring complete layout
+ */
+class DeferredLayoutQueue {
+  private static callbacks: DeferredUpdateCallback[] = []
   private static scheduled = false
 
   /**
-   * Schedule a mask update for next frame
-   * Multiple updates for same container are automatically deduplicated
-   * @param container - Container to update
-   * @param width - Container width
-   * @param height - Container height
-   * @param props - Layout props
+   * Schedule a callback to execute after current layout pass completes
+   * All callbacks are batched and executed in single requestAnimationFrame
+   * @param callback - Function to execute in next frame
    */
-  static schedule(
-    container: Phaser.GameObjects.Container,
-    width: number,
-    height: number,
-    props: LayoutProps
-  ): void {
-    // Add to queue (replaces existing entry if already queued)
-    this.pending.set(container, { width, height, props })
+  static defer(callback: DeferredUpdateCallback): void {
+    this.callbacks.push(callback)
 
     // Schedule flush if not already scheduled (only 1 requestAnimationFrame per frame)
     if (!this.scheduled) {
@@ -56,22 +56,24 @@ class MaskUpdateQueue {
   }
 
   /**
-   * Process all pending mask updates in batch
+   * Execute all pending callbacks in batch
    * Called once per frame via requestAnimationFrame
    */
   private static flush(): void {
     this.scheduled = false
 
-    // Process all pending updates
-    for (const [container, { width, height, props }] of this.pending) {
-      // Verify container still exists and has overflow=hidden
-      if (container.active && props.overflow === 'hidden') {
-        updateMaskWorldPosition(container, width, height, debug)
+    // Copy and clear callbacks before execution to prevent infinite loops
+    const callbacks = [...this.callbacks]
+    this.callbacks = []
+
+    // Execute all callbacks with error isolation
+    for (const callback of callbacks) {
+      try {
+        callback()
+      } catch (error) {
+        console.error('[DeferredLayoutQueue] Error in deferred callback:', error)
       }
     }
-
-    // Clear queue for next frame
-    this.pending.clear()
   }
 }
 
@@ -133,8 +135,31 @@ function updateMaskWorldPosition(
  * IMPLEMENTATION NOTES:
  * - Mask Graphics is NOT added as child (must be independent for Phaser masks)
  * - Uses absolute world coordinates calculated from parent chain
- * - Defers position update to next frame for nested containers via requestAnimationFrame
- * - Batches multiple mask updates per frame for optimal performance
+ * - Defers position update to next frame for nested containers via DeferredLayoutQueue
+ * - All deferred updates are batched in single requestAnimationFrame for optimal performance
+ *
+ * // Frame N - Initial Mount:
+ * mount(scene, <View>...</View>)
+ * ├─ calculateLayout(container)
+ * │  ├─ Position children
+ * │  ├─ Apply overflow mask
+ * │  │  └─ DeferredLayoutQueue.defer(() => updateMask1())
+ * │  └─ Nested calculateLayout(child)
+ * │     └─ DeferredLayoutQueue.defer(() => updateMask2())
+ * │
+ * ├─ User code:
+ * │  └─ DeferredLayoutQueue.defer(() => animateIn())
+ * │
+ * └─ requestAnimationFrame scheduled (only once!)
+ *
+ * // Frame N+1 - Deferred Execution:
+ * requestAnimationFrame fires
+ * └─ DeferredLayoutQueue.flush()
+ *    ├─ updateMask1() ✓
+ *    ├─ updateMask2() ✓
+ *    └─ animateIn() ✓
+ *
+ * All done in one batch! 🚀
  *
  * @param container - Phaser container to apply mask to
  * @param containerProps - Layout props containing overflow setting
@@ -184,8 +209,13 @@ function applyOverflowMask(
     if (hasParentContainer) {
       // Nested container: Defer mask position update to next frame
       // This ensures parent containers are fully positioned before calculating world coords
-      // Uses batched queue for optimal performance with many containers
-      MaskUpdateQueue.schedule(container, width, height, containerProps)
+      // Uses deferred queue for optimal performance with many containers
+      DeferredLayoutQueue.defer(() => {
+        // Verify container still exists and has overflow=hidden
+        if (container.active && containerProps.overflow === 'hidden') {
+          updateMaskWorldPosition(container, width, height, debug)
+        }
+      })
 
       if (debug) {
         console.log('[Layout] Scheduled deferred mask update for nested container')
