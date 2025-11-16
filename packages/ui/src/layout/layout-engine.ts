@@ -20,8 +20,122 @@ import { calculateJustifyContent } from './utils/spacing-calculator'
 const debug = false
 
 /**
+ * Central batch processor for deferred mask updates
+ * Collects all mask updates and processes them in one requestAnimationFrame call
+ * This optimizes performance when many containers need mask updates
+ */
+class MaskUpdateQueue {
+  private static pending = new Map<
+    Phaser.GameObjects.Container,
+    { width: number; height: number; props: LayoutProps }
+  >()
+  private static scheduled = false
+
+  /**
+   * Schedule a mask update for next frame
+   * Multiple updates for same container are automatically deduplicated
+   * @param container - Container to update
+   * @param width - Container width
+   * @param height - Container height
+   * @param props - Layout props
+   */
+  static schedule(
+    container: Phaser.GameObjects.Container,
+    width: number,
+    height: number,
+    props: LayoutProps
+  ): void {
+    // Add to queue (replaces existing entry if already queued)
+    this.pending.set(container, { width, height, props })
+
+    // Schedule flush if not already scheduled (only 1 requestAnimationFrame per frame)
+    if (!this.scheduled) {
+      this.scheduled = true
+      requestAnimationFrame(() => this.flush())
+    }
+  }
+
+  /**
+   * Process all pending mask updates in batch
+   * Called once per frame via requestAnimationFrame
+   */
+  private static flush(): void {
+    this.scheduled = false
+
+    // Process all pending updates
+    for (const [container, { width, height, props }] of this.pending) {
+      // Verify container still exists and has overflow=hidden
+      if (container.active && props.overflow === 'hidden') {
+        updateMaskWorldPosition(container, width, height, debug)
+      }
+    }
+
+    // Clear queue for next frame
+    this.pending.clear()
+  }
+}
+
+/**
+ * Updates mask position using world coordinates
+ * Called during batch processing or immediate updates
+ * @param container - Container with mask
+ * @param width - Container width
+ * @param height - Container height
+ * @param debug - Debug logging flag
+ */
+function updateMaskWorldPosition(
+  container: Phaser.GameObjects.Container,
+  width: number,
+  height: number,
+  debug: boolean
+): void {
+  const extendedContainer = container as typeof container & {
+    __overflowMask?: Phaser.GameObjects.Graphics | undefined
+  }
+
+  if (!extendedContainer.__overflowMask) return
+
+  // Calculate absolute world position by traversing parent chain
+  let worldX = 0
+  let worldY = 0
+  let current: Phaser.GameObjects.Container | null = container
+
+  while (current) {
+    worldX += current.x
+    worldY += current.y
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    current = (current as any).parentContainer || null
+  }
+
+  // Update mask geometry
+  const maskGraphics = extendedContainer.__overflowMask
+  maskGraphics.clear()
+  maskGraphics.fillStyle(0xffffff)
+  // note: alpha 1 is default and it would hide children below
+  maskGraphics.setAlpha(0.0)
+  // Expand by 1px on each side to prevent edge artifacts
+  maskGraphics.fillRect(worldX - 1, worldY - 1, width + 2, height + 2)
+
+  if (debug) {
+    console.log('[Layout] Updated overflow mask world position:', {
+      x: worldX,
+      y: worldY,
+      width,
+      height,
+    })
+  }
+}
+
+/**
  * Applies overflow mask to container if overflow='hidden' is set
  * Creates a geometry mask that clips children to container bounds
+ *
+ * IMPLEMENTATION NOTES:
+ * - Mask Graphics is NOT added as child (must be independent for Phaser masks)
+ * - Uses absolute world coordinates calculated from parent chain
+ * - Defers position update to next frame for nested containers via requestAnimationFrame
+ * - Batches multiple mask updates per frame for optimal performance
+ *
  * @param container - Phaser container to apply mask to
  * @param containerProps - Layout props containing overflow setting
  * @param width - Container width
@@ -37,7 +151,6 @@ function applyOverflowMask(
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
-    __maskUpdateScheduled?: boolean
   }
 
   if (containerProps.overflow === 'hidden') {
@@ -46,7 +159,8 @@ function applyOverflowMask(
       const maskGraphics = container.scene.add.graphics()
       extendedContainer.__overflowMask = maskGraphics
 
-      // DO NOT add as child - mask needs to be independent
+      // DO NOT add as child - mask needs to be independent for Phaser's mask system
+      // Phaser containers with masks cannot have masked children (Phaser limitation)
 
       // Create geometry mask
       const mask = maskGraphics.createGeometryMask()
@@ -63,62 +177,23 @@ function applyOverflowMask(
       if (debug) console.log('[Layout] Created overflow mask')
     }
 
-    // Update mask shape to match container dimensions
-    // Use world position since mask is NOT a child of the container
-    const maskGraphics = extendedContainer.__overflowMask
+    // Check if this is a nested container (has parent container)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const hasParentContainer = (container as any).parentContainer != null
 
-    // Calculate absolute world position by traversing parent chain and accumulating offsets
-    let worldX = 0
-    let worldY = 0
-    let current: Phaser.GameObjects.Container | null = container
+    if (hasParentContainer) {
+      // Nested container: Defer mask position update to next frame
+      // This ensures parent containers are fully positioned before calculating world coords
+      // Uses batched queue for optimal performance with many containers
+      MaskUpdateQueue.schedule(container, width, height, containerProps)
 
-    while (current) {
-      worldX += current.x
-      worldY += current.y
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      current = (current as any).parentContainer || null
+      if (debug) {
+        console.log('[Layout] Scheduled deferred mask update for nested container')
+      }
+    } else {
+      // Root container: Update mask immediately (parent positions are already final)
+      updateMaskWorldPosition(container, width, height, debug)
     }
-
-    maskGraphics.clear()
-    // TODO: could be a debug option to set different color
-    maskGraphics.fillStyle(0xff00ff) // could be set to Pink for debugging - set to 0xffffff (white) for production
-
-    // Schedule a post-update to fix initial position after all parents are positioned
-    // This ensures the mask is correctly positioned even on first render
-    if (!extendedContainer.__maskUpdateScheduled) {
-      extendedContainer.__maskUpdateScheduled = true
-      container.scene.sys.events.once('postupdate', () => {
-        extendedContainer.__maskUpdateScheduled = false
-        // Recalculate world position after all layouts are complete
-        let finalX = 0
-        let finalY = 0
-        let curr: Phaser.GameObjects.Container | null = container
-        while (curr) {
-          finalX += curr.x
-          finalY += curr.y
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          curr = (curr as any).parentContainer || null
-        }
-        if (extendedContainer.__overflowMask && (finalX !== worldX || finalY !== worldY)) {
-          // TODO: could be a debug option
-          // set alpha a bit greater 0 to be visible for debugging, this would show the mask area which paints over the content
-          extendedContainer.__overflowMask.setAlpha(0.3)
-          // TODO: find out why we need to expand the rect by 1 pixel on each side
-          extendedContainer.__overflowMask.fillRect(finalX - 1, finalY - 1, width + 2, height + 2)
-          if (debug) console.log('[Layout] Post-updated overflow mask:', { x: finalX, y: finalY })
-        }
-      })
-    }
-
-    if (debug)
-      console.log('[Layout] Updated overflow mask:', {
-        x: worldX,
-        y: worldY,
-        containerX: container.x,
-        containerY: container.y,
-        width,
-        height,
-      })
   } else if (extendedContainer.__overflowMask) {
     // Remove mask if overflow is not hidden
     container.clearMask()
