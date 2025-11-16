@@ -80,10 +80,8 @@ function applyOverflowMask(
     }
 
     maskGraphics.clear()
-    maskGraphics.fillStyle(0xff00ff) // Pink for debugging - set to 0xffffff for production
-    maskGraphics.setAlpha(0.3) // Visible for debugging - set to 0 for production
-    // Use accumulated world position
-    maskGraphics.fillRect(worldX, worldY, width, height)
+    // TODO: could be a debug option to set different color
+    maskGraphics.fillStyle(0xffffff) // could be set to Pink for debugging - set to 0xffffff (white) for production
 
     // Schedule a post-update to fix initial position after all parents are positioned
     // This ensures the mask is correctly positioned even on first render
@@ -102,11 +100,10 @@ function applyOverflowMask(
           curr = (curr as any).parentContainer || null
         }
         if (extendedContainer.__overflowMask && (finalX !== worldX || finalY !== worldY)) {
-          // following line would color the mask area, need to set alpha a bit greater 0
-          // useful to debug mask position issues
-          //extendedContainer.__overflowMask.clear()
-          //extendedContainer.__overflowMask.fillStyle(0x000000)
+          // TODO: could be a debug option
+          // set alpha a bit greater 0 to be visible for debugging, this would show the mask area which paints over the content
           extendedContainer.__overflowMask.setAlpha(0.0)
+          // TODO: find out why we need to expand the rect by 1 pixel on each side
           extendedContainer.__overflowMask.fillRect(finalX - 1, finalY - 1, width + 2, height + 2)
           if (debug) console.log('[Layout] Post-updated overflow mask:', { x: finalX, y: finalY })
         }
