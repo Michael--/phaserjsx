@@ -87,7 +87,7 @@ function ProgressBar({ score, maxScore = 2000 }: { score: number; maxScore?: num
       />
       <NineSlice
         texture="ui"
-        frame="ButtonOrangeFill1"
+        frame="ButtonOrangeFill2"
         width={progressWidth}
         height="100%"
         leftWidth={6}
@@ -112,7 +112,7 @@ export function NineSliceExample() {
       <Text text="NineSlice Examples" fontSize={24} color="#ffffff" />
 
       {/* Example 1: Button with NineSlice background - uses ref for inner bounds */}
-      <View direction="stack" width={buttonWidth} height={98} backgroundColor={0x33aa33}>
+      <View direction="stack" width={buttonWidth} height={98}>
         <NineSlice
           ref={buttonRef.callback}
           texture="ui"
@@ -166,7 +166,7 @@ export function NineSliceExample() {
       {/* Example 3: Resize button with max width */}
       <NineSliceButton
         texture="ui"
-        frame="BlueButtonSml"
+        frame="ButtonOrange"
         text="Toggle Size"
         onClick={() => setButtonWidth(Math.min(buttonWidth === 300 ? 400 : 300, 400))}
         width={200}

@@ -10,16 +10,20 @@ import { App } from './App'
  */
 class MainScene extends Phaser.Scene {
   preload() {
-    this.load.setBaseURL('https://cdn.phaserfiles.com/v385')
-    // https://cdn.phaserfiles.com/v385/assets/skies/pixelsky.png
-    this.load.image('bg', 'assets/skies/pixelsky.png')
-    // https://cdn.phaserfiles.com/v385/assets/ui/nine-slice.json
+    console.log('MainScene.preload() called')
+    // Load local assets
     this.load.atlas('ui', 'assets/ui/nine-slice.png', 'assets/ui/nine-slice.json')
+    console.log('Preload complete')
+  }
+
+  debugLoadedAssets() {
+    console.log('Loaded assets:')
+    this.textures.getTextureKeys().forEach((key) => {
+      console.log(' -', key)
+    })
   }
 
   nineSliceTest1() {
-    this.add.image(400, 300, 'bg')
-
     this.add.nineslice(400, 200, 'ui', 'RedButtonSml', 640, 98, 64, 64, 48, 48)
 
     const score = this.add
@@ -43,7 +47,7 @@ class MainScene extends Phaser.Scene {
       duration: 2000,
       ease: 'linear',
       onUpdate: (tween) => {
-        const value = Math.round(tween.getValue())
+        const value = Math.round(tween.getValue() ?? 0)
         score.setText(`Score: ${value}`)
       },
     })
@@ -63,7 +67,7 @@ class MainScene extends Phaser.Scene {
           duration: 2000,
           ease: 'linear',
           onUpdate: (tween) => {
-            const value = Math.round(tween.getValue())
+            const value = Math.round(tween.getValue() ?? 0)
             score.setText(`Score: ${value}`)
           },
         })
@@ -72,12 +76,12 @@ class MainScene extends Phaser.Scene {
   }
 
   nineSliceTest2() {
-    const bar1 = this.add.nineslice(400, 200, 'ui', 'ButtonOrange')
+    this.add.nineslice(400, 200, 'ui', 'ButtonOrange')
     const fill1 = this.add.nineslice(286, 198, 'ui', 'ButtonOrangeFill1', 13, 39, 6, 6)
 
     fill1.setOrigin(0, 0.5)
 
-    const bar2 = this.add.nineslice(400, 400, 'ui', 'ButtonOrange')
+    this.add.nineslice(400, 400, 'ui', 'ButtonOrange')
     const fill2 = this.add.nineslice(286, 398, 'ui', 'ButtonOrangeFill2', 13, 39, 6, 6)
 
     fill2.setOrigin(0, 0.5)
@@ -106,9 +110,10 @@ class MainScene extends Phaser.Scene {
    * Creates the scene and mounts the JSX app
    */
   create() {
-    // this.nineSliceTest1()
-    // this.nineSliceTest2()
-    // return
+    this.debugLoadedAssets()
+    //this.nineSliceTest1()
+    //this.nineSliceTest2()
+    //return
 
     console.log('MainScene.create() called')
     console.log('Scene dimensions:', this.scale.width, 'x', this.scale.height)
