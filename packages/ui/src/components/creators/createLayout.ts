@@ -1,7 +1,7 @@
 /**
  * Layout creator for initializing container layout system
  */
-import type { BackgroundProps, LayoutProps } from '../../core-props'
+import type { BackgroundProps, LayoutProps, TransformProps } from '../../core-props'
 import {
   getChildSize,
   parseSize,
@@ -18,15 +18,15 @@ import {
  */
 export function createLayout(
   container: Phaser.GameObjects.Container & {
-    __layoutProps?: LayoutProps & BackgroundProps
+    __layoutProps?: LayoutProps & BackgroundProps & TransformProps
     __getLayoutSize?: () => LayoutSize
     width?: number | string
     height?: number | string
   },
-  props: Partial<LayoutProps & BackgroundProps>
+  props: Partial<LayoutProps & BackgroundProps & TransformProps>
 ): void {
   // Attach layout props for layout calculations
-  container.__layoutProps = props as LayoutProps & BackgroundProps
+  container.__layoutProps = props as LayoutProps & BackgroundProps & TransformProps
 
   // Attach dynamic size provider
   // This returns the calculated dimensions after layout

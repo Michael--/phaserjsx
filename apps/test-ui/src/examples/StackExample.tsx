@@ -17,7 +17,7 @@ export function StackExample() {
         padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       >
         <View width={200} height={100} backgroundColor={0x880000} />
-        <View width={150} height={80} backgroundColor={0x008800} />
+        <View x={20} y={30} width={150} height={80} backgroundColor={0x008800} />
         <View width={100} height={60} backgroundColor={0x000088} />
       </View>
     </View>

@@ -2,7 +2,7 @@
  * Type definitions for the layout system
  */
 import type Phaser from 'phaser'
-import type { BackgroundProps, EdgeInsets, LayoutProps } from '../core-props'
+import type { BackgroundProps, EdgeInsets, LayoutProps, TransformProps } from '../core-props'
 
 /**
  * Size information for layout calculations
@@ -29,7 +29,7 @@ export interface LayoutSizeProvider {
  * Extended GameObject with layout metadata
  */
 export type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
-  __layoutProps?: LayoutProps & BackgroundProps
+  __layoutProps?: LayoutProps & BackgroundProps & TransformProps
   __isBackground?: boolean
   __background?: Phaser.GameObjects.Graphics
   __getLayoutSize?: () => LayoutSize

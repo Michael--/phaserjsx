@@ -80,6 +80,17 @@ export class StackLayoutStrategy extends BaseLayoutStrategy {
         break
     }
 
+    // Apply explicit x/y offsets if provided
+    const childX = child.child.__layoutProps?.x
+    const childY = child.child.__layoutProps?.y
+
+    if (childX !== undefined) {
+      x += childX
+    }
+    if (childY !== undefined) {
+      y += childY
+    }
+
     return {
       position: { x, y },
       nextMain: currentMain, // Stack doesn't advance main axis
