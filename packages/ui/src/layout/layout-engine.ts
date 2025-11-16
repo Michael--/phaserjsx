@@ -4,6 +4,7 @@
  */
 import Phaser from 'phaser'
 import type { LayoutProps } from '../core-props'
+import { DebugLogger, DevConfig } from '../dev-config'
 import { updateBackground, updateHitArea } from './appliers/background-applier'
 import { applyContainerDimensions } from './appliers/container-applier'
 import { applyChildPositions } from './appliers/position-applier'
@@ -16,8 +17,6 @@ import { getChildSize, getMargin, processNestedContainer } from './utils/child-u
 import { calculateContainerSize, normalizePadding } from './utils/dimension-calculator'
 import { distributeFlexSpace, hasFlexChildren } from './utils/flex-distributor'
 import { calculateJustifyContent } from './utils/spacing-calculator'
-
-const debug = false
 
 /**
  * Callback function for deferred layout updates
@@ -83,13 +82,11 @@ class DeferredLayoutQueue {
  * @param container - Container with mask
  * @param width - Container width
  * @param height - Container height
- * @param debug - Debug logging flag
  */
 function updateMaskWorldPosition(
   container: Phaser.GameObjects.Container,
   width: number,
-  height: number,
-  debug: boolean
+  height: number
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
@@ -112,20 +109,22 @@ function updateMaskWorldPosition(
   // Update mask geometry
   const maskGraphics = extendedContainer.__overflowMask
   maskGraphics.clear()
-  maskGraphics.fillStyle(0xffffff)
-  // note: alpha 1 is default and it would hide children below
-  maskGraphics.setAlpha(0.0)
+
+  // Use configurable color and alpha for debugging
+  maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
+  maskGraphics.setAlpha(
+    DevConfig.visual.showOverflowMasks ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
+  )
+
   // Expand by 1px on each side to prevent edge artifacts
   maskGraphics.fillRect(worldX - 1, worldY - 1, width + 2, height + 2)
 
-  if (debug) {
-    console.log('[Layout] Updated overflow mask world position:', {
-      x: worldX,
-      y: worldY,
-      width,
-      height,
-    })
-  }
+  DebugLogger.log('overflowMask', 'Updated overflow mask world position:', {
+    x: worldX,
+    y: worldY,
+    width,
+    height,
+  })
 }
 
 /**
@@ -165,14 +164,12 @@ function updateMaskWorldPosition(
  * @param containerProps - Layout props containing overflow setting
  * @param width - Container width
  * @param height - Container height
- * @param debug - Debug logging flag
  */
 function applyOverflowMask(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps,
   width: number,
-  height: number,
-  debug: boolean
+  height: number
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
@@ -199,7 +196,7 @@ function applyOverflowMask(
         }
       })
 
-      if (debug) console.log('[Layout] Created overflow mask')
+      DebugLogger.log('overflowMask', 'Created overflow mask')
     }
 
     // Check if this is a nested container (has parent container)
@@ -213,16 +210,14 @@ function applyOverflowMask(
       DeferredLayoutQueue.defer(() => {
         // Verify container still exists and has overflow=hidden
         if (container.active && containerProps.overflow === 'hidden') {
-          updateMaskWorldPosition(container, width, height, debug)
+          updateMaskWorldPosition(container, width, height)
         }
       })
 
-      if (debug) {
-        console.log('[Layout] Scheduled deferred mask update for nested container')
-      }
+      DebugLogger.log('overflowMask', 'Scheduled deferred mask update for nested container')
     } else {
       // Root container: Update mask immediately (parent positions are already final)
-      updateMaskWorldPosition(container, width, height, debug)
+      updateMaskWorldPosition(container, width, height)
     }
   } else if (extendedContainer.__overflowMask) {
     // Remove mask if overflow is not hidden
@@ -230,7 +225,7 @@ function applyOverflowMask(
     extendedContainer.__overflowMask.destroy()
     extendedContainer.__overflowMask = undefined
 
-    if (debug) console.log('[Layout] Removed overflow mask')
+    DebugLogger.log('overflowMask', 'Removed overflow mask')
   }
 }
 
@@ -259,16 +254,15 @@ export function calculateLayout(
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
-  if (debug) {
-    console.log(
-      '[Layout] Container with',
-      children?.length ?? 0,
-      'children, props:',
-      containerProps
-    )
+  DebugLogger.group('layout', `Container with ${children?.length ?? 0} children`)
+
+  if (!children || !Array.isArray(children)) {
+    DebugLogger.groupEnd('layout')
+    return
   }
 
-  if (!children || !Array.isArray(children)) return
+  // Performance timing
+  DebugLogger.time('performance', 'calculateLayout')
 
   // 1. Extract layout parameters
   const direction = containerProps.direction ?? 'column'
@@ -276,7 +270,7 @@ export function calculateLayout(
   const gap = containerProps.gap ?? 0
   const justifyContent = containerProps.justifyContent ?? 'start'
 
-  if (debug) console.log('  Direction:', direction, 'Padding:', padding)
+  DebugLogger.log('layout', `Direction: ${direction}, Padding:`, padding)
 
   // 2a. Pre-calculate container size if explicitly set (needed for percentage children)
   //     This allows percentage-based child sizes to resolve correctly
@@ -302,10 +296,8 @@ export function calculateLayout(
       }
     : undefined
 
-  if (debug && currentContainerSize) {
-    console.log('  Pre-calculated container size for percentage resolution:', currentContainerSize)
-    console.log('  Available content size (for fill):', availableContentSize)
-  }
+  DebugLogger.log('layout', 'Pre-calculated container size:', currentContainerSize)
+  DebugLogger.log('layout', 'Available content size (for fill):', availableContentSize)
 
   // 2. Prepare layout children (filter backgrounds, process nested containers)
   const layoutChildren: LayoutChild[] = []
@@ -313,11 +305,9 @@ export function calculateLayout(
   for (const child of children) {
     // Skip background rectangles
     if (child.__isBackground) {
-      if (debug) console.log('  Skipping background')
+      DebugLogger.log('layout', 'Skipping background')
       continue
-    }
-
-    // Skip processing nested containers with flex (they need parent size first)
+    } // Skip processing nested containers with flex (they need parent size first)
     const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
     if (!hasFlex) {
       // Process nested containers (pass current container size and padding for resolution)
@@ -492,15 +482,19 @@ export function calculateLayout(
   }
 
   // 11. Apply positions to children
-  applyChildPositions(finalLayoutChildren, positions, debug)
+  applyChildPositions(finalLayoutChildren, positions, DevConfig.debug.positioning)
 
   // 12. Apply container dimensions
-  applyContainerDimensions(container, containerWidth, containerHeight, debug)
+  applyContainerDimensions(container, containerWidth, containerHeight, DevConfig.debug.layout)
 
   // 13. Update background and hit area
-  updateBackground(container, containerWidth, containerHeight, debug)
-  updateHitArea(container, containerWidth, containerHeight, debug)
+  updateBackground(container, containerWidth, containerHeight, DevConfig.debug.layout)
+  updateHitArea(container, containerWidth, containerHeight, DevConfig.debug.layout)
 
   // 14. Apply overflow mask if needed
-  applyOverflowMask(container, containerProps, containerWidth, containerHeight, debug)
+  applyOverflowMask(container, containerProps, containerWidth, containerHeight)
+
+  // End performance timing
+  DebugLogger.timeEnd('performance', 'calculateLayout')
+  DebugLogger.groupEnd('layout')
 }

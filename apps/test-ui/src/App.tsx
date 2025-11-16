@@ -1,7 +1,7 @@
 /**
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
-import { Text, View, useState } from '@phaserjsx/ui'
+import { DevPresets, Text, View, useState } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { AdvancedLayoutDemo } from './LayoutDemo'
 import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
@@ -11,6 +11,9 @@ import { LayoutExample } from './examples/LayoutExample'
 import { RefExample } from './examples/RefExample'
 import { StackDemo } from './examples/StackDemo'
 import { ToggleButtonDemo } from './examples/ToggleButtonDemo'
+
+// Enable overflow debugging preset
+DevPresets.debugOverflow()
 
 /**
  * Props for the root App component

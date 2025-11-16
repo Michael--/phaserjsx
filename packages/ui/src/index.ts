@@ -22,3 +22,6 @@ export * from './components'
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";
  */
 export { Fragment, jsx, jsxs } from './jsx-runtime'
+
+// Development configuration and debugging utilities
+export { DebugLogger, DevConfig, DevPresets } from './dev-config'
