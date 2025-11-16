@@ -114,7 +114,7 @@ export function BorderDemo() {
       {/* Overflow hidden - text clipping */}
       <View
         width={150}
-        height={60}
+        height={80}
         backgroundColor={0x2a2a2a}
         borderWidth={2}
         borderColor={0xff9ff3}
@@ -127,6 +127,9 @@ export function BorderDemo() {
           color={'white'}
           style={{ fontSize: 22 }}
         />
+        <View width={70} height={35} borderWidth={2} borderColor={0xffffff} overflow="hidden">
+          <Text text="Nested Box" color={'white'} style={{ fontSize: 14 }} />
+        </View>
       </View>
 
       {/* Overflow visible - comparison */}
