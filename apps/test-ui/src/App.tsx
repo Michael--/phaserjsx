@@ -1,38 +1,12 @@
 /**
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
-import { DevPresets, Text, View, useState } from '@phaserjsx/ui'
-import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
+import { Text, View, useState } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
+import { DebugSide, type DebugPresetKey } from './DemoSide'
+import { DemoContainer, ExampleSide, type ExampleKey } from './ExampleSide'
+import { Sidebar } from './components'
 import { Spacer } from './components/Spacer'
-import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
-import { BorderExample } from './examples/BorderExample'
-import { FlexExample } from './examples/FlexExample'
-import { LayoutExample } from './examples/LayoutExample'
-import { RefExample } from './examples/RefExample'
-import { StackExample } from './examples/StackExample'
-import { ToggleButtonExample } from './examples/ToggleButtonExample'
-
-const demos = {
-  layout: { label: 'Layout System', component: LayoutExample },
-  advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
-  toggle: { label: 'Toggle Buttons', component: ToggleButtonExample },
-  stack: { label: 'Stack Demo', component: StackExample },
-  flex: { label: 'Flex vs Spacer', component: FlexExample },
-  border: { label: 'Border & Corners', component: BorderExample },
-  ref: { label: 'Ref Example', component: RefExample },
-} as const
-
-const debugPresets = {
-  production: { label: 'Production', preset: DevPresets.production },
-  debugLayout: { label: 'Debug Layout', preset: DevPresets.debugLayout },
-  debugOverflow: { label: 'Debug Overflow', preset: DevPresets.debugOverflow },
-  profilePerformance: { label: 'Profile Performance', preset: DevPresets.profilePerformance },
-  debugVDOM: { label: 'Debug VDOM', preset: DevPresets.debugVDOM },
-  debugAll: { label: 'Debug All', preset: DevPresets.debugAll },
-} as const
-
-type DemoKey = keyof typeof demos
-type DebugPresetKey = keyof typeof debugPresets
 
 /**
  * Props for the root App component
@@ -70,64 +44,6 @@ export function Button(props: {
   )
 }
 
-export function DemoSide(props: { selectedDemo: DemoKey; onChange: (value: DemoKey) => void }) {
-  const demoOptions: RadioGroupOption[] = Object.entries(demos).map(([value, config]) => ({
-    value: value as DemoKey,
-    label: config.label,
-  }))
-
-  return (
-    <>
-      <Text text="Demos" color={'cyan'} style={{ fontSize: 18 }} />
-      <RadioGroup
-        options={demoOptions}
-        value={props.selectedDemo}
-        onChange={(value: string) => props.onChange(value as DemoKey)}
-        gap={8}
-        selectedColor={0x4ecdc4}
-        unselectedColor={0x555555}
-      />
-    </>
-  )
-}
-
-export function DemoContainer(props: { selectedDemo: DemoKey }) {
-  const Component = demos[props.selectedDemo].component
-  return (
-    <View key="demo-container">
-      <Component key={props.selectedDemo} />
-    </View>
-  )
-}
-
-export function DebugSide(props: {
-  selectedPreset: DebugPresetKey
-  onChange: (value: DebugPresetKey) => void
-}) {
-  const presetOptions: RadioGroupOption[] = Object.entries(debugPresets).map(([value, config]) => ({
-    value: value as DebugPresetKey,
-    label: config.label,
-  }))
-
-  return (
-    <>
-      <Text text="Debug Options" color={'cyan'} style={{ fontSize: 18 }} />
-      <RadioGroup
-        options={presetOptions}
-        value={props.selectedPreset}
-        onChange={(value: string) => {
-          const key = value as DebugPresetKey
-          debugPresets[key].preset()
-          props.onChange(key)
-        }}
-        gap={8}
-        selectedColor={0x4ecdc4}
-        unselectedColor={0x555555}
-      />
-    </>
-  )
-}
-
 /**
  * Main app component with example selector
  * @param props - App props from Phaser scene
@@ -137,8 +53,8 @@ export function App(props: AppProps) {
   const width = props.width ?? 800
   const height = props.height ?? 600
 
-  const [selectedDemo, setSelectedDemo] = useState<DemoKey>('border')
-  const [selectedPreset, setSelectedPreset] = useState<DebugPresetKey>('production')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('border')
+  const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
 
   return (
     <View
@@ -149,9 +65,9 @@ export function App(props: AppProps) {
       justifyContent="start"
     >
       <Sidebar height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
-        <DemoSide selectedDemo={selectedDemo} onChange={setSelectedDemo} />
+        <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />
-        <DebugSide selectedPreset={selectedPreset} onChange={setSelectedPreset} />
+        <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
       </Sidebar>
 
       <View

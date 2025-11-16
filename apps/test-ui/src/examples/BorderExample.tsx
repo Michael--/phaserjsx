@@ -8,11 +8,11 @@ import { Text, useState, View } from '@phaserjsx/ui'
  * @returns BorderDemo component
  */
 export function BorderExample() {
-  const [px, setPx] = useState(0)
+  const [px, setPx] = useState(20)
 
   return (
     <View
-      x={20 + px}
+      x={20}
       y={20}
       backgroundColor={0x1a1a1a}
       padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
