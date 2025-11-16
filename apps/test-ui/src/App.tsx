@@ -12,6 +12,18 @@ import { RefExample } from './examples/RefExample'
 import { StackDemo } from './examples/StackDemo'
 import { ToggleButtonDemo } from './examples/ToggleButtonDemo'
 
+const demos = {
+  layout: { label: 'Layout System', component: LayoutExample },
+  advanced: { label: 'Advanced Layouts', component: AdvancedLayoutDemo },
+  toggle: { label: 'Toggle Buttons', component: ToggleButtonDemo },
+  stack: { label: 'Stack Demo', component: StackDemo },
+  flex: { label: 'Flex vs Spacer', component: FlexDemo },
+  border: { label: 'Border & Corners', component: BorderDemo },
+  ref: { label: 'Ref Example', component: RefExample },
+} as const
+
+type DemoKey = keyof typeof demos
+
 // Enable overflow debugging preset
 DevPresets.debugOverflow()
 
@@ -51,16 +63,11 @@ export function Button(props: {
   )
 }
 
-export function DemoSide(props: { selectedDemo: string; onChange: (value: string) => void }) {
-  const demoOptions: RadioGroupOption[] = [
-    { value: 'layout', label: 'Layout System' },
-    { value: 'advanced', label: 'Advanced Layouts' },
-    { value: 'toggle', label: 'Toggle Buttons' },
-    { value: 'stack', label: 'Stack Demo' },
-    { value: 'flex', label: 'Flex vs Spacer' },
-    { value: 'border', label: 'Border & Corners' },
-    { value: 'ref', label: 'Ref Example' },
-  ]
+export function DemoSide(props: { selectedDemo: DemoKey; onChange: (value: DemoKey) => void }) {
+  const demoOptions: RadioGroupOption[] = Object.entries(demos).map(([value, config]) => ({
+    value: value as DemoKey,
+    label: config.label,
+  }))
 
   return (
     <>
@@ -68,7 +75,7 @@ export function DemoSide(props: { selectedDemo: string; onChange: (value: string
       <RadioGroup
         options={demoOptions}
         value={props.selectedDemo}
-        onChange={props.onChange}
+        onChange={(value: string) => props.onChange(value as DemoKey)}
         gap={8}
         selectedColor={0x4ecdc4}
         unselectedColor={0x555555}
@@ -77,16 +84,11 @@ export function DemoSide(props: { selectedDemo: string; onChange: (value: string
   )
 }
 
-export function DemoContainer(props: { selectedDemo: string }) {
+export function DemoContainer(props: { selectedDemo: DemoKey }) {
+  const Component = demos[props.selectedDemo].component
   return (
     <View key="demo-container">
-      {props.selectedDemo === 'layout' && <LayoutExample key="layout" />}
-      {props.selectedDemo === 'advanced' && <AdvancedLayoutDemo key="advanced" />}
-      {props.selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
-      {props.selectedDemo === 'stack' && <StackDemo key="stack" />}
-      {props.selectedDemo === 'flex' && <FlexDemo key="flex" />}
-      {props.selectedDemo === 'border' && <BorderDemo key="border" />}
-      {props.selectedDemo === 'ref' && <RefExample key="ref" />}
+      <Component key={props.selectedDemo} />
     </View>
   )
 }
@@ -100,7 +102,7 @@ export function App(props: AppProps) {
   const width = props.width ?? 800
   const height = props.height ?? 600
 
-  const [selectedDemo, setSelectedDemo] = useState('border')
+  const [selectedDemo, setSelectedDemo] = useState<DemoKey>('border')
 
   return (
     <View
