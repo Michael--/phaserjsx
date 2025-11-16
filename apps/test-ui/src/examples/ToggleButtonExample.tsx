@@ -36,7 +36,7 @@ export function ToggleButton(props: {
   )
 }
 
-export function ToggleButtonDemo() {
+export function ToggleButtonExample() {
   const testButton = (key: number) => {
     return (
       <ToggleButton

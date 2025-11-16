@@ -2,23 +2,23 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { DevPresets, Text, View, useState } from '@phaserjsx/ui'
-import { AdvancedLayoutDemo } from './LayoutDemo'
 import { RadioGroup, Sidebar, type RadioGroupOption } from './components'
 import { Spacer } from './components/Spacer'
-import { BorderDemo } from './examples/BorderDemo'
-import { FlexDemo } from './examples/FlexDemo'
+import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
+import { BorderExample } from './examples/BorderExample'
+import { FlexExample } from './examples/FlexExample'
 import { LayoutExample } from './examples/LayoutExample'
 import { RefExample } from './examples/RefExample'
-import { StackDemo } from './examples/StackDemo'
-import { ToggleButtonDemo } from './examples/ToggleButtonDemo'
+import { StackExample } from './examples/StackExample'
+import { ToggleButtonExample } from './examples/ToggleButtonExample'
 
 const demos = {
   layout: { label: 'Layout System', component: LayoutExample },
-  advanced: { label: 'Advanced Layouts', component: AdvancedLayoutDemo },
-  toggle: { label: 'Toggle Buttons', component: ToggleButtonDemo },
-  stack: { label: 'Stack Demo', component: StackDemo },
-  flex: { label: 'Flex vs Spacer', component: FlexDemo },
-  border: { label: 'Border & Corners', component: BorderDemo },
+  advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
+  toggle: { label: 'Toggle Buttons', component: ToggleButtonExample },
+  stack: { label: 'Stack Demo', component: StackExample },
+  flex: { label: 'Flex vs Spacer', component: FlexExample },
+  border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },
 } as const
 

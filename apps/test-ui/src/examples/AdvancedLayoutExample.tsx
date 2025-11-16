@@ -27,7 +27,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
  * Gap demonstration
  * @returns Gap demo
  */
-export function GapDemo() {
+export function GapExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
@@ -46,7 +46,7 @@ export function GapDemo() {
  * JustifyContent demonstration - column direction
  * @returns JustifyContent demo
  */
-export function JustifyContentColumnDemo() {
+export function JustifyContentColumnExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
@@ -135,7 +135,7 @@ export function JustifyContentColumnDemo() {
  * AlignItems demonstration - row direction
  * @returns AlignItems demo
  */
-export function AlignItemsRowDemo() {
+export function AlignItemsRowExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
@@ -194,10 +194,10 @@ export function AlignItemsRowDemo() {
 }
 
 /**
- * Main layout demo component
- * @returns Layout demo
+ * Main layout example component
+ * @returns Layout example
  */
-export function AdvancedLayoutDemo() {
+export function AdvancedLayoutExample() {
   const [n, setN] = useState(0)
 
   return (
@@ -212,9 +212,9 @@ export function AdvancedLayoutDemo() {
       }}
     >
       <Text text={`Pointer Down Count: ${n}`} color={'white'} style={{ fontSize: 18 }} />
-      <GapDemo />
-      <JustifyContentColumnDemo />
-      <AlignItemsRowDemo />
+      <GapExample />
+      <JustifyContentColumnExample />
+      <AlignItemsRowExample />
     </View>
   )
 }

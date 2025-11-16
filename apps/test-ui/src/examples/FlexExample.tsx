@@ -5,7 +5,7 @@ import { Text, View } from '@phaserjsx/ui'
  * Shows two different approaches to fill remaining space
  * @returns Flex demo JSX
  */
-export function FlexDemo() {
+export function FlexExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}

@@ -7,7 +7,7 @@ import { Text, useState, View } from '@phaserjsx/ui'
  * Border and corner radius demonstration
  * @returns BorderDemo component
  */
-export function BorderDemo() {
+export function BorderExample() {
   const [px, setPx] = useState(0)
 
   return (

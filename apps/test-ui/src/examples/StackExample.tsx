@@ -1,6 +1,6 @@
 import { Text, View } from '@phaserjsx/ui'
 
-export function StackDemo() {
+export function StackExample() {
   return (
     <View
       backgroundColor={0x222222}
