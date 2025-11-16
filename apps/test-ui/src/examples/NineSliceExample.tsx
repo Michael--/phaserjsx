@@ -1,7 +1,15 @@
 /**
  * NineSlice Example - demonstrates scalable UI elements using NineSlice
  */
-import { NineSlice, Text, useNineSliceRef, useState, View } from '@phaserjsx/ui'
+import {
+  createNineSliceRef,
+  NineSlice,
+  Text,
+  useEffect,
+  useRef,
+  useState,
+  View,
+} from '@phaserjsx/ui'
 
 /**
  * Reusable NineSlice button component with proper inner padding
@@ -35,12 +43,25 @@ function NineSliceButton({
   color?: string
   fontFamily?: string
 }) {
-  const ref = useNineSliceRef(leftWidth, rightWidth, topHeight, bottomHeight)
+  const ref = useRef<ReturnType<typeof createNineSliceRef> | null>(null)
+
+  const handleRef = (node: Phaser.GameObjects.NineSlice | null) => {
+    if (node) {
+      ref.current = createNineSliceRef(node, {
+        leftWidth,
+        rightWidth,
+        topHeight,
+        bottomHeight,
+      })
+    } else {
+      ref.current = null
+    }
+  }
 
   return (
     <View direction="stack" width={width} height={height} onPointerDown={onClick ?? (() => {})}>
       <NineSlice
-        ref={ref.callback}
+        ref={handleRef}
         texture={texture}
         frame={frame}
         width="100%"
@@ -54,15 +75,12 @@ function NineSliceButton({
         direction="column"
         width="100%"
         height="100%"
-        padding={{
-          left: ref.current?.leftWidth ?? 0,
-          right: ref.current?.rightWidth ?? 0,
-          top: ref.current?.topHeight ?? 0,
-          bottom: ref.current?.bottomHeight ?? 0,
-        }}
+        borderWidth={3}
+        borderColor={0x990099}
         alignItems="center"
         justifyContent="center"
       >
+        <Text text={text} fontSize={fontSize} color={color} fontFamily={fontFamily} />
         <Text text={text} fontSize={fontSize} color={color} fontFamily={fontFamily} />
       </View>
     </View>
@@ -73,26 +91,61 @@ function NineSliceButton({
  * Progress bar component using NineSlice
  */
 function ProgressBar({ score, maxScore = 2000 }: { score: number; maxScore?: number }) {
-  const progressWidth = Math.floor((Math.min(score, maxScore) / maxScore) * 228)
+  const ref = useRef<ReturnType<typeof createNineSliceRef> | null>(null)
+
+  const handleRef = (node: Phaser.GameObjects.NineSlice | null) => {
+    if (node) {
+      ref.current = createNineSliceRef(node, {
+        leftWidth: 6,
+        rightWidth: 6,
+      })
+    } else {
+      ref.current = null
+    }
+  }
+
+  const innerWidth =
+    ref.current != null
+      ? ref.current.innerBounds.width - ref.current.leftWidth - ref.current.rightWidth
+      : 216
+  const progressWidth = Math.floor((Math.min(score, maxScore) / maxScore) * innerWidth)
+
+  useEffect(() => {
+    console.log('Ref updated:', ref.current)
+    //if (ref.current?.node != null) console.log('Inner bounds:', ref.current?.node.getBounds())
+  }, [ref])
 
   return (
-    <View direction="stack" width={228} height={39}>
+    <View direction="stack" width={228} height={40}>
       <NineSlice
+        ref={handleRef}
         texture="ui"
         frame="ButtonOrange"
         width="100%"
         height="100%"
-        leftWidth={6}
-        rightWidth={6}
+        leftWidth={12}
+        rightWidth={12}
       />
-      <NineSlice
-        texture="ui"
-        frame="ButtonOrangeFill2"
-        width={progressWidth}
-        height="100%"
-        leftWidth={6}
-        rightWidth={6}
-      />
+      <View
+        direction="stack"
+        width={innerWidth}
+        height={'100%'}
+        x={ref.current ? ref.current.leftWidth : 12}
+        y={12}
+        borderWidth={3}
+        borderColor={0x0000aa}
+      >
+        <NineSlice
+          //x={0}
+          //y={0}
+          texture="ui"
+          frame="ButtonOrangeFill2"
+          width={progressWidth}
+          //height={10}
+          leftWidth={6}
+          rightWidth={6}
+        />
+      </View>
     </View>
   )
 }
@@ -103,9 +156,6 @@ function ProgressBar({ score, maxScore = 2000 }: { score: number; maxScore?: num
 export function NineSliceExample() {
   const [score, setScore] = useState(0)
   const [buttonWidth, setButtonWidth] = useState(300)
-
-  // Use NineSlice ref to access inner bounds for perfect text positioning
-  const buttonRef = useNineSliceRef(64, 64, 48, 48)
 
   return (
     <View
@@ -118,39 +168,20 @@ export function NineSliceExample() {
       <Text text="NineSlice Examples" fontSize={24} color="#ffffff" />
 
       {/* Example 1: Button with NineSlice background - uses ref for inner bounds */}
-      <View direction="stack" width={buttonWidth} height={98}>
-        <NineSlice
-          ref={buttonRef.callback}
-          texture="ui"
-          frame="GreenButtonSml"
-          width="100%"
-          height="100%"
-          leftWidth={64}
-          rightWidth={64}
-          topHeight={48}
-          bottomHeight={48}
-        />
-        <View
-          direction="column"
-          width="100%"
-          height="100%"
-          padding={{
-            left: buttonRef.current?.leftWidth ?? 0,
-            right: buttonRef.current?.rightWidth ?? 0,
-            top: buttonRef.current?.topHeight ?? 0,
-            bottom: buttonRef.current?.bottomHeight ?? 0,
-          }}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text text={`Score: ${score}`} fontSize={32} color="#ffffff" fontFamily="Courier" />
-          <Text
-            text={`Inner: ${buttonRef.current?.innerBounds.width ?? 0}x${buttonRef.current?.innerBounds.height ?? 0}`}
-            fontSize={12}
-            color="#88ff88"
-          />
-        </View>
-      </View>
+      <NineSliceButton
+        texture="ui"
+        frame="GreenButtonSml"
+        text={`Score: ${score}`}
+        width={300}
+        height={98}
+        leftWidth={64}
+        rightWidth={64}
+        topHeight={48}
+        bottomHeight={48}
+        fontSize={36}
+        color="#000000"
+        fontFamily="Arial"
+      />
 
       {/* Example 2: Clickable button */}
       <NineSliceButton

@@ -2,12 +2,8 @@
  * NineSlice component tests
  */
 import { describe, expect, it, vi } from 'vitest'
-import {
-  createNineSliceRef,
-  nineSliceCreator,
-  nineSlicePatcher,
-  useNineSliceRef,
-} from './nineslice'
+import { useRef } from '../hooks'
+import { createNineSliceRef, nineSliceCreator, nineSlicePatcher } from './nineslice'
 
 describe('NineSlice Component', () => {
   describe('nineSliceCreator', () => {
@@ -325,42 +321,81 @@ describe('NineSlice Component', () => {
     })
   })
 
-  describe('useNineSliceRef', () => {
-    it('creates a ref callback and accessor', () => {
-      const refHelper = useNineSliceRef(64, 64, 48, 48)
+  describe('ref usage with useRef', () => {
+    it('creates a ref callback using useRef and createNineSliceRef', () => {
+      const nineSliceRef = useRef<ReturnType<typeof createNineSliceRef> | null>(null)
 
-      expect(refHelper.callback).toBeTypeOf('function')
-      expect(refHelper.current).toBeNull()
+      const handleRef = (node: Phaser.GameObjects.NineSlice | null) => {
+        if (node) {
+          nineSliceRef.current = createNineSliceRef(node, {
+            leftWidth: 64,
+            rightWidth: 64,
+            topHeight: 48,
+            bottomHeight: 48,
+          })
+        } else {
+          nineSliceRef.current = null
+        }
+      }
+
+      expect(handleRef).toBeTypeOf('function')
+      expect(nineSliceRef.current).toBeNull()
     })
 
     it('populates ref data when callback is called', () => {
-      const refHelper = useNineSliceRef(64, 64, 48, 48)
+      const nineSliceRef = useRef<ReturnType<typeof createNineSliceRef> | null>(null)
+
+      const handleRef = (node: Phaser.GameObjects.NineSlice | null) => {
+        if (node) {
+          nineSliceRef.current = createNineSliceRef(node, {
+            leftWidth: 64,
+            rightWidth: 64,
+            topHeight: 48,
+            bottomHeight: 48,
+          })
+        } else {
+          nineSliceRef.current = null
+        }
+      }
 
       const mockNineSlice = {
         width: 300,
         height: 100,
       } as Phaser.GameObjects.NineSlice
 
-      refHelper.callback(mockNineSlice)
+      handleRef(mockNineSlice)
 
-      expect(refHelper.current).not.toBeNull()
-      expect(refHelper.current?.node).toBe(mockNineSlice)
-      expect(refHelper.current?.innerBounds.width).toBe(172)
+      expect(nineSliceRef.current).not.toBeNull()
+      expect(nineSliceRef.current?.node).toBe(mockNineSlice)
+      expect(nineSliceRef.current?.innerBounds.width).toBe(172)
     })
 
     it('clears ref data when callback is called with null', () => {
-      const refHelper = useNineSliceRef(64, 64, 48, 48)
+      const nineSliceRef = useRef<ReturnType<typeof createNineSliceRef> | null>(null)
+
+      const handleRef = (node: Phaser.GameObjects.NineSlice | null) => {
+        if (node) {
+          nineSliceRef.current = createNineSliceRef(node, {
+            leftWidth: 64,
+            rightWidth: 64,
+            topHeight: 48,
+            bottomHeight: 48,
+          })
+        } else {
+          nineSliceRef.current = null
+        }
+      }
 
       const mockNineSlice = {
         width: 300,
         height: 100,
       } as Phaser.GameObjects.NineSlice
 
-      refHelper.callback(mockNineSlice)
-      expect(refHelper.current).not.toBeNull()
+      handleRef(mockNineSlice)
+      expect(nineSliceRef.current).not.toBeNull()
 
-      refHelper.callback(null)
-      expect(refHelper.current).toBeNull()
+      handleRef(null)
+      expect(nineSliceRef.current).toBeNull()
     })
   })
 })

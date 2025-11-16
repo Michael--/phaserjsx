@@ -35,7 +35,6 @@ export {
   createNineSliceRef,
   nineSliceCreator,
   nineSlicePatcher,
-  useNineSliceRef,
   type NineSliceBaseProps,
   type NineSliceInnerBounds,
   type NineSliceProps,
