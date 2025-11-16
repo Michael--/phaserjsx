@@ -53,7 +53,7 @@ export function App(props: AppProps) {
   const width = props.width ?? 800
   const height = props.height ?? 600
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('border')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('nineslice')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
 
   return (

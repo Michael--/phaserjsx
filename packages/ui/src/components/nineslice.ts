@@ -66,18 +66,24 @@ export interface NineSliceProps
  * NineSlice creator - creates a Phaser NineSlice object
  */
 export const nineSliceCreator: HostCreator<'NineSlice'> = (scene, props) => {
+  // For width/height, use a small default that will be overridden by layout system
+  // This prevents the NineSlice from being created with huge dimensions
+  const initialWidth = typeof props.width === 'number' ? props.width : 64
+  const initialHeight = typeof props.height === 'number' ? props.height : 64
+
   const nineSlice = scene.add.nineslice(
     props.x ?? 0,
     props.y ?? 0,
     props.texture,
     props.frame,
-    typeof props.width === 'number' ? props.width : 256,
-    typeof props.height === 'number' ? props.height : 256,
+    initialWidth,
+    initialHeight,
     props.leftWidth,
     props.rightWidth,
     props.topHeight,
     props.bottomHeight
   )
+  nineSlice.setOrigin(0, 0) // Top-left origin for easier layout handling as it is in UI
 
   // Apply transform props (visible, depth, alpha, scale, rotation)
   createTransform(nineSlice, props)

@@ -14,13 +14,13 @@ export function NineSliceExample() {
     <View direction="column" gap={30} padding={{ top: 20, left: 20 }} backgroundColor={0x1a1a1a}>
       <Text text="NineSlice Examples" fontSize={24} color="#ffffff" />
 
-      {/* Example 1: Button with NineSlice background */}
-      <View direction="stack" width={buttonWidth} height={98}>
+      {/* Example 1: Button with NineSlice background - NineSlice fills parent with 100% */}
+      <View direction="stack" width={buttonWidth} height={98} backgroundColor={0x33aa33}>
         <NineSlice
           texture="ui"
           frame="GreenButtonSml"
-          width={buttonWidth}
-          height={98}
+          width="100%"
+          height="100%"
           leftWidth={64}
           rightWidth={64}
           topHeight={48}
@@ -34,8 +34,8 @@ export function NineSliceExample() {
         <NineSlice
           texture="ui"
           frame="RedButtonSml"
-          width={300}
-          height={98}
+          width="100%"
+          height="100%"
           leftWidth={64}
           rightWidth={64}
           topHeight={48}
@@ -54,8 +54,8 @@ export function NineSliceExample() {
         <NineSlice
           texture="ui"
           frame="BlueButtonSml"
-          width={200}
-          height={70}
+          width="100%"
+          height="100%"
           leftWidth={64}
           rightWidth={64}
           topHeight={35}
@@ -71,8 +71,8 @@ export function NineSliceExample() {
           <NineSlice
             texture="ui"
             frame="ButtonOrange"
-            width={228}
-            height={39}
+            width="100%"
+            height="100%"
             leftWidth={6}
             rightWidth={6}
           />
@@ -80,7 +80,7 @@ export function NineSliceExample() {
             texture="ui"
             frame="ButtonOrangeFill1"
             width={Math.floor((score / 2000) * 228)}
-            height={39}
+            height="100%"
             leftWidth={6}
             rightWidth={6}
           />
