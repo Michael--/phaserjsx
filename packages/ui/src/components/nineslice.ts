@@ -66,41 +66,6 @@ export interface NineSliceRef {
 }
 
 /**
- * Creates a NineSliceRef object with slice information and inner bounds
- * @param node - Phaser NineSlice GameObject
- * @param props - NineSlice props containing slice dimensions
- * @returns NineSliceRef with computed inner bounds
- */
-export function createNineSliceRef(
-  node: Phaser.GameObjects.NineSlice,
-  props: Partial<NineSliceSpecificProps>
-): NineSliceRef {
-  const leftWidth = props.leftWidth ?? 0
-  const rightWidth = props.rightWidth ?? 0
-  const topHeight = props.topHeight ?? 0
-  const bottomHeight = props.bottomHeight ?? 0
-
-  return {
-    node,
-    leftWidth,
-    rightWidth,
-    topHeight,
-    bottomHeight,
-    get innerBounds(): NineSliceInnerBounds {
-      // Dynamically calculate based on current node dimensions
-      const totalWidth = node.width
-      const totalHeight = node.height
-      return {
-        x: leftWidth,
-        y: topHeight,
-        width: Math.max(0, totalWidth - leftWidth - rightWidth),
-        height: Math.max(0, totalHeight - topHeight - bottomHeight),
-      }
-    },
-  }
-}
-
-/**
  * NineSlice-specific properties for texture and slice configuration
  */
 export interface NineSliceSpecificProps {

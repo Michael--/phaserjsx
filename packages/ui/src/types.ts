@@ -29,6 +29,9 @@ export interface PropsDefaultExtension<T = unknown> {
   key?: string | number | undefined
   ref?: Ref<T> | undefined
 }
+
+export type ChildrenType = VNode | VNode[] | null | undefined
+
 export interface PropsContainerExtension {
-  children?: VNode | VNode[] | null | undefined
+  children?: ChildrenType
 }

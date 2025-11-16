@@ -32,7 +32,6 @@ export { textCreator, textPatcher, type TextBaseProps, type TextProps } from './
 
 // Re-export NineSlice component
 export {
-  createNineSliceRef,
   nineSliceCreator,
   nineSlicePatcher,
   type NineSliceBaseProps,
