@@ -3,6 +3,7 @@
  * Defines the mapping between node type names and their corresponding Phaser types
  */
 import type Phaser from 'phaser'
+import type { NineSliceBaseProps } from './components/nineslice'
 import type { TextBaseProps } from './components/text'
 import type { ViewBaseProps } from './components/view'
 
@@ -12,6 +13,7 @@ import type { ViewBaseProps } from './components/view'
 export interface NodeMap {
   View: Phaser.GameObjects.Container
   Text: Phaser.GameObjects.Text
+  NineSlice: Phaser.GameObjects.NineSlice
 }
 
 /**
@@ -20,6 +22,7 @@ export interface NodeMap {
 export interface NodePropsMap {
   View: ViewBaseProps
   Text: TextBaseProps
+  NineSlice: NineSliceBaseProps
 }
 
 /**
