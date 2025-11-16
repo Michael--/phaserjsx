@@ -207,15 +207,16 @@ export function resolveSize(
 
     case 'auto':
       if (contentSize === undefined) {
-        DebugLogger.warn('Size', 'Auto size without content size, using fallback 100px')
-        return 100
+        DebugLogger.warn('Size', 'Auto size without content size, using fallback 0px')
+        return 0
       }
       return contentSize
 
     case 'fill': {
       if (parentSize === undefined) {
-        DebugLogger.warn('Size', 'Fill size without parent size, using fallback 100px')
-        return 100
+        // this would be possible at startup before parent sizes are known, therefore just return 0
+        // DebugLogger.warn('Size', 'Fill size without parent size, using fallback 0px')
+        return 0
       }
       // Fill = parent size minus padding (content-area)
       if (parentPadding !== undefined && parentPadding > 0) {
