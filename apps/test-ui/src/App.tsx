@@ -77,6 +77,20 @@ export function DemoSide(props: { selectedDemo: string; onChange: (value: string
   )
 }
 
+export function DemoContainer(props: { selectedDemo: string }) {
+  return (
+    <View key="demo-container">
+      {props.selectedDemo === 'layout' && <LayoutExample key="layout" />}
+      {props.selectedDemo === 'advanced' && <AdvancedLayoutDemo key="advanced" />}
+      {props.selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
+      {props.selectedDemo === 'stack' && <StackDemo key="stack" />}
+      {props.selectedDemo === 'flex' && <FlexDemo key="flex" />}
+      {props.selectedDemo === 'border' && <BorderDemo key="border" />}
+      {props.selectedDemo === 'ref' && <RefExample key="ref" />}
+    </View>
+  )
+}
+
 /**
  * Main app component with example selector
  * @param props - App props from Phaser scene
@@ -107,15 +121,7 @@ export function App(props: AppProps) {
         justifyContent="space-between"
         backgroundColor={0x764522}
       >
-        <View key="demo-container">
-          {selectedDemo === 'layout' && <LayoutExample key="layout" />}
-          {selectedDemo === 'advanced' && <AdvancedLayoutDemo key="advanced" />}
-          {selectedDemo === 'toggle' && <ToggleButtonDemo key="toggle" />}
-          {selectedDemo === 'stack' && <StackDemo key="stack" />}
-          {selectedDemo === 'flex' && <FlexDemo key="flex" />}
-          {selectedDemo === 'border' && <BorderDemo key="border" />}
-          {selectedDemo === 'ref' && <RefExample key="ref" />}
-        </View>
+        <DemoContainer selectedDemo={selectedDemo} />
 
         <View
           direction="row"
