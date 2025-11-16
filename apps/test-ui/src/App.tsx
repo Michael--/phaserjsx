@@ -51,15 +51,7 @@ export function Button(props: {
   )
 }
 
-/**
- * Main app component with example selector
- * @param props - App props from Phaser scene
- * @returns App component JSX
- */
-export function App(props: AppProps) {
-  const width = props.width ?? 800
-  const height = props.height ?? 600
-
+export function DemoSide(props: { selectedDemo: string; onChange: (value: string) => void }) {
   const demoOptions: RadioGroupOption[] = [
     { value: 'layout', label: 'Layout System' },
     { value: 'advanced', label: 'Advanced Layouts' },
@@ -69,6 +61,30 @@ export function App(props: AppProps) {
     { value: 'border', label: 'Border & Corners' },
     { value: 'ref', label: 'Ref Example' },
   ]
+
+  return (
+    <>
+      <Text text="Demos" color={'cyan'} style={{ fontSize: 18 }} />
+      <RadioGroup
+        options={demoOptions}
+        value={props.selectedDemo}
+        onChange={props.onChange}
+        gap={8}
+        selectedColor={0x4ecdc4}
+        unselectedColor={0x555555}
+      />
+    </>
+  )
+}
+
+/**
+ * Main app component with example selector
+ * @param props - App props from Phaser scene
+ * @returns App component JSX
+ */
+export function App(props: AppProps) {
+  const width = props.width ?? 800
+  const height = props.height ?? 600
 
   const [selectedDemo, setSelectedDemo] = useState('border')
 
@@ -81,15 +97,7 @@ export function App(props: AppProps) {
       justifyContent="start"
     >
       <Sidebar width={200} height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
-        <Text text="Demos" color={'cyan'} style={{ fontSize: 18 }} />
-        <RadioGroup
-          options={demoOptions}
-          value={selectedDemo}
-          onChange={(value) => setSelectedDemo(value)}
-          gap={8}
-          selectedColor={0x4ecdc4}
-          unselectedColor={0x555555}
-        />
+        <DemoSide selectedDemo={selectedDemo} onChange={setSelectedDemo} />
       </Sidebar>
 
       <View
