@@ -89,15 +89,15 @@ export interface ParsedSize {
 
 /**
  * Calc expression representation
- * Supports: calc(50% - 20px), calc(100% + 10px), etc.
+ * Supports: calc(50% - 20px), calc(100% + 10px), calc((50% + 10px) * 2), etc.
  */
 export interface CalcExpression {
-  /** Left operand */
-  left: CalcOperand
+  /** Left operand or sub-expression */
+  left: CalcOperand | CalcExpression
   /** Operator: +, -, *, / */
   operator: '+' | '-' | '*' | '/'
-  /** Right operand */
-  right: CalcOperand
+  /** Right operand or sub-expression */
+  right: CalcOperand | CalcExpression
 }
 
 /**

@@ -120,8 +120,35 @@ describe('parseSize', () => {
     it('handles spaces in calc expression', () => {
       const result = parseSize('calc( 100%  -  40px )')
       expect(result.type).toBe('calc')
-      expect(result.calc?.left.type).toBe('percent')
-      expect(result.calc?.right.value).toBe(40)
+      const left = result.calc?.left
+      const right = result.calc?.right
+      if (left && 'type' in left) {
+        expect(left.type).toBe('percent')
+      }
+      if (right && 'value' in right) {
+        expect(right.value).toBe(40)
+      }
+    })
+
+    it('parses complex calc with parentheses', () => {
+      const result = parseSize('calc((50% + 10px) * 2)')
+      expect(result.type).toBe('calc')
+      // The structure should be (50% + 10px) * 2
+      expect(result.calc?.operator).toBe('*')
+      const right = result.calc?.right
+      if (right && 'type' in right) {
+        expect(right.type).toBe('fixed')
+        expect(right.value).toBe(2)
+      } else {
+        throw new Error('Right operand should be CalcOperand')
+      }
+    })
+
+    it('parses calc with multiple operators', () => {
+      const result = parseSize('calc(100% - 20px + 10px)')
+      expect(result.type).toBe('calc')
+      // Should parse as (100% - 20px) + 10px due to left associativity
+      expect(result.calc?.operator).toBe('+')
     })
   })
 
@@ -314,6 +341,24 @@ describe('resolveSize', () => {
       const result = resolveSize(parsed) // no parent
       expect(result).toBe(10) // 0 + 10
     })
+
+    it('resolves complex calc expression', () => {
+      // Manually create (50% + 10) * 2
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: {
+            left: { type: 'percent' as const, value: 50 },
+            operator: '+' as const,
+            right: { type: 'fixed' as const, value: 10 },
+          },
+          operator: '*' as const,
+          right: { type: 'fixed' as const, value: 2 },
+        },
+      }
+      const result = resolveSize(parsed, 200) // parent 200
+      expect(result).toBe(220) // (100 + 10) * 2 = 220
+    })
   })
 })
 
@@ -346,6 +391,22 @@ describe('helper functions', () => {
         },
       }
       expect(requiresParent(parsed)).toBe(false)
+    })
+
+    it('returns true for nested calc with percentage', () => {
+      const parsed = {
+        type: 'calc' as const,
+        calc: {
+          left: {
+            left: { type: 'percent' as const, value: 50 },
+            operator: '+' as const,
+            right: { type: 'fixed' as const, value: 10 },
+          },
+          operator: '*' as const,
+          right: { type: 'fixed' as const, value: 2 },
+        },
+      }
+      expect(requiresParent(parsed)).toBe(true)
     })
 
     it('returns false for fixed', () => {

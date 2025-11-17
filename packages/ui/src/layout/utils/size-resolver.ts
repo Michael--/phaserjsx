@@ -37,22 +37,64 @@ function parseCalcOperand(operand: string): CalcOperand {
  * @returns Parsed calc expression
  */
 function parseCalcExpression(expr: string): CalcExpression {
-  // Support: +, -, *, /
-  // Find operator (look for operators not inside parentheses)
-  const operators = ['+', '-', '*', '/']
+  // Remove spaces
+  expr = expr.replace(/\s+/g, '')
 
-  for (const op of operators) {
-    const parts = expr.split(op)
-    if (parts.length === 2 && parts[0] && parts[1]) {
-      return {
-        left: parseCalcOperand(parts[0]),
-        operator: op as '+' | '-' | '*' | '/',
-        right: parseCalcOperand(parts[1]),
+  // Simple recursive parser for calc expressions
+  function parseExpression(str: string): CalcExpression | CalcOperand {
+    str = str.trim()
+
+    // Handle parentheses
+    if (str.startsWith('(') && str.endsWith(')')) {
+      return parseExpression(str.slice(1, -1))
+    }
+
+    // Check if it's just an operand
+    try {
+      return parseCalcOperand(str)
+    } catch {
+      // Not an operand, continue parsing
+    }
+
+    // Find operators, respecting precedence: * / before + -
+    const operators = ['+', '-', '*', '/']
+    let parenDepth = 0
+    let lastOpIndex = -1
+    let lastOp = ''
+
+    for (let i = str.length - 1; i >= 0; i--) {
+      const char = str.charAt(i)
+      if (char === ')') parenDepth++
+      else if (char === '(') parenDepth--
+      else if (parenDepth === 0 && operators.includes(char)) {
+        // Check precedence: prefer * / over + -
+        if (char === '*' || char === '/' || (lastOp !== '*' && lastOp !== '/')) {
+          lastOpIndex = i
+          lastOp = char
+          if (char === '+' || char === '-') break // Lowest precedence, stop here
+        }
       }
+    }
+
+    if (lastOpIndex === -1) {
+      throw new Error(`[Size] No valid operator found in calc expression: "${str}"`)
+    }
+
+    const leftStr = str.slice(0, lastOpIndex)
+    const rightStr = str.slice(lastOpIndex + 1)
+
+    if (!leftStr || !rightStr) {
+      throw new Error(`[Size] Invalid calc expression: "${str}"`)
+    }
+
+    return {
+      left: parseExpression(leftStr),
+      operator: lastOp as '+' | '-' | '*' | '/',
+      right: parseExpression(rightStr),
     }
   }
 
-  throw new Error(`[Size] Invalid calc expression: "calc(${expr})"`)
+  return parseExpression(expr) as CalcExpression
 }
 
 /**
@@ -112,21 +154,27 @@ export function parseSize(size: number | string | undefined): ParsedSize {
 
 /**
  * Resolve a calc operand to pixel value
- * @param operand - Calc operand
+ * @param operand - Calc operand or sub-expression
  * @param parentSize - Parent dimension for percentage resolution
  * @returns Resolved pixel value
  */
-function resolveCalcOperand(operand: CalcOperand, parentSize?: number): number {
-  if (operand.type === 'fixed') {
-    return operand.value
-  }
+function resolveCalcOperand(operand: CalcOperand | CalcExpression, parentSize?: number): number {
+  if ('type' in operand) {
+    // It's a CalcOperand
+    if (operand.type === 'fixed') {
+      return operand.value
+    }
 
-  // Percentage
-  if (parentSize === undefined) {
-    DebugLogger.warn('Size', 'Cannot resolve percentage in calc() without parent size. Using 0.')
-    return 0
+    // Percentage
+    if (parentSize === undefined) {
+      DebugLogger.warn('Size', 'Cannot resolve percentage in calc() without parent size. Using 0.')
+      return 0
+    }
+    return (parentSize * operand.value) / 100
+  } else {
+    // It's a CalcExpression
+    return resolveCalcExpression(operand, parentSize)
   }
-  return (parentSize * operand.value) / 100
 }
 
 /**
@@ -207,8 +255,8 @@ export function resolveSize(
 
     case 'auto':
       if (contentSize === undefined) {
-        DebugLogger.warn('Size', 'Auto size without content size, using fallback 0px')
-        return 0
+        DebugLogger.warn('Size', 'Auto size without content size, using fallback 100px')
+        return 100
       }
       return contentSize
 
@@ -234,6 +282,22 @@ export function resolveSize(
 }
 
 /**
+ * Check if a calc expression requires parent context
+ * @param calc - Calc expression
+ * @returns True if expression contains percentages
+ */
+function calcRequiresParent(calc: CalcExpression): boolean {
+  const checkOperand = (op: CalcOperand | CalcExpression): boolean => {
+    if ('type' in op) {
+      return op.type === 'percent'
+    } else {
+      return calcRequiresParent(op)
+    }
+  }
+  return checkOperand(calc.left) || checkOperand(calc.right)
+}
+
+/**
  * Check if a size needs parent context to resolve
  * @param parsed - Parsed size information
  * @returns True if size requires parent dimension
@@ -245,7 +309,7 @@ export function requiresParent(parsed: ParsedSize): boolean {
 
   // Calc expressions might contain percentages
   if (parsed.type === 'calc' && parsed.calc) {
-    return parsed.calc.left.type === 'percent' || parsed.calc.right.type === 'percent'
+    return calcRequiresParent(parsed.calc)
   }
 
   return false
