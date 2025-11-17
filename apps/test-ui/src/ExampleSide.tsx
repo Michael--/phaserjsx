@@ -6,6 +6,7 @@ import { FlexExample } from './examples/FlexExample'
 import { LayoutExample } from './examples/LayoutExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { RefExample } from './examples/RefExample'
+import { ScrollExample } from './examples/ScrollExamples'
 import { StackExample } from './examples/StackExample'
 import { ToggleButtonExample } from './examples/ToggleButtonExample'
 
@@ -18,6 +19,7 @@ const examples = {
   border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },
   nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+  scroll: { label: 'Scroll Example', component: ScrollExample },
 } as const
 
 export type ExampleKey = keyof typeof examples
