@@ -1,62 +1,8 @@
 /**
  * NineSlice Example - demonstrates scalable UI elements using NineSlice
  */
-import { NineSlice, Text, useRef, useState, View, type ChildrenType } from '@phaserjsx/ui'
-
-/**
- * Reusable NineSlice button component with proper inner padding
- */
-function NineSliceButton(props: {
-  texture: string
-  frame: string
-  text: string
-  onClick?: (() => void) | undefined
-  width: number
-  height: number
-  leftWidth: number
-  rightWidth: number
-  topHeight: number
-  bottomHeight: number
-  children?: ChildrenType
-}) {
-  const ref = useRef<Phaser.GameObjects.NineSlice | null>(null)
-  const innerWidth = props.width - props.leftWidth - props.rightWidth
-  const innerHeight = props.height - props.topHeight - props.bottomHeight
-
-  return (
-    <View
-      direction="stack"
-      width={props.width}
-      height={props.height}
-      onPointerDown={props.onClick ?? (() => {})}
-    >
-      <NineSlice
-        ref={ref}
-        texture={props.texture}
-        frame={props.frame}
-        width="100%"
-        height="100%"
-        leftWidth={props.leftWidth}
-        rightWidth={props.rightWidth}
-        topHeight={props.topHeight}
-        bottomHeight={props.bottomHeight}
-      />
-      <View
-        direction="column"
-        x={props.leftWidth}
-        y={props.topHeight}
-        width={innerWidth}
-        height={innerHeight}
-        borderWidth={3}
-        borderColor={0x990099}
-        alignItems="center"
-        justifyContent="center"
-      >
-        {props.children}
-      </View>
-    </View>
-  )
-}
+import { Text, useState, View } from '@phaserjsx/ui'
+import { NineSliceButton } from '../components'
 
 /**
  * Example demonstrating NineSlice usage with ZStack pattern for buttons
@@ -80,11 +26,10 @@ export function NineSliceExample() {
     >
       <Text text="NineSlice Examples" style={{ fontSize: 24 }} />
 
-      {/* Example 1: Button with NineSlice background - uses ref for inner bounds */}
+      {/* Example 1: Button with NineSlice background */}
       <NineSliceButton
         texture="ui"
         frame="GreenButtonSml"
-        text={`Score: ${score}`}
         width={250}
         height={102}
         leftWidth={20}
@@ -99,7 +44,6 @@ export function NineSliceExample() {
       <NineSliceButton
         texture="ui"
         frame="RedButtonSml"
-        text="Add 500 to Score"
         onClick={() => setScore(score + 500)}
         width={300}
         height={98}
@@ -118,7 +62,6 @@ export function NineSliceExample() {
       <NineSliceButton
         texture="ui"
         frame="ButtonOrange"
-        text="Toggle Size"
         onClick={toggleSize}
         width={buttonWidth}
         height={70}
