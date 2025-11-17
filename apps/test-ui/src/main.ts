@@ -50,6 +50,12 @@ class MainScene extends Phaser.Scene {
 
     console.log('MainScene.create() scene dimensions:', this.scale.width, 'x', this.scale.height)
 
+    // Listen for orientation changes and reload the page
+    this.scale.on('orientationchange', (orientation: string) => {
+      console.log('Orientation changed to:', orientation)
+      window.location.reload()
+    })
+
     // Mount the JSX app into this scene, this is where the UI tree starts
     // Could be mounted into a Container instead of the Scene directly
     mountJSX(this, App, {
@@ -64,7 +70,7 @@ new Phaser.Game({
   width: '100%',
   height: '100%',
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     zoom: 1,
   },
