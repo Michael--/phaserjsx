@@ -127,7 +127,7 @@ export function NineSliceExample() {
         topHeight={14}
         bottomHeight={14}
       >
-        <Text text="Toggle Size" style={{ fontSize: 20 }} color="#ffffff" />
+        <Text text="Toggle Size" style={{ fontSize: 20 }} />
       </NineSliceButton>
 
       {/** TODO: this is a dummy view at end, because nineSlice did not correctly considered when calculate needed size */}

@@ -51,7 +51,7 @@ export function LayoutExample() {
       gap={10}
       justifyContent="start"
     >
-      <Text text="Layout System Demo (gap: 10)" color={'yellow'} />
+      <Text text="Layout System Demo (gap: 10)" style={{ color: 'yellow' }} />
       <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />
       <Counter step={5} label="Counter B" />
@@ -64,9 +64,9 @@ export function LayoutExample() {
         gap={15}
         alignItems="center"
       >
-        <Text style={{ fontSize: 20 }} text="Row" color={'cyan'} />
-        <Text style={{ fontSize: 30 }} text="Layout" color={'lime'} />
-        <Text style={{ fontSize: 15 }} text="Demo" color={'orange'} />
+        <Text style={{ fontSize: 20, color: 'cyan' }} text="Row" />
+        <Text style={{ fontSize: 30, color: 'lime' }} text="Layout" />
+        <Text style={{ fontSize: 15, color: 'orange' }} text="Demo" />
       </View>
     </View>
   )

@@ -146,12 +146,8 @@ export interface BackgroundProps {
  */
 export interface TextSpecificProps {
   text: string
-  color?: string | number
-  fontSize?: number
-  fontFamily?: string
   fontStyle?: string
   align?: 'left' | 'center' | 'right'
-  maxWidth?: number
 }
 
 /**

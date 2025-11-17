@@ -18,7 +18,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
       alignItems="center"
       justifyContent="center"
     >
-      <Text text={props.text} style={{ fontSize: 12 }} color={'white'} />
+      <Text text={props.text} style={{ fontSize: 12, color: 'white' }} />
     </View>
   )
 }
@@ -34,7 +34,7 @@ export function GapExample() {
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={15}
     >
-      <Text text="Gap(15)" color={'yellow'} style={{ fontSize: 14 }} />
+      <Text text="Gap(15)" style={{ fontSize: 14, color: 'yellow' }} />
       <Box color={0xff6b6b} text="Box 1" />
       <Box color={0x4ecdc4} text="Box 2" />
       <Box color={0x45b7d1} text="Box 3" />
@@ -54,7 +54,7 @@ export function JustifyContentColumnExample() {
       direction="column"
       gap={10}
     >
-      <Text text="JustifyContent (Column)" color={'yellow'} style={{ fontSize: 16 }} />
+      <Text text="JustifyContent (Column)" style={{ fontSize: 16, color: 'yellow' }} />
 
       <View direction="row" gap={10}>
         {/* Start */}
@@ -66,7 +66,7 @@ export function JustifyContentColumnExample() {
           justifyContent="start"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
         >
-          <Text text="start" style={{ fontSize: 10 }} color={'cyan'} />
+          <Text text="start" style={{ fontSize: 10, color: 'cyan' }} />
           <Box color={0xff6b6b} text="1" width={40} height={20} />
           <Box color={0x4ecdc4} text="2" width={40} height={20} />
         </View>
@@ -80,7 +80,7 @@ export function JustifyContentColumnExample() {
           justifyContent="center"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
         >
-          <Text text="center" style={{ fontSize: 10 }} color={'cyan'} />
+          <Text text="center" style={{ fontSize: 10, color: 'cyan' }} />
           <Box color={0xff6b6b} text="1" width={40} height={20} />
           <Box color={0x4ecdc4} text="2" width={40} height={20} />
         </View>
@@ -94,7 +94,7 @@ export function JustifyContentColumnExample() {
           justifyContent="end"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
         >
-          <Text text="end" style={{ fontSize: 10 }} color={'cyan'} />
+          <Text text="end" style={{ fontSize: 10, color: 'cyan' }} />
           <Box color={0xff6b6b} text="1" width={40} height={20} />
           <Box color={0x4ecdc4} text="2" width={40} height={20} />
         </View>
@@ -108,7 +108,7 @@ export function JustifyContentColumnExample() {
           justifyContent="space-between"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
         >
-          <Text text="space-btw" style={{ fontSize: 10 }} color={'cyan'} />
+          <Text text="space-btw" style={{ fontSize: 10, color: 'cyan' }} />
           <Box color={0xff6b6b} text="1" width={40} height={20} />
           <Box color={0x4ecdc4} text="2" width={40} height={20} />
         </View>
@@ -122,7 +122,7 @@ export function JustifyContentColumnExample() {
           justifyContent="space-around"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
         >
-          <Text text="space-ard" style={{ fontSize: 10 }} color={'cyan'} />
+          <Text text="space-ard" style={{ fontSize: 10, color: 'cyan' }} />
           <Box color={0xff6b6b} text="1" width={40} height={20} />
           <Box color={0x4ecdc4} text="2" width={40} height={20} />
         </View>
@@ -143,7 +143,7 @@ export function AlignItemsRowExample() {
       direction="column"
       gap={10}
     >
-      <Text text="AlignItems (Row)" color={'yellow'} style={{ fontSize: 16 }} />
+      <Text text="AlignItems (Row)" style={{ fontSize: 16, color: 'yellow' }} />
 
       {/* Start */}
       <View
@@ -154,7 +154,7 @@ export function AlignItemsRowExample() {
         gap={5}
         padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
-        <Text text="start:" style={{ fontSize: 10 }} color={'cyan'} />
+        <Text text="start:" style={{ fontSize: 10, color: 'cyan' }} />
         <Box color={0xff6b6b} text="A" width={40} height={30} />
         <Box color={0x4ecdc4} text="B" width={40} height={50} />
         <Box color={0x45b7d1} text="C" width={40} height={20} />
@@ -169,7 +169,7 @@ export function AlignItemsRowExample() {
         gap={5}
         padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
-        <Text text="center:" style={{ fontSize: 10 }} color={'cyan'} />
+        <Text text="center:" style={{ fontSize: 10, color: 'cyan' }} />
         <Box color={0xff6b6b} text="A" width={40} height={30} />
         <Box color={0x4ecdc4} text="B" width={40} height={50} />
         <Box color={0x45b7d1} text="C" width={40} height={20} />
@@ -184,7 +184,7 @@ export function AlignItemsRowExample() {
         gap={5}
         padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
-        <Text text="end:" style={{ fontSize: 10 }} color={'cyan'} />
+        <Text text="end:" style={{ fontSize: 10, color: 'cyan' }} />
         <Box color={0xff6b6b} text="A" width={40} height={30} />
         <Box color={0x4ecdc4} text="B" width={40} height={50} />
         <Box color={0x45b7d1} text="C" width={40} height={20} />
@@ -211,7 +211,7 @@ export function AdvancedLayoutExample() {
         setN((n) => n + 1)
       }}
     >
-      <Text text={`Pointer Down Count: ${n}`} color={'white'} style={{ fontSize: 18 }} />
+      <Text text={`Pointer Down Count: ${n}`} style={{ fontSize: 18, color: 'white' }} />
       <GapExample />
       <JustifyContentColumnExample />
       <AlignItemsRowExample />

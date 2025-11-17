@@ -84,8 +84,7 @@ export function RadioGroup(props: RadioGroupProps) {
 
             <Text
               text={option.label}
-              color={props.labelColor ?? 'white'}
-              style={{ fontSize: 14 }}
+              style={{ fontSize: 14, color: props.labelColor ?? 'white' }}
             />
           </View>
         )

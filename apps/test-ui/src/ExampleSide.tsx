@@ -33,7 +33,7 @@ export function ExampleSide(props: {
 
   return (
     <>
-      <Text text="Examples" color={'cyan'} style={{ fontSize: 18 }} />
+      <Text text="Examples" style={{ fontSize: 18 }} />
       <RadioGroup
         options={exampleOptions}
         value={props.selectedExample}

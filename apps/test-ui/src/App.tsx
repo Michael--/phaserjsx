@@ -39,7 +39,7 @@ export function Button(props: {
         props.onClick?.()
       }}
     >
-      <Text text={props.text} style={{ fontSize: 16 }} color={'white'} />
+      <Text text={props.text} style={{ fontSize: 16, color: 'white' }} />
     </View>
   )
 }
@@ -80,9 +80,9 @@ export function App(props: AppProps) {
         <DemoContainer selectedDemo={selectedDemo} />
 
         <View direction="row" justifyContent="space-between" key="footer" width={'fill'}>
-          <Text text={`Demo: ${selectedDemo}`} color={'white'} style={{ fontSize: 14 }} />
+          <Text text={`Demo: ${selectedDemo}`} style={{ fontSize: 14, color: 'white' }} />
           <Spacer />
-          <Text text={`Screen: ${width} x ${height}`} color={'white'} style={{ fontSize: 14 }} />
+          <Text text={`Screen: ${width} x ${height}`} style={{ fontSize: 14, color: 'white' }} />
         </View>
       </View>
     </View>

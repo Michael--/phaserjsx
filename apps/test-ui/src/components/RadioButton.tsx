@@ -58,7 +58,7 @@ export function RadioButton(props: RadioButtonProps) {
         />
       </View>
 
-      <Text text={props.label} color={props.labelColor ?? 'white'} style={{ fontSize: 14 }} />
+      <Text text={props.label} style={{ fontSize: 14, color: props.labelColor ?? 'white' }} />
     </View>
   )
 }

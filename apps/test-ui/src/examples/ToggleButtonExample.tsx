@@ -29,8 +29,7 @@ export function ToggleButton(props: {
     >
       <Text
         text={toggled ? props.textOn : props.textOff}
-        style={{ fontSize: 16 }}
-        color={'white'}
+        style={{ fontSize: 16, color: 'white' }}
       />
     </View>
   )
@@ -60,7 +59,7 @@ export function ToggleButtonExample() {
       gap={10}
       alignItems="center"
     >
-      <Text text="Toggle Button Demo" color={'yellow'} style={{ fontSize: 16 }} />
+      <Text text="Toggle Button Demo" style={{ fontSize: 16, color: 'yellow' }} />
       {testButton(1)}
       {testButton(2)}
       {testButton(3)}

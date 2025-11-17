@@ -23,7 +23,7 @@ export function DebugSide(props: {
 
   return (
     <View>
-      <Text text="Debug Options" color={'cyan'} style={{ fontSize: 18 }} />
+      <Text text="Debug Options" style={{ fontSize: 18, color: 'cyan' }} />
       <RadioGroup
         options={presetOptions}
         value={props.selectedDebug}

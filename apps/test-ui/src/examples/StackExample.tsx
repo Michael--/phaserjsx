@@ -8,7 +8,7 @@ export function StackExample() {
       gap={10}
       alignItems="center"
     >
-      <Text text="Stack Demo" color={'orange'} style={{ fontSize: 16 }} />
+      <Text text="Stack Demo" style={{ fontSize: 16, color: 'orange' }} />
       <View
         direction="stack"
         width={220}

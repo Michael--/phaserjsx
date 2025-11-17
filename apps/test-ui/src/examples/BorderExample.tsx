@@ -22,7 +22,7 @@ export function BorderExample() {
         setPx(px == 0 ? 20 : 0)
       }}
     >
-      <Text text="Border & Corner Radius Demo" color={'yellow'} style={{ fontSize: 18 }} />
+      <Text text="Border & Corner Radius Demo" style={{ fontSize: 18, color: 'yellow' }} />
 
       {/* Simple border */}
       <View
@@ -35,7 +35,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Simple Border" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Simple Border" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* Rounded corners */}
@@ -48,7 +48,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Rounded Corners" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Rounded Corners" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* Border + rounded corners */}
@@ -64,7 +64,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Border + Rounded" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Border + Rounded" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* Different corner radii */}
@@ -79,7 +79,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Mixed Corners" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Mixed Corners" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* Thick border showcase */}
@@ -94,7 +94,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Thick Border" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Thick Border" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* No background, border only */}
@@ -108,7 +108,7 @@ export function BorderExample() {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text="Border Only" color={'white'} style={{ fontSize: 12 }} />
+        <Text text="Border Only" style={{ fontSize: 12, color: 'white' }} />
       </View>
 
       {/* Overflow hidden - text clipping */}
@@ -124,11 +124,10 @@ export function BorderExample() {
       >
         <Text
           text="This is a very long text that will be clipped by the overflow hidden property"
-          color={'white'}
-          style={{ fontSize: 22 }}
+          style={{ fontSize: 22, color: 'white' }}
         />
         <View width={70} height={35} borderWidth={2} borderColor={0xffffff} overflow="hidden">
-          <Text text="Nested Box" color={'white'} style={{ fontSize: 14 }} />
+          <Text text="Nested Box" style={{ fontSize: 14, color: 'white' }} />
         </View>
       </View>
 
@@ -145,8 +144,7 @@ export function BorderExample() {
       >
         <Text
           text="Same text but overflow visible (default)"
-          color={'white'}
-          style={{ fontSize: 12 }}
+          style={{ fontSize: 12, color: 'white' }}
         />
       </View>
     </View>
