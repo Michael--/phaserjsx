@@ -143,7 +143,20 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       __layoutProps?: Record<string, unknown>
     }
     DebugLogger.log('vdom', 'About to calculate layout, __layoutProps:', container.__layoutProps)
-    calculateLayout(container, container.__layoutProps ?? {})
+
+    // Get parent size for percentage/fill resolution
+    let parentSize: { width: number; height: number } | undefined
+    if (parentOrScene instanceof Phaser.GameObjects.Container) {
+      const parentContainer = parentOrScene as Phaser.GameObjects.Container & {
+        __layoutProps?: Record<string, unknown>
+      }
+      // Get parent's resolved size if available
+      if (parentContainer.width > 0 && parentContainer.height > 0) {
+        parentSize = { width: parentContainer.width, height: parentContainer.height }
+      }
+    }
+
+    calculateLayout(container, container.__layoutProps ?? {}, parentSize)
   }
 
   return node
@@ -305,7 +318,18 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       __layoutProps?: Record<string, unknown>
     }
     if (container.__layoutProps) {
-      calculateLayout(container, container.__layoutProps)
+      // Get parent size for percentage/fill resolution
+      let parentSize: { width: number; height: number } | undefined
+      if (parent instanceof Phaser.GameObjects.Container) {
+        const parentContainer = parent as Phaser.GameObjects.Container & {
+          __layoutProps?: Record<string, unknown>
+        }
+        if (parentContainer.width > 0 && parentContainer.height > 0) {
+          parentSize = { width: parentContainer.width, height: parentContainer.height }
+        }
+      }
+
+      calculateLayout(container, container.__layoutProps, parentSize)
     }
   }
 }
