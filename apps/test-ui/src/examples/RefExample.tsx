@@ -88,17 +88,31 @@ export function RefContainerExample() {
     }
   }, [])
 
+  // use a workaround to set pivot point for rotation
   return (
-    <View
-      backgroundColor={0x16213e}
-      width={200}
-      height={100}
-      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
-      alignItems="center"
-      justifyContent="center"
-      ref={handleContainerRef}
-    >
-      <Text text="Smooth rotation" style={{ fontSize: 16, color: '#ffffff' }} />
+    <View direction="stack" width={200} height={100} borderColor={0x335533} borderWidth={1}>
+      <View
+        // direction="stack"
+        ref={handleContainerRef}
+        borderColor={0xffff00}
+        borderWidth={1}
+        x={100}
+        y={50}
+        width={0}
+        height={0}
+        padding={{ left: -100, top: -50 }}
+      >
+        <View
+          backgroundColor={0x16213e}
+          width={200}
+          height={100}
+          padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text text="Smooth rotation" style={{ fontSize: 16, color: '#ffffff' }} />
+        </View>
+      </View>
     </View>
   )
 }
