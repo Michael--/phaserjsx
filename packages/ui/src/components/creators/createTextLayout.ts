@@ -21,12 +21,11 @@ export function createTextLayout(
   // Attach layout props for layout calculations
   text.__layoutProps = props as TextBaseProps
 
-  // Attach dynamic size provider using getBounds
+  // Attach dynamic size provider using direct dimensions (not getBounds to avoid rotation issues)
   text.__getLayoutSize = () => {
-    const bounds = text.getBounds()
     return {
-      width: bounds.width,
-      height: bounds.height,
+      width: text.width,
+      height: text.height,
     }
   }
 }

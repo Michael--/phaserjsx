@@ -26,10 +26,9 @@ export function applyTextLayout(
   // Update size provider if text content or style changed
   if (prev.text !== next.text || prev.style !== next.style) {
     text.__getLayoutSize = () => {
-      const bounds = text.getBounds()
       return {
-        width: bounds.width,
-        height: bounds.height,
+        width: text.width,
+        height: text.height,
       }
     }
   }
