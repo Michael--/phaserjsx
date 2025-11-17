@@ -32,7 +32,15 @@ export function NineSliceExample() {
         topHeight={15}
         bottomHeight={15}
       >
-        <Text text={`Score: ${score}`} style={{ fontSize: 20, color: '#000000' }} />
+        <Text
+          text={`Score: ${score}`}
+          style={{
+            fontSize: 30,
+            fontStyle: 'bold',
+            color: '#ffff00',
+            shadow: { offsetX: 2, offsetY: 2, blur: 3, fill: true },
+          }}
+        />
       </NineSliceButton>
 
       {/* Example 2: Clickable button */}
