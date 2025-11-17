@@ -148,6 +148,7 @@ export interface TextSpecificProps {
   text: string
   fontStyle?: string
   align?: 'left' | 'center' | 'right'
+  maxWidth?: number
 }
 
 /**

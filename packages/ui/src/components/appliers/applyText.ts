@@ -33,31 +33,9 @@ export function applyTextProps<T extends TextNode>(
     needsUpdate = true
   }
 
-  // Build style object for properties that changed
-  const style: Phaser.Types.GameObjects.Text.TextStyle = {}
-
-  if (next.color !== prev.color && next.color !== undefined) {
-    style.color = toCssColor(next.color as string | number)
-  }
-  if (next.fontSize !== prev.fontSize && typeof next.fontSize === 'number') {
-    style.fontSize = `${next.fontSize}px`
-  }
-  if (next.fontFamily !== prev.fontFamily && typeof next.fontFamily === 'string') {
-    style.fontFamily = next.fontFamily
-  }
-  if (next.fontStyle !== prev.fontStyle && typeof next.fontStyle === 'string') {
-    style.fontStyle = next.fontStyle
-  }
-  if (
-    next.align !== prev.align &&
-    (next.align === 'left' || next.align === 'center' || next.align === 'right')
-  ) {
-    style.align = next.align
-  }
-
-  // Apply style changes if any
-  if (Object.keys(style).length > 0) {
-    node.setStyle(style)
+  // Apply style changes if the style object changed
+  if (next.style !== undefined && !deepEqual(next.style, prev.style || {})) {
+    node.setStyle(next.style)
     needsUpdate = true
   }
 
@@ -69,7 +47,7 @@ export function applyTextProps<T extends TextNode>(
 
   // Legacy: Support direct Phaser style object
   if (prev.style !== next.style && next.style !== undefined) {
-    node.setStyle(next.style as Phaser.Types.GameObjects.Text.TextStyle)
+    node.setStyle(next.style)
     needsUpdate = true
   }
 
@@ -81,12 +59,25 @@ export function applyTextProps<T extends TextNode>(
 }
 
 /**
- * Converts color value to CSS color string
- * @param c - Color as hex number or CSS string
- * @returns CSS color string
+ * Simple deep equality check for objects (shallow for nested objects)
+ * @param a - First object
+ * @param b - Second object
+ * @returns True if objects are deeply equal
  */
-function toCssColor(c: string | number): string {
-  if (typeof c === 'string') return c
-  const hex = c.toString(16).padStart(6, '0')
-  return `#${hex}`
+function deepEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
+  if (keysA.length !== keysB.length) return false
+  for (const key of keysA) {
+    if (!(key in b)) return false
+    const valA = a[key]
+    const valB = b[key]
+    if (valA === valB) continue
+    if (typeof valA === 'object' && typeof valB === 'object' && valA !== null && valB !== null) {
+      if (!deepEqual(valA as Record<string, unknown>, valB as Record<string, unknown>)) return false
+    } else if (valA !== valB) {
+      return false
+    }
+  }
+  return true
 }
