@@ -2,7 +2,6 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import { Text, View, useState } from '@phaserjsx/ui'
-import type Phaser from 'phaser'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { DemoContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { Sidebar } from './components'
@@ -13,11 +12,9 @@ import { Spacer } from './components/Spacer'
  */
 export interface AppProps {
   /** Screen width in pixels */
-  width?: number
+  width: number
   /** Screen height in pixels */
-  height?: number
-  /** Phaser scene instance for advanced usage */
-  scene?: Phaser.Scene
+  height: number
 }
 
 export function Button(props: {
@@ -50,8 +47,8 @@ export function Button(props: {
  * @returns App component JSX
  */
 export function App(props: AppProps) {
-  const width = props.width ?? 800
-  const height = props.height ?? 600
+  const width = props.width
+  const height = props.height
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('nineslice')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')

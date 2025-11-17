@@ -1,7 +1,7 @@
 /**
  * Minimal Phaser bootstrap that mounts the JSX tree into a Scene.
  */
-import { mount } from '@phaserjsx/ui'
+import { mountJSX } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import { App } from './App'
 
@@ -51,13 +51,10 @@ class MainScene extends Phaser.Scene {
     console.log('MainScene.create() scene dimensions:', this.scale.width, 'x', this.scale.height)
 
     // Mount the JSX app into this scene, this is where the UI tree starts
-    mount(this, {
-      type: App,
-      props: {
-        width: this.scale.width,
-        height: this.scale.height,
-        scene: this,
-      },
+    // Could be mounted into a Container instead of the Scene directly
+    mountJSX(this, App, {
+      width: this.scale.width,
+      height: this.scale.height,
     })
   }
 }

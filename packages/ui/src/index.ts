@@ -14,6 +14,9 @@ export * from './host'
 export * from './types'
 export * from './vdom'
 
+// Explicit export for convenience functions
+export { mountJSX as mountComponent } from './vdom'
+
 // Re-export component creators/patchers for advanced usage
 export * from './components'
 

@@ -3,7 +3,7 @@
  * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
 import type Phaser from 'phaser'
-import type { NodeType } from './core-types'
+import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
@@ -309,3 +309,33 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     }
   }
 }
+
+/**
+ * Mounts a component by type and props (convenience wrapper around mount)
+ * @param parentOrScene - Phaser scene or parent container
+ * @param type - Component type (function or string)
+ * @param props - Component props
+ * @returns Created Phaser GameObject
+ */
+/* eslint-disable no-redeclare */
+export function mountJSX<T extends NodeType>(
+  parentOrScene: ParentType,
+  type: T,
+  props: NodeProps<T>
+): Phaser.GameObjects.GameObject
+
+export function mountJSX<P>(
+  parentOrScene: ParentType,
+  type: (props: P) => VNode,
+  props: P
+): Phaser.GameObjects.GameObject
+
+export function mountJSX(
+  parentOrScene: ParentType,
+  type: NodeType | ((props: unknown) => VNode),
+  props: Record<string, unknown> = {}
+): Phaser.GameObjects.GameObject {
+  const vnode: VNode = { type, props, children: [] }
+  return mount(parentOrScene, vnode)
+}
+/* eslint-enable no-redeclare */
