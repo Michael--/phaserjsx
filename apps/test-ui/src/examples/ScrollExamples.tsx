@@ -7,28 +7,40 @@ export function ScrollExample() {
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
   const lastPointerYRef = useRef(0)
+  const startButtonRef = useRef<number>(0)
 
   const handlePointerDown = (pointer: Phaser.Input.Pointer) => {
     isDraggingRef.current = true
     lastPointerYRef.current = pointer.y
+    startButtonRef.current = pointer.button
   }
 
   const handlePointerUp = () => {
     isDraggingRef.current = false
   }
 
-  const handlePointerUpOutside = () => {
-    isDraggingRef.current = false
-  }
-
   const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
-    if (!isDraggingRef.current || !contentRef.current || !viewportRef.current) return
+    if (!isDraggingRef.current) return
+
+    // Check if pointer is actually down - stops dragging if button was released outside
+    if (!pointer.isDown) {
+      isDraggingRef.current = false
+      return
+    }
+
+    // Check button consistency - if different button, stop dragging
+    if (pointer.button !== startButtonRef.current) {
+      isDraggingRef.current = false
+      return
+    }
+
+    if (!contentRef.current || !viewportRef.current) return
 
     const deltaY = pointer.y - lastPointerYRef.current
     lastPointerYRef.current = pointer.y
 
     // Get viewport and content heights
-    const viewportHeight = viewportRef.current.height // height minus padding if exists
+    const viewportHeight = viewportRef.current.height
     const contentHeight = contentRef.current.height
 
     // Calculate new scroll position
@@ -54,41 +66,36 @@ export function ScrollExample() {
       alignItems="center"
     >
       <Text text="Scroll Example (Drag to scroll)" style={{ fontSize: 16, color: 'orange' }} />
-      {/** next view is used to hold padding (darkgray 0x444444)*/}
-      <View
-        width={400}
-        height={600}
-        backgroundColor={0x444444}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      >
-        {/** next view is the viewport, the measure base where the scroll content is contained (medium gray 0x555555) */}
+      {/** X: The overall example container, this is always a part of the user code */}
+      <View width={400} height={600}>
+        {/** next will be used to implement a high level container <ScrollView/> */}
+        {/** A: next view is the viewport, the measure base where the scroll content is contained (medium gray 0x555555), only visible when content size low */}
         <View
           ref={handleViewportRef}
           direction="stack"
-          width={`fill`}
+          width={'fill'}
           height={'fill'}
           backgroundColor={0x555555}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
-          onPointerUpOutside={handlePointerUpOutside}
           onPointerMove={handlePointerMove}
           overflow="hidden"
         >
-          {/** next view is the dynamic sized content which could be scrolled in parent */}
+          {/** B: next view is the dynamic sized content which could be scrolled in parent, when size is bigger then parent */}
           <View
             ref={handleContentRef}
             x={0}
             y={-scrollY}
             width="fill"
             backgroundColor={0x888888}
-            padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
+            //padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
             gap={10}
           >
-            {/** At least the content */}
+            {/** C: At least the content */}
             {Array.from({ length: 20 }).map((_, index) => (
               <View
                 key={index}
-                width="80%"
+                width={`100%`}
                 height={50}
                 backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
                 justifyContent="center"
