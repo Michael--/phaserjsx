@@ -16,7 +16,14 @@ export function createInteraction(
     InteractionProps & { width?: number | string | undefined; height?: number | string | undefined }
   >
 ): void {
-  if (props.onPointerDown || props.onPointerUp || props.onPointerOver || props.onPointerOut) {
+  if (
+    props.onPointerDown ||
+    props.onPointerUp ||
+    props.onPointerOver ||
+    props.onPointerOut ||
+    props.onPointerMove ||
+    props.onPointerUpOutside
+  ) {
     const width = typeof props.width === 'number' ? props.width : 100
     const height = typeof props.height === 'number' ? props.height : 100
     // Create hit area centered around container's origin
@@ -29,5 +36,7 @@ export function createInteraction(
     if (props.onPointerUp) container.on('pointerup', props.onPointerUp)
     if (props.onPointerOver) container.on('pointerover', props.onPointerOver)
     if (props.onPointerOut) container.on('pointerout', props.onPointerOut)
+    if (props.onPointerMove) container.on('pointermove', props.onPointerMove)
+    if (props.onPointerUpOutside) container.on('pointerupoutside', props.onPointerUpOutside)
   }
 }

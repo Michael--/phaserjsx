@@ -25,9 +25,13 @@ export function applyInteractionProps(
   const nextOver = next.onPointerOver
   const prevOut = prev.onPointerOut
   const nextOut = next.onPointerOut
+  const prevMove = prev.onPointerMove
+  const nextMove = next.onPointerMove
+  const prevUpOutside = prev.onPointerUpOutside
+  const nextUpOutside = next.onPointerUpOutside
 
-  const hadAnyEvent = !!(prevDown || prevUp || prevOver || prevOut)
-  const hasAnyEvent = !!(nextDown || nextUp || nextOver || nextOut)
+  const hadAnyEvent = !!(prevDown || prevUp || prevOver || prevOut || prevMove || prevUpOutside)
+  const hasAnyEvent = !!(nextDown || nextUp || nextOver || nextOut || nextMove || nextUpOutside)
 
   // Update interactive state if needed
   if (!hadAnyEvent && hasAnyEvent) {
@@ -71,5 +75,13 @@ export function applyInteractionProps(
   if (prevOut !== nextOut) {
     if (prevOut) container.off('pointerout', prevOut)
     if (nextOut) container.on('pointerout', nextOut)
+  }
+  if (prevMove !== nextMove) {
+    if (prevMove) container.off('pointermove', prevMove)
+    if (nextMove) container.on('pointermove', nextMove)
+  }
+  if (prevUpOutside !== nextUpOutside) {
+    if (prevUpOutside) container.off('pointerupoutside', prevUpOutside)
+    if (nextUpOutside) container.on('pointerupoutside', nextUpOutside)
   }
 }
