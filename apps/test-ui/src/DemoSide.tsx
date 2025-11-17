@@ -1,4 +1,4 @@
-import { DevPresets, Text, View } from '@phaserjsx/ui'
+import { DevPresets, Text } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
 
 const debugPresets = {
@@ -22,7 +22,7 @@ export function DebugSide(props: {
   }))
 
   return (
-    <View>
+    <>
       <Text text="Debug Options" style={{ fontSize: 18, color: 'cyan' }} />
       <RadioGroup
         options={presetOptions}
@@ -36,6 +36,6 @@ export function DebugSide(props: {
         selectedColor={0x4ecdc4}
         unselectedColor={0x555555}
       />
-    </View>
+    </>
   )
 }

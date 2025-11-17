@@ -1,0 +1,110 @@
+/**
+ * OriginView - A View component that supports custom origin points for rotation and scale
+ *
+ * This is a convenience wrapper that uses nested Views to enable rotation/scale
+ * around a custom pivot point without changing the layout coordinate system.
+ *
+ * @example
+ * <OriginView originX={0.5} originY={0.5} width={200} height={100}>
+ *   <Text>Rotates around center</Text>
+ * </OriginView>
+ */
+import type { ViewProps } from '@phaserjsx/ui'
+import { useRef, useState, View } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
+
+/**
+ * Extended ViewProps with origin support
+ */
+export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y'> {
+  /**
+   * Origin X for rotation and scale (0 = left, 0.5 = center, 1 = right)
+   * @default 0.5
+   */
+  originX?: number
+  /**
+   * Origin Y for rotation and scale (0 = top, 0.5 = center, 1 = bottom)
+   * @default 0.5
+   */
+  originY?: number
+  /**
+   * X position of the view
+   */
+  x?: number
+  /**
+   * Y position of the view
+   */
+  y?: number
+}
+
+/**
+ * OriginView component - enables rotation/scale around custom origin point
+ *
+ * Uses nested View structure internally:
+ * - Outer View: Defines bounding box and position
+ * - Middle View: Positioned at origin point, receives ref (rotation target)
+ * - Inner View: Contains actual content, offset by negative padding
+ *
+ * @param props - OriginView props
+ * @returns JSX element
+ */
+export function OriginView({
+  originX = 0.5,
+  originY = 0.5,
+  x = 0,
+  y = 0,
+  width,
+  height,
+  ref,
+  children,
+  ...viewProps
+}: OriginViewProps) {
+  // Ref to outer View to get computed dimensions after layout
+  const outerRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const [numericDimension, setNumericWidth] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+
+  /**
+   * Handler for outer View - calculates and updates pivot position based on actual size
+   */
+  const handleOuterRef = (container: Phaser.GameObjects.Container | null) => {
+    if (!container) return
+    outerRef.current = container
+
+    setTimeout(() => {
+      // Use layout dimensions or fallback to getBounds
+      const width = container.width
+      const height = container.height
+      const actualWidth = Number.isNaN(width) ? 0 : width
+      const actualHeight = Number.isNaN(height) ? 0 : height
+      if (actualHeight !== numericDimension.y || actualWidth !== numericDimension.x)
+        setNumericWidth({ x: actualWidth, y: actualHeight })
+    }, 0)
+  }
+
+  // Calculate pivot point position (relative to outer View)
+  const pivotX = numericDimension.x * originX
+  const pivotY = numericDimension.y * originY
+
+  // Calculate offset for inner content (to center it around pivot)
+  const offsetX = -numericDimension.x * originX
+  const offsetY = -numericDimension.y * originY
+
+  return (
+    <View ref={handleOuterRef} direction="stack" width={width} height={height} x={x} y={y}>
+      {/* Middle View: Positioned at origin point, receives ref for rotation */}
+      <View
+        ref={ref as ((instance: Phaser.GameObjects.Container | null) => void) | undefined}
+        x={pivotX}
+        y={pivotY}
+        width={0}
+        height={0}
+        padding={{ left: offsetX, top: offsetY }}
+      >
+        {/* Inner View: Contains actual content with all original props */}
+        <View width={width} height={height} {...viewProps}>
+          {children}
+        </View>
+      </View>
+    </View>
+  )
+}
