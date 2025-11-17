@@ -12,7 +12,7 @@ export function ScrollExample() {
       <Text text="Scroll Example (Drag to scroll)" style={{ fontSize: 16, color: 'orange' }} />
       {/** X: The overall example container, this is always a part of the user code */}
       <View width={400} height={600}>
-        <ScrollView width={400} height={600} gap={10}>
+        <ScrollView gap={10}>
           <View>
             {/** C: At least the content */}
             {Array.from({ length: 20 }).map((_, index) => (

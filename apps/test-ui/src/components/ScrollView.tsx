@@ -9,10 +9,6 @@ import type Phaser from 'phaser'
  * Props for ScrollView component
  */
 export interface ScrollViewProps {
-  /** Width of the scroll viewport */
-  width?: number | string
-  /** Height of the scroll viewport */
-  height?: number | string
   /** Gap between children in the content area */
   gap?: number
   /** Children to render inside scrollable content */
@@ -27,7 +23,7 @@ export interface ScrollViewProps {
  * @returns JSX element
  */
 export function ScrollView(props: ScrollViewProps) {
-  const { width, height, gap = 0, children, onScroll } = props
+  const { gap = 0, children, onScroll } = props
   const [scrollY, setScrollY] = useState(0)
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -89,8 +85,8 @@ export function ScrollView(props: ScrollViewProps) {
     <View
       ref={handleViewportRef}
       direction="stack"
-      width={width}
-      height={height}
+      width="fill"
+      height="fill"
       backgroundColor={0x555555}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
