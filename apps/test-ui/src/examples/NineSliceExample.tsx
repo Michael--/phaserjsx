@@ -11,11 +11,6 @@ export function NineSliceExample() {
   const [score, setScore] = useState(0)
   const [buttonWidth, setButtonWidth] = useState(200)
 
-  const toggleSize = () => {
-    console.log('Toggling button size', buttonWidth)
-    setButtonWidth(buttonWidth === 300 ? 200 : 300)
-  }
-
   return (
     <View
       direction="column"
@@ -62,7 +57,7 @@ export function NineSliceExample() {
       <NineSliceButton
         texture="ui"
         frame="ButtonOrange"
-        onClick={toggleSize}
+        onClick={() => setButtonWidth(buttonWidth === 300 ? 200 : 300)}
         width={buttonWidth}
         height={70}
         leftWidth={14}
