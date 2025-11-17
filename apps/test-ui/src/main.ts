@@ -61,8 +61,19 @@ class MainScene extends Phaser.Scene {
 
 new Phaser.Game({
   type: Phaser.AUTO,
-  width: 1200,
-  height: 1200,
+  width: '100%',
+  height: '100%',
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    zoom: 1,
+  },
+  input: {
+    mouse: true,
+    touch: true,
+    activePointers: 2,
+  },
+  disableContextMenu: true,
   backgroundColor: '#1d1d1d',
   parent: 'app',
   scene: [MainScene],
