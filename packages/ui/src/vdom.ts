@@ -401,9 +401,42 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
       // Propagate theme to rendered VNode if not already set
       if (ctx.theme && !renderedNext.__theme) {
+        DebugLogger.log(
+          'vdom',
+          `Function component re-render: propagating ctx.theme to renderedNext (type: ${renderedNext.type}):`,
+          ctx.theme
+        )
         renderedNext.__theme = ctx.theme
+        DebugLogger.log(
+          'vdom',
+          `Function component re-render: AFTER setting, renderedNext.__theme is:`,
+          renderedNext.__theme,
+          'renderedNext:',
+          renderedNext
+        )
+      } else if (renderedNext.__theme) {
+        DebugLogger.log(
+          'vdom',
+          `Function component re-render: renderedNext already has __theme (type: ${renderedNext.type}):`,
+          renderedNext.__theme
+        )
+      } else {
+        DebugLogger.log(
+          'vdom',
+          `Function component re-render: NO THEME! ctx.theme:`,
+          ctx.theme,
+          'renderedNext:',
+          renderedNext
+        )
       }
 
+      if (renderedNext.type === 'View' && renderedNext.props && 'direction' in renderedNext.props) {
+        DebugLogger.log(
+          'vdom',
+          `About to call patchVNode for View with direction. renderedNext.__theme:`,
+          renderedNext.__theme
+        )
+      }
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()
@@ -425,8 +458,29 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
   // Transfer theme from newV to oldV (theme may have changed)
   // This ensures theme updates are properly applied during patching
+  if (nodeType === 'View' && newV.props && 'direction' in newV.props) {
+    DebugLogger.log(
+      'vdom',
+      `BEFORE theme transfer - ${nodeType} (key: ${newV.__key}, direction: ${(newV.props as { direction?: string }).direction}): newV.__theme:`,
+      newV.__theme,
+      'newV:',
+      newV
+    )
+  }
   if (newV.__theme !== undefined) {
     oldV.__theme = newV.__theme
+  } else if (oldV.__theme !== undefined) {
+    // IMPORTANT: If newV doesn't have a theme, inherit from oldV
+    // This happens when a function component re-renders and creates new VNodes
+    // without explicitly propagating the theme
+    newV.__theme = oldV.__theme
+    DebugLogger.log('vdom', `Inheriting theme from oldV for ${nodeType}:`, oldV.__theme)
+  } else if (nodeType === 'View') {
+    DebugLogger.log(
+      'vdom',
+      `WARNING: ${nodeType} (key: ${newV.__key}) newV.__theme is undefined and oldV has no theme! props:`,
+      newV.props
+    )
   }
 
   // Update ref if it changed
@@ -438,11 +492,28 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   }
 
   // Apply theme to props before patching (merge explicit props with theme)
+  DebugLogger.log(
+    'vdom',
+    `Patching ${nodeType}: oldV.__theme:`,
+    oldV.__theme,
+    'newV.__theme:',
+    newV.__theme
+  )
   const { props: oldThemedProps } = getThemedProps(nodeType, oldV.__theme, oldV.props ?? {})
   const { props: newThemedProps, nestedTheme: newNestedTheme } = getThemedProps(
     nodeType,
     newV.__theme,
     newV.props ?? {}
+  )
+  DebugLogger.log(
+    'vdom',
+    `Patching ${nodeType}: oldThemedProps.gap:`,
+    (oldThemedProps as { gap?: number }).gap
+  )
+  DebugLogger.log(
+    'vdom',
+    `Patching ${nodeType}: newThemedProps.gap:`,
+    (newThemedProps as { gap?: number }).gap
   )
 
   // Debug nested theme propagation
@@ -496,8 +567,9 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
           'from nestedTheme:',
           newNestedTheme
         )
-      } else if (!c2.__theme && newV.__theme) {
-        // Fallback: Propagate theme to child (inherit parent's theme if child doesn't have one)
+      } else if (newV.__theme) {
+        // Fallback: Propagate theme to child (inherit parent's theme)
+        // IMPORTANT: Always propagate, even if child has theme, because parent theme might have changed
         c1.__theme = newV.__theme
         c2.__theme = newV.__theme
       }

@@ -327,8 +327,22 @@ export function getThemedProps<
   // 2. Component's own theme (from theme prop via __theme)
   // We need to check if localTheme contains this component's theme OR nested themes
   const localComponentTheme = localTheme?.[componentName] ?? {}
+
+  DebugLogger.log('theme', `getThemedProps(${String(componentName)}): localTheme:`, localTheme)
+  DebugLogger.log(
+    'theme',
+    `getThemedProps(${String(componentName)}): localComponentTheme (from localTheme['${String(componentName)}']):`,
+    localComponentTheme
+  )
+
   const { ownProps: localOwnProps, nestedThemes: localNestedThemes } =
     extractNestedThemes(localComponentTheme)
+
+  DebugLogger.log(
+    'theme',
+    `getThemedProps(${String(componentName)}): localOwnProps after extractNestedThemes:`,
+    localOwnProps
+  )
 
   // Also extract nested themes directly from localTheme (for theme prop case)
   const { nestedThemes: localThemeNested } = extractNestedThemes(localTheme ?? {})
@@ -347,6 +361,12 @@ export function getThemedProps<
   const mergedNestedThemes = mergeThemes(
     mergeThemes(mergeThemes(globalNestedThemes, localNestedThemes), localThemeNested),
     explicitNestedThemes
+  )
+
+  DebugLogger.log(
+    'theme',
+    `getThemedProps(${String(componentName)}): FINAL mergedProps:`,
+    mergedProps
   )
 
   return {

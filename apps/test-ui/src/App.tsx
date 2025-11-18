@@ -97,7 +97,7 @@ const globalTheme = createTheme({
     View: {
       backgroundColor: 0x2e2e2e,
       backgroundAlpha: 1.0,
-      padding: { top: 10, left: 10, right: 10, bottom: 10 },
+      padding: 10,
       gap: 10,
     },
   },
