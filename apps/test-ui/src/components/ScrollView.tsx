@@ -2,7 +2,7 @@
  * ScrollView component for scrollable content areas
  */
 import type { VNode } from '@phaserjsx/ui'
-import { useRef, useState, View } from '@phaserjsx/ui'
+import { useEffect, useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
 /**
@@ -11,8 +11,13 @@ import type Phaser from 'phaser'
 export interface ScrollViewProps {
   /** Children to render inside scrollable content, allow only one child */
   children?: VNode
-  /** Called when scroll position changes, values are in percent 0..100 */
-  onScroll?: (scrollX: number, scrollY: number) => void
+  /** Called when scroll position changes, values are in percent 0..100
+   * @param scrollX - Horizontal scroll position in percent (0 = left, 100 = right)
+   * @param scrollY - Vertical scroll position in percent (0 = top, 100 = bottom)
+   * @param scrollWidth - Total scrollable width size, 100 means the slider fills the viewport
+   * @param scrollHeight - Total scrollable height, 100 means the slider fills the viewport
+   */
+  onScroll?: (scrollX: number, scrollY: number, scrollWidth: number, scrollHeight: number) => void
 }
 
 /**
@@ -30,6 +35,12 @@ export function ScrollView(props: ScrollViewProps) {
   const isDraggingRef = useRef(false)
   const lastPointerRef = useRef({ x: 0, y: 0 })
 
+  useEffect(() => {
+    setTimeout(() => {
+      calc(0, 0)
+    }, 0)
+  }, [])
+
   const handlePointerDown = (pointer: Phaser.Input.Pointer) => {
     if (pointer.leftButtonDown()) {
       isDraggingRef.current = true
@@ -43,21 +54,8 @@ export function ScrollView(props: ScrollViewProps) {
     }
   }
 
-  const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
-    if (!isDraggingRef.current) return
-
-    // Check if pointer is actually down - stops dragging if button was released outside
-    if (!pointer.leftButtonDown()) {
-      isDraggingRef.current = false
-      return
-    }
-
+  const calc = (deltaX: number, deltaY: number) => {
     if (!contentRef.current || !viewportRef.current) return
-
-    // Calculate pointer movement delta
-    const deltaY = pointer.y - lastPointerRef.current.y
-    const deltaX = pointer.x - lastPointerRef.current.x
-    lastPointerRef.current = { x: pointer.x, y: pointer.y }
 
     // Get viewport and content heights
     const viewportHeight = viewportRef.current.height
@@ -73,13 +71,36 @@ export function ScrollView(props: ScrollViewProps) {
     const newScrollYPercent = maxScrollY != 0 ? (newScrollY / maxScrollY) * 100 : 0
     const newScrollXPercent = maxScrollX != 0 ? (newScrollX / maxScrollX) * 100 : 0
 
+    // Calculate scrollbar size percentages
+    const scrollWidthPercent = contentWidth > 0 ? (viewportWidth / contentWidth) * 100 : 100
+    const scrollHeightPercent = contentHeight > 0 ? (viewportHeight / contentHeight) * 100 : 100
+
     setScroll({ dx: newScrollX, dy: newScrollY })
-    onScroll?.(newScrollXPercent, newScrollYPercent)
+    onScroll?.(newScrollXPercent, newScrollYPercent, scrollWidthPercent, scrollHeightPercent)
+  }
+
+  const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
+    if (!isDraggingRef.current) return
+
+    // Check if pointer is actually down - stops dragging if button was released outside
+    if (!pointer.leftButtonDown()) {
+      isDraggingRef.current = false
+      return
+    }
+    if (!contentRef.current || !viewportRef.current) return
+
+    // Calculate pointer movement delta
+    const deltaY = pointer.y - lastPointerRef.current.y
+    const deltaX = pointer.x - lastPointerRef.current.x
+    lastPointerRef.current = { x: pointer.x, y: pointer.y }
+
+    calc(deltaX, deltaY)
   }
 
   return (
     <View
       ref={viewportRef}
+      padding={0}
       direction="stack"
       width="fill"
       height="fill"
@@ -91,7 +112,7 @@ export function ScrollView(props: ScrollViewProps) {
       overflow="hidden"
     >
       {/** B: next view is the dynamic sized content which could be scrolled in parent, when size is bigger then parent */}
-      <View ref={contentRef} x={-scroll.dx} y={-scroll.dy} backgroundColor={0x888888}>
+      <View ref={contentRef} x={-scroll.dx} y={-scroll.dy} backgroundColor={0x888888} padding={0}>
         {children}
       </View>
     </View>
