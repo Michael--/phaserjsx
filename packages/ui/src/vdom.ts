@@ -57,15 +57,11 @@ function hasLayoutPropsChanged(oldV: VNode, newV: VNode): boolean {
     // Use deep comparison for object props (margin, padding)
     if (DEEP_COMPARE_PROPS.has(prop)) {
       if (!equal(oldVal, newVal)) {
-        // Debug: Log what changed
-        DebugLogger.log('vdom', 'hasLayoutPropsChanged', prop, 'changed:', oldVal, '→', newVal)
         return true
       }
     } else {
       // Shallow comparison for primitives
       if (oldVal !== newVal) {
-        // Debug: Log what changed
-        DebugLogger.log('vdom', 'hasLayoutPropsChanged', prop, 'changed:', oldVal, '→', newVal)
         return true
       }
     }
@@ -252,7 +248,6 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     const container = node as Phaser.GameObjects.Container & {
       __layoutProps?: Record<string, unknown>
     }
-    DebugLogger.log('vdom', 'About to calculate layout, __layoutProps:', container.__layoutProps)
 
     // Get parent size for percentage/fill resolution
     let parentSize: { width: number; height: number } | undefined
@@ -401,42 +396,9 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
       // Propagate theme to rendered VNode if not already set
       if (ctx.theme && !renderedNext.__theme) {
-        DebugLogger.log(
-          'vdom',
-          `Function component re-render: propagating ctx.theme to renderedNext (type: ${renderedNext.type}):`,
-          ctx.theme
-        )
         renderedNext.__theme = ctx.theme
-        DebugLogger.log(
-          'vdom',
-          `Function component re-render: AFTER setting, renderedNext.__theme is:`,
-          renderedNext.__theme,
-          'renderedNext:',
-          renderedNext
-        )
-      } else if (renderedNext.__theme) {
-        DebugLogger.log(
-          'vdom',
-          `Function component re-render: renderedNext already has __theme (type: ${renderedNext.type}):`,
-          renderedNext.__theme
-        )
-      } else {
-        DebugLogger.log(
-          'vdom',
-          `Function component re-render: NO THEME! ctx.theme:`,
-          ctx.theme,
-          'renderedNext:',
-          renderedNext
-        )
       }
 
-      if (renderedNext.type === 'View' && renderedNext.props && 'direction' in renderedNext.props) {
-        DebugLogger.log(
-          'vdom',
-          `About to call patchVNode for View with direction. renderedNext.__theme:`,
-          renderedNext.__theme
-        )
-      }
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()
@@ -457,16 +419,8 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   newV.__node = oldV.__node
 
   // Transfer theme from newV to oldV (theme may have changed)
+  // Transfer theme from newV to oldV, or inherit from oldV if newV has no theme
   // This ensures theme updates are properly applied during patching
-  if (nodeType === 'View' && newV.props && 'direction' in newV.props) {
-    DebugLogger.log(
-      'vdom',
-      `BEFORE theme transfer - ${nodeType} (key: ${newV.__key}, direction: ${(newV.props as { direction?: string }).direction}): newV.__theme:`,
-      newV.__theme,
-      'newV:',
-      newV
-    )
-  }
   if (newV.__theme !== undefined) {
     oldV.__theme = newV.__theme
   } else if (oldV.__theme !== undefined) {
@@ -474,13 +428,6 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     // This happens when a function component re-renders and creates new VNodes
     // without explicitly propagating the theme
     newV.__theme = oldV.__theme
-    DebugLogger.log('vdom', `Inheriting theme from oldV for ${nodeType}:`, oldV.__theme)
-  } else if (nodeType === 'View') {
-    DebugLogger.log(
-      'vdom',
-      `WARNING: ${nodeType} (key: ${newV.__key}) newV.__theme is undefined and oldV has no theme! props:`,
-      newV.props
-    )
   }
 
   // Update ref if it changed
@@ -510,16 +457,6 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     `Patching ${nodeType}: oldThemedProps.gap:`,
     (oldThemedProps as { gap?: number }).gap
   )
-  DebugLogger.log(
-    'vdom',
-    `Patching ${nodeType}: newThemedProps.gap:`,
-    (newThemedProps as { gap?: number }).gap
-  )
-
-  // Debug nested theme propagation
-  if (Object.keys(newNestedTheme).length > 0) {
-    DebugLogger.log('vdom', `Patching ${nodeType} with nestedTheme:`, newNestedTheme)
-  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldThemedProps, newThemedProps)
@@ -531,9 +468,6 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
   // Check if the container's own layout props changed
   const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)
-
-  // Debug: Track excessive patching
-  // DebugLogger.log('vdom', 'Patching:', { type: oldV.type, children: len, containerLayoutChanged })
 
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
@@ -560,13 +494,6 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
         const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
         c1.__theme = mergedTheme
         c2.__theme = mergedTheme
-        DebugLogger.log(
-          'vdom',
-          `Patching child ${c2.type} with merged theme:`,
-          mergedTheme,
-          'from nestedTheme:',
-          newNestedTheme
-        )
       } else if (newV.__theme) {
         // Fallback: Propagate theme to child (inherit parent's theme)
         // IMPORTANT: Always propagate, even if child has theme, because parent theme might have changed

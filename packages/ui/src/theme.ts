@@ -131,7 +131,6 @@ class ThemeRegistry {
    * @param theme - Partial theme to merge with current global theme
    */
   updateGlobalTheme(theme: PartialTheme): void {
-    DebugLogger.log('theme', 'updateGlobalTheme called with:', theme)
     for (const [component, styles] of Object.entries(theme)) {
       if (component in this.globalTheme) {
         this.globalTheme[component as NodeType] = {
@@ -187,7 +186,6 @@ class ThemeRegistry {
   getComponentTheme<K extends keyof ComponentThemes>(componentName: K): ComponentThemes[K] {
     if (componentName in this.globalTheme) {
       const theme = this.globalTheme[componentName as NodeType] as ComponentThemes[K]
-      DebugLogger.log('theme', `getComponentTheme(${String(componentName)}):`, theme)
       return theme
     }
     return (this.customThemes.get(componentName as string) ?? {}) as ComponentThemes[K]
@@ -328,21 +326,8 @@ export function getThemedProps<
   // We need to check if localTheme contains this component's theme OR nested themes
   const localComponentTheme = localTheme?.[componentName] ?? {}
 
-  DebugLogger.log('theme', `getThemedProps(${String(componentName)}): localTheme:`, localTheme)
-  DebugLogger.log(
-    'theme',
-    `getThemedProps(${String(componentName)}): localComponentTheme (from localTheme['${String(componentName)}']):`,
-    localComponentTheme
-  )
-
   const { ownProps: localOwnProps, nestedThemes: localNestedThemes } =
     extractNestedThemes(localComponentTheme)
-
-  DebugLogger.log(
-    'theme',
-    `getThemedProps(${String(componentName)}): localOwnProps after extractNestedThemes:`,
-    localOwnProps
-  )
 
   // Also extract nested themes directly from localTheme (for theme prop case)
   const { nestedThemes: localThemeNested } = extractNestedThemes(localTheme ?? {})
