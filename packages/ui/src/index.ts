@@ -12,6 +12,7 @@ export * from './core-types'
 export * from './hooks'
 export * from './host'
 export * from './memo'
+export * from './theme'
 export * from './types'
 export * from './vdom'
 

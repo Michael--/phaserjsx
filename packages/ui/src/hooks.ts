@@ -2,6 +2,7 @@
  * Tiny hook runtime to enable function components with local subtree re-render.
  * It is independent from React/Preact renderers.
  */
+import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
 import { patchVNode } from './vdom'
 
@@ -20,6 +21,7 @@ export type Ctx = {
   isFactory: boolean
   lastProps?: unknown // Store last props for memoization
   memoized?: boolean // Whether component uses memoization (default: true)
+  theme?: PartialTheme | undefined // Theme context for this component
 }
 
 let CURRENT: Ctx | null = null
@@ -39,6 +41,7 @@ export type VNode = {
     padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
   }
   __memo?: boolean // Opt-out of memoization (false = always re-render)
+  __theme?: PartialTheme // Theme override for this VNode and its children
 }
 
 /**
@@ -109,6 +112,17 @@ export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
   slot.value = fn()
   slot.deps = deps
   return slot.value
+}
+
+/**
+ * Hook to access current theme context
+ * Returns the theme that was passed down through the VDOM tree
+ * @returns Current theme context or undefined if no theme is set
+ */
+export function useTheme(): PartialTheme | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const c = CURRENT!
+  return c.theme
 }
 
 /**

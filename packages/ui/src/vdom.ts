@@ -10,6 +10,7 @@ import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } fr
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
 import { calculateLayout } from './layout/index'
+import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
@@ -74,50 +75,6 @@ function hasLayoutPropsChanged(oldV: VNode, newV: VNode): boolean {
 }
 
 /**
- * Check if children array changed structurally
- * Checks length and VNode types, not deep props
- * @param oldChildren - Previous children
- * @param newChildren - New children
- * @returns True if structure changed
- */
-function hasChildrenStructureChanged(
-  oldChildren: (VNode | false | null | undefined)[] | undefined,
-  newChildren: (VNode | false | null | undefined)[] | undefined
-): boolean {
-  const a = oldChildren ?? []
-  const b = newChildren ?? []
-
-  // Different length = structural change
-  if (a.length !== b.length) {
-    return true
-  }
-
-  // Check if any child type or key changed
-  for (let i = 0; i < a.length; i++) {
-    const c1 = a[i]
-    const c2 = b[i]
-
-    // Check validity (filter out false/null/undefined)
-    const isValidC1 = c1 != null && c1 !== false
-    const isValidC2 = c2 != null && c2 !== false
-
-    // One valid, one invalid = structural change
-    if (isValidC1 !== isValidC2) {
-      return true
-    }
-
-    // Both valid: check type and key
-    if (isValidC1 && isValidC2) {
-      if (c1.type !== c2.type || c1.__key !== c2.__key) {
-        return true
-      }
-    }
-  }
-
-  return false
-}
-
-/**
  * Attaches or detaches a ref to a node
  * @param ref - Ref callback or object
  * @param value - Value to set (null for detach)
@@ -160,6 +117,10 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     let firstNode: Phaser.GameObjects.GameObject | undefined
     vnode.children?.forEach((c) => {
       if (c != null && c !== false) {
+        // Propagate theme to children
+        if (!c.__theme && vnode.__theme) {
+          c.__theme = vnode.__theme
+        }
         const childNode = mount(parentOrScene, c)
         if (!firstNode) firstNode = childNode
       }
@@ -186,6 +147,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       parent: parentOrScene,
       function: vnode.type as (props: unknown) => VNode,
       isFactory: false,
+      theme: vnode.__theme, // Inherit theme from parent or use vnode's theme
     }
     // Store context on the component vnode for patching
     ;(vnode as VNode & { __ctx?: Ctx }).__ctx = ctx
@@ -196,6 +158,11 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     const rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
+
+    // Propagate theme to rendered VNode
+    if (ctx.theme && !rendered.__theme) {
+      rendered.__theme = ctx.theme
+    }
 
     // Check if this is a VNode factory (renders immediately without using hooks)
     if (ctx.slots.length === 0 && ctx.effects.length === 0) {
@@ -227,7 +194,24 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  const node = host.create(vnode.type as NodeType, vnode.props ?? {}, scene)
+  // Apply theme to props
+  const nodeType = vnode.type as NodeType
+  const themedProps = getThemedProps(nodeType, vnode.__theme, vnode.props ?? {})
+
+  // Debug: Log themed props for View
+  if (
+    nodeType === 'View' &&
+    (themedProps.backgroundColor !== undefined || themedProps.cornerRadius !== undefined)
+  ) {
+    console.log('[VDOM Mount] Themed props for View:', {
+      backgroundColor: themedProps.backgroundColor,
+      cornerRadius: themedProps.cornerRadius,
+      hasTheme: !!vnode.__theme,
+      originalProps: vnode.props,
+    })
+  }
+
+  const node = host.create(nodeType, themedProps as NodeProps, scene)
   vnode.__node = node
   vnode.__parent = parentOrScene // Store parent for unmounting
 
@@ -237,7 +221,13 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
-    if (c != null && c !== false) mount(node as ParentType, c)
+    if (c != null && c !== false) {
+      // Propagate theme to children (inherit parent's theme if child doesn't have one)
+      if (!c.__theme && vnode.__theme) {
+        c.__theme = vnode.__theme
+      }
+      mount(node as ParentType, c)
+    }
   })
 
   // Calculate layout after all children are mounted

@@ -8,6 +8,7 @@ import { NineSliceExample } from './examples/NineSliceExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { StackExample } from './examples/StackExample'
+import { ThemeExample } from './examples/ThemeExample'
 import { ToggleButtonExample } from './examples/ToggleButtonExample'
 
 const examples = {
@@ -20,6 +21,7 @@ const examples = {
   ref: { label: 'Ref Example', component: RefExample },
   nineslice: { label: 'NineSlice UI', component: NineSliceExample },
   scroll: { label: 'Scroll Example', component: ScrollExample },
+  theme: { label: 'Theme System', component: ThemeExample },
 } as const
 
 export type ExampleKey = keyof typeof examples

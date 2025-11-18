@@ -36,6 +36,16 @@ export interface ViewProps
  * View creator - creates a Phaser Container with optional background and interaction
  */
 export const viewCreator: HostCreator<'View'> = (scene, props) => {
+  // Debug: Log props to verify theme values
+  if (props.backgroundColor !== undefined || props.cornerRadius !== undefined) {
+    console.log('[View Creator] Props received:', {
+      backgroundColor: props.backgroundColor,
+      cornerRadius: props.cornerRadius,
+      width: props.width,
+      height: props.height,
+    })
+  }
+
   const container = scene.add.container(props.x ?? 0, props.y ?? 0)
 
   // Apply transform props (visible, depth, alpha, scale, rotation)

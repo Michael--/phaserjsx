@@ -1,5 +1,6 @@
 import type Phaser from 'phaser'
 import type { VNode } from './hooks'
+import type { PartialTheme } from './theme'
 
 export type SignalLike<T> = { value: T } | T
 
@@ -28,6 +29,7 @@ export type Ref<T> = RefCallback<T> | RefObject<T>
 export interface PropsDefaultExtension<T = unknown> {
   key?: string | number | undefined
   ref?: Ref<T> | undefined
+  theme?: PartialTheme | undefined
 }
 
 export type ChildrenType = VNode | VNode[] | null | undefined

@@ -20,13 +20,18 @@ export function jsx(
   props: Record<string, unknown> | null,
   key?: unknown
 ): VNodeLike {
-  const { children, expand, proportion, ...rest } = props ?? {}
+  const { children, expand, proportion, theme, ...rest } = props ?? {}
   const kids = children == null ? [] : Array.isArray(children) ? children : [children]
   const vnode: VNode = { type, props: rest, children: kids }
 
   // Extract key
   if (key !== undefined && key !== null) {
     vnode.__key = typeof key === 'string' || typeof key === 'number' ? key : String(key)
+  }
+
+  // Extract theme and store separately (removed from props)
+  if (theme !== undefined) {
+    vnode.__theme = theme as NonNullable<VNode['__theme']>
   }
 
   // Extract RexUI add() config and store separately (removed from props)
