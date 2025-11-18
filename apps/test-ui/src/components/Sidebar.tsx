@@ -28,7 +28,6 @@ export interface SidebarProps {
 export function Sidebar(props: SidebarProps) {
   const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, {})
   const width = props.width ?? undefined
-  const backgroundColor = themed.backgroundColor
   const gap = props.gap ?? 10
 
   let padding: ViewProps['padding']
@@ -50,8 +49,8 @@ export function Sidebar(props: SidebarProps) {
       width={width}
       height={props.height}
       theme={nestedTheme}
-      backgroundColor={backgroundColor}
-      backgroundAlpha={1.0}
+      backgroundColor={themed.backgroundColor}
+      backgroundAlpha={themed.backgroundAlpha}
       padding={padding}
       gap={gap}
       direction="column"

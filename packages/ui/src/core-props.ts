@@ -134,7 +134,7 @@ export interface LayoutProps {
  */
 export interface BackgroundProps {
   backgroundColor?: number | undefined
-  backgroundAlpha?: number
+  backgroundAlpha?: number | undefined
   cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
   borderWidth?: number
   borderColor?: number

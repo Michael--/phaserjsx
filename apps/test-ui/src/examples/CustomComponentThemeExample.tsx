@@ -13,12 +13,11 @@ declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Sidebar: {
       backgroundColor?: number
+      backgroundAlpha?: number
       width?: number | string
       padding?: number
       gap?: number
-      // Nested component themes
-      Text?: Partial<import('@phaserjsx/ui').ComponentThemes['Text']>
-    }
+    } & import('@phaserjsx/ui').NestedComponentThemes
   }
 }
 

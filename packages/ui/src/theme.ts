@@ -26,9 +26,12 @@ export interface ViewTheme
 
 /**
  * Theme definition for Text component
- * Includes all text-specific visual props that can be themed
+ * Includes all text-specific visual props that can be themed, plus nested component themes
  */
-export interface TextTheme extends Partial<TransformProps>, Partial<TextSpecificProps> {
+export interface TextTheme
+  extends Partial<TransformProps>,
+    Partial<TextSpecificProps>,
+    NestedComponentThemes {
   // Legacy: support Phaser's style object directly
   style?: Phaser.Types.GameObjects.Text.TextStyle
 }
