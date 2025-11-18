@@ -2,6 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
+import equal from 'fast-deep-equal'
 import type { TextSpecificProps } from '../../core-props'
 
 /**
@@ -34,7 +35,7 @@ export function applyTextProps<T extends TextNode>(
   }
 
   // Apply style changes if the style object changed
-  if (next.style !== undefined && !deepEqual(next.style, prev.style || {})) {
+  if (next.style !== undefined && !equal(next.style, prev.style || {})) {
     node.setStyle(next.style)
     needsUpdate = true
   }
@@ -56,28 +57,4 @@ export function applyTextProps<T extends TextNode>(
   if (needsUpdate && node.updateText) {
     node.updateText()
   }
-}
-
-/**
- * Simple deep equality check for objects (shallow for nested objects)
- * @param a - First object
- * @param b - Second object
- * @returns True if objects are deeply equal
- */
-function deepEqual(a: Record<string, unknown>, b: Record<string, unknown>): boolean {
-  const keysA = Object.keys(a)
-  const keysB = Object.keys(b)
-  if (keysA.length !== keysB.length) return false
-  for (const key of keysA) {
-    if (!(key in b)) return false
-    const valA = a[key]
-    const valB = b[key]
-    if (valA === valB) continue
-    if (typeof valA === 'object' && typeof valB === 'object' && valA !== null && valB !== null) {
-      if (!deepEqual(valA as Record<string, unknown>, valB as Record<string, unknown>)) return false
-    } else if (valA !== valB) {
-      return false
-    }
-  }
-  return true
 }

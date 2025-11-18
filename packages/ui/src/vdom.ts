@@ -2,6 +2,7 @@
  * VDOM + mount/patch/unmount and host integration.
  * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
+import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
@@ -31,8 +32,14 @@ const LAYOUT_PROPS = [
 ] as const
 
 /**
+ * Object props that need deep comparison
+ * These props are objects and should be compared by value, not by reference
+ */
+const DEEP_COMPARE_PROPS = new Set(['margin', 'padding'])
+
+/**
  * Check if layout-relevant props changed between two VNodes
- * Only checks shallow equality for performance
+ * Uses shallow equality for primitives and deep equality for objects
  * @param oldV - Previous VNode
  * @param newV - New VNode
  * @returns True if any layout prop changed
@@ -43,10 +50,23 @@ function hasLayoutPropsChanged(oldV: VNode, newV: VNode): boolean {
 
   // Check each layout-relevant prop
   for (const prop of LAYOUT_PROPS) {
-    if (oldProps[prop] !== newProps[prop]) {
-      // Debug: Log what changed
-      console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldProps[prop], '→', newProps[prop])
-      return true
+    const oldVal = oldProps[prop]
+    const newVal = newProps[prop]
+
+    // Use deep comparison for object props (margin, padding)
+    if (DEEP_COMPARE_PROPS.has(prop)) {
+      if (!equal(oldVal, newVal)) {
+        // Debug: Log what changed
+        console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldVal, '→', newVal)
+        return true
+      }
+    } else {
+      // Shallow comparison for primitives
+      if (oldVal !== newVal) {
+        // Debug: Log what changed
+        console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldVal, '→', newVal)
+        return true
+      }
     }
   }
 

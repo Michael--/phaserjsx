@@ -1,6 +1,7 @@
 /**
  * Layout property applier for updating container layout configuration
  */
+import equal from 'fast-deep-equal'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 import { calculateLayout } from '../../layout/index'
 
@@ -21,7 +22,13 @@ const LAYOUT_RELEVANT_PROPS: (keyof LayoutProps)[] = [
 ]
 
 /**
+ * Object props that need deep comparison
+ */
+const DEEP_COMPARE_PROPS = new Set(['margin', 'padding'])
+
+/**
  * Check if any layout-relevant prop changed
+ * Uses shallow equality for primitives and deep equality for objects
  * @param prev - Previous props
  * @param next - New props
  * @returns True if any layout prop changed
@@ -31,8 +38,19 @@ function hasLayoutPropsChanged(
   next: Partial<LayoutProps & BackgroundProps>
 ): boolean {
   for (const prop of LAYOUT_RELEVANT_PROPS) {
-    if (prev[prop] !== next[prop]) {
-      return true
+    const oldVal = prev[prop]
+    const newVal = next[prop]
+
+    // Use deep comparison for object props (margin, padding)
+    if (DEEP_COMPARE_PROPS.has(prop as string)) {
+      if (!equal(oldVal, newVal)) {
+        return true
+      }
+    } else {
+      // Shallow comparison for primitives
+      if (oldVal !== newVal) {
+        return true
+      }
     }
   }
   return false
