@@ -1,11 +1,17 @@
 /**
  * Tests for ref functionality - allows accessing underlying Phaser objects
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useRef } from './hooks'
 import { jsx } from './jsx-runtime'
+import { LayoutBatchQueue } from './layout/layout-engine'
 import type { RefObject } from './types'
 import { mount, patchVNode, unmount } from './vdom'
+
+// Enable synchronous mode for all tests
+beforeAll(() => {
+  LayoutBatchQueue.synchronous = true
+})
 
 // Mock host before imports
 vi.mock('./host', () => ({

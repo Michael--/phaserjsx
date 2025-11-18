@@ -4,7 +4,7 @@
  */
 
 // Main layout engine
-export { calculateLayout } from './layout-engine'
+export { LayoutBatchQueue, calculateLayout } from './layout-engine'
 
 // Types
 export type {

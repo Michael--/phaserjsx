@@ -77,6 +77,139 @@ class DeferredLayoutQueue {
 }
 
 /**
+ * Entry for batched layout calculation
+ */
+interface LayoutBatchEntry {
+  container: Phaser.GameObjects.Container
+  containerProps: LayoutProps
+  parentSize: { width: number; height: number } | undefined
+  parentPadding: { horizontal: number; vertical: number } | undefined
+}
+
+/**
+ * Batches layout calculations to reduce redundant recalculations
+ * Prevents multiple calculations of same container within single synchronous call stack
+ * Does NOT defer to next frame - executes immediately after current stack completes
+ *
+ * Benefits:
+ * - Prevents multiple calculations of same container in one update
+ * - Bottom-up execution order prevents redundant parent recalculations
+ * - No visual flickering (executes in same frame)
+ *
+ * Usage:
+ * - VDOM patches: LayoutBatchQueue.schedule() instead of direct calculateLayout()
+ * - Appliers: LayoutBatchQueue.schedule() instead of direct calculateLayout()
+ * - Tests: Set LayoutBatchQueue.synchronous = true for immediate execution
+ */
+export class LayoutBatchQueue {
+  private static pending = new Map<Phaser.GameObjects.Container, LayoutBatchEntry>()
+  private static scheduled = false
+
+  /**
+   * Enable synchronous mode for testing
+   * When true, layouts execute immediately instead of batching
+   */
+  static synchronous = false
+
+  /**
+   * Schedule a layout calculation to execute after current call stack
+   * Uses microtask (Promise) instead of requestAnimationFrame to avoid flickering
+   * If container is already scheduled, updates entry with latest props
+   * @param container - Container to calculate layout for
+   * @param containerProps - Layout props
+   * @param parentSize - Optional parent size for percentage resolution
+   * @param parentPadding - Optional parent padding for fill resolution
+   */
+  static schedule(
+    container: Phaser.GameObjects.Container,
+    containerProps: LayoutProps,
+    parentSize?: { width: number; height: number },
+    parentPadding?: { horizontal: number; vertical: number }
+  ): void {
+    // Synchronous mode for tests - execute immediately
+    if (this.synchronous) {
+      calculateLayoutImmediate(container, containerProps, parentSize, parentPadding)
+      return
+    }
+
+    // Update or add entry (latest props win if scheduled multiple times)
+    this.pending.set(container, { container, containerProps, parentSize, parentPadding })
+
+    // Schedule flush if not already scheduled
+    // Use microtask (Promise.resolve) instead of requestAnimationFrame
+    // This executes in SAME FRAME after current call stack, preventing flickering
+    if (!this.scheduled) {
+      this.scheduled = true
+      Promise.resolve().then(() => this.flush())
+    }
+  }
+
+  /**
+   * Execute all pending layout calculations immediately
+   * Processes in bottom-up order (deepest children first)
+   * This prevents redundant parent recalculations
+   */
+  static flush(): void {
+    this.scheduled = false
+
+    if (this.pending.size === 0) return
+
+    DebugLogger.time('performance', 'LayoutBatchQueue.flush')
+
+    // Copy and clear pending entries
+    const entries = Array.from(this.pending.values())
+    this.pending.clear()
+
+    // Sort bottom-up (deepest containers first)
+    // This ensures children are laid out before parents
+    entries.sort((a, b) => {
+      const depthA = getContainerDepth(a.container)
+      const depthB = getContainerDepth(b.container)
+      return depthB - depthA // Higher depth = deeper = execute first
+    })
+
+    // Execute layout calculations in optimal order
+    for (const entry of entries) {
+      try {
+        // Only calculate if container still exists and is active
+        if (entry.container.active) {
+          calculateLayoutImmediate(
+            entry.container,
+            entry.containerProps,
+            entry.parentSize,
+            entry.parentPadding
+          )
+        }
+      } catch (error) {
+        DebugLogger.error('LayoutBatchQueue', 'Error calculating layout:', error)
+      }
+    }
+
+    DebugLogger.timeEnd('performance', 'LayoutBatchQueue.flush')
+  }
+}
+
+/**
+ * Get depth of container in scene hierarchy
+ * Root containers have depth 0, children have depth 1, etc.
+ * @param container - Container to get depth for
+ * @returns Depth level (0 = root)
+ */
+function getContainerDepth(container: Phaser.GameObjects.Container): number {
+  let depth = 0
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let current: Phaser.GameObjects.Container | null = (container as any).parentContainer || null
+
+  while (current) {
+    depth++
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    current = (current as any).parentContainer || null
+  }
+
+  return depth
+}
+
+/**
  * Updates mask position using world coordinates
  * Called during batch processing or immediate updates
  * @param container - Container with mask
@@ -239,14 +372,14 @@ const strategies: Record<string, LayoutStrategy> = {
 }
 
 /**
- * Calculate layout for a container and its children
- * Main entry point for layout system
+ * Calculate layout for a container and its children immediately (internal)
+ * DO NOT CALL DIRECTLY - Use calculateLayout() which batches for performance
  * @param container - Phaser container with children
  * @param containerProps - Layout props of the container
  * @param parentSize - Optional parent dimensions for percentage resolution
  * @param parentPadding - Optional parent padding for 'fill' resolution
  */
-export function calculateLayout(
+function calculateLayoutImmediate(
   container: Phaser.GameObjects.Container,
   containerProps: LayoutProps,
   parentSize?: { width: number; height: number },
@@ -500,4 +633,22 @@ export function calculateLayout(
   // End performance timing
   DebugLogger.timeEnd('performance', 'calculateLayout')
   DebugLogger.groupEnd('layout')
+}
+
+/**
+ * Calculate layout for a container and its children
+ * Batches layout calculations for optimal performance
+ * Multiple calls within same frame are deduplicated and executed bottom-up
+ * @param container - Phaser container with children
+ * @param containerProps - Layout props of the container
+ * @param parentSize - Optional parent dimensions for percentage resolution
+ * @param parentPadding - Optional parent padding for 'fill' resolution
+ */
+export function calculateLayout(
+  container: Phaser.GameObjects.Container,
+  containerProps: LayoutProps,
+  parentSize?: { width: number; height: number },
+  parentPadding?: { horizontal: number; vertical: number }
+): void {
+  LayoutBatchQueue.schedule(container, containerProps, parentSize, parentPadding)
 }

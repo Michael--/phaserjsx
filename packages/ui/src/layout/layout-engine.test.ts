@@ -2,9 +2,14 @@
  * Integration tests for percentage-based layouts
  */
 import type Phaser from 'phaser'
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import type { LayoutProps } from '../core-props'
-import { calculateLayout } from './layout-engine'
+import { calculateLayout, LayoutBatchQueue } from './layout-engine'
+
+// Enable synchronous mode for all tests
+beforeAll(() => {
+  LayoutBatchQueue.synchronous = true
+})
 
 /**
  * Mock container helper
