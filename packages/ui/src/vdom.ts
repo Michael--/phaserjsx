@@ -6,7 +6,7 @@ import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
-import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
+import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
 import { calculateLayout } from './layout/index'
@@ -358,10 +358,19 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       }
       // Transfer context to newV so future patches work
       ;(newV as VNode & { __ctx?: Ctx }).__ctx = ctx
-      // Re-render with updated props
+
+      // Build props for comparison (merge props + children)
       const propsWithChildren = ctx.componentVNode.children?.length
         ? { ...(ctx.componentVNode.props ?? {}), children: ctx.componentVNode.children }
         : ctx.componentVNode.props
+
+      // Check if component should update (memoization)
+      if (!shouldComponentUpdate(ctx, propsWithChildren)) {
+        // Props haven't changed - skip re-render
+        return
+      }
+
+      // Re-render with updated props
       const renderedNext = withHooks(ctx, () =>
         (newV.type as (props: unknown) => VNode)(propsWithChildren)
       )

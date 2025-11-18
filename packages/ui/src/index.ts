@@ -11,6 +11,7 @@ registerBuiltins()
 export * from './core-types'
 export * from './hooks'
 export * from './host'
+export * from './memo'
 export * from './types'
 export * from './vdom'
 

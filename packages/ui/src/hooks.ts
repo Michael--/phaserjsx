@@ -18,6 +18,8 @@ export type Ctx = {
   function: (props: unknown) => VNode
   updater?: (() => void) | undefined
   isFactory: boolean
+  lastProps?: unknown // Store last props for memoization
+  memoized?: boolean // Whether component uses memoization (default: true)
 }
 
 let CURRENT: Ctx | null = null
@@ -36,6 +38,7 @@ export type VNode = {
     align?: string
     padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
   }
+  __memo?: boolean // Opt-out of memoization (false = always re-render)
 }
 
 /**
@@ -145,6 +148,70 @@ function depsChanged(a?: readonly unknown[], b?: readonly unknown[]) {
     if (!Object.is(a[i], b[i])) return true
   }
   return false
+}
+
+/**
+ * Shallow comparison for props objects
+ * Used for component memoization (React.memo equivalent)
+ * @param a - Previous props
+ * @param b - Current props
+ * @returns true if props are shallowly equal
+ */
+export function shallowEqual(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true
+
+  // Handle null/undefined
+  if (a == null || b == null) return false
+
+  // Must both be objects
+  if (typeof a !== 'object' || typeof b !== 'object') return false
+
+  const keysA = Object.keys(a)
+  const keysB = Object.keys(b)
+
+  // Different number of keys
+  if (keysA.length !== keysB.length) return false
+
+  // Check each key
+  for (const key of keysA) {
+    if (
+      !Object.prototype.hasOwnProperty.call(b, key) ||
+      !Object.is((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])
+    ) {
+      return false
+    }
+  }
+
+  return true
+}
+
+/**
+ * Check if component should update based on props comparison
+ * Similar to React.memo() - skips re-render if props haven't changed
+ * @param ctx - Component context
+ * @param newProps - New props to compare
+ * @returns true if component should re-render
+ */
+export function shouldComponentUpdate(ctx: Ctx, newProps: unknown): boolean {
+  // Always update if memoization disabled (ctx.memoized = false or __memo = false)
+  if (ctx.memoized === false) return true
+
+  // Check VNode-level opt-out
+  if (ctx.componentVNode.__memo === false) return true
+
+  // First render or no previous props
+  if (ctx.lastProps === undefined) {
+    ctx.lastProps = newProps
+    return true
+  }
+
+  // Compare props (shallow)
+  const hasChanged = !shallowEqual(ctx.lastProps, newProps)
+
+  // Update stored props
+  ctx.lastProps = newProps
+
+  return hasChanged
 }
 
 /**
