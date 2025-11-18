@@ -390,10 +390,7 @@ function calculateLayoutImmediate(
   // Debug: Track excessive layout calls
   // console.log('[LAYOUT] calculateLayout called for container with', children?.length ?? 0, 'children')
 
-  DebugLogger.group('layout', `Container with ${children?.length ?? 0} children`)
-
   if (!children || !Array.isArray(children)) {
-    DebugLogger.groupEnd('layout')
     return
   }
 
@@ -632,7 +629,6 @@ function calculateLayoutImmediate(
 
   // End performance timing
   DebugLogger.timeEnd('performance', 'calculateLayout')
-  DebugLogger.groupEnd('layout')
 }
 
 /**

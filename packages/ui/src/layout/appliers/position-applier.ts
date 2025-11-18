@@ -22,7 +22,7 @@ export function applyChildPositions(children: LayoutChild[], positions: Position
     // Apply size (resolved from layout props, including percentages)
     if ('setSize' in child && typeof child.setSize === 'function') {
       if (size.width !== child.width || size.height !== child.height) {
-        DebugLogger.log('positioning', `Setting child ${i} size: ${size.width}x${size.height}`)
+        DebugLogger.log('positioning', 'Setting child', `${i} size: ${size.width}x${size.height}`)
         ;(child as { setSize: (w: number, h: number) => unknown }).setSize(size.width, size.height)
       }
     } else {
@@ -35,7 +35,7 @@ export function applyChildPositions(children: LayoutChild[], positions: Position
 
     // Apply position
     if (child.setPosition) {
-      DebugLogger.log('positioning', `Setting child ${i} position: (${x}, ${y})`)
+      DebugLogger.log('positioning', 'Setting child', ` ${i} position: (${x}, ${y})`)
       child.setPosition(x, y)
     }
   }

@@ -3,6 +3,8 @@
  * Runtime-configurable settings for debugging and development
  */
 
+import { debounce } from 'lodash'
+
 /**
  * Development configuration object
  * Can be modified at runtime from user code for debugging
@@ -134,17 +136,31 @@ export const DevConfig = {
  */
 export class DebugLogger {
   /**
-   * Log a message with category filtering
+   * Debounced console.log instances per category-message combination
+   */
+  private static debouncedLoggers = new Map<string, (...args: unknown[]) => void>()
+
+  /**
+   * Log a message with category filtering and debouncing
    * @param category - Debug category to check
    * @param message - Message to log
-   * @param args - Additional arguments to log
+   * @param args - Additional arguments to log (only first element is used)
    */
   static log(category: keyof typeof DevConfig.debug, message: string, ...args: unknown[]): void {
     if (!DevConfig.debug.enabled) return
     if (category !== 'enabled' && !DevConfig.debug[category]) return
 
-    // console.log(`[${category}] ${message}`, ...args)
-    console.log(`[${category}] ${message}`)
+    const key = `${String(category)}:${message}`
+    let debouncedLog = this.debouncedLoggers.get(key)
+
+    if (!debouncedLog) {
+      debouncedLog = debounce(() => {
+        console.log(`[${category}] ${message}`, args[0])
+      }, 300)
+      this.debouncedLoggers.set(key, debouncedLog)
+    }
+
+    debouncedLog()
   }
 
   /**
@@ -165,29 +181,6 @@ export class DebugLogger {
    */
   static error(category: string, message: string, ...args: unknown[]): void {
     console.error(`[${category}] ${message}`, ...args)
-  }
-
-  /**
-   * Start a collapsed console group
-   * @param category - Debug category to check
-   * @param label - Group label
-   */
-  static group(category: keyof typeof DevConfig.debug, label: string): void {
-    if (!DevConfig.debug.enabled) return
-    if (category !== 'enabled' && !DevConfig.debug[category]) return
-
-    console.group(`[${category}] ${label}`)
-  }
-
-  /**
-   * End a console group
-   * @param category - Debug category to check
-   */
-  static groupEnd(category: keyof typeof DevConfig.debug): void {
-    if (!DevConfig.debug.enabled) return
-    if (category !== 'enabled' && !DevConfig.debug[category]) return
-
-    console.groupEnd()
   }
 
   /**

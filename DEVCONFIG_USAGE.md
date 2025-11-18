@@ -188,10 +188,6 @@ import { DebugLogger } from '@phaserjsx/ui'
 function MyCustomComponent() {
   DebugLogger.log('layout', 'Custom component rendering')
 
-  DebugLogger.group('layout', 'Complex calculation')
-  // ... complex logic ...
-  DebugLogger.groupEnd('layout')
-
   DebugLogger.time('performance', 'Heavy operation')
   // ... heavy operation ...
   DebugLogger.timeEnd('performance', 'Heavy operation')
