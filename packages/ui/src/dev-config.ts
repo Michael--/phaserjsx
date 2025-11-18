@@ -143,7 +143,8 @@ export class DebugLogger {
     if (!DevConfig.debug.enabled) return
     if (category !== 'enabled' && !DevConfig.debug[category]) return
 
-    console.log(`[${category}] ${message}`, ...args)
+    // console.log(`[${category}] ${message}`, ...args)
+    console.log(`[${category}] ${message}`)
   }
 
   /**

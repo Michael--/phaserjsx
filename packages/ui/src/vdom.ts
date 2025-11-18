@@ -57,14 +57,14 @@ function hasLayoutPropsChanged(oldV: VNode, newV: VNode): boolean {
     if (DEEP_COMPARE_PROPS.has(prop)) {
       if (!equal(oldVal, newVal)) {
         // Debug: Log what changed
-        console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldVal, '→', newVal)
+        DebugLogger.log('vdom', 'hasLayoutPropsChanged', prop, 'changed:', oldVal, '→', newVal)
         return true
       }
     } else {
       // Shallow comparison for primitives
       if (oldVal !== newVal) {
         // Debug: Log what changed
-        console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldVal, '→', newVal)
+        DebugLogger.log('vdom', 'hasLayoutPropsChanged', prop, 'changed:', oldVal, '→', newVal)
         return true
       }
     }
@@ -413,8 +413,7 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)
 
   // Debug: Track excessive patching
-  // console.log('[VDOM] Patching:', { type: oldV.type, children: len, containerLayoutChanged })
-  // console.log('[VDOM] Patching:') // when you want less info to count only
+  // DebugLogger.log('vdom', 'Patching:', { type: oldV.type, children: len, containerLayoutChanged })
 
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
