@@ -67,6 +67,11 @@ const globalTheme = createTheme({
 
   Sidebar: {
     backgroundColor: 0x2e1e1e,
+    Text: {
+      style: {
+        color: '#ffff00',
+      },
+    },
   },
 })
 

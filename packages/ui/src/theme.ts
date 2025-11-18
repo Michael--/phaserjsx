@@ -7,13 +7,22 @@ import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 
 /**
+ * Type helper for nested component themes
+ * Allows a component theme to include nested themes for child components
+ */
+export type NestedComponentThemes = {
+  [K in keyof ComponentThemes]?: Partial<ComponentThemes[K]>
+}
+
+/**
  * Theme definition for View component
- * Includes all visual props that can be themed
+ * Includes all visual props that can be themed, plus nested component themes
  */
 export interface ViewTheme
   extends Partial<TransformProps>,
     Partial<LayoutProps>,
-    Partial<BackgroundProps> {}
+    Partial<BackgroundProps>,
+    NestedComponentThemes {}
 
 /**
  * Theme definition for Text component
@@ -27,7 +36,7 @@ export interface TextTheme extends Partial<TransformProps>, Partial<TextSpecific
 /**
  * Theme definition for NineSlice component
  */
-export interface NineSliceTheme extends Partial<TransformProps> {
+export interface NineSliceTheme extends Partial<TransformProps>, NestedComponentThemes {
   texture?: string
   leftWidth?: number
   rightWidth?: number
@@ -222,10 +231,11 @@ export function createTheme(theme: PartialTheme): PartialTheme {
 /**
  * Get themed props for a component, merging global theme, local theme override, and explicit props
  * Explicit props take highest priority, then local theme, then global theme
+ * Also extracts nested component themes to pass down to children
  * @param componentName - Component name
  * @param localTheme - Local theme override (from theme prop in VDOM tree)
  * @param explicitProps - Explicit props passed to component
- * @returns Merged props with theme applied
+ * @returns Object with merged props and nested themes for child components
  */
 function deepMergeDefined<T extends object>(base: T, override: Partial<T>): T {
   const result = { ...base }
@@ -252,6 +262,30 @@ function deepMergeDefined<T extends object>(base: T, override: Partial<T>): T {
   return result as T
 }
 
+/**
+ * Helper to extract nested component themes from a theme object
+ * Separates own props from nested component themes
+ * @param theme - Theme object that might contain nested themes
+ * @param componentNames - Known component names to extract
+ * @returns Object with ownProps and nestedThemes
+ */
+function extractNestedThemes<T extends object>(
+  theme: T,
+  componentNames: readonly string[] = ['View', 'Text', 'NineSlice']
+): { ownProps: T; nestedThemes: PartialTheme } {
+  const ownProps = { ...theme }
+  const nestedThemes: PartialTheme = {}
+
+  for (const componentName of componentNames) {
+    if (componentName in ownProps) {
+      nestedThemes[componentName as keyof ComponentThemes] = (ownProps as never)[componentName]
+      delete (ownProps as never)[componentName]
+    }
+  }
+
+  return { ownProps, nestedThemes }
+}
+
 export function getThemedProps<
   K extends keyof ComponentThemes,
   P extends Partial<ComponentThemes[K]>,
@@ -259,14 +293,37 @@ export function getThemedProps<
   componentName: K,
   localTheme: PartialTheme | undefined,
   explicitProps: P
-): ComponentThemes[K] & P {
+): { props: ComponentThemes[K] & P; nestedTheme: PartialTheme } {
   // Start with global theme for this component
   const globalComponentTheme = themeRegistry.getComponentTheme(componentName)
+
+  // Extract nested themes from global theme
+  const { ownProps: globalOwnProps, nestedThemes: globalNestedThemes } =
+    extractNestedThemes(globalComponentTheme)
+
   // Apply local theme override if provided
   const localComponentTheme = localTheme?.[componentName] ?? {}
+  const { ownProps: localOwnProps, nestedThemes: localNestedThemes } =
+    extractNestedThemes(localComponentTheme)
+
+  // Extract nested themes from explicit props
+  const { ownProps: explicitOwnProps, nestedThemes: explicitNestedThemes } =
+    extractNestedThemes(explicitProps)
+
   // Merge: global < local < explicit, but only defined values
-  return {
-    ...deepMergeDefined(globalComponentTheme, localComponentTheme),
-    ...deepMergeDefined({}, explicitProps),
+  const mergedProps = {
+    ...deepMergeDefined(globalOwnProps as object, localOwnProps),
+    ...deepMergeDefined({}, explicitOwnProps),
   } as ComponentThemes[K] & P
+
+  // Merge nested themes: global < local < explicit
+  const mergedNestedThemes = mergeThemes(
+    mergeThemes(globalNestedThemes, localNestedThemes),
+    explicitNestedThemes
+  )
+
+  return {
+    props: mergedProps,
+    nestedTheme: mergedNestedThemes,
+  }
 }

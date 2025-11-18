@@ -26,7 +26,7 @@ export interface SidebarProps {
  * @returns Sidebar JSX element
  */
 export function Sidebar(props: SidebarProps) {
-  const themed = getThemedProps('Sidebar', undefined, {})
+  const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, {})
   const width = props.width ?? undefined
   const backgroundColor = themed.backgroundColor
   const gap = props.gap ?? 10
@@ -49,6 +49,7 @@ export function Sidebar(props: SidebarProps) {
     <View
       width={width}
       height={props.height}
+      theme={nestedTheme}
       backgroundColor={backgroundColor}
       backgroundAlpha={1.0}
       padding={padding}

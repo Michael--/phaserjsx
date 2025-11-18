@@ -16,6 +16,8 @@ declare module '@phaserjsx/ui' {
       width?: number | string
       padding?: number
       gap?: number
+      // Nested component themes
+      Text?: Partial<import('@phaserjsx/ui').ComponentThemes['Text']>
     }
   }
 }
@@ -31,6 +33,12 @@ themeRegistry.registerCustomComponent('Sidebar', {
   width: 200,
   padding: 10,
   gap: 10,
+  Text: {
+    style: {
+      fontSize: '18px',
+      color: '#cccccc',
+    },
+  },
 })
 
 /**
@@ -50,7 +58,7 @@ export interface SidebarProps {
 
 function Sidebar(props: SidebarProps) {
   // Get themed props - merges global, local, and explicit props
-  const themedProps = getThemedProps('Sidebar', undefined, props)
+  const { props: themedProps } = getThemedProps('Sidebar', undefined, props)
   const padding = themedProps.padding
 
   const viewProps: Partial<ViewProps> = {
@@ -72,35 +80,45 @@ function Sidebar(props: SidebarProps) {
 }
 
 /**
- * Step 4: Use the themed component with global or local overrides
+ * Step 4: Use the themed component with global, local, and nested theme overrides
  */
 import { Text } from '@phaserjsx/ui'
 
 export function UsageExample() {
   return (
-    <View>
-      {/* Uses global Sidebar theme */}
+    <View direction="column" gap={30}>
+      {/* Uses global Sidebar theme (includes nested Text theme with fontSize: 18px) */}
       <Sidebar>
-        <Text text="Content" />
+        <Text text="Menu Item 1" />
+        <Text text="Menu Item 2" />
+        <Text text="Menu Item 3" />
       </Sidebar>
 
-      {/* Override theme locally */}
+      {/* Override Sidebar's nested Text theme locally */}
       <View
         theme={{
           Sidebar: {
-            backgroundColor: 0xff0000,
+            backgroundColor: 0x2a2a2a,
             width: 300,
+            Text: {
+              style: {
+                fontSize: '24px',
+                color: '#ffaa00',
+              },
+            },
           },
         }}
       >
         <Sidebar>
-          <Text text="Red sidebar with custom width" />
+          <Text text="Large orange text" />
+          <Text text="All texts in this sidebar are styled" />
         </Sidebar>
       </View>
 
-      {/* Explicit props override everything */}
-      <Sidebar backgroundColor={0x00ff00} width={250}>
-        <Text text="Green sidebar - explicit props win" />
+      {/* Explicit props on individual Text still override nested theme */}
+      <Sidebar backgroundColor={0x003366} width={250}>
+        <Text text="Normal sidebar text (18px from global)" />
+        <Text text="Explicit override" style={{ fontSize: '12px', color: '#ff0000' }} />
       </Sidebar>
     </View>
   )

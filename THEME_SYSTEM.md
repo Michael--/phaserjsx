@@ -129,10 +129,10 @@ themeRegistry.registerCustomComponent('Button', {
 import { getThemedProps } from '@phaserjsx/ui'
 
 function Button(props: ButtonProps) {
-  const themed = getThemedProps('Button', undefined, props)
+  const { props: themed, nestedTheme } = getThemedProps('Button', undefined, props)
 
   return (
-    <View backgroundColor={themed.backgroundColor}>
+    <View backgroundColor={themed.backgroundColor} theme={nestedTheme}>
       <Text
         text={props.text}
         style={{
@@ -143,6 +143,63 @@ function Button(props: ButtonProps) {
     </View>
   )
 }
+```
+
+### Nested Component Theming
+
+Components can define styles for their child components using nested themes:
+
+```tsx
+// 1. Extend theme definition with nested component themes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    Sidebar: {
+      backgroundColor?: number
+      padding?: number
+      // Nested theme for all Text components inside Sidebar
+      Text?: Partial<ComponentThemes['Text']>
+    }
+  }
+}
+
+// 2. Register with nested theme defaults
+themeRegistry.registerCustomComponent('Sidebar', {
+  backgroundColor: 0x1e1e1e,
+  padding: 10,
+  Text: {
+    style: {
+      fontSize: '18px',
+      color: '#cccccc',
+    },
+  },
+})
+
+// 3. Use in your component (nested themes are automatically applied to children)
+function Sidebar(props: SidebarProps) {
+  const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, props)
+
+  return (
+    <View backgroundColor={themed.backgroundColor} padding={themed.padding}>
+      {/* Text components automatically receive the nested Text theme */}
+      {props.children}
+    </View>
+  )
+}
+
+// 4. Override nested themes locally
+;<View
+  theme={{
+    Sidebar: {
+      Text: {
+        style: { fontSize: '24px', color: '#ffaa00' },
+      },
+    },
+  }}
+>
+  <Sidebar>
+    <Text text="Large orange text" />
+  </Sidebar>
+</View>
 ```
 
 ## API Reference
@@ -166,9 +223,19 @@ Helper to create a partial theme with type safety.
 
 ### `getThemedProps(componentName, localTheme, explicitProps)`
 
-Merge global theme, local theme override, and explicit props.
+Merge global theme, local theme override, and explicit props. Also extracts nested component themes.
 
-**Priority:** explicit props > local theme > global theme
+**Returns:** `{ props: MergedProps, nestedTheme: PartialTheme }`
+
+- `props`: Merged props with theme applied (explicit props > local theme > global theme)
+- `nestedTheme`: Extracted nested component themes to pass to children
+
+**Example:**
+
+```tsx
+const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, props)
+// Use themed for own props, pass nestedTheme to children via theme prop
+```
 
 ### `useTheme()`
 

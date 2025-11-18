@@ -194,9 +194,13 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     ? (parentOrScene as Phaser.Scene) // It's a Scene
     : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene) // It's a game object with .scene
 
-  // Apply theme to props
+  // Apply theme to props and extract nested themes for children
   const nodeType = vnode.type as NodeType
-  const themedProps = getThemedProps(nodeType, vnode.__theme, vnode.props ?? {})
+  const { props: themedProps, nestedTheme } = getThemedProps(
+    nodeType,
+    vnode.__theme,
+    vnode.props ?? {}
+  )
 
   // Debug: Log themed props for View
   if (
@@ -222,8 +226,11 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) {
-      // Propagate theme to children (inherit parent's theme if child doesn't have one)
-      if (!c.__theme && vnode.__theme) {
+      // Merge parent's nested theme with child's existing theme
+      if (Object.keys(nestedTheme).length > 0) {
+        c.__theme = c.__theme ? { ...nestedTheme, ...c.__theme } : nestedTheme
+      } else if (!c.__theme && vnode.__theme) {
+        // Fallback: Propagate theme to children (inherit parent's theme if child doesn't have one)
         c.__theme = vnode.__theme
       }
       mount(node as ParentType, c)
@@ -398,8 +405,12 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   }
 
   // Apply theme to props before patching (merge explicit props with theme)
-  const oldThemedProps = getThemedProps(nodeType, oldV.__theme, oldV.props ?? {})
-  const newThemedProps = getThemedProps(nodeType, newV.__theme, newV.props ?? {})
+  const { props: oldThemedProps } = getThemedProps(nodeType, oldV.__theme, oldV.props ?? {})
+  const { props: newThemedProps, nestedTheme: newNestedTheme } = getThemedProps(
+    nodeType,
+    newV.__theme,
+    newV.props ?? {}
+  )
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldThemedProps, newThemedProps)
@@ -422,14 +433,23 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     const isValidC1 = c1 != null && c1 !== false
     const isValidC2 = c2 != null && c2 !== false
     if (!isValidC1 && isValidC2) {
+      // Merge parent's nested theme with new child's theme
+      if (Object.keys(newNestedTheme).length > 0) {
+        c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+      } else if (!c2.__theme && newV.__theme) {
+        c2.__theme = newV.__theme
+      }
       mount(oldV.__node as ParentType, c2)
       childrenChanged = true
     } else if (isValidC1 && !isValidC2) {
       unmount(c1)
       childrenChanged = true
     } else if (isValidC1 && isValidC2) {
-      // Propagate theme to child (inherit parent's theme if child doesn't have one)
-      if (!c2.__theme && newV.__theme) {
+      // Merge parent's nested theme with child's theme
+      if (Object.keys(newNestedTheme).length > 0) {
+        c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+      } else if (!c2.__theme && newV.__theme) {
+        // Fallback: Propagate theme to child (inherit parent's theme if child doesn't have one)
         c2.__theme = newV.__theme
       }
 
