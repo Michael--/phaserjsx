@@ -11,9 +11,10 @@ import type Phaser from 'phaser'
 export interface ScrollViewProps {
   /** Children to render inside scrollable content, allow only one child */
   children?: VNode
+  /** Initial scroll position */
+  scroll?: { dx: number; dy: number }
   /** Called when scroll position changes, values are in percent 0..100
    * @param scrollX - Horizontal scroll position in percent (0 = left, 100 = right)
-   * @param scrollY - Vertical scroll position in percent (0 = top, 100 = bottom)
    * @param scrollWidth - Total scrollable width size, 100 means the slider fills the viewport
    * @param scrollHeight - Total scrollable height, 100 means the slider fills the viewport
    */
@@ -28,12 +29,18 @@ export interface ScrollViewProps {
  * @returns JSX element
  */
 export function ScrollView(props: ScrollViewProps) {
-  const { children, onScroll } = props
-  const [scroll, setScroll] = useState({ dx: 0, dy: 0 })
+  const { children, onScroll, scroll: initialScroll } = props
+  const [scroll, setScroll] = useState(initialScroll || { dx: 0, dy: 0 })
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
   const lastPointerRef = useRef({ x: 0, y: 0 })
+
+  useEffect(() => {
+    if (initialScroll) {
+      setScroll(initialScroll)
+    }
+  }, [initialScroll])
 
   useEffect(() => {
     setTimeout(() => {

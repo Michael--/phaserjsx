@@ -1,4 +1,5 @@
-import { Text, useState, View } from '@phaserjsx/ui'
+import { Text, useRef, useState, View } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
 import { ScrollView } from '../components'
 
 function Content(props: { count: number; width: string }) {
@@ -44,32 +45,131 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
 function Slider(props: {
   scroll: { scrollX: number; scrollY: number; width: number; height: number }
   trackHeight: number
+  onScroll: (scrollY: number) => void
 }) {
   const scrollHeight = (props.trackHeight * props.scroll.height) / 100
   const newScrollY = (props.scroll.scrollY / 100) * (props.trackHeight - scrollHeight)
+  const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const isDraggingRef = useRef(false)
+  const lastPointerRef = useRef({ y: 0 })
+
+  const getGlobalY = (obj: Phaser.GameObjects.GameObject): number => {
+    let y = (obj as Phaser.GameObjects.Container).y
+    let parent = obj.parentContainer
+    while (parent) {
+      y += (parent as Phaser.GameObjects.Container).y
+      parent = parent.parentContainer
+    }
+    return y
+  }
+
+  const handleThumbPointerDown = (pointer: Phaser.Input.Pointer) => {
+    if (pointer.leftButtonDown()) {
+      isDraggingRef.current = true
+      lastPointerRef.current = { y: pointer.y }
+    }
+  }
+
+  const handlePointerUp = (pointer: Phaser.Input.Pointer) => {
+    if (pointer.leftButtonReleased()) {
+      isDraggingRef.current = false
+    }
+  }
+
+  const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
+    if (!isDraggingRef.current) return
+
+    if (!pointer.leftButtonDown()) {
+      isDraggingRef.current = false
+      return
+    }
+
+    if (!sliderRef.current) return
+
+    const deltaY = pointer.y - lastPointerRef.current.y
+    lastPointerRef.current = { y: pointer.y }
+
+    const thumbRange = props.trackHeight - scrollHeight
+    const currentThumbY = (props.scroll.scrollY / 100) * thumbRange
+    const newThumbY = Math.max(0, Math.min(thumbRange, currentThumbY + deltaY))
+    const newScrollYPercent = thumbRange > 0 ? (newThumbY / thumbRange) * 100 : 0
+
+    props.onScroll(newScrollYPercent)
+  }
+
+  const handleBackgroundPointerDown = (pointer: Phaser.Input.Pointer) => {
+    if (pointer.leftButtonDown() && sliderRef.current) {
+      const globalSliderY = getGlobalY(sliderRef.current)
+      const localY = pointer.y - globalSliderY
+      const effectiveHeight = props.trackHeight - 2
+      const normalizedY = (localY - 1) / effectiveHeight
+      const targetScrollY = Math.max(0, Math.min(100, normalizedY * 100))
+      console.log('bg down', localY, targetScrollY)
+      props.onScroll(targetScrollY)
+    }
+  }
 
   return (
     <View
+      ref={sliderRef}
       width={24}
       height={props.trackHeight}
       backgroundColor={0xdddddd}
-      padding={1}
       direction="stack"
+      padding={1}
+      onPointerUp={handlePointerUp}
+      onPointerMove={handlePointerMove}
     >
-      <View width={'fill'} height={'fill'} backgroundColor={0xaaaaaa}></View>
+      <View
+        width={'fill'}
+        height={'fill'}
+        backgroundColor={0xaaaaaa}
+        onPointerDown={handleBackgroundPointerDown}
+      ></View>
       <View
         width={'fill'}
         x={1}
         y={newScrollY}
         height={scrollHeight}
         backgroundColor={0xeeeebb}
+        onPointerDown={handleThumbPointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
       ></View>
     </View>
   )
 }
 
 function ScrollExampleSliderLocal(props: { title: string; count: number; width: string }) {
-  const [scroll, setScroll] = useState({ scrollX: 0, scrollY: 0, width: 0, height: 0 })
+  const [scroll, setScroll] = useState({
+    dx: 0,
+    dy: 0,
+    scrollX: 0,
+    scrollY: 0,
+    width: 0,
+    height: 0,
+  })
+
+  const handleScrollViewScroll = (x: number, y: number, w: number, h: number) => {
+    // Calculate absolute scroll positions from percentages
+    const contentHeight = 400 / (h / 100)
+    const maxScrollY = contentHeight - 400
+    const dy = (y / 100) * maxScrollY
+
+    const contentWidth = 200 / (w / 100)
+    const maxScrollX = contentWidth - 200
+    const dx = (x / 100) * maxScrollX
+
+    setScroll({ dx, dy, scrollX: x, scrollY: y, width: w, height: h })
+  }
+
+  const handleSliderScroll = (scrollYPercent: number) => {
+    const contentHeight = 400 / (scroll.height / 100)
+    const maxScrollY = contentHeight - 400
+    const dy = (scrollYPercent / 100) * maxScrollY
+
+    setScroll({ ...scroll, dy, scrollY: scrollYPercent })
+  }
 
   return (
     <View padding={0} alignItems="center">
@@ -77,13 +177,11 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
       {/** Border around ScrollView to visualize its bounds */}
       <View borderColor={0xffffff} borderWidth={2} padding={2} direction="row" gap={0}>
         <View width={200} height={400} padding={0}>
-          <ScrollView
-            onScroll={(x, y, w, h) => setScroll({ scrollX: x, scrollY: y, width: w, height: h })}
-          >
+          <ScrollView scroll={scroll} onScroll={handleScrollViewScroll}>
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
-        <Slider scroll={scroll} trackHeight={400} />
+        <Slider scroll={scroll} trackHeight={400} onScroll={handleSliderScroll} />
       </View>
     </View>
   )
