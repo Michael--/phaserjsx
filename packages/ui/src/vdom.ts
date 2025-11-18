@@ -383,6 +383,12 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
   const nodeType = oldV.type as NodeType
   newV.__node = oldV.__node
 
+  // Transfer theme from newV to oldV (theme may have changed)
+  // This ensures theme updates are properly applied during patching
+  if (newV.__theme !== undefined) {
+    oldV.__theme = newV.__theme
+  }
+
   // Update ref if it changed
   const oldRef = oldV.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
   const newRef = newV.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
@@ -422,6 +428,11 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       unmount(c1)
       childrenChanged = true
     } else if (isValidC1 && isValidC2) {
+      // Propagate theme to child (inherit parent's theme if child doesn't have one)
+      if (!c2.__theme && newV.__theme) {
+        c2.__theme = newV.__theme
+      }
+
       // Check if this child has layout-relevant changes
       const childLayoutChanged = hasLayoutPropsChanged(c1, c2)
 
