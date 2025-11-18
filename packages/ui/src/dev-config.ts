@@ -160,6 +160,8 @@ export class DebugLogger {
     const key = `${String(category)}:${message}`
     let debouncedLog = this.debouncedLoggers.get(key)
 
+    // console.log(`[${category}] ${message}`, args[0])
+
     if (!debouncedLog) {
       debouncedLog = debounce(() => {
         console.log(`[${category}] ${message}`, args[0])

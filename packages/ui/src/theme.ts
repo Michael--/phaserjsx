@@ -192,6 +192,14 @@ class ThemeRegistry {
     }
     return (this.customThemes.get(componentName as string) ?? {}) as ComponentThemes[K]
   }
+
+  /**
+   * Get all registered custom component names
+   * @returns Set of custom component names
+   */
+  getCustomComponentNames(): Set<string> {
+    return new Set(this.customThemes.keys())
+  }
 }
 
 /**
@@ -268,21 +276,30 @@ function deepMergeDefined<T extends object>(base: T, override: Partial<T>): T {
 /**
  * Helper to extract nested component themes from a theme object
  * Separates own props from nested component themes
+ * Detects nested themes by checking if the property value is an object
+ * and the key starts with uppercase (convention for component names)
  * @param theme - Theme object that might contain nested themes
- * @param componentNames - Known component names to extract
  * @returns Object with ownProps and nestedThemes
  */
 function extractNestedThemes<T extends object>(
-  theme: T,
-  componentNames: readonly string[] = ['View', 'Text', 'NineSlice']
+  theme: T
 ): { ownProps: T; nestedThemes: PartialTheme } {
   const ownProps = { ...theme }
   const nestedThemes: PartialTheme = {}
 
-  for (const componentName of componentNames) {
-    if (componentName in ownProps) {
-      nestedThemes[componentName as keyof ComponentThemes] = (ownProps as never)[componentName]
-      delete (ownProps as never)[componentName]
+  // Get all registered component names (built-in + custom)
+  const allComponentNames = new Set([
+    'View',
+    'Text',
+    'NineSlice',
+    ...Array.from(themeRegistry.getCustomComponentNames()),
+  ])
+
+  for (const key in ownProps) {
+    // Check if this key is a component name (starts with uppercase or is in our registry)
+    if (allComponentNames.has(key)) {
+      nestedThemes[key as keyof ComponentThemes] = (ownProps as never)[key]
+      delete (ownProps as never)[key]
     }
   }
 
@@ -305,9 +322,16 @@ export function getThemedProps<
     extractNestedThemes(globalComponentTheme)
 
   // Apply local theme override if provided
+  // IMPORTANT: localTheme can be either:
+  // 1. Parent's nested theme (propagated down)
+  // 2. Component's own theme (from theme prop via __theme)
+  // We need to check if localTheme contains this component's theme OR nested themes
   const localComponentTheme = localTheme?.[componentName] ?? {}
   const { ownProps: localOwnProps, nestedThemes: localNestedThemes } =
     extractNestedThemes(localComponentTheme)
+
+  // Also extract nested themes directly from localTheme (for theme prop case)
+  const { nestedThemes: localThemeNested } = extractNestedThemes(localTheme ?? {})
 
   // Extract nested themes from explicit props
   const { ownProps: explicitOwnProps, nestedThemes: explicitNestedThemes } =
@@ -319,9 +343,9 @@ export function getThemedProps<
     ...deepMergeDefined({}, explicitOwnProps),
   } as ComponentThemes[K] & P
 
-  // Merge nested themes: global < local < explicit
+  // Merge nested themes: global < localComponent < localTheme < explicit
   const mergedNestedThemes = mergeThemes(
-    mergeThemes(globalNestedThemes, localNestedThemes),
+    mergeThemes(mergeThemes(globalNestedThemes, localNestedThemes), localThemeNested),
     explicitNestedThemes
   )
 

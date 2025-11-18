@@ -137,6 +137,15 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
   // Function component
   if (typeof vnode.type === 'function') {
+    // Debug log for theme
+    if (vnode.__theme) {
+      DebugLogger.log(
+        'vdom',
+        `Function component ${vnode.type.name} mounting with __theme:`,
+        vnode.__theme
+      )
+    }
+
     const ctx: Ctx = {
       index: 0,
       slots: [],
@@ -310,6 +319,11 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
   // Fragment - patch children directly
   if (oldV.type === Fragment && newV.type === Fragment) {
+    // Transfer theme from newV to oldV
+    if (newV.__theme !== undefined) {
+      oldV.__theme = newV.__theme
+    }
+
     const a = oldV.children ?? []
     const b = newV.children ?? []
     const len = Math.max(a.length, b.length)
@@ -319,10 +333,19 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       const isValidC1 = c1 != null && c1 !== false
       const isValidC2 = c2 != null && c2 !== false
       if (!isValidC1 && isValidC2) {
+        // Propagate theme to new child
+        if (newV.__theme && !c2.__theme) {
+          c2.__theme = newV.__theme
+        }
         mount(parent, c2)
       } else if (isValidC1 && !isValidC2) {
         unmount(c1)
       } else if (isValidC1 && isValidC2) {
+        // Propagate theme to both children
+        if (newV.__theme) {
+          c1.__theme = newV.__theme
+          c2.__theme = newV.__theme
+        }
         patchVNode(parent, c1, c2)
       }
     }
@@ -353,6 +376,10 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       if (newV.children !== undefined) {
         ctx.componentVNode.children = newV.children
       }
+      // Update theme in context if it changed
+      if (newV.__theme !== undefined) {
+        ctx.theme = newV.__theme
+      }
       // Transfer context to newV so future patches work
       ;(newV as VNode & { __ctx?: Ctx }).__ctx = ctx
 
@@ -371,6 +398,12 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       const renderedNext = withHooks(ctx, () =>
         (newV.type as (props: unknown) => VNode)(propsWithChildren)
       )
+
+      // Propagate theme to rendered VNode if not already set
+      if (ctx.theme && !renderedNext.__theme) {
+        renderedNext.__theme = ctx.theme
+      }
+
       patchVNode(parent, ctx.vnode, renderedNext)
       ctx.vnode = renderedNext
       for (const run of ctx.effects) run()
@@ -412,6 +445,11 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     newV.props ?? {}
   )
 
+  // Debug nested theme propagation
+  if (Object.keys(newNestedTheme).length > 0) {
+    DebugLogger.log('vdom', `Patching ${nodeType} with nestedTheme:`, newNestedTheme)
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldThemedProps, newThemedProps)
 
@@ -446,10 +484,21 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       childrenChanged = true
     } else if (isValidC1 && isValidC2) {
       // Merge parent's nested theme with child's theme
+      // IMPORTANT: Update both c1 (for patch comparison) and c2 (for future renders)
       if (Object.keys(newNestedTheme).length > 0) {
-        c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+        const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+        c1.__theme = mergedTheme
+        c2.__theme = mergedTheme
+        DebugLogger.log(
+          'vdom',
+          `Patching child ${c2.type} with merged theme:`,
+          mergedTheme,
+          'from nestedTheme:',
+          newNestedTheme
+        )
       } else if (!c2.__theme && newV.__theme) {
         // Fallback: Propagate theme to child (inherit parent's theme if child doesn't have one)
+        c1.__theme = newV.__theme
         c2.__theme = newV.__theme
       }
 

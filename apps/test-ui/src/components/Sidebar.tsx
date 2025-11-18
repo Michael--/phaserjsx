@@ -1,8 +1,8 @@
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
-import type { ViewProps } from '@phaserjsx/ui'
-import { type EdgeInsets, getThemedProps, View } from '@phaserjsx/ui'
+import type { NestedComponentThemes, ViewProps } from '@phaserjsx/ui'
+import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -10,9 +10,16 @@ declare module '@phaserjsx/ui' {
     Sidebar: {
       backgroundColor?: number
       backgroundAlpha?: number
-      padding?: number | EdgeInsets
+      padding?:
+        | number
+        | {
+            top?: number
+            right?: number
+            bottom?: number
+            left?: number
+          }
       gap?: number
-    } & import('@phaserjsx/ui').NestedComponentThemes
+    } & NestedComponentThemes
   }
 }
 
@@ -32,7 +39,8 @@ export interface SidebarProps {
  * @returns Sidebar JSX element
  */
 export function Sidebar(props: SidebarProps) {
-  const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed, nestedTheme } = getThemedProps('Sidebar', localTheme, {})
 
   return (
     <View

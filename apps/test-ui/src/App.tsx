@@ -7,6 +7,10 @@ import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 
+// Activate desired debug preset by default:
+// import { DevPresets } from '@phaserjsx/ui'
+// DevPresets.debugVDOM()
+
 /**
  * Props for the root App component
  */
@@ -73,7 +77,8 @@ const globalTheme = createTheme({
     gap: 10,
     Text: {
       style: {
-        color: '#ffff00',
+        color: '#ffffaa',
+        fontSize: '30px',
       },
     },
   },
@@ -83,6 +88,9 @@ const globalTheme = createTheme({
     selectedColor: 0x4ecdc4,
     unselectedColor: 0x666666,
     gap: 10,
+    View: {
+      cornerRadius: 8,
+    },
   },
 })
 
