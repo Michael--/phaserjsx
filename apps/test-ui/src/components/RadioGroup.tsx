@@ -73,6 +73,7 @@ export function RadioGroup(props: RadioGroupProps) {
               backgroundColor={selectedColor}
               alignItems="center"
               justifyContent="center"
+              backgroundAlpha={1.0}
             >
               <View
                 width={innerSize}

@@ -29,6 +29,7 @@ export function StackExample() {
   return (
     <View
       backgroundColor={0x222222}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={10}
       alignItems="center"
@@ -39,6 +40,7 @@ export function StackExample() {
         width={220}
         height={120}
         backgroundColor={0x444444}
+        backgroundAlpha={1.0}
         padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       >
         {items.map((item) => (
@@ -49,6 +51,7 @@ export function StackExample() {
             width={item.width}
             height={item.height}
             backgroundColor={item.color}
+            backgroundAlpha={1.0}
             onPointerDown={() => handleClick(item.id)}
             justifyContent="center"
             alignItems="center"

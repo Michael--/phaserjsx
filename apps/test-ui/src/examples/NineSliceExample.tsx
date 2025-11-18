@@ -18,6 +18,7 @@ export function NineSliceExample() {
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
       alignItems="center"
       backgroundColor={0x1a1a1a}
+      backgroundAlpha={1.0}
     >
       <Text text="NineSlice Examples" style={{ fontSize: 24 }} />
 

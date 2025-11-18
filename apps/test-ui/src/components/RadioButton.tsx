@@ -42,6 +42,8 @@ export function RadioButton(props: RadioButtonProps) {
       alignItems="center"
       padding={{ left: 4, top: 4, right: 4, bottom: 4 }}
       onPointerDown={() => props.onClick?.()}
+      backgroundAlpha={1.0}
+      backgroundColor={0xffff00}
     >
       <View
         width={size}

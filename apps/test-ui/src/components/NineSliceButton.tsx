@@ -5,7 +5,7 @@
  * the stack layout pattern and inner content positioning.
  */
 import type { ChildrenType, ViewProps } from '@phaserjsx/ui'
-import { NineSlice, View } from '@phaserjsx/ui'
+import { createTheme, NineSlice, View } from '@phaserjsx/ui'
 
 /**
  * Props for NineSliceButton component
@@ -223,12 +223,20 @@ export interface NineSliceButtonProps {
  * </NineSliceButton>
  * ```
  */
+
+const theme = createTheme({
+  View: {
+    backgroundAlpha: 0,
+  },
+})
+
 export function NineSliceButton(props: NineSliceButtonProps) {
   const innerWidth = props.width - props.leftWidth - props.rightWidth
   const innerHeight = props.height - (props.topHeight ?? 0) - (props.bottomHeight ?? 0)
 
   return (
     <View
+      theme={theme} // Apply transparent background theme did not work correctly when repainting
       direction="stack"
       width={props.width}
       height={props.height}
@@ -252,6 +260,7 @@ export function NineSliceButton(props: NineSliceButtonProps) {
         {...(props.bottomHeight !== undefined && { bottomHeight: props.bottomHeight })}
       />
       <View
+        // theme={theme} // Apply transparent background theme work correctly including repainting
         direction={props.direction ?? 'column'}
         x={props.leftWidth}
         y={props.topHeight ?? 0}

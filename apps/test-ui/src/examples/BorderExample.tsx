@@ -15,6 +15,7 @@ export function BorderExample() {
       x={20}
       y={20}
       backgroundColor={0x1a1a1a}
+      backgroundAlpha={1.0}
       padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
       gap={px}
       direction="column"
@@ -29,6 +30,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         borderWidth={2}
         borderColor={0xff6b6b}
         padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
@@ -43,6 +45,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         cornerRadius={15}
         padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
         justifyContent="center"
@@ -56,6 +59,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         borderWidth={3}
         borderColor={0x4ecdc4}
         borderAlpha={0.8}
@@ -72,6 +76,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         borderWidth={2}
         borderColor={0xfeca57}
         cornerRadius={{ tl: 5, tr: 20, bl: 20, br: 5 }}
@@ -87,6 +92,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x1e3a5f}
+        backgroundAlpha={1.0}
         borderWidth={6}
         borderColor={0x45b7d1}
         cornerRadius={25}
@@ -116,6 +122,7 @@ export function BorderExample() {
         width={150}
         height={80}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         borderWidth={2}
         borderColor={0xff9ff3}
         cornerRadius={10}
@@ -136,6 +143,7 @@ export function BorderExample() {
         width={150}
         height={60}
         backgroundColor={0x2a2a2a}
+        backgroundAlpha={1.0}
         borderWidth={2}
         borderColor={0x95e1d3}
         cornerRadius={10}

@@ -12,6 +12,7 @@ export function Counter(props: { step?: number; label?: string }) {
     <View
       margin={{ top: 10, bottom: 10 }}
       backgroundColor={0x008800}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       direction="row"
       gap={20}
@@ -19,6 +20,7 @@ export function Counter(props: { step?: number; label?: string }) {
     >
       <View
         backgroundColor={0x880000}
+        backgroundAlpha={1.0}
         onPointerDown={() => {
           setN((v) => v + step)
         }}
@@ -29,7 +31,7 @@ export function Counter(props: { step?: number; label?: string }) {
           margin={{ left: 10, top: 10, right: 10, bottom: 10 }}
         />
       </View>
-      <View backgroundColor={0x444444}>
+      <View backgroundColor={0x444444} backgroundAlpha={1.0}>
         <Text text={`${props.label ?? 'Count'}: ${n}`} />
       </View>
     </View>
@@ -47,6 +49,7 @@ export function LayoutExample() {
       x={20}
       y={20}
       backgroundColor={0x2a2a2a}
+      backgroundAlpha={1.0}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
       gap={10}
       justifyContent="start"
@@ -59,6 +62,7 @@ export function LayoutExample() {
       <View
         margin={{ top: 20 }}
         backgroundColor={0x444444}
+        backgroundAlpha={1.0}
         padding={{ left: 15, top: 15, right: 15, bottom: 15 }}
         direction="row"
         gap={15}

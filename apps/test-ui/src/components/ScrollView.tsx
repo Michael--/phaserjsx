@@ -84,6 +84,7 @@ export function ScrollView(props: ScrollViewProps) {
       width="fill"
       height="fill"
       backgroundColor={0x555555}
+      backgroundAlpha={1.0}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerMove={handlePointerMove}

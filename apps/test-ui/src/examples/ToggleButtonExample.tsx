@@ -18,6 +18,7 @@ export function ToggleButton(props: {
       width={props.width}
       height={props.height}
       backgroundColor={toggled ? (props.colorOn ?? 0x008800) : (props.colorOff ?? 0x880000)}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       alignItems="center"
       justifyContent="center"
@@ -55,6 +56,7 @@ export function ToggleButtonExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={10}
       alignItems="center"

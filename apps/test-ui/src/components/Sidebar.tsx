@@ -51,6 +51,7 @@ export function Sidebar(props: SidebarProps) {
       width={width}
       height={props.height}
       backgroundColor={backgroundColor}
+      backgroundAlpha={1.0}
       padding={padding}
       gap={gap}
       direction="column"

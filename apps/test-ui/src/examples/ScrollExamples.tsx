@@ -9,6 +9,7 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
   return (
     <View
       backgroundColor={0x222222}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={10}
       alignItems="center"
@@ -25,6 +26,7 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
                 width={props.width}
                 height={50}
                 backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
+                backgroundAlpha={1.0}
                 justifyContent="center"
                 alignItems="center"
               >
@@ -40,7 +42,12 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
 
 export function ScrollExample() {
   return (
-    <View direction="row" gap={20}>
+    <View
+      direction="row"
+      gap={20}
+      backgroundAlpha={1.0}
+      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
+    >
       <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
       <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
       <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />

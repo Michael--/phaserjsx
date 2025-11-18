@@ -14,6 +14,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
       width={props.width ?? 60}
       height={props.height ?? 40}
       backgroundColor={props.color}
+      backgroundAlpha={1.0}
       padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       alignItems="center"
       justifyContent="center"
@@ -27,10 +28,11 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
  * Gap demonstration
  * @returns Gap demo
  */
-export function GapExample() {
+function GapExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       gap={15}
     >
@@ -46,10 +48,11 @@ export function GapExample() {
  * JustifyContent demonstration - column direction
  * @returns JustifyContent demo
  */
-export function JustifyContentColumnExample() {
+function JustifyContentColumnExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       direction="column"
       gap={10}
@@ -62,6 +65,7 @@ export function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
+          backgroundAlpha={1.0}
           direction="column"
           justifyContent="start"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
@@ -76,6 +80,7 @@ export function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
+          backgroundAlpha={1.0}
           direction="column"
           justifyContent="center"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
@@ -90,6 +95,7 @@ export function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
+          backgroundAlpha={1.0}
           direction="column"
           justifyContent="end"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
@@ -104,6 +110,7 @@ export function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
+          backgroundAlpha={1.0}
           direction="column"
           justifyContent="space-between"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
@@ -118,6 +125,7 @@ export function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
+          backgroundAlpha={1.0}
           direction="column"
           justifyContent="space-around"
           padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
@@ -135,10 +143,11 @@ export function JustifyContentColumnExample() {
  * AlignItems demonstration - row direction
  * @returns AlignItems demo
  */
-export function AlignItemsRowExample() {
+function AlignItemsRowExample() {
   return (
     <View
       backgroundColor={0x2a2a2a}
+      backgroundAlpha={1.0}
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       direction="column"
       gap={10}
@@ -149,6 +158,7 @@ export function AlignItemsRowExample() {
       <View
         height={80}
         backgroundColor={0x444444}
+        backgroundAlpha={1.0}
         direction="row"
         alignItems="start"
         gap={5}
@@ -164,6 +174,7 @@ export function AlignItemsRowExample() {
       <View
         height={80}
         backgroundColor={0x444444}
+        backgroundAlpha={1.0}
         direction="row"
         alignItems="center"
         gap={5}
@@ -206,6 +217,7 @@ export function AdvancedLayoutExample() {
       y={10}
       gap={10}
       backgroundColor={0x000044}
+      backgroundAlpha={1.0}
       padding={{ top: 10, left: 10, right: 10, bottom: 10 }}
       onPointerDown={() => {
         setN((n) => n + 1)

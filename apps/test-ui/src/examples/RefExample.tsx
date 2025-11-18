@@ -48,6 +48,7 @@ export function RefTextExample() {
   return (
     <View
       backgroundColor={0x1a1a2e}
+      backgroundAlpha={1.0}
       width={250}
       height={120}
       padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
@@ -97,6 +98,7 @@ export function RefContainerExample() {
     <OriginView
       cornerRadius={42}
       backgroundColor={0x16213e}
+      backgroundAlpha={1.0}
       borderColor={0xaaaa00}
       borderWidth={2}
       width={200}
@@ -153,6 +155,7 @@ export function RefAnimationExample() {
   return (
     <View
       backgroundColor={0x0f3460}
+      backgroundAlpha={1.0}
       width={200}
       height={60}
       justifyContent="center"
@@ -211,6 +214,7 @@ export function TypeSafeRefExample() {
   return (
     <View
       backgroundColor={0x533483}
+      backgroundAlpha={1.0}
       width={180}
       height={80}
       alignItems="center"
@@ -224,7 +228,12 @@ export function TypeSafeRefExample() {
 
 export function RefExample() {
   return (
-    <View gap={20} backgroundColor={0x0d0d0d}>
+    <View
+      gap={20}
+      backgroundColor={0x0d0d0d}
+      backgroundAlpha={1.0}
+      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
+    >
       <Text text="Ref Examples" style={{ fontSize: 24, color: '#ffffff' }} />
       <RefTextExample />
       <RefContainerExample />
