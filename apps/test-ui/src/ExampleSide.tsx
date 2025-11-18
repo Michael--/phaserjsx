@@ -1,4 +1,4 @@
-import { Text, View } from '@phaserjsx/ui'
+import { getThemedProps, Text, View, type NestedComponentThemes } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
@@ -10,6 +10,15 @@ import { ScrollExample } from './examples/ScrollExamples'
 import { StackExample } from './examples/StackExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ToggleButtonExample } from './examples/ToggleButtonExample'
+
+// Module augmentation to add Sidebar theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    ExampleContainer: {
+      // default is empty
+    } & NestedComponentThemes
+  }
+}
 
 const examples = {
   layout: { label: 'Layout System', component: LayoutExample },
@@ -48,9 +57,10 @@ export function ExampleSide(props: {
 }
 
 export function ExampleContainer(props: { selectedExample: ExampleKey }) {
+  const { nestedTheme } = getThemedProps('ExampleContainer', undefined, {})
   const Component = examples[props.selectedExample].component
   return (
-    <View key="demo-container">
+    <View key="demo-container" theme={nestedTheme}>
       <Component key={props.selectedExample} />
     </View>
   )

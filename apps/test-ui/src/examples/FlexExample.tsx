@@ -7,13 +7,7 @@ import { Text, View } from '@phaserjsx/ui'
  */
 export function FlexExample() {
   return (
-    <View
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
-      gap={25}
-      width={700}
-    >
+    <View width={700}>
       <Text text="Flex Layout Examples" style={{ fontSize: 20, color: 'yellow' }} />
 
       {/* Example 1: Basic flex */}

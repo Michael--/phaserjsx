@@ -54,13 +54,7 @@ export function ToggleButtonExample() {
   }
 
   return (
-    <View
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      gap={10}
-      alignItems="center"
-    >
+    <View alignItems="center">
       <Text text="Toggle Button Demo" style={{ fontSize: 16, color: 'yellow' }} />
       {testButton(1)}
       {testButton(2)}

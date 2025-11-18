@@ -5,7 +5,7 @@ import { Text, View, useState } from '@phaserjsx/ui'
  * @param props - Counter properties
  * @returns Counter component JSX
  */
-export function Counter(props: { step?: number; label?: string }) {
+function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
   const step = props.step ?? 1
   return (
@@ -45,15 +45,7 @@ export function Counter(props: { step?: number; label?: string }) {
  */
 export function LayoutExample() {
   return (
-    <View
-      x={20}
-      y={20}
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
-      gap={10}
-      justifyContent="start"
-    >
+    <View x={20} y={20} justifyContent="start">
       <Text text="Layout System Demo (gap: 10)" style={{ color: 'yellow' }} />
       <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />

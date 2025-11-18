@@ -92,6 +92,15 @@ const globalTheme = createTheme({
       cornerRadius: 8, // rounded radio buttons
     },
   },
+
+  ExampleContainer: {
+    View: {
+      backgroundColor: 0x2e2e2e,
+      backgroundAlpha: 1.0,
+      padding: { top: 10, left: 10, right: 10, bottom: 10 },
+      gap: 10,
+    },
+  },
 })
 
 // Set global theme ONCE (safe in function body for SPA)

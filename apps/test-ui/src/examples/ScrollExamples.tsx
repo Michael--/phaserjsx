@@ -1,4 +1,4 @@
-import { Text, View } from '@phaserjsx/ui'
+import { createTheme, Text, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
 
 /**
@@ -42,15 +42,14 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
 
 export function ScrollExample() {
   return (
-    <View
-      direction="row"
-      gap={20}
-      backgroundAlpha={1.0}
-      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
-    >
-      <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
-      <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
-      <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
+    /** inherit all default theme */
+    <View>
+      {/** disable padding for only the next */}
+      <View direction="row" theme={createTheme({ View: { padding: 0 } })}>
+        <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
+        <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
+        <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
+      </View>
     </View>
   )
 }

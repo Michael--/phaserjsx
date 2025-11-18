@@ -14,9 +14,6 @@ export function BorderExample() {
     <View
       x={20}
       y={20}
-      backgroundColor={0x1a1a1a}
-      backgroundAlpha={1.0}
-      padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
       gap={px}
       direction="column"
       onPointerDown={() => {

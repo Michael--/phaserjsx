@@ -215,10 +215,6 @@ export function AdvancedLayoutExample() {
     <View
       x={10}
       y={10}
-      gap={10}
-      backgroundColor={0x000044}
-      backgroundAlpha={1.0}
-      padding={{ top: 10, left: 10, right: 10, bottom: 10 }}
       onPointerDown={() => {
         setN((n) => n + 1)
       }}

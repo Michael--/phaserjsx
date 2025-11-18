@@ -27,13 +27,7 @@ export function StackExample() {
   }
 
   return (
-    <View
-      backgroundColor={0x222222}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      gap={10}
-      alignItems="center"
-    >
+    <View alignItems="center">
       <Text text="Interactive Stack Demo" style={{ fontSize: 16, color: 'orange' }} />
       <View
         direction="stack"

@@ -12,14 +12,7 @@ export function NineSliceExample() {
   const [buttonWidth, setButtonWidth] = useState(200)
 
   return (
-    <View
-      direction="column"
-      gap={30}
-      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
-      alignItems="center"
-      backgroundColor={0x1a1a1a}
-      backgroundAlpha={1.0}
-    >
+    <View direction="column" alignItems="center">
       <Text text="NineSlice Examples" style={{ fontSize: 24 }} />
 
       {/* Example 1: Button with NineSlice background */}

@@ -228,12 +228,7 @@ export function TypeSafeRefExample() {
 
 export function RefExample() {
   return (
-    <View
-      gap={20}
-      backgroundColor={0x0d0d0d}
-      backgroundAlpha={1.0}
-      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
-    >
+    <View>
       <Text text="Ref Examples" style={{ fontSize: 24, color: '#ffffff' }} />
       <RefTextExample />
       <RefContainerExample />
