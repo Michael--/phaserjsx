@@ -16,6 +16,14 @@ export * from './theme'
 export * from './types'
 export * from './vdom'
 
+// Export core prop utilities
+export {
+  normalizeCornerRadius,
+  normalizeEdgeInsets,
+  type CornerRadiusInsets,
+  type EdgeInsets,
+} from './core-props'
+
 // Explicit export for convenience functions
 export { mountJSX as mountComponent } from './vdom'
 

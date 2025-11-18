@@ -34,7 +34,11 @@ export function createLayout(
     const children = container.list as GameObjectWithLayout[]
 
     const direction = props.direction ?? 'column'
-    const padding = props.padding ?? {}
+    const paddingRaw = props.padding ?? {}
+    const padding =
+      typeof paddingRaw === 'number'
+        ? { left: paddingRaw, top: paddingRaw, right: paddingRaw, bottom: paddingRaw }
+        : paddingRaw
     const paddingLeft = padding.left ?? 0
     const paddingTop = padding.top ?? 0
     const paddingRight = padding.right ?? 0
@@ -55,7 +59,11 @@ export function createLayout(
 
       childCount++
 
-      const margin = child.__layoutProps?.margin ?? {}
+      const marginRaw = child.__layoutProps?.margin ?? {}
+      const margin =
+        typeof marginRaw === 'number'
+          ? { top: marginRaw, right: marginRaw, bottom: marginRaw, left: marginRaw }
+          : marginRaw
       const marginTop = margin.top ?? 0
       const marginBottom = margin.bottom ?? 0
       const marginLeft = margin.left ?? 0

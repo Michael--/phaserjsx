@@ -29,6 +29,48 @@ export interface EdgeInsets {
 }
 
 /**
+ * Corner radius specification
+ */
+export interface CornerRadiusInsets {
+  tl?: number
+  tr?: number
+  bl?: number
+  br?: number
+}
+
+/**
+ * Normalize edge insets - converts number to all-sides object
+ * @param value - Number (all sides) or edge insets object
+ * @returns Normalized EdgeInsets object
+ */
+export function normalizeEdgeInsets(value: number | EdgeInsets | undefined): EdgeInsets {
+  if (value === undefined) {
+    return {}
+  }
+  if (typeof value === 'number') {
+    return { top: value, right: value, bottom: value, left: value }
+  }
+  return value
+}
+
+/**
+ * Normalize corner radius - converts number to all-corners object
+ * @param value - Number (all corners) or corner radius object
+ * @returns Normalized CornerRadiusInsets object or number
+ */
+export function normalizeCornerRadius(
+  value: number | CornerRadiusInsets | undefined
+): number | CornerRadiusInsets {
+  if (value === undefined) {
+    return 0
+  }
+  if (typeof value === 'number') {
+    return value
+  }
+  return value
+}
+
+/**
  * Layout properties - basic sizing and spacing (minimal for now)
  */
 export interface LayoutProps {
@@ -58,8 +100,8 @@ export interface LayoutProps {
    */
   height?: number | string | undefined
 
-  margin?: EdgeInsets
-  padding?: EdgeInsets
+  margin?: number | EdgeInsets
+  padding?: number | EdgeInsets
   /**
    * Layout direction for children
    * - 'column': Stack children vertically (default, like SwiftUI's VStack)
@@ -135,7 +177,7 @@ export interface LayoutProps {
 export interface BackgroundProps {
   backgroundColor?: number | undefined
   backgroundAlpha?: number | undefined
-  cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+  cornerRadius?: number | CornerRadiusInsets
   borderWidth?: number
   borderColor?: number
   borderAlpha?: number

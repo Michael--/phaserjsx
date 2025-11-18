@@ -128,11 +128,19 @@ export function calculateContainerSize(
 }
 
 /**
- * Normalize padding from EdgeInsets to PaddingValues
- * @param padding - Edge insets (may be undefined or partial)
+ * Normalize padding from EdgeInsets or number to PaddingValues
+ * @param padding - Edge insets (may be undefined, partial, or a single number for all sides)
  * @returns Normalized padding with all values defined
  */
-export function normalizePadding(padding?: EdgeInsets): PaddingValues {
+export function normalizePadding(padding?: number | EdgeInsets): PaddingValues {
+  if (typeof padding === 'number') {
+    return {
+      left: padding,
+      top: padding,
+      right: padding,
+      bottom: padding,
+    }
+  }
   return {
     left: padding?.left ?? 0,
     top: padding?.top ?? 0,

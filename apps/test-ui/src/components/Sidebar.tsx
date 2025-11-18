@@ -29,20 +29,7 @@ export function Sidebar(props: SidebarProps) {
   const { props: themed, nestedTheme } = getThemedProps('Sidebar', undefined, {})
   const width = props.width ?? undefined
   const gap = props.gap ?? 10
-
-  let padding: ViewProps['padding']
-  if (typeof props.padding === 'number') {
-    padding = {
-      top: props.padding,
-      right: props.padding,
-      bottom: props.padding,
-      left: props.padding,
-    }
-  } else if (props.padding) {
-    padding = props.padding
-  } else {
-    padding = { top: 10, right: 10, bottom: 10, left: 10 }
-  }
+  const padding = props.padding ?? { top: 10, right: 10, bottom: 10, left: 10 }
 
   return (
     <View

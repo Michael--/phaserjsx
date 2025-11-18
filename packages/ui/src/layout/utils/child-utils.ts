@@ -9,11 +9,16 @@ import { parseSize, resolveSize } from './size-resolver'
 
 /**
  * Get effective margin for a child
+ * Normalizes margin to EdgeInsets (supports number for all sides)
  * @param child - Child game object
  * @returns Edge insets
  */
 export function getMargin(child: GameObjectWithLayout): EdgeInsets {
-  return child.__layoutProps?.margin ?? {}
+  const margin = child.__layoutProps?.margin
+  if (typeof margin === 'number') {
+    return { top: margin, right: margin, bottom: margin, left: margin }
+  }
+  return margin ?? {}
 }
 
 /**
