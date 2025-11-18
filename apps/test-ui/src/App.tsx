@@ -46,9 +46,28 @@ export function Button(props: {
  * @param props - App props from Phaser scene
  * @returns App component JSX
  */
+import { createTheme, themeRegistry } from '@phaserjsx/ui'
+
 export function App(props: AppProps) {
   const width = props.width
   const height = props.height
+
+  // Set global theme ONCE (safe in function body for SPA)
+  themeRegistry.updateGlobalTheme(
+    createTheme({
+      Text: {
+        style: {
+          color: '#00ff00',
+          fontSize: '18px',
+          fontFamily: 'Arial',
+        },
+      },
+      View: {
+        backgroundColor: 0x333333,
+        cornerRadius: 8,
+      },
+    })
+  )
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('theme')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')

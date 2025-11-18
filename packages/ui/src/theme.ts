@@ -225,6 +225,31 @@ export function createTheme(theme: PartialTheme): PartialTheme {
  * @param explicitProps - Explicit props passed to component
  * @returns Merged props with theme applied
  */
+function deepMergeDefined<T extends object>(base: T, override: Partial<T>): T {
+  const result = { ...base }
+  for (const key in override) {
+    const value = override[key]
+    if (value !== undefined) {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value) &&
+        typeof base[key] === 'object' &&
+        base[key] !== null
+      ) {
+        // Deep merge for nested objects (e.g. style)
+        ;(result as unknown as Record<string, unknown>)[key] = deepMergeDefined(
+          base[key] as object,
+          value as object
+        )
+      } else {
+        ;(result as unknown as Record<string, unknown>)[key] = value
+      }
+    }
+  }
+  return result as T
+}
+
 export function getThemedProps<
   K extends keyof ComponentThemes,
   P extends Partial<ComponentThemes[K]>,
@@ -235,14 +260,11 @@ export function getThemedProps<
 ): ComponentThemes[K] & P {
   // Start with global theme for this component
   const globalComponentTheme = themeRegistry.getComponentTheme(componentName)
-
   // Apply local theme override if provided
   const localComponentTheme = localTheme?.[componentName] ?? {}
-
-  // Merge: global < local < explicit
+  // Merge: global < local < explicit, but only defined values
   return {
-    ...globalComponentTheme,
-    ...localComponentTheme,
-    ...explicitProps,
+    ...deepMergeDefined(globalComponentTheme, localComponentTheme),
+    ...deepMergeDefined({}, explicitProps),
   } as ComponentThemes[K] & P
 }
