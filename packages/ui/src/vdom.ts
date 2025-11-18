@@ -391,8 +391,12 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     attachRef(newRef, oldV.__node as Phaser.GameObjects.GameObject)
   }
 
+  // Apply theme to props before patching (merge explicit props with theme)
+  const oldThemedProps = getThemedProps(nodeType, oldV.__theme, oldV.props ?? {})
+  const newThemedProps = getThemedProps(nodeType, newV.__theme, newV.props ?? {})
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  host.patch(nodeType, oldV.__node as any, oldV.props ?? {}, newV.props ?? {})
+  host.patch(nodeType, oldV.__node as any, oldThemedProps, newThemedProps)
 
   const a = oldV.children ?? []
   const b = newV.children ?? []
