@@ -59,7 +59,9 @@ function hasLayoutPropsChanged(
 /**
  * Applies layout property changes to a container
  * Handles width, height, direction, padding, margin updates
- * Only triggers layout recalculation when layout-relevant props changed
+ * Triggers layout recalculation when:
+ * 1. Layout-relevant props changed, OR
+ * 2. This is being called from host.patch (which means VDOM will handle child changes)
  * @param node - Phaser container node
  * @param prev - Previous layout props
  * @param next - New layout props
@@ -72,9 +74,12 @@ export function applyLayoutProps(
   // Update stored layout props
   node.__layoutProps = next as LayoutProps & BackgroundProps
 
-  // Only recalculate layout if layout-relevant props changed
-  // Non-layout props (x, y, backgroundColor, event handlers) don't need layout recalc
+  // IMPORTANT: We only recalculate if container's own props changed
+  // Children changes are handled by VDOM patchVNode() which has smarter detection
+  // This prevents double-calculation while still catching container prop changes
   if (hasLayoutPropsChanged(prev, next)) {
     calculateLayout(node, next)
   }
+  // Note: If children changed (text content, child added/removed, etc.),
+  // the VDOM layer will detect that and call calculateLayout separately
 }

@@ -405,6 +405,7 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
   // Debug: Track excessive patching
   // console.log('[VDOM] Patching:', { type: oldV.type, children: len, containerLayoutChanged })
+  // console.log('[VDOM] Patching:') // when you want less info to count only
 
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
@@ -425,8 +426,13 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       // Recursively patch the child
       patchVNode(oldV.__node as ParentType, c1, c2)
 
-      // Only mark as changed if layout props actually changed
+      // Mark as changed if:
+      // 1. Layout props changed, OR
+      // 2. Child has dynamic sizing (__getLayoutSize) - content might have changed
       if (childLayoutChanged) {
+        childrenChanged = true
+      } else if (c1.__node && typeof c1.__node === 'object' && '__getLayoutSize' in c1.__node) {
+        // Child has dynamic sizing (e.g., text), assume size might have changed
         childrenChanged = true
       }
     }
