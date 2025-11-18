@@ -2,7 +2,7 @@
  * VDOM + mount/patch/unmount and host integration.
  * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 import { disposeCtx, withHooks, type Ctx, type VNode } from './hooks'
@@ -12,6 +12,90 @@ import { calculateLayout } from './layout/index'
 import type { ParentType, Ref } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
+
+/**
+ * Layout-relevant props that trigger layout recalculation when changed
+ * These are the props that affect container/child sizing and positioning
+ */
+const LAYOUT_PROPS = [
+  'width',
+  'height',
+  'flex',
+  'margin',
+  'padding',
+  'gap',
+  'direction',
+  'justifyContent',
+  'alignItems',
+  'overflow',
+] as const
+
+/**
+ * Check if layout-relevant props changed between two VNodes
+ * Only checks shallow equality for performance
+ * @param oldV - Previous VNode
+ * @param newV - New VNode
+ * @returns True if any layout prop changed
+ */
+function hasLayoutPropsChanged(oldV: VNode, newV: VNode): boolean {
+  const oldProps = oldV.props ?? {}
+  const newProps = newV.props ?? {}
+
+  // Check each layout-relevant prop
+  for (const prop of LAYOUT_PROPS) {
+    if (oldProps[prop] !== newProps[prop]) {
+      // Debug: Log what changed
+      console.log('[hasLayoutPropsChanged]', prop, 'changed:', oldProps[prop], '→', newProps[prop])
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * Check if children array changed structurally
+ * Checks length and VNode types, not deep props
+ * @param oldChildren - Previous children
+ * @param newChildren - New children
+ * @returns True if structure changed
+ */
+function hasChildrenStructureChanged(
+  oldChildren: (VNode | false | null | undefined)[] | undefined,
+  newChildren: (VNode | false | null | undefined)[] | undefined
+): boolean {
+  const a = oldChildren ?? []
+  const b = newChildren ?? []
+
+  // Different length = structural change
+  if (a.length !== b.length) {
+    return true
+  }
+
+  // Check if any child type or key changed
+  for (let i = 0; i < a.length; i++) {
+    const c1 = a[i]
+    const c2 = b[i]
+
+    // Check validity (filter out false/null/undefined)
+    const isValidC1 = c1 != null && c1 !== false
+    const isValidC2 = c2 != null && c2 !== false
+
+    // One valid, one invalid = structural change
+    if (isValidC1 !== isValidC2) {
+      return true
+    }
+
+    // Both valid: check type and key
+    if (isValidC1 && isValidC2) {
+      if (c1.type !== c2.type || c1.__key !== c2.__key) {
+        return true
+      }
+    }
+  }
+
+  return false
+}
 
 /**
  * Attaches or detaches a ref to a node
@@ -290,10 +374,18 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldV.props ?? {}, newV.props ?? {})
+
   const a = oldV.children ?? []
   const b = newV.children ?? []
   const len = Math.max(a.length, b.length)
   let childrenChanged = false
+
+  // Check if the container's own layout props changed
+  const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)
+
+  // Debug: Track excessive patching
+  // console.log('[VDOM] Patching:', { type: oldV.type, children: len, containerLayoutChanged })
+
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
       c2 = b[i]
@@ -307,13 +399,30 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       unmount(c1)
       childrenChanged = true
     } else if (isValidC1 && isValidC2) {
+      // Check if this child has layout-relevant changes
+      const childLayoutChanged = hasLayoutPropsChanged(c1, c2)
+
+      // Recursively patch the child
       patchVNode(oldV.__node as ParentType, c1, c2)
-      childrenChanged = true
+
+      // Only mark as changed if layout props actually changed
+      if (childLayoutChanged) {
+        childrenChanged = true
+      }
     }
   }
 
-  // Recalculate layout if children changed and this is a container
-  if (childrenChanged && oldV.__node && typeof oldV.__node === 'object' && 'list' in oldV.__node) {
+  // Recalculate layout if:
+  // 1. Container's own layout props changed, OR
+  // 2. Children structurally changed or have layout-relevant changes
+  const shouldRecalculateLayout = containerLayoutChanged || childrenChanged
+
+  if (
+    shouldRecalculateLayout &&
+    oldV.__node &&
+    typeof oldV.__node === 'object' &&
+    'list' in oldV.__node
+  ) {
     const container = oldV.__node as Phaser.GameObjects.Container & {
       __layoutProps?: Record<string, unknown>
     }

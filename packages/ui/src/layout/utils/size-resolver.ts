@@ -9,6 +9,18 @@ import type { CalcExpression, CalcOperand, ParsedSize } from '../types'
 export type { ParsedSize } from '../types'
 
 /**
+ * Cache for parseSize results to avoid repeated string parsing
+ * Key: original size value, Value: parsed size object
+ */
+const parseSizeCache = new Map<unknown, ParsedSize>()
+
+/**
+ * Set of size values that already triggered a warning
+ * Prevents console spam from repeated warnings for the same invalid value
+ */
+const warnedSizes = new Set<string>()
+
+/**
  * Parse a calc operand (e.g., "50%" or "20px")
  * @param operand - String operand from calc expression
  * @returns Parsed operand
@@ -99,6 +111,7 @@ function parseCalcExpression(expr: string): CalcExpression {
 
 /**
  * Parse a size value into its components
+ * Results are cached to avoid repeated string parsing during layout calculations
  * @param size - Size value (number, string, or undefined)
  * @returns Parsed size information
  * @throws Error if string format is invalid
@@ -111,6 +124,31 @@ function parseCalcExpression(expr: string): CalcExpression {
  * parseSize('auto')                 // { type: 'auto' }
  */
 export function parseSize(size: number | string | undefined): ParsedSize {
+  // Debug: Track parseSize call frequency
+  // console.log('parseSize called:', size)
+
+  // Check cache first (huge performance win for repeated calls)
+  const cached = parseSizeCache.get(size)
+  if (cached !== undefined) {
+    return cached
+  }
+
+  // Parse the size value
+  const result = parseSizeInternal(size)
+
+  // Cache the result for future calls
+  parseSizeCache.set(size, result)
+
+  return result
+}
+
+/**
+ * Internal parsing logic for size values
+ * Separated to allow caching in parseSize()
+ * @param size - Size value to parse
+ * @returns Parsed size information
+ */
+function parseSizeInternal(size: number | string | undefined): ParsedSize {
   // undefined -> auto (dynamic based on content)
   if (size === undefined) {
     return { type: 'auto' }
@@ -141,7 +179,12 @@ export function parseSize(size: number | string | undefined): ParsedSize {
   if (percentMatch && percentMatch[1]) {
     const value = parseFloat(percentMatch[1])
     if (value < 0 || value > 100) {
-      DebugLogger.warn('Size', `Percentage value ${value}% is outside valid range (0-100%)`)
+      // Only warn once per unique invalid value to prevent console spam
+      const warnKey = `percent:${value}`
+      if (!warnedSizes.has(warnKey)) {
+        warnedSizes.add(warnKey)
+        DebugLogger.warn('Size', `Percentage value ${value}% is outside valid range (0-100%)`)
+      }
     }
     return { type: 'percent', value }
   }
@@ -279,6 +322,21 @@ export function resolveSize(
       DebugLogger.error('Size', `Unknown size type: ${(parsed as ParsedSize).type}`)
       return 100
   }
+}
+
+/**
+ * Clear the parseSize cache and warning deduplication set
+ * Useful for testing or memory management in long-running applications
+ *
+ * @example
+ * ```typescript
+ * // Clear caches after major UI rebuild
+ * clearSizeCaches()
+ * ```
+ */
+export function clearSizeCaches(): void {
+  parseSizeCache.clear()
+  warnedSizes.clear()
 }
 
 /**

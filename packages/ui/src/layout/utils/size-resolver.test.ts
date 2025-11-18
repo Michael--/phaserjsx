@@ -2,7 +2,13 @@
  * Tests for size-resolver utilities
  */
 import { describe, expect, it } from 'vitest'
-import { isExplicit, parseSize, requiresParent, resolveSize } from './size-resolver'
+import {
+  clearSizeCaches,
+  isExplicit,
+  parseSize,
+  requiresParent,
+  resolveSize,
+} from './size-resolver'
 
 describe('parseSize', () => {
   describe('fixed sizes', () => {
@@ -447,6 +453,77 @@ describe('helper functions', () => {
       const parsed = { type: 'auto' as const }
       expect(isExplicit(parsed)).toBe(false)
     })
+  })
+})
+
+describe('performance: caching', () => {
+  it('returns same object reference for repeated calls with same value', () => {
+    // First call parses the value
+    const result1 = parseSize('50%')
+    // Second call should return cached result (same object reference)
+    const result2 = parseSize('50%')
+
+    expect(result1).toBe(result2) // Same object reference
+    expect(result1).toEqual({ type: 'percent', value: 50 })
+  })
+
+  it('caches number values', () => {
+    const result1 = parseSize(100)
+    const result2 = parseSize(100)
+
+    expect(result1).toBe(result2)
+    expect(result1).toEqual({ type: 'fixed', value: 100 })
+  })
+
+  it('caches undefined (auto)', () => {
+    const result1 = parseSize(undefined)
+    const result2 = parseSize(undefined)
+
+    expect(result1).toBe(result2)
+    expect(result1).toEqual({ type: 'auto' })
+  })
+
+  it('caches string literals (auto, fill)', () => {
+    const auto1 = parseSize('auto')
+    const auto2 = parseSize('auto')
+    expect(auto1).toBe(auto2)
+
+    const fill1 = parseSize('fill')
+    const fill2 = parseSize('fill')
+    expect(fill1).toBe(fill2)
+  })
+
+  it('caches calc expressions', () => {
+    const result1 = parseSize('calc(100% - 40px)')
+    const result2 = parseSize('calc(100% - 40px)')
+
+    expect(result1).toBe(result2)
+    expect(result1.type).toBe('calc')
+  })
+
+  it('different values get different cache entries', () => {
+    const result1 = parseSize('50%')
+    const result2 = parseSize('75%')
+
+    expect(result1).not.toBe(result2) // Different object references
+    expect(result1).toEqual({ type: 'percent', value: 50 })
+    expect(result2).toEqual({ type: 'percent', value: 75 })
+  })
+
+  it('clearSizeCaches invalidates cache', () => {
+    // First call creates cache entry
+    const result1 = parseSize('50%')
+
+    // Clear cache
+    clearSizeCaches()
+
+    // Second call should create new object (cache was cleared)
+    const result2 = parseSize('50%')
+
+    // Same value but different object references (cache was cleared)
+    expect(result1).not.toBe(result2)
+    expect(result1).toEqual({ type: 'percent', value: 50 })
+    expect(result2).toEqual({ type: 'percent', value: 50 })
   })
 })
 

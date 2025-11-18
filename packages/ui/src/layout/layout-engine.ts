@@ -254,6 +254,9 @@ export function calculateLayout(
 ): void {
   const children = container.list as GameObjectWithLayout[]
 
+  // Debug: Track excessive layout calls
+  // console.log('[LAYOUT] calculateLayout called for container with', children?.length ?? 0, 'children')
+
   DebugLogger.group('layout', `Container with ${children?.length ?? 0} children`)
 
   if (!children || !Array.isArray(children)) {
