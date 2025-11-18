@@ -41,12 +41,35 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
   )
 }
 
+function Slider(props: {
+  scroll: { scrollX: number; scrollY: number; width: number; height: number }
+  trackHeight: number
+}) {
+  const scrollHeight = (props.trackHeight * props.scroll.height) / 100
+  const newScrollY = (props.scroll.scrollY / 100) * (props.trackHeight - scrollHeight)
+
+  return (
+    <View
+      width={24}
+      height={props.trackHeight}
+      backgroundColor={0xdddddd}
+      padding={1}
+      direction="stack"
+    >
+      <View width={'fill'} height={'fill'} backgroundColor={0xaaaaaa}></View>
+      <View
+        width={'fill'}
+        x={1}
+        y={newScrollY}
+        height={scrollHeight}
+        backgroundColor={0xeeeebb}
+      ></View>
+    </View>
+  )
+}
+
 function ScrollExampleSliderLocal(props: { title: string; count: number; width: string }) {
   const [scroll, setScroll] = useState({ scrollX: 0, scrollY: 0, width: 0, height: 0 })
-
-  const scrollHeight = (400 * scroll.height) / 100
-  const newScrollY = (scroll.scrollY / 100) * (400 - scrollHeight)
-  //console.log('newScrollY', scroll)
 
   return (
     <View padding={0} alignItems="center">
@@ -60,16 +83,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
-        <View width={24} height={400} backgroundColor={0xdddddd} padding={1} direction="stack">
-          <View width={'fill'} height={'fill'} backgroundColor={0xaaaaaa}></View>
-          <View
-            width={'fill'}
-            x={1}
-            y={newScrollY}
-            height={scrollHeight}
-            backgroundColor={0xeeeebb}
-          ></View>
-        </View>
+        <Slider scroll={scroll} trackHeight={400} />
       </View>
     </View>
   )
