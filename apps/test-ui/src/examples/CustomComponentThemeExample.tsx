@@ -11,7 +11,7 @@
  */
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
-    Sidebar: {
+    CustomComponent: {
       backgroundColor?: number
       backgroundAlpha?: number
       width?: number | string
@@ -27,7 +27,7 @@ declare module '@phaserjsx/ui' {
  */
 import { themeRegistry } from '@phaserjsx/ui'
 
-themeRegistry.registerCustomComponent('Sidebar', {
+themeRegistry.registerCustomComponent('CustomComponentName', {
   backgroundColor: 0x1e1e1e,
   width: 200,
   padding: 10,
@@ -46,7 +46,7 @@ themeRegistry.registerCustomComponent('Sidebar', {
  */
 import { View, getThemedProps, type ViewProps } from '@phaserjsx/ui'
 
-export interface SidebarProps {
+export interface CustomComponentProps {
   width?: number | string
   height?: number | string
   backgroundColor?: number
@@ -55,9 +55,9 @@ export interface SidebarProps {
   children?: ViewProps['children']
 }
 
-function Sidebar(props: SidebarProps) {
+function CustomComponent(props: CustomComponentProps) {
   // Get themed props - merges global, local, and explicit props
-  const { props: themedProps } = getThemedProps('Sidebar', undefined, props)
+  const { props: themedProps } = getThemedProps('CustomComponent', undefined, props)
   const padding = themedProps.padding
 
   const viewProps: Partial<ViewProps> = {
@@ -87,16 +87,16 @@ export function UsageExample() {
   return (
     <View direction="column" gap={30}>
       {/* Uses global Sidebar theme (includes nested Text theme with fontSize: 18px) */}
-      <Sidebar>
+      <CustomComponent>
         <Text text="Menu Item 1" />
         <Text text="Menu Item 2" />
         <Text text="Menu Item 3" />
-      </Sidebar>
+      </CustomComponent>
 
       {/* Override Sidebar's nested Text theme locally */}
       <View
         theme={{
-          Sidebar: {
+          CustomComponent: {
             backgroundColor: 0x2a2a2a,
             width: 300,
             Text: {
@@ -108,17 +108,17 @@ export function UsageExample() {
           },
         }}
       >
-        <Sidebar>
+        <CustomComponent>
           <Text text="Large orange text" />
           <Text text="All texts in this sidebar are styled" />
-        </Sidebar>
+        </CustomComponent>
       </View>
 
       {/* Explicit props on individual Text still override nested theme */}
-      <Sidebar backgroundColor={0x003366} width={250}>
+      <CustomComponent backgroundColor={0x003366} width={250}>
         <Text text="Normal sidebar text (18px from global)" />
         <Text text="Explicit override" style={{ fontSize: '12px', color: '#ff0000' }} />
-      </Sidebar>
+      </CustomComponent>
     </View>
   )
 }

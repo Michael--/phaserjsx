@@ -65,9 +65,12 @@ const globalTheme = createTheme({
     backgroundAlpha: 0,
   },
 
+  // custom component theme for Sidebar
   Sidebar: {
     backgroundColor: 0x2e1e1e,
     backgroundAlpha: 1.0,
+    padding: 10,
+    gap: 10,
     Text: {
       style: {
         color: '#ffff00',
@@ -88,7 +91,7 @@ export function App(props: AppProps) {
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
-      <Sidebar height={'100%'} padding={15} gap={12}>
+      <Sidebar height={'100%'}>
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />
         <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />

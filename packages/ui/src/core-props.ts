@@ -100,8 +100,22 @@ export interface LayoutProps {
    */
   height?: number | string | undefined
 
-  margin?: number | EdgeInsets
-  padding?: number | EdgeInsets
+  /**
+   * * Margin outside the container
+   * - number: Uniform margin on all sides
+   * - EdgeInsets: Individual margin per side
+   * - undefined: No margin
+   */
+  margin?: number | EdgeInsets | undefined
+
+  /**
+   * Padding inside the container
+   * - number: Uniform padding on all sides
+   * - EdgeInsets: Individual padding per side
+   * - undefined: No padding
+   */
+  padding?: number | EdgeInsets | undefined
+
   /**
    * Layout direction for children
    * - 'column': Stack children vertically (default, like SwiftUI's VStack)
@@ -114,7 +128,7 @@ export interface LayoutProps {
    * Gap between children (uniform spacing)
    * Applied between each child along the main axis
    */
-  gap?: number
+  gap?: number | undefined
 
   /**
    * Main axis alignment (along direction)
