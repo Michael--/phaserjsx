@@ -1,7 +1,7 @@
 /**
  * ScrollView component for scrollable content areas
  */
-import type { ChildrenType } from '@phaserjsx/ui'
+import type { VNode } from '@phaserjsx/ui'
 import { useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
@@ -9,81 +9,77 @@ import type Phaser from 'phaser'
  * Props for ScrollView component
  */
 export interface ScrollViewProps {
-  /** Gap between children in the content area */
-  gap?: number
-  /** Children to render inside scrollable content */
-  children?: ChildrenType
-  /** Called when scroll position changes */
-  onScroll?: (scrollY: number) => void
+  /** Children to render inside scrollable content, allow only one child */
+  children?: VNode
+  /** Called when scroll position changes, values are in percent 0..100 */
+  onScroll?: (scrollX: number, scrollY: number) => void
 }
 
 /**
  * ScrollView component providing drag-to-scroll functionality
+ * Scrolling is done by dragging the content area with automatic calculation of scroll positions
+ * Both horizontal and vertical scrolling are supported (auto-detected on its size).
  * @param props - ScrollView properties
  * @returns JSX element
  */
 export function ScrollView(props: ScrollViewProps) {
-  const { gap = 0, children, onScroll } = props
-  const [scrollY, setScrollY] = useState(0)
+  const { children, onScroll } = props
+  const [scroll, setScroll] = useState({ dx: 0, dy: 0 })
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
-  const lastPointerYRef = useRef(0)
-  const startButtonRef = useRef<number>(0)
+  const lastPointerRef = useRef({ x: 0, y: 0 })
 
   const handlePointerDown = (pointer: Phaser.Input.Pointer) => {
-    isDraggingRef.current = true
-    lastPointerYRef.current = pointer.y
-    startButtonRef.current = pointer.button
+    if (pointer.leftButtonDown()) {
+      isDraggingRef.current = true
+      lastPointerRef.current = { x: pointer.x, y: pointer.y }
+    }
   }
 
-  const handlePointerUp = () => {
-    isDraggingRef.current = false
+  const handlePointerUp = (pointer: Phaser.Input.Pointer) => {
+    if (pointer.leftButtonReleased()) {
+      isDraggingRef.current = false
+    }
   }
 
   const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
     if (!isDraggingRef.current) return
 
     // Check if pointer is actually down - stops dragging if button was released outside
-    if (!pointer.isDown) {
-      isDraggingRef.current = false
-      return
-    }
-
-    // Check button consistency - if different button, stop dragging
-    if (pointer.button !== startButtonRef.current) {
+    if (!pointer.leftButtonDown()) {
       isDraggingRef.current = false
       return
     }
 
     if (!contentRef.current || !viewportRef.current) return
 
-    const deltaY = pointer.y - lastPointerYRef.current
-    lastPointerYRef.current = pointer.y
+    // Calculate pointer movement delta
+    const deltaY = pointer.y - lastPointerRef.current.y
+    const deltaX = pointer.x - lastPointerRef.current.x
+    lastPointerRef.current = { x: pointer.x, y: pointer.y }
 
     // Get viewport and content heights
     const viewportHeight = viewportRef.current.height
+    const viewportWidth = viewportRef.current.width
     const contentHeight = contentRef.current.height
+    const contentWidth = contentRef.current.width
 
     // Calculate new scroll position
-    const maxScroll = Math.max(0, contentHeight - viewportHeight)
-    const newScrollY = Math.max(0, Math.min(maxScroll, scrollY - deltaY))
+    const maxScrollY = Math.max(0, contentHeight - viewportHeight)
+    const maxScrollX = Math.max(0, contentWidth - viewportWidth)
+    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
+    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
+    const newScrollYPercent = maxScrollY != 0 ? (newScrollY / maxScrollY) * 100 : 0
+    const newScrollXPercent = maxScrollX != 0 ? (newScrollX / maxScrollX) * 100 : 0
 
-    setScrollY(newScrollY)
-    onScroll?.(newScrollY)
-  }
-
-  const handleContentRef = (container: Phaser.GameObjects.Container | null) => {
-    contentRef.current = container
-  }
-
-  const handleViewportRef = (container: Phaser.GameObjects.Container | null) => {
-    viewportRef.current = container
+    setScroll({ dx: newScrollX, dy: newScrollY })
+    onScroll?.(newScrollXPercent, newScrollYPercent)
   }
 
   return (
     <View
-      ref={handleViewportRef}
+      ref={viewportRef}
       direction="stack"
       width="fill"
       height="fill"
@@ -94,14 +90,7 @@ export function ScrollView(props: ScrollViewProps) {
       overflow="hidden"
     >
       {/** B: next view is the dynamic sized content which could be scrolled in parent, when size is bigger then parent */}
-      <View
-        ref={handleContentRef}
-        x={0}
-        y={-scrollY}
-        width={'100%'}
-        backgroundColor={0x888888}
-        gap={gap}
-      >
+      <View ref={contentRef} x={-scroll.dx} y={-scroll.dy} backgroundColor={0x888888}>
         {children}
       </View>
     </View>

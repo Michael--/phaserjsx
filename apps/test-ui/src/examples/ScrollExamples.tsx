@@ -12,13 +12,13 @@ export function ScrollExample() {
       <Text text="Scroll Example (Drag to scroll)" style={{ fontSize: 16, color: 'orange' }} />
       {/** X: The overall example container, this is always a part of the user code */}
       <View width={400} height={600}>
-        <ScrollView gap={10}>
+        <ScrollView>
           <View>
             {/** C: At least the content */}
             {Array.from({ length: 20 }).map((_, index) => (
               <View
                 key={index}
-                width={'fill'}
+                width={'100%'}
                 height={50}
                 backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
                 justifyContent="center"
