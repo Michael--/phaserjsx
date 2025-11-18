@@ -1,7 +1,11 @@
 import { Text, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
 
-export function ScrollExample() {
+/**
+ *  Example of ScrollView usage, depending on props either vertical, horizontal or both scrolling is available
+ * @param props title, count, width
+ */
+function ScrollExampleLocal(props: { title: string; count: number; width: string }) {
   return (
     <View
       backgroundColor={0x222222}
@@ -9,16 +13,16 @@ export function ScrollExample() {
       gap={10}
       alignItems="center"
     >
-      <Text text="Scroll Example (Drag to scroll)" style={{ fontSize: 16, color: 'orange' }} />
+      <Text text={props.title} style={{ fontSize: 16, color: 'orange' }} />
       {/** X: The overall example container, this is always a part of the user code */}
-      <View width={400} height={600}>
+      <View width={200} height={400}>
         <ScrollView>
           <View>
             {/** C: At least the content */}
-            {Array.from({ length: 20 }).map((_, index) => (
+            {Array.from({ length: props.count }).map((_, index) => (
               <View
                 key={index}
-                width={'100%'}
+                width={props.width}
                 height={50}
                 backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
                 justifyContent="center"
@@ -30,6 +34,16 @@ export function ScrollExample() {
           </View>
         </ScrollView>
       </View>
+    </View>
+  )
+}
+
+export function ScrollExample() {
+  return (
+    <View direction="row" gap={20}>
+      <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
+      <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
+      <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
     </View>
   )
 }
