@@ -2,7 +2,7 @@
  * Sidebar component - High-level container with typical sidebar styling
  */
 import type { ViewProps } from '@phaserjsx/ui'
-import { View } from '@phaserjsx/ui'
+import { getThemedProps, View } from '@phaserjsx/ui'
 
 /**
  * Props for Sidebar component
@@ -12,8 +12,6 @@ export interface SidebarProps {
   width?: number | string
   /** Height of the sidebar */
   height?: number | string
-  /** Background color (default: 0x1e1e1e) */
-  backgroundColor?: number
   /** Padding inside sidebar (default: 10 on all sides) */
   padding?: number | { top?: number; right?: number; bottom?: number; left?: number }
   /** Gap between children (default: 10) */
@@ -28,8 +26,9 @@ export interface SidebarProps {
  * @returns Sidebar JSX element
  */
 export function Sidebar(props: SidebarProps) {
+  const themed = getThemedProps('Sidebar', undefined, {})
   const width = props.width ?? undefined
-  const backgroundColor = props.backgroundColor ?? 0x1e1e1e
+  const backgroundColor = themed.backgroundColor
   const gap = props.gap ?? 10
 
   let padding: ViewProps['padding']

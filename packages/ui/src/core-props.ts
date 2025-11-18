@@ -133,7 +133,7 @@ export interface LayoutProps {
  * Background styling properties
  */
 export interface BackgroundProps {
-  backgroundColor?: number
+  backgroundColor?: number | undefined
   backgroundAlpha?: number
   cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
   borderWidth?: number

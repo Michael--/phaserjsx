@@ -64,6 +64,10 @@ const globalTheme = createTheme({
     cornerRadius: 0,
     backgroundAlpha: 0,
   },
+
+  Sidebar: {
+    backgroundColor: 0x2e1e1e,
+  },
 })
 
 // Set global theme ONCE (safe in function body for SPA)
@@ -78,7 +82,7 @@ export function App(props: AppProps) {
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
-      <Sidebar height={'100%'} backgroundColor={0x2e1e1e} padding={15} gap={12}>
+      <Sidebar height={'100%'} padding={15} gap={12}>
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />
         <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
