@@ -120,9 +120,7 @@ export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
  * @returns Current theme context or undefined if no theme is set
  */
 export function useTheme(): PartialTheme | undefined {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const c = CURRENT!
-  return c.theme
+  return CURRENT?.theme
 }
 
 /**

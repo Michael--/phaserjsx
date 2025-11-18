@@ -89,7 +89,7 @@ const globalTheme = createTheme({
     unselectedColor: 0x666666,
     gap: 10,
     View: {
-      cornerRadius: 8,
+      cornerRadius: 8, // rounded radio buttons
     },
   },
 })
