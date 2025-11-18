@@ -4,6 +4,7 @@
  */
 import type { BackgroundProps, LayoutProps, TextSpecificProps, TransformProps } from './core-props'
 import type { NodeType } from './core-types'
+import { DebugLogger } from './dev-config'
 
 /**
  * Theme definition for View component
@@ -118,15 +119,16 @@ class ThemeRegistry {
    * @param theme - Partial theme to merge with current global theme
    */
   updateGlobalTheme(theme: PartialTheme): void {
-    console.log('[ThemeRegistry] updateGlobalTheme called with:', theme)
+    DebugLogger.log('theme', 'updateGlobalTheme called with:', theme)
     for (const [component, styles] of Object.entries(theme)) {
       if (component in this.globalTheme) {
         this.globalTheme[component as NodeType] = {
           ...this.globalTheme[component as NodeType],
           ...styles,
         } as never
-        console.log(
-          `[ThemeRegistry] Updated ${component} theme:`,
+        DebugLogger.log(
+          'theme',
+          `Updated ${component} theme:`,
           this.globalTheme[component as NodeType]
         )
       } else {
@@ -173,7 +175,7 @@ class ThemeRegistry {
   getComponentTheme<K extends keyof ComponentThemes>(componentName: K): ComponentThemes[K] {
     if (componentName in this.globalTheme) {
       const theme = this.globalTheme[componentName as NodeType] as ComponentThemes[K]
-      console.log(`[ThemeRegistry] getComponentTheme(${String(componentName)}):`, theme)
+      DebugLogger.log('theme', `getComponentTheme(${String(componentName)}):`, theme)
       return theme
     }
     return (this.customThemes.get(componentName as string) ?? {}) as ComponentThemes[K]

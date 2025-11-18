@@ -75,6 +75,13 @@ export const DevConfig = {
      * @default false
      */
     performance: false,
+
+    /**
+     * Theme system logs
+     * Shows theme registry updates and prop merging
+     * @default false
+     */
+    theme: false,
   },
 
   /**
@@ -297,6 +304,18 @@ export const DevPresets = {
     DevConfig.debug.positioning = false
     DevConfig.debug.flex = false
     DevConfig.debug.performance = false
+  },
+
+  debugTheme: (): void => {
+    DevConfig.debug.enabled = true
+    DevConfig.debug.theme = true
+    // Keep other categories off
+    DevConfig.debug.layout = false
+    DevConfig.debug.overflowMask = false
+    DevConfig.debug.positioning = false
+    DevConfig.debug.flex = false
+    DevConfig.debug.performance = false
+    DevConfig.debug.vdom = false
   },
 
   /**

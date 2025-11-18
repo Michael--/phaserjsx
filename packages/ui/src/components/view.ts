@@ -38,7 +38,7 @@ export interface ViewProps
 export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Debug: Log props to verify theme values
   if (props.backgroundColor !== undefined || props.cornerRadius !== undefined) {
-    console.log('[View Creator] Props received:', {
+    DebugLogger.log('theme', 'View Creator - Props received:', {
       backgroundColor: props.backgroundColor,
       cornerRadius: props.cornerRadius,
       width: props.width,

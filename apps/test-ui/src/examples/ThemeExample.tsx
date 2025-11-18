@@ -33,7 +33,7 @@ export function ThemeExample() {
   )
 
   return (
-    <View padding={{ top: 20, left: 20, right: 20 }} gap={25}>
+    <View padding={{ top: 20, left: 20, right: 20, bottom: 20 }} gap={25}>
       {/* Global theme applied */}
       <Text text="Global Theme Text (green, 18px)" />
 

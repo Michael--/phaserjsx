@@ -7,6 +7,7 @@ const debugPresets = {
   debugOverflow: { label: 'Debug Overflow', preset: DevPresets.debugOverflow },
   profilePerformance: { label: 'Profile Performance', preset: DevPresets.profilePerformance },
   debugVDOM: { label: 'Debug VDOM', preset: DevPresets.debugVDOM },
+  debugTheme: { label: 'Debug Theme', preset: DevPresets.debugTheme },
   debugAll: { label: 'Debug All', preset: DevPresets.debugAll },
 } as const
 

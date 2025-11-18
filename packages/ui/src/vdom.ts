@@ -203,7 +203,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     nodeType === 'View' &&
     (themedProps.backgroundColor !== undefined || themedProps.cornerRadius !== undefined)
   ) {
-    console.log('[VDOM Mount] Themed props for View:', {
+    DebugLogger.log('theme', 'VDOM Mount - Themed props for View:', {
       backgroundColor: themedProps.backgroundColor,
       cornerRadius: themedProps.cornerRadius,
       hasTheme: !!vnode.__theme,
