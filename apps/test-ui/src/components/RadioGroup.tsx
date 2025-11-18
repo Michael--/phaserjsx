@@ -1,7 +1,19 @@
 /**
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
-import { Text, View, useState } from '@phaserjsx/ui'
+import { Text, View, getThemedProps, useState } from '@phaserjsx/ui'
+
+// Module augmentation to add Sidebar theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    RadioGroup: {
+      selectedColor?: number
+      unselectedColor?: number
+      labelColor?: number
+      gap?: number
+    } & import('@phaserjsx/ui').NestedComponentThemes
+  }
+}
 
 /**
  * Option item for RadioGroup
@@ -23,16 +35,8 @@ export interface RadioGroupProps {
   value?: string
   /** Callback when selection changes */
   onChange?: (value: string) => void
-  /** Gap between radio buttons (default: 8) */
-  gap?: number
   /** Layout direction (default: 'column') */
   direction?: 'row' | 'column'
-  /** Color when selected */
-  selectedColor?: number
-  /** Color when unselected */
-  unselectedColor?: number
-  /** Label text color */
-  labelColor?: string
 }
 
 /**
@@ -41,6 +45,8 @@ export interface RadioGroupProps {
  * @returns RadioGroup JSX element
  */
 export function RadioGroup(props: RadioGroupProps) {
+  const { props: themed, nestedTheme } = getThemedProps('RadioGroup', undefined, {})
+
   const [selected, setSelected] = useState<string>(props.value ?? '')
 
   const handleSelect = (value: string) => {
@@ -49,14 +55,14 @@ export function RadioGroup(props: RadioGroupProps) {
   }
 
   return (
-    <View direction={props.direction ?? 'column'} gap={props.gap ?? 8}>
+    <View direction={props.direction ?? 'column'} theme={nestedTheme} gap={themed.gap}>
       {props.options.map((option) => {
         const isSelected = selected === option.value
         const size = 16
         const innerSize = size * 0.5
         const selectedColor = isSelected
-          ? (props.selectedColor ?? 0x4ecdc4)
-          : (props.unselectedColor ?? 0x666666)
+          ? (themed.selectedColor ?? 0x4ecdc4)
+          : (themed.unselectedColor ?? 0x666666)
 
         return (
           <View
@@ -78,14 +84,13 @@ export function RadioGroup(props: RadioGroupProps) {
               <View
                 width={innerSize}
                 height={innerSize}
-                backgroundColor={0xffffff}
+                //backgroundColor={0xffffff}
                 visible={isSelected}
               />
             </View>
-
             <Text
               text={option.label}
-              style={{ fontSize: 14, color: props.labelColor ?? 'white' }}
+              style={{ fontSize: 14, color: `#${themed.labelColor?.toString(16)}` }}
             />
           </View>
         )

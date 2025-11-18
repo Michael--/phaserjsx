@@ -37,24 +37,21 @@ export function ExampleSide(props: {
 
   return (
     <>
-      <Text text="Examples" style={{ fontSize: 18 }} />
+      <Text text="Examples" />
       <RadioGroup
         options={exampleOptions}
         value={props.selectedExample}
         onChange={(value: string) => props.onChange(value as ExampleKey)}
-        gap={8}
-        selectedColor={0x4ecdc4}
-        unselectedColor={0x555555}
       />
     </>
   )
 }
 
-export function DemoContainer(props: { selectedDemo: ExampleKey }) {
-  const Component = examples[props.selectedDemo].component
+export function ExampleContainer(props: { selectedExample: ExampleKey }) {
+  const Component = examples[props.selectedExample].component
   return (
     <View key="demo-container">
-      <Component key={props.selectedDemo} />
+      <Component key={props.selectedExample} />
     </View>
   )
 }

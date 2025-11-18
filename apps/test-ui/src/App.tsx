@@ -3,7 +3,7 @@
  */
 import { Text, View, useState } from '@phaserjsx/ui'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
-import { DemoContainer, ExampleSide, type ExampleKey } from './ExampleSide'
+import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 
@@ -77,6 +77,13 @@ const globalTheme = createTheme({
       },
     },
   },
+
+  RadioGroup: {
+    labelColor: 0xffffff,
+    selectedColor: 0x4ecdc4,
+    unselectedColor: 0x666666,
+    gap: 10,
+  },
 })
 
 // Set global theme ONCE (safe in function body for SPA)
@@ -103,7 +110,7 @@ export function App(props: AppProps) {
         padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
         justifyContent="space-between"
       >
-        <DemoContainer selectedDemo={selectedDemo} />
+        <ExampleContainer selectedExample={selectedDemo} />
 
         <View direction="row" justifyContent="space-between" key="footer" width={'fill'}>
           <Text text={`Demo: ${selectedDemo}`} style={{ fontSize: 14, color: 'white' }} />

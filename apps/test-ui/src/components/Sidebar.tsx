@@ -1,9 +1,10 @@
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
-import type { EdgeInsets, ViewProps } from '@phaserjsx/ui'
-import { getThemedProps, View } from '@phaserjsx/ui'
+import type { ViewProps } from '@phaserjsx/ui'
+import { type EdgeInsets, getThemedProps, View } from '@phaserjsx/ui'
 
+// Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Sidebar: {

@@ -24,7 +24,7 @@ export function DebugSide(props: {
 
   return (
     <>
-      <Text text="Debug Options" style={{ fontSize: 18, color: 'cyan' }} />
+      <Text text="Debug Options" />
       <RadioGroup
         options={presetOptions}
         value={props.selectedDebug}
@@ -33,9 +33,6 @@ export function DebugSide(props: {
           debugPresets[key].preset()
           props.onChange(key)
         }}
-        gap={8}
-        selectedColor={0x4ecdc4}
-        unselectedColor={0x555555}
       />
     </>
   )

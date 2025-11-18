@@ -1,7 +1,7 @@
 /**
  * Theme System Example - demonstrates global and local theme usage
  */
-import { Text, View, createTheme, themeRegistry, useTheme } from '@phaserjsx/ui'
+import { Text, View, createTheme, useTheme } from '@phaserjsx/ui'
 
 /**
  * Component that uses theme context
@@ -16,6 +16,7 @@ function ThemedText(props: { text: string }) {
  */
 export function ThemeExample() {
   // Set up global theme
+  /** // commented out to avoid resetting global theme on every render
   themeRegistry.updateGlobalTheme(
     createTheme({
       Text: {
@@ -31,6 +32,7 @@ export function ThemeExample() {
       },
     })
   )
+  */
 
   return (
     <View padding={{ top: 20, left: 20, right: 20, bottom: 20 }} gap={25}>
