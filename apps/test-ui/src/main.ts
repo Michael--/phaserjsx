@@ -56,6 +56,20 @@ class MainScene extends Phaser.Scene {
       window.location.reload()
     })
 
+    // Add a rasterized background layer for testing performance with many UI elements
+    const graphics = this.add.graphics()
+    graphics.lineStyle(1, 0xffffff, 0.2)
+    const gridSize = 20
+    for (let x = 0; x < this.scale.width; x += gridSize) {
+      graphics.moveTo(x, 0)
+      graphics.lineTo(x, this.scale.height)
+    }
+    for (let y = 0; y < this.scale.height; y += gridSize) {
+      graphics.moveTo(0, y)
+      graphics.lineTo(this.scale.width, y)
+    }
+    graphics.strokePath()
+
     // Mount the JSX app into this scene, this is where the UI tree starts
     // Could be mounted into a Container instead of the Scene directly
     mountJSX(this, App, {
