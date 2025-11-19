@@ -31,7 +31,8 @@ export function GameObjectEffectsExample() {
   }
 
   const triggerCombined = () => {
-    applyEffect(createFadeEffect, { intensity: 1.2, time: 200 })
+    // applyEffect(createFadeEffect, { intensity: 1.2, time: 200 })
+    applyEffect(createPulseEffect, { intensity: 1.3, time: 200 })
     applyEffect(createShakeEffect, { magnitude: 5, time: 200 })
   }
 

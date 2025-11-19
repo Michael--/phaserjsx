@@ -15,6 +15,85 @@ export interface EffectConfig {
 }
 
 /**
+ * Position state manager for effects that need to track original position
+ * Allows multiple position-based effects to run synchronously
+ */
+interface PositionState {
+  originalX: number
+  originalY: number
+  currentX: number
+  currentY: number
+  effectCount: number
+}
+
+/**
+ * WeakMap to store position state for game objects
+ * This allows multiple effects to share the same position data
+ */
+const positionStates = new WeakMap<Phaser.GameObjects.Container, PositionState>()
+
+/**
+ * Get or create position state for a game object
+ * @param obj - Game object
+ * @returns Position state
+ */
+function getPositionState(obj: Phaser.GameObjects.Container): PositionState {
+  if (!positionStates.has(obj)) {
+    positionStates.set(obj, {
+      originalX: obj.x,
+      originalY: obj.y,
+      currentX: obj.x,
+      currentY: obj.y,
+      effectCount: 0,
+    })
+  }
+  const state = positionStates.get(obj)
+  if (!state) {
+    throw new Error('Position state not found')
+  }
+  return state
+}
+
+/**
+ * Update current position in shared state
+ * @param obj - Game object
+ * @param x - New X position
+ * @param y - New Y position
+ */
+function updateCurrentPosition(obj: Phaser.GameObjects.Container, x: number, y: number): void {
+  const state = getPositionState(obj)
+  state.currentX = x
+  state.currentY = y
+}
+
+/**
+ * Increment effect count (called when effect starts)
+ * @param obj - Game object
+ */
+function incrementEffectCount(obj: Phaser.GameObjects.Container): void {
+  const state = getPositionState(obj)
+  state.effectCount++
+}
+
+/**
+ * Decrement effect count (called when effect completes)
+ * Resets to last known position when count reaches 0
+ * @param obj - Game object
+ */
+function decrementEffectCount(obj: Phaser.GameObjects.Container): void {
+  const state = getPositionState(obj)
+  state.effectCount--
+
+  // Reset to original position when all effects are done
+  if (state.effectCount <= 0) {
+    obj.setPosition(state.originalX, state.originalY)
+    state.currentX = state.originalX
+    state.currentY = state.originalY
+    state.effectCount = 0
+  }
+}
+
+/**
  * Effect callback function
  * @param obj - The Phaser game object to apply effect to
  * @param config - Effect configuration
@@ -29,22 +108,15 @@ export type EffectFn = (obj: Phaser.GameObjects.Container, config: EffectConfig)
 export const createShakeEffect: EffectFn = (obj, config) => {
   const { magnitude = 5, time = 200 } = config
 
-  const refWithPos = obj as Phaser.GameObjects.Container & {
-    __originalX?: number
-    __originalY?: number
-  }
-
-  // Store original position on first shake
-  const isFirstShake = refWithPos.__originalX === undefined || refWithPos.__originalY === undefined
-
-  if (isFirstShake) {
-    refWithPos.__originalX = obj.x
-    refWithPos.__originalY = obj.y
-  }
+  const state = getPositionState(obj)
+  incrementEffectCount(obj)
 
   const scene = obj.scene
   const start = 0
   const end = start + time
+  // Use the current position as base for this effect
+  const baseX = state.currentX
+  const baseY = state.currentY
 
   scene.tweens.add({
     targets: obj,
@@ -56,28 +128,13 @@ export const createShakeEffect: EffectFn = (obj, config) => {
       const decayFactor = Math.pow(remainingTime / totalTime, 2)
       const mag = magnitude * decayFactor
 
-      const baseX = refWithPos.__originalX ?? 0
-      const baseY = refWithPos.__originalY ?? 0
-      obj.setPosition(
-        baseX + Phaser.Math.Between(-mag, mag),
-        baseY + Phaser.Math.Between(-mag, mag)
-      )
+      const newX = baseX + Phaser.Math.Between(-mag, mag)
+      const newY = baseY + Phaser.Math.Between(-mag, mag)
+      obj.setPosition(newX, newY)
+      updateCurrentPosition(obj, newX, newY)
     },
     onComplete: () => {
-      // Reset to original position if no other shakes are active
-      const activeTweens = scene.tweens
-        .getTweensOf(obj)
-        .filter((tween: Phaser.Tweens.Tween) => tween.isActive())
-
-      if (activeTweens.length === 0) {
-        const baseX = refWithPos.__originalX ?? 0
-        const baseY = refWithPos.__originalY ?? 0
-        obj.setPosition(baseX, baseY)
-
-        // Clear stored position
-        delete refWithPos.__originalX
-        delete refWithPos.__originalY
-      }
+      decrementEffectCount(obj)
     },
   })
 }
@@ -90,13 +147,17 @@ export const createShakeEffect: EffectFn = (obj, config) => {
 export const createPulseEffect: EffectFn = (obj, config) => {
   const { intensity = 1.2, time = 300 } = config
 
+  const state = getPositionState(obj)
+  incrementEffectCount(obj)
+
   const scene = obj.scene
   const originalScaleX = obj.scaleX
   const originalScaleY = obj.scaleY
-  const originalX = obj.x
-  const originalY = obj.y
   const width = obj.width
   const height = obj.height
+  // Use the current position as base for this effect
+  const baseX = state.currentX
+  const baseY = state.currentY
 
   scene.tweens.add({
     targets: obj,
@@ -112,12 +173,15 @@ export const createPulseEffect: EffectFn = (obj, config) => {
       if (scale === null) return
       const offsetX = (width * (scale - originalScaleX)) / 2
       const offsetY = (height * (scale - originalScaleY)) / 2
-      obj.setPosition(originalX - offsetX, originalY - offsetY)
+      const newX = baseX - offsetX
+      const newY = baseY - offsetY
+      obj.setPosition(newX, newY)
+      updateCurrentPosition(obj, newX, newY)
     },
     onComplete: () => {
-      // Restore original position and scale
-      obj.setPosition(originalX, originalY)
+      // Restore original scale
       obj.setScale(originalScaleX, originalScaleY)
+      decrementEffectCount(obj)
     },
   })
 }
