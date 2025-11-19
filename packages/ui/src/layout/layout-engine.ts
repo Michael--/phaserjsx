@@ -34,8 +34,9 @@ type DeferredUpdateCallback = () => void
  * - Scroll position updates (needs final content size)
  * - Animation initialization (needs final positions)
  * - Custom effects requiring complete layout
+ * - Gesture hit area updates (needs final layout size)
  */
-class DeferredLayoutQueue {
+export class DeferredLayoutQueue {
   private static callbacks: DeferredUpdateCallback[] = []
   private static scheduled = false
 

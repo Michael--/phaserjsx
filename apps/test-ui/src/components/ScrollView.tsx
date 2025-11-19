@@ -66,11 +66,21 @@ export function ScrollView(props: ScrollViewProps) {
     const scrollWidthPercent = contentWidth > 0 ? (viewportWidth / contentWidth) * 100 : 100
     const scrollHeightPercent = contentHeight > 0 ? (viewportHeight / contentHeight) * 100 : 100
 
+    console.log('calc scroll', {
+      newScrollX,
+      newScrollY,
+      newScrollXPercent,
+      newScrollYPercent,
+      scrollWidthPercent,
+      scrollHeightPercent,
+    })
     setScroll({ dx: newScrollX, dy: newScrollY })
     onScroll?.(newScrollXPercent, newScrollYPercent, scrollWidthPercent, scrollHeightPercent)
   }
 
   const handleTouchMove = (data: GestureEventData) => {
+    console.log('touch move', data)
+
     // Process start and move events, ignore end
     if (data.state === 'end') return
 
@@ -89,7 +99,7 @@ export function ScrollView(props: ScrollViewProps) {
       height="fill"
       backgroundColor={0x555555}
       backgroundAlpha={1.0}
-      enableGestures
+      enableGestures={true}
       onTouchMove={handleTouchMove}
       overflow="hidden"
     >

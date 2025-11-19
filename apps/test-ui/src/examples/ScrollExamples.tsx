@@ -53,6 +53,8 @@ function Slider(props: {
   const isDraggingRef = useRef(false)
 
   const handleThumbTouchMove = (data: { dy?: number; state?: string }) => {
+    console.log('thumb move', data)
+
     if (data.state === 'start') {
       isDraggingRef.current = true
       return
@@ -103,7 +105,7 @@ function Slider(props: {
         y={newScrollY}
         height={scrollHeight}
         backgroundColor={0xeeeebb}
-        enableGestures
+        enableGestures={true}
         onTouchMove={handleThumbTouchMove}
       ></View>
     </View>

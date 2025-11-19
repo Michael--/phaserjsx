@@ -69,6 +69,12 @@ export class GestureManager {
     hitArea: Phaser.Geom.Rectangle,
     config: GestureConfig = {}
   ): void {
+    console.log('[GestureManager] registerContainer called', {
+      hasOnTouch: !!callbacks.onTouch,
+      hasOnTouchMove: !!callbacks.onTouchMove,
+      hitArea: { width: hitArea.width, height: hitArea.height },
+      totalContainers: this.containers.size,
+    })
     this.initialize()
 
     const state: GestureContainerState = {
@@ -108,6 +114,15 @@ export class GestureManager {
   }
 
   /**
+   * Check if a container is registered
+   * @param container - Container to check
+   * @returns True if container is registered
+   */
+  hasContainer(container: Phaser.GameObjects.Container): boolean {
+    return this.containers.has(container)
+  }
+
+  /**
    * Update hit area for a container
    * @param container - Container to update
    * @param hitArea - New hit area
@@ -135,10 +150,30 @@ export class GestureManager {
    * Handle global pointer down event
    */
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
+    console.log('[GestureManager] handlePointerDown', {
+      x: pointer.x,
+      y: pointer.y,
+      totalContainers: this.containers.size,
+    })
     // Find which container was hit (TODO: Consider z-order/depth for overlapping containers)
     // NOTE: Event bubbling not implemented yet - only topmost hit container receives event
     for (const state of this.containers.values()) {
-      if (this.isPointerInContainer(pointer, state)) {
+      const isHit = this.isPointerInContainer(pointer, state)
+      const localPos = this.getLocalPosition(pointer, state.container)
+      console.log('[GestureManager] Checking container', {
+        isHit,
+        localX: localPos.x,
+        localY: localPos.y,
+        hitAreaX: state.hitArea.x,
+        hitAreaY: state.hitArea.y,
+        hitAreaWidth: state.hitArea.width,
+        hitAreaHeight: state.hitArea.height,
+        containerX: state.container.x,
+        containerY: state.container.y,
+        containerVisible: state.container.visible,
+        containerAlpha: state.container.alpha,
+      })
+      if (isHit) {
         const localPos = this.getLocalPosition(pointer, state.container)
 
         // Store active pointer down for touch detection

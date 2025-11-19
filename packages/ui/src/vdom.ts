@@ -10,7 +10,7 @@ import { getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
-import { calculateLayout } from './layout/index'
+import { DeferredLayoutQueue, calculateLayout } from './layout/index'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
 
@@ -31,11 +31,22 @@ function updateGestureHitAreaAfterLayout(container: Phaser.GameObjects.Container
 
   try {
     const manager = getGestureManager(container.scene)
+
+    // Check if container is actually registered with gesture manager
+    // If not, skip the update - this prevents overwriting hit areas of other containers
+    if (!manager.hasContainer(container)) return
+
     const size = containerWithLayout.__getLayoutSize()
+    console.log('[updateGestureHitAreaAfterLayout]', {
+      width: size.width,
+      height: size.height,
+      containerPos: { x: container.x, y: container.y },
+    })
     const hitArea = new Phaser.Geom.Rectangle(0, 0, size.width, size.height)
     manager.updateHitArea(container, hitArea)
-  } catch {
+  } catch (e) {
     // Gesture manager or container not registered, ignore
+    console.log('[updateGestureHitAreaAfterLayout] Error:', e)
   }
 }
 
@@ -287,8 +298,9 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
     calculateLayout(container, container.__layoutProps ?? {}, parentSize)
 
-    // Update gesture hit area after initial layout
-    updateGestureHitAreaAfterLayout(container)
+    // Defer gesture hit area update to next frame after layout completes
+    // This ensures __getLayoutSize() returns correct dimensions (not 0x0)
+    DeferredLayoutQueue.defer(() => updateGestureHitAreaAfterLayout(container))
   }
 
   return node
@@ -574,8 +586,8 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
 
       calculateLayout(container, container.__layoutProps, parentSize)
 
-      // Update gesture hit area after layout recalculation
-      updateGestureHitAreaAfterLayout(container)
+      // Defer gesture hit area update to next frame after layout completes
+      DeferredLayoutQueue.defer(() => updateGestureHitAreaAfterLayout(container))
     }
   }
 }
