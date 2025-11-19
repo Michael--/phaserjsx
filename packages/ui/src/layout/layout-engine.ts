@@ -580,7 +580,9 @@ function calculateLayoutImmediate(
 
   // 9. Calculate spacing for justifyContent
   const availableMainSpace = direction === 'row' ? contentArea.width : contentArea.height
-  const remainingSpace = availableMainSpace - metrics.totalMainSize
+  // Calculate total gap space (gaps between children, not before first or after last)
+  const totalGapSpace = finalLayoutChildren.length > 1 ? gap * (finalLayoutChildren.length - 1) : 0
+  const remainingSpace = availableMainSpace - metrics.totalMainSize - totalGapSpace
 
   let mainStart = 0
   let spaceBetween = 0

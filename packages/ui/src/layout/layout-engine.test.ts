@@ -377,6 +377,109 @@ describe('nested percentage layouts', () => {
   })
 })
 
+describe('justifyContent with gap', () => {
+  it('correctly calculates center position with gap between children', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(80, 20, false)
+    const child2 = mockContainer(80, 20, false)
+    const child3 = mockContainer(80, 20, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 120,
+      gap: 5,
+      justifyContent: 'center',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 120 - 10 (padding) = 110
+    // Content: 3 * 20 = 60, gaps: 2 * 5 = 10
+    // Total content + gaps: 70
+    // Remaining space: 110 - 70 = 40
+    // Center offset: 40 / 2 = 20
+    // First child: 5 (padding) + 20 (center offset) = 25
+    expect(child1.y).toBe(25)
+    // Second child: 25 + 20 + 5 (gap) = 50
+    expect(child2.y).toBe(50)
+    // Third child: 50 + 20 + 5 (gap) = 75
+    expect(child3.y).toBe(75)
+  })
+
+  it('correctly calculates end position with gap between children', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(80, 20, false)
+    const child2 = mockContainer(80, 20, false)
+    const child3 = mockContainer(80, 20, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 120,
+      gap: 5,
+      justifyContent: 'end',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 120 - 10 (padding) = 110
+    // Content: 3 * 20 = 60, gaps: 2 * 5 = 10
+    // Total content + gaps: 70
+    // Remaining space: 110 - 70 = 40
+    // End offset: 40
+    // First child: 5 (padding) + 40 (end offset) = 45
+    expect(child1.y).toBe(45)
+    // Second child: 45 + 20 + 5 (gap) = 70
+    expect(child2.y).toBe(70)
+    // Third child: 70 + 20 + 5 (gap) = 95
+    expect(child3.y).toBe(95)
+    // Last child should not exceed container: 95 + 20 = 115 <= 120 - 5 (padding) = 115
+    expect(child3.y + child3.height).toBeLessThanOrEqual(115)
+  })
+
+  it('correctly calculates space-between with gap', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(80, 20, false)
+    const child2 = mockContainer(80, 20, false)
+    const child3 = mockContainer(80, 20, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 120,
+      gap: 5,
+      justifyContent: 'space-between',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 120 - 10 (padding) = 110
+    // Content: 3 * 20 = 60, gaps: 2 * 5 = 10
+    // Total content + gaps: 70
+    // Remaining space: 110 - 70 = 40
+    // Space between (3 children): 40 / 2 = 20 extra space between each
+    // First child: 5 (padding) + 0 = 5
+    expect(child1.y).toBe(5)
+    // Second child: 5 + 20 + 5 (gap) + 20 (space-between) = 50
+    expect(child2.y).toBe(50)
+    // Third child: 50 + 20 + 5 (gap) + 20 (space-between) = 95
+    expect(child3.y).toBe(95)
+  })
+})
+
 describe('edge cases', () => {
   it('handles 0% size', () => {
     const container = mockContainer()
