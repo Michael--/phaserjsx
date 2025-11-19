@@ -2,8 +2,20 @@
  * ScrollSlider component for scrollable content areas
  */
 import type { GestureEventData } from '@phaserjsx/ui'
-import { useRef, View } from '@phaserjsx/ui'
+import { getThemedProps, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
+
+// Module augmentation to add ScrollSlider theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    ScrollSlider: {
+      thumbColor?: number
+      trackColor?: number
+      minThumbSize?: number
+      borderWidth?: number
+    }
+  }
+}
 
 /**
  * Props for ScrollSlider component
@@ -26,6 +38,7 @@ export interface ScrollSliderProps {
  */
 export function ScrollSlider(props: ScrollSliderProps) {
   const { direction, trackSize, scrollInfo, onScroll } = props
+  const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
 
@@ -33,7 +46,8 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const scrollPercent = isVertical ? scrollInfo.scrollY : scrollInfo.scrollX
   const sizePercent = isVertical ? scrollInfo.height : scrollInfo.width
 
-  const thumbSize = (trackSize * sizePercent) / 100
+  const minThumbSize = themed.minThumbSize ?? 20
+  const thumbSize = Math.max(minThumbSize, (trackSize * sizePercent) / 100)
   const thumbPosition = (scrollPercent / 100) * (trackSize - thumbSize)
 
   const handleThumbTouchMove = (data: GestureEventData) => {
@@ -71,9 +85,9 @@ export function ScrollSlider(props: ScrollSliderProps) {
       ref={sliderRef}
       width={isVertical ? 24 : trackSize}
       height={isVertical ? trackSize : 24}
-      backgroundColor={0xdddddd}
+      backgroundColor={themed.trackColor ?? 0xdddddd}
       direction="stack"
-      padding={1}
+      padding={themed.borderWidth ?? 1}
     >
       <View
         width={'fill'}
@@ -85,9 +99,9 @@ export function ScrollSlider(props: ScrollSliderProps) {
       <View
         width={isVertical ? 'fill' : thumbSize}
         height={isVertical ? thumbSize : 'fill'}
-        x={isVertical ? 1 : thumbPosition}
-        y={isVertical ? thumbPosition : 1}
-        backgroundColor={0xeeeebb}
+        x={isVertical ? (themed.borderWidth ?? 1) : thumbPosition}
+        y={isVertical ? thumbPosition : (themed.borderWidth ?? 1)}
+        backgroundColor={themed.thumbColor ?? 0xeeeebb}
         enableGestures={true}
         onTouchMove={handleThumbTouchMove}
       />

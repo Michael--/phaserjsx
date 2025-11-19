@@ -94,6 +94,13 @@ const globalTheme = createTheme({
     },
   },
 
+  ScrollSlider: {
+    trackColor: 0x444444,
+    thumbColor: 0xeeeebb,
+    borderWidth: 1,
+    minThumbSize: 30,
+  },
+
   ExampleContainer: {
     View: {
       backgroundColor: 0x2e2e2e,
