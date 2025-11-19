@@ -77,6 +77,10 @@ const globalTheme = createTheme({
     size: 30,
   },
 
+  Button: {
+    backgroundColor: 0x0044aa,
+  },
+
   ExampleContainer: {
     View: {
       backgroundColor: 0x2e2e2e,

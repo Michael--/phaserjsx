@@ -1,6 +1,7 @@
 /**
  * ScrollSlider component for scrollable content areas
  */
+import type * as PhaserJSX from '@phaserjsx/ui'
 import type { GestureEventData } from '@phaserjsx/ui'
 import { getThemedProps, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
@@ -15,7 +16,7 @@ declare module '@phaserjsx/ui' {
       borderWidth?: number
       size?: number
       minThumbSize?: number
-    }
+    } & PhaserJSX.NestedComponentThemes
   }
 }
 
