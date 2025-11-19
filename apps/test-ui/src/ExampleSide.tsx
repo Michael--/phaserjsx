@@ -12,7 +12,6 @@ import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { StackExample } from './examples/StackExample'
 import { ThemeExample } from './examples/ThemeExample'
-import { ToggleButtonExample } from './examples/ToggleButtonExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -27,7 +26,6 @@ const examples = {
   layout: { label: 'Layout System', component: LayoutExample },
   advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
   button: { label: 'Button Variants', component: ButtonExample },
-  toggle: { label: 'Toggle Buttons', component: ToggleButtonExample },
   gesture: { label: 'Gesture System', component: GestureExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
