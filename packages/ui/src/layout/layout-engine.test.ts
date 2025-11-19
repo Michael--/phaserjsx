@@ -480,6 +480,147 @@ describe('justifyContent with gap', () => {
   })
 })
 
+describe('alignItems with gap', () => {
+  it('correctly calculates center alignment in row direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(60, 20, false)
+    const child2 = mockContainer(60, 40, false)
+    const child3 = mockContainer(60, 30, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 300,
+      height: 100,
+      gap: 10,
+      alignItems: 'center',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 100 - 10 (padding) = 90
+    // Child1 (height 20): centered at (90 - 20) / 2 = 35
+    expect(child1.y).toBe(5 + 35) // 40
+    // Child2 (height 40): centered at (90 - 40) / 2 = 25
+    expect(child2.y).toBe(5 + 25) // 30
+    // Child3 (height 30): centered at (90 - 30) / 2 = 30
+    expect(child3.y).toBe(5 + 30) // 35
+  })
+
+  it('correctly calculates end alignment in row direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(60, 20, false)
+    const child2 = mockContainer(60, 40, false)
+    const child3 = mockContainer(60, 30, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 300,
+      height: 100,
+      gap: 10,
+      alignItems: 'end',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 100 - 10 (padding) = 90
+    // Child1 (height 20): aligned to end at 90 - 20 = 70
+    expect(child1.y).toBe(5 + 70) // 75
+    // Child2 (height 40): aligned to end at 90 - 40 = 50
+    expect(child2.y).toBe(5 + 50) // 55
+    // Child3 (height 30): aligned to end at 90 - 30 = 60
+    expect(child3.y).toBe(5 + 60) // 65
+  })
+
+  it('correctly calculates center alignment in column direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(20, 60, false)
+    const child2 = mockContainer(40, 60, false)
+    const child3 = mockContainer(30, 60, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 300,
+      gap: 10,
+      alignItems: 'center',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available width: 100 - 10 (padding) = 90
+    // Child1 (width 20): centered at (90 - 20) / 2 = 35
+    expect(child1.x).toBe(5 + 35) // 40
+    // Child2 (width 40): centered at (90 - 40) / 2 = 25
+    expect(child2.x).toBe(5 + 25) // 30
+    // Child3 (width 30): centered at (90 - 30) / 2 = 30
+    expect(child3.x).toBe(5 + 30) // 35
+  })
+
+  it('correctly calculates end alignment in column direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(20, 60, false)
+    const child2 = mockContainer(40, 60, false)
+    const child3 = mockContainer(30, 60, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 300,
+      gap: 10,
+      alignItems: 'end',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available width: 100 - 10 (padding) = 90
+    // Child1 (width 20): aligned to end at 90 - 20 = 70
+    expect(child1.x).toBe(5 + 70) // 75
+    // Child2 (width 40): aligned to end at 90 - 40 = 50
+    expect(child2.x).toBe(5 + 50) // 55
+    // Child3 (width 30): aligned to end at 90 - 30 = 60
+    expect(child3.x).toBe(5 + 60) // 65
+  })
+
+  it('correctly handles start alignment (default)', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(60, 20, false)
+    const child2 = mockContainer(60, 40, false)
+    container.add(child1)
+    container.add(child2)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 200,
+      height: 100,
+      gap: 10,
+      alignItems: 'start',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Both children should be at start (padding top)
+    expect(child1.y).toBe(5)
+    expect(child2.y).toBe(5)
+  })
+})
+
 describe('edge cases', () => {
   it('handles 0% size', () => {
     const container = mockContainer()
