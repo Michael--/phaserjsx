@@ -21,10 +21,12 @@ export function applyGesturesProps(
   prev: Partial<GestureProps & LayoutProps>,
   next: Partial<GestureProps & LayoutProps>
 ): void {
-  const prevEnabled = prev.enableGestures
-  const nextEnabled = next.enableGestures
-
   const hasAnyGesture = !!(next.onTouch || next.onTouchMove || next.onDoubleTap || next.onLongPress)
+  const hadAnyGesture = !!(prev.onTouch || prev.onTouchMove || prev.onDoubleTap || prev.onLongPress)
+
+  // Auto-enable if callbacks present, unless explicitly disabled
+  const prevEnabled = hadAnyGesture && prev.enableGestures !== false
+  const nextEnabled = hasAnyGesture && next.enableGestures !== false
 
   const manager = getGestureManager(scene)
 

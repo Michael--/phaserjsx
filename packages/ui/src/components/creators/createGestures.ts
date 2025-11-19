@@ -19,11 +19,6 @@ export function createGestures(
   container: Phaser.GameObjects.Container,
   props: Partial<GestureProps & LayoutProps>
 ): void {
-  // Only register if explicitly enabled
-  if (!props.enableGestures) {
-    return
-  }
-
   // Check if any gesture callback is defined
   const hasAnyGesture = !!(
     props.onTouch ||
@@ -32,8 +27,10 @@ export function createGestures(
     props.onLongPress
   )
 
-  if (!hasAnyGesture) {
-    console.warn('enableGestures is true but no gesture callbacks provided')
+  // Auto-enable gestures if callbacks are provided, unless explicitly disabled
+  const shouldEnable = hasAnyGesture && props.enableGestures !== false
+
+  if (!shouldEnable) {
     return
   }
 
