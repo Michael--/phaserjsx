@@ -81,14 +81,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
     height: 0,
   })
 
-  const handleScrollViewScroll = (
-    x: number,
-    y: number,
-    vw: number,
-    vh: number,
-    cw: number,
-    ch: number
-  ) => {
+  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
     // Calculate absolute scroll positions from percentages
     const maxScrollY = Math.max(0, ch - vh)
     const dy = (y / 100) * maxScrollY
@@ -99,13 +92,12 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
     setScroll({ dx, dy, scrollX: x, scrollY: y, width: (vw / cw) * 100, height: (vh / ch) * 100 })
   }
 
-  const handleSliderScroll = (scrollYPercent: number) => {
+  const handleVScroll = (percent: number) => {
     const vh = 400
     const ch = vh / (scroll.height / 100)
     const maxScrollY = Math.max(0, ch - vh)
-    const dy = (scrollYPercent / 100) * maxScrollY
-
-    setScroll({ ...scroll, dy, scrollY: scrollYPercent })
+    const dy = (percent / 100) * maxScrollY
+    setScroll({ ...scroll, dy, scrollY: percent })
   }
 
   return (
@@ -114,7 +106,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
       {/** Border around ScrollView to visualize its bounds */}
       <View borderColor={0xffffff} borderWidth={2} padding={2} direction="row" gap={0}>
         <View width={200} height={400} padding={0}>
-          <ScrollView scroll={scroll} onScroll={handleScrollViewScroll}>
+          <ScrollView scroll={scroll} onScroll={handleScroll}>
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
@@ -122,7 +114,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
           direction="vertical"
           trackSize={400}
           scrollInfo={scroll}
-          onScroll={handleSliderScroll}
+          onScroll={handleVScroll}
         />
       </View>
     </View>
@@ -139,14 +131,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
     height: 0,
   })
 
-  const handleScrollViewScroll = (
-    x: number,
-    y: number,
-    vw: number,
-    vh: number,
-    cw: number,
-    ch: number
-  ) => {
+  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
     // Calculate absolute scroll positions from percentages
     const maxScrollY = Math.max(0, ch - vh)
     const dy = (y / 100) * maxScrollY
@@ -164,13 +149,20 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
     })
   }
 
-  const handleSliderScroll = (scrollYPercent: number) => {
+  const handleVScroll = (percent: number) => {
     const vh = 200
     const ch = vh / (scroll.height / 100)
     const maxScrollY = Math.max(0, ch - vh)
-    const dy = (scrollYPercent / 100) * maxScrollY
+    const dy = (percent / 100) * maxScrollY
+    setScroll({ ...scroll, dy, scrollY: percent })
+  }
 
-    setScroll({ ...scroll, dy, scrollY: scrollYPercent })
+  const handleHScroll = (percent: number) => {
+    const vw = 200
+    const cw = vw / (scroll.width / 100)
+    const maxScrollX = Math.max(0, cw - vw)
+    const dx = (percent / 100) * maxScrollX
+    setScroll({ ...scroll, dx, scrollX: percent })
   }
 
   return (
@@ -188,7 +180,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
             gap={0}
           >
             <View width={200} height={200} padding={0}>
-              <ScrollView scroll={scroll} onScroll={handleScrollViewScroll}>
+              <ScrollView scroll={scroll} onScroll={handleScroll}>
                 <View
                   direction="stack"
                   width={300}
@@ -207,7 +199,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
             direction="vertical"
             trackSize={200}
             scrollInfo={scroll}
-            onScroll={handleSliderScroll}
+            onScroll={handleVScroll}
           />
         </View>
         {/** Horizontal slider */}
@@ -215,13 +207,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           direction="horizontal"
           trackSize={200}
           scrollInfo={scroll}
-          onScroll={(percent) => {
-            const vw = 200
-            const cw = vw / (scroll.width / 100)
-            const maxScrollX = Math.max(0, cw - vw)
-            const dx = (percent / 100) * maxScrollX
-            setScroll({ ...scroll, dx, scrollX: percent })
-          }}
+          onScroll={handleHScroll}
         />
       </View>
     </View>

@@ -90,8 +90,6 @@ export function ScrollView(props: ScrollViewProps) {
     const deltaX = data.dx ?? 0
     const deltaY = data.dy ?? 0
 
-    console.log(deltaX, deltaY)
-
     calc(deltaX, deltaY)
   }
 
