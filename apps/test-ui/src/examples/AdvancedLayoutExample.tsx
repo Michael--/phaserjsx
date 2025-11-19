@@ -14,8 +14,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
       width={props.width ?? 60}
       height={props.height ?? 40}
       backgroundColor={props.color}
-      backgroundAlpha={1.0}
-      padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+      padding={5}
       alignItems="center"
       justifyContent="center"
     >
@@ -30,12 +29,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
  */
 function GapExample() {
   return (
-    <View
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      gap={15}
-    >
+    <View backgroundColor={0x2a2a2a} backgroundAlpha={1.0} padding={10} gap={15}>
       <Text text="Gap(15)" style={{ fontSize: 14, color: 'yellow' }} />
       <Box color={0xff6b6b} text="Box 1" />
       <Box color={0x4ecdc4} text="Box 2" />
@@ -50,13 +44,7 @@ function GapExample() {
  */
 function JustifyContentColumnExample() {
   return (
-    <View
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      direction="column"
-      gap={10}
-    >
+    <View backgroundColor={0x2a2a2a} padding={10} direction="column" gap={10}>
       <Text text="JustifyContent (Column)" style={{ fontSize: 16, color: 'yellow' }} />
 
       <View direction="row" gap={10}>
@@ -68,11 +56,12 @@ function JustifyContentColumnExample() {
           backgroundAlpha={1.0}
           direction="column"
           justifyContent="start"
-          padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+          padding={5}
+          gap={5}
         >
-          <Text text="start" style={{ fontSize: 10, color: 'cyan' }} />
-          <Box color={0xff6b6b} text="1" width={40} height={20} />
-          <Box color={0x4ecdc4} text="2" width={40} height={20} />
+          <Box color={0x44ccbb} text="start" width={80} height={20} />
+          <Box color={0xff6b6b} text="1" width={80} height={20} />
+          <Box color={0x4ecdc4} text="2" width={80} height={20} />
         </View>
 
         {/* Center */}
@@ -80,14 +69,14 @@ function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
-          backgroundAlpha={1.0}
           direction="column"
           justifyContent="center"
-          padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+          padding={5}
+          gap={5}
         >
-          <Text text="center" style={{ fontSize: 10, color: 'cyan' }} />
-          <Box color={0xff6b6b} text="1" width={40} height={20} />
-          <Box color={0x4ecdc4} text="2" width={40} height={20} />
+          <Box color={0x44ccbb} text="center" width={80} height={20} />
+          <Box color={0xff6b6b} text="1" width={80} height={20} />
+          <Box color={0x4ecdc4} text="2" width={80} height={20} />
         </View>
 
         {/* End */}
@@ -95,14 +84,14 @@ function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
-          backgroundAlpha={1.0}
           direction="column"
           justifyContent="end"
-          padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+          padding={5}
+          gap={5}
         >
-          <Text text="end" style={{ fontSize: 10, color: 'cyan' }} />
-          <Box color={0xff6b6b} text="1" width={40} height={20} />
-          <Box color={0x4ecdc4} text="2" width={40} height={20} />
+          <Box color={0x44ccbb} text="end" width={80} height={20} />
+          <Box color={0xff6b6b} text="1" width={80} height={20} />
+          <Box color={0x4ecdc4} text="2" width={80} height={20} />
         </View>
 
         {/* Space Between */}
@@ -110,14 +99,14 @@ function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
-          backgroundAlpha={1.0}
           direction="column"
           justifyContent="space-between"
-          padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+          padding={5}
+          gap={5}
         >
-          <Text text="space-btw" style={{ fontSize: 10, color: 'cyan' }} />
-          <Box color={0xff6b6b} text="1" width={40} height={20} />
-          <Box color={0x4ecdc4} text="2" width={40} height={20} />
+          <Box color={0x44ccbb} text="space-btw" width={80} height={20} />
+          <Box color={0xff6b6b} text="1" width={80} height={20} />
+          <Box color={0x4ecdc4} text="2" width={80} height={20} />
         </View>
 
         {/* Space Around */}
@@ -125,14 +114,14 @@ function JustifyContentColumnExample() {
           width={100}
           height={120}
           backgroundColor={0x444444}
-          backgroundAlpha={1.0}
           direction="column"
           justifyContent="space-around"
-          padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
+          padding={5}
+          gap={5}
         >
-          <Text text="space-ard" style={{ fontSize: 10, color: 'cyan' }} />
-          <Box color={0xff6b6b} text="1" width={40} height={20} />
-          <Box color={0x4ecdc4} text="2" width={40} height={20} />
+          <Box color={0x44ccbb} text="space-ard" width={80} height={20} />
+          <Box color={0xff6b6b} text="1" width={80} height={20} />
+          <Box color={0x4ecdc4} text="2" width={80} height={20} />
         </View>
       </View>
     </View>
@@ -145,45 +134,37 @@ function JustifyContentColumnExample() {
  */
 function AlignItemsRowExample() {
   return (
-    <View
-      backgroundColor={0x2a2a2a}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      direction="column"
-      gap={10}
-    >
+    <View backgroundColor={0x2a2a2a} direction="column">
       <Text text="AlignItems (Row)" style={{ fontSize: 16, color: 'yellow' }} />
 
       {/* Start */}
       <View
         height={80}
         backgroundColor={0x444444}
-        backgroundAlpha={1.0}
         direction="row"
         alignItems="start"
+        padding={5}
         gap={5}
-        padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
         <Text text="start:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={40} height={30} />
-        <Box color={0x4ecdc4} text="B" width={40} height={50} />
-        <Box color={0x45b7d1} text="C" width={40} height={20} />
+        <Box color={0xff6b6b} text="A" width={80} height={40} />
+        <Box color={0x4ecdc4} text="B" width={80} height={60} />
+        <Box color={0x45b7d1} text="C" width={80} height={20} />
       </View>
 
       {/* Center */}
       <View
         height={80}
         backgroundColor={0x444444}
-        backgroundAlpha={1.0}
         direction="row"
         alignItems="center"
+        padding={5}
         gap={5}
-        padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
         <Text text="center:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={40} height={30} />
-        <Box color={0x4ecdc4} text="B" width={40} height={50} />
-        <Box color={0x45b7d1} text="C" width={40} height={20} />
+        <Box color={0xff6b6b} text="A" width={80} height={40} />
+        <Box color={0x4ecdc4} text="B" width={80} height={60} />
+        <Box color={0x45b7d1} text="C" width={80} height={20} />
       </View>
 
       {/* End */}
@@ -192,13 +173,13 @@ function AlignItemsRowExample() {
         backgroundColor={0x444444}
         direction="row"
         alignItems="end"
+        padding={5}
         gap={5}
-        padding={{ left: 5, top: 5, right: 5, bottom: 5 }}
       >
         <Text text="end:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={40} height={30} />
-        <Box color={0x4ecdc4} text="B" width={40} height={50} />
-        <Box color={0x45b7d1} text="C" width={40} height={20} />
+        <Box color={0xff6b6b} text="A" width={80} height={40} />
+        <Box color={0x4ecdc4} text="B" width={80} height={60} />
+        <Box color={0x45b7d1} text="C" width={80} height={20} />
       </View>
     </View>
   )
