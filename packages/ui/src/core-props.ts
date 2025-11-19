@@ -209,6 +209,7 @@ export interface TextSpecificProps {
 
 /**
  * Interaction props for pointer events
+ * @deprecated Use GestureProps instead for better cross-platform support
  */
 export interface InteractionProps {
   onPointerDown?: (pointer: Phaser.Input.Pointer) => void
@@ -216,4 +217,70 @@ export interface InteractionProps {
   onPointerOver?: (pointer: Phaser.Input.Pointer) => void
   onPointerOut?: (pointer: Phaser.Input.Pointer) => void
   onPointerMove?: (pointer: Phaser.Input.Pointer) => void
+}
+
+/**
+ * Data passed to gesture event handlers
+ */
+export interface GestureEventData {
+  /** The Phaser pointer that triggered the event */
+  pointer: Phaser.Input.Pointer
+  /** Local X coordinate relative to container origin */
+  localX: number
+  /** Local Y coordinate relative to container origin */
+  localY: number
+  /** Delta X since last move event (only for onTouchMove) */
+  dx?: number
+  /** Delta Y since last move event (only for onTouchMove) */
+  dy?: number
+}
+
+/**
+ * High-level gesture props - unified touch and mouse interaction
+ * These provide cross-platform gesture detection with transparent mouse/touch support
+ */
+export interface GestureProps {
+  /**
+   * Enable gesture system for this container
+   * Must be true to receive any gesture events
+   * Default: false (no overhead for non-interactive containers)
+   */
+  enableGestures?: boolean
+
+  /**
+   * Called on pointer down + up on the same target (click/tap)
+   * Works for both mouse click and touch tap
+   */
+  onTouch?: (data: GestureEventData) => void
+
+  /**
+   * Called during pointer movement - continues even when outside bounds
+   * Provides dx/dy deltas for tracking drag operations
+   * Requires enableGestures: true
+   */
+  onTouchMove?: (data: GestureEventData) => void
+
+  /**
+   * Called when double tap/click is detected within configured delay
+   * Optional - only enable if needed to reduce overhead
+   */
+  onDoubleTap?: (data: GestureEventData) => void
+
+  /**
+   * Called when pointer is held down for configured duration
+   * Optional - only enable if needed to reduce overhead
+   */
+  onLongPress?: (data: GestureEventData) => void
+
+  /**
+   * Duration in ms to trigger long press
+   * Default: 500ms
+   */
+  longPressDuration?: number
+
+  /**
+   * Max time in ms between taps for double tap detection
+   * Default: 300ms
+   */
+  doubleTapDelay?: number
 }

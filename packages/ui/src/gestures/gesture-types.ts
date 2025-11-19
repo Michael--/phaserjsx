@@ -1,0 +1,67 @@
+/**
+ * Type definitions for the gesture system
+ */
+import type Phaser from 'phaser'
+
+/**
+ * Data passed to gesture event handlers
+ */
+export interface GestureEventData {
+  /** The Phaser pointer that triggered the event */
+  pointer: Phaser.Input.Pointer
+  /** Local X coordinate relative to container origin */
+  localX: number
+  /** Local Y coordinate relative to container origin */
+  localY: number
+  /** Delta X since last move event (only for onTouchMove) */
+  dx?: number
+  /** Delta Y since last move event (only for onTouchMove) */
+  dy?: number
+}
+
+/**
+ * Callback functions for gesture events
+ */
+export interface GestureCallbacks {
+  /** Called on pointer down + up on the same target (click/tap) */
+  onTouch?: (data: GestureEventData) => void
+  /** Called during pointer movement - continues even when outside bounds */
+  onTouchMove?: (data: GestureEventData) => void
+  /** Called when double tap/click is detected */
+  onDoubleTap?: (data: GestureEventData) => void
+  /** Called when pointer is held down for configured duration */
+  onLongPress?: (data: GestureEventData) => void
+}
+
+/**
+ * Configuration for gesture detection
+ */
+export interface GestureConfig {
+  /** Duration in ms to trigger long press (default: 500) */
+  longPressDuration?: number
+  /** Max time in ms between taps for double tap (default: 300) */
+  doubleTapDelay?: number
+}
+
+/**
+ * Default gesture configuration values
+ */
+export const DEFAULT_GESTURE_CONFIG: Required<GestureConfig> = {
+  longPressDuration: 500,
+  doubleTapDelay: 300,
+}
+
+/**
+ * Internal state for tracking a registered container
+ */
+export interface GestureContainerState {
+  container: Phaser.GameObjects.Container
+  callbacks: GestureCallbacks
+  config: Required<GestureConfig>
+  hitArea: Phaser.Geom.Rectangle
+
+  // State for gesture detection
+  lastTapTime?: number | undefined
+  longPressTimer?: NodeJS.Timeout | undefined
+  pointerDownPosition?: { x: number; y: number } | undefined
+}

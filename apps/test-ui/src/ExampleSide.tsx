@@ -3,6 +3,7 @@ import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { FlexExample } from './examples/FlexExample'
+import { GestureExample } from './examples/GestureExample'
 import { LayoutExample } from './examples/LayoutExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { RefExample } from './examples/RefExample'
@@ -24,6 +25,7 @@ const examples = {
   layout: { label: 'Layout System', component: LayoutExample },
   advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
   toggle: { label: 'Toggle Buttons', component: ToggleButtonExample },
+  gesture: { label: 'Gesture System', component: GestureExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
   border: { label: 'Border & Corners', component: BorderExample },

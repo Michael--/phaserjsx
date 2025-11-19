@@ -2,15 +2,23 @@
  * View component implementation - native Phaser Container with background and interaction support
  */
 import Phaser from 'phaser'
-import type { BackgroundProps, InteractionProps, LayoutProps, TransformProps } from '../core-props'
+import type {
+  BackgroundProps,
+  GestureProps,
+  InteractionProps,
+  LayoutProps,
+  TransformProps,
+} from '../core-props'
 import { DebugLogger } from '../dev-config'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsContainerExtension, PropsDefaultExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
+import { applyGesturesProps } from './appliers/applyGestures'
 import { applyInteractionProps } from './appliers/applyInteraction'
 import { applyLayoutProps } from './appliers/applyLayout'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createBackground } from './creators/createBackground'
+import { createGestures } from './creators/createGestures'
 import { createInteraction } from './creators/createInteraction'
 import { createLayout } from './creators/createLayout'
 import { createTransform } from './creators/createTransform'
@@ -22,7 +30,8 @@ export interface ViewBaseProps
   extends TransformProps,
     LayoutProps,
     BackgroundProps,
-    InteractionProps {}
+    InteractionProps,
+    GestureProps {}
 
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
@@ -61,6 +70,9 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Setup pointer interaction if any event handlers are provided
   createInteraction(container, props)
 
+  // Setup gesture system (high-level touch/mouse gestures)
+  createGestures(scene, container, props)
+
   // Setup layout system (props and size provider)
   createLayout(container, props)
 
@@ -86,6 +98,9 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
 
   // Pointer event handlers
   applyInteractionProps(container, prev, next)
+
+  // Gesture event handlers (high-level touch/mouse gestures)
+  applyGesturesProps(container.scene, container, prev, next)
 
   // Apply layout props and recalculate if needed
   applyLayoutProps(container, prev, next)
