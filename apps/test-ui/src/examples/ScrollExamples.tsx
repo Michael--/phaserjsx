@@ -1,5 +1,6 @@
 import type { GestureEventData } from '@phaserjsx/ui'
 import { Text, useState, View } from '@phaserjsx/ui'
+import { Button } from '../App'
 import { ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
 import { Spacer } from '../components/Spacer'
@@ -208,6 +209,18 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           trackSize={200}
           scrollInfo={scroll}
           onScroll={handleHScroll}
+        />
+        <Button
+          text="Scroll to left/top"
+          onClick={() => setScroll({ ...scroll, dx: 0, dy: 0, scrollX: 0, scrollY: 0 })}
+        />
+        <Button
+          text="Scroll to center"
+          onClick={() => setScroll({ ...scroll, dx: 50, dy: 50, scrollX: 50, scrollY: 50 })}
+        />
+        <Button
+          text="Scroll to bottom/right"
+          onClick={() => setScroll({ ...scroll, dx: 100, dy: 100, scrollX: 100, scrollY: 100 })}
         />
       </View>
     </View>
