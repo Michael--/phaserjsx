@@ -65,7 +65,6 @@ export function ScrollView(props: ScrollViewProps) {
     // Calculate scrollbar size percentages
     const scrollWidthPercent = contentWidth > 0 ? (viewportWidth / contentWidth) * 100 : 100
     const scrollHeightPercent = contentHeight > 0 ? (viewportHeight / contentHeight) * 100 : 100
-
     setScroll({ dx: newScrollX, dy: newScrollY })
     onScroll?.(newScrollXPercent, newScrollYPercent, scrollWidthPercent, scrollHeightPercent)
   }
@@ -76,6 +75,8 @@ export function ScrollView(props: ScrollViewProps) {
 
     const deltaX = data.dx ?? 0
     const deltaY = data.dy ?? 0
+
+    console.log(deltaX, deltaY)
 
     calc(deltaX, deltaY)
   }

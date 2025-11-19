@@ -1,32 +1,33 @@
 import { Text, useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { ScrollView } from '../components'
+import { Spacer } from '../components/Spacer'
 
+function ListButton(props: { index: number }) {
+  const [count, setCount] = useState(0)
+  return (
+    <View key={props.index} justifyContent="center" alignItems="center" direction="row">
+      <Spacer />
+      <View
+        backgroundColor={0x0000aa}
+        backgroundAlpha={1.0}
+        enableGestures={true}
+        onTouch={(e) => {
+          e.stopPropagation() // prevent bubble up to ScrollView
+          setCount(count + 1)
+        }}
+      >
+        <Text text={`Button ${props.index + 1}`} style={{ fontSize: 14, color: 'white' }} />
+      </View>
+      <Text text={`${count}`} style={{ fontSize: 12, color: 'yellow' }} />
+    </View>
+  )
+}
 function Content(props: { count: number; width: string }) {
   const entry = (index: number) => {
-    if (index === 7) {
+    if (index % 3 === 0) {
       // return a button like view
-      return (
-        <View
-          key={index}
-          width={props.width}
-          height={50}
-          justifyContent="center"
-          alignItems="center"
-        >
-          <View
-            backgroundColor={0x0000aa}
-            backgroundAlpha={1.0}
-            enableGestures={true}
-            onTouch={(e) => {
-              console.log('Button clicked!')
-              e.stopPropagation() // Prevent ScrollView from receiving this event
-            }}
-          >
-            <Text text={`Button ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />
-          </View>
-        </View>
-      )
+      return <ListButton index={index} />
     }
     return (
       <View
@@ -183,6 +184,76 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
   )
 }
 
+function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
+  const [scroll, setScroll] = useState({
+    dx: 0,
+    dy: 0,
+    scrollX: 0,
+    scrollY: 0,
+    width: 0,
+    height: 0,
+  })
+
+  const handleScrollViewScroll = (x: number, y: number, w: number, h: number) => {
+    // Calculate absolute scroll positions from percentages
+    const contentHeight = 200 / (h / 100)
+    const maxScrollY = contentHeight - 200
+    const dy = (y / 100) * maxScrollY
+
+    const contentWidth = 200 / (w / 100)
+    const maxScrollX = contentWidth - 200
+    const dx = (x / 100) * maxScrollX
+
+    setScroll({ dx, dy, scrollX: x, scrollY: y, width: w, height: h })
+  }
+
+  const handleSliderScroll = (scrollYPercent: number) => {
+    const contentHeight = 200 / (scroll.height / 100)
+    const maxScrollY = contentHeight - 200
+    const dy = (scrollYPercent / 100) * maxScrollY
+
+    setScroll({ ...scroll, dy, scrollY: scrollYPercent })
+  }
+
+  return (
+    <View padding={0} alignItems="center">
+      <Text text={props.title} style={{ fontSize: 16, color: 'orange' }} />
+      <View direction="column" gap={2} padding={0} margin={0}>
+        <View direction="row" gap={2} padding={0} margin={0}>
+          <View
+            height={204}
+            width={204}
+            borderColor={0xffffff}
+            borderWidth={2}
+            padding={2}
+            direction="row"
+            gap={0}
+          >
+            <View width={200} height={200} padding={0}>
+              <ScrollView scroll={scroll} onScroll={handleScrollViewScroll}>
+                <View
+                  direction="stack"
+                  width={300}
+                  height={300}
+                  padding={0}
+                  backgroundColor={0x444400}
+                >
+                  <View x={0} y={0} width={50} height={50} backgroundColor={0xff00000}></View>
+                  <View x={125} y={125} width={50} height={50} backgroundColor={0xff00000}></View>
+                  <View x={250} y={250} width={50} height={50} backgroundColor={0xff00000}></View>
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+          <Slider scroll={scroll} trackHeight={200} onScroll={handleSliderScroll} />
+        </View>
+        {/** Adjust to be a horizontal slider in Slider itself (not yet supported) */}
+        <Slider scroll={scroll} trackHeight={200} onScroll={handleSliderScroll} />
+      </View>
+    </View>
+  )
+}
+
 export function ScrollExample() {
   return (
     /** inherit all default theme */
@@ -196,6 +267,7 @@ export function ScrollExample() {
       {/** disable padding for only the next */}
       <View direction="row">
         <ScrollExampleSliderLocal title="V-Slider" count={20} width="100%" />
+        <ScrollExampleSliderFullLocal title="XY-Slider" width="100%" />
       </View>
     </View>
   )
