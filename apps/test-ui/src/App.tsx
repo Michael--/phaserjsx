@@ -95,10 +95,12 @@ const globalTheme = createTheme({
   },
 
   ScrollSlider: {
+    borderColor: 0x222222,
     trackColor: 0x444444,
-    thumbColor: 0xeeeebb,
-    borderWidth: 1,
+    thumbColor: 0xeeeedd,
+    borderWidth: 2,
     minThumbSize: 30,
+    size: 30,
   },
 
   ExampleContainer: {

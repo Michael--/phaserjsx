@@ -9,10 +9,12 @@ import type Phaser from 'phaser'
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     ScrollSlider: {
-      thumbColor?: number
+      borderColor?: number
       trackColor?: number
-      minThumbSize?: number
+      thumbColor?: number
       borderWidth?: number
+      size?: number
+      minThumbSize?: number
     }
   }
 }
@@ -46,9 +48,14 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const scrollPercent = isVertical ? scrollInfo.scrollY : scrollInfo.scrollX
   const sizePercent = isVertical ? scrollInfo.height : scrollInfo.width
 
+  const border = themed.borderWidth ?? 1
+  const outer = themed.size ?? 24
+  const dimension = outer - border * 2
+  const trackSizeInner = trackSize - border * 2
   const minThumbSize = themed.minThumbSize ?? 20
-  const thumbSize = Math.max(minThumbSize, (trackSize * sizePercent) / 100)
-  const thumbPosition = (scrollPercent / 100) * (trackSize - thumbSize)
+  const thumbSize = Math.max(minThumbSize, (trackSizeInner * sizePercent) / 100)
+  const thumbRange = trackSizeInner - thumbSize
+  const thumbPosition = (scrollPercent / 100) * thumbRange
 
   const handleThumbTouchMove = (data: GestureEventData) => {
     if (data.state === 'start') {
@@ -64,47 +71,53 @@ export function ScrollSlider(props: ScrollSliderProps) {
     if (!isDraggingRef.current) return
 
     const delta = isVertical ? (data.dy ?? 0) : (data.dx ?? 0)
-    const trackRange = trackSize - thumbSize
-    const currentThumbPos = (scrollPercent / 100) * trackRange
-    const newThumbPos = Math.max(0, Math.min(trackRange, currentThumbPos + delta))
-    const newScrollPercent = trackRange > 0 ? (newThumbPos / trackRange) * 100 : 0
+    const currentThumbPos = (scrollPercent / 100) * thumbRange
+    const newThumbPos = Math.max(0, Math.min(thumbRange, currentThumbPos + delta))
+    const newScrollPercent = thumbRange > 0 ? (newThumbPos / thumbRange) * 100 : 0
 
     onScroll(newScrollPercent)
   }
 
   const handleBackgroundTouch = (data: { localX?: number; localY?: number }) => {
     const localPos = isVertical ? (data.localY ?? 0) : (data.localX ?? 0)
-    const effectiveSize = trackSize - 2
-    const normalizedPos = (localPos - 1) / effectiveSize
-    const targetScrollPercent = Math.max(0, Math.min(100, normalizedPos * 100))
+    const effectiveSize = trackSizeInner
+    const normalizedPos = Math.max(0, Math.min(1, localPos / effectiveSize))
+    const targetScrollPercent = normalizedPos * 100
     onScroll(targetScrollPercent)
   }
 
   return (
     <View
-      ref={sliderRef}
-      width={isVertical ? 24 : trackSize}
-      height={isVertical ? trackSize : 24}
-      backgroundColor={themed.trackColor ?? 0xdddddd}
-      direction="stack"
-      padding={themed.borderWidth ?? 1}
+      width={isVertical ? outer : trackSize}
+      height={isVertical ? trackSize : outer}
+      backgroundColor={themed.borderColor ?? 0x000000}
+      padding={border}
     >
       <View
-        width={'fill'}
-        height={'fill'}
-        backgroundColor={0xaaaaaa}
-        enableGestures={true}
-        onTouch={handleBackgroundTouch}
-      />
-      <View
-        width={isVertical ? 'fill' : thumbSize}
-        height={isVertical ? thumbSize : 'fill'}
-        x={isVertical ? (themed.borderWidth ?? 1) : thumbPosition}
-        y={isVertical ? thumbPosition : (themed.borderWidth ?? 1)}
-        backgroundColor={themed.thumbColor ?? 0xeeeebb}
-        enableGestures={true}
-        onTouchMove={handleThumbTouchMove}
-      />
+        ref={sliderRef}
+        width={isVertical ? dimension : trackSizeInner}
+        height={isVertical ? trackSizeInner : dimension}
+        backgroundColor={themed.trackColor ?? 0xdddddd}
+        direction="stack"
+        padding={0}
+      >
+        <View
+          width={'fill'}
+          height={'fill'}
+          backgroundColor={themed.trackColor ?? 0xaaaaaa}
+          enableGestures={true}
+          onTouch={handleBackgroundTouch}
+        />
+        <View
+          width={isVertical ? 'fill' : thumbSize}
+          height={isVertical ? thumbSize : 'fill'}
+          x={isVertical ? 0 : thumbPosition}
+          y={isVertical ? thumbPosition : 0}
+          backgroundColor={themed.thumbColor ?? 0xeeeebb}
+          enableGestures={true}
+          onTouchMove={handleThumbTouchMove}
+        />
+      </View>
     </View>
   )
 }
