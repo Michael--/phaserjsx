@@ -18,8 +18,9 @@ function Content(props: { count: number; width: string }) {
             backgroundColor={0x0000aa}
             backgroundAlpha={1.0}
             enableGestures={true}
-            onTouch={() => {
+            onTouch={(e) => {
               console.log('Button clicked!')
+              e.stopPropagation() // Prevent ScrollView from receiving this event
             }}
           >
             <Text text={`Button ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />

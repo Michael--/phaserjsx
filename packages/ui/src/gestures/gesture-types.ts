@@ -10,6 +10,7 @@ export type TouchMoveState = 'start' | 'move' | 'end'
 
 /**
  * Data passed to gesture event handlers
+ * Supports DOM-style event propagation control
  */
 export interface GestureEventData {
   /** The Phaser pointer that triggered the event */
@@ -30,6 +31,19 @@ export interface GestureEventData {
   isInside?: boolean
   /** Current state of touch move gesture: 'start' (first move), 'move' (during), 'end' (pointer up) (only for onTouchMove) */
   state?: TouchMoveState
+
+  /**
+   * Stop event propagation to parent containers
+   * Similar to DOM's event.stopPropagation()
+   * Default behavior: events bubble up to parent containers
+   */
+  stopPropagation(): void
+
+  /**
+   * Check if propagation has been stopped
+   * @returns true if stopPropagation() was called
+   */
+  isPropagationStopped(): boolean
 }
 
 /**

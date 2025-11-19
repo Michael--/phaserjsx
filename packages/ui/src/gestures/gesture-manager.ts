@@ -117,6 +117,78 @@ export class GestureManager {
   }
 
   /**
+   * Create a gesture event data object with propagation control
+   * @param pointer - Phaser pointer
+   * @param localX - Local X coordinate
+   * @param localY - Local Y coordinate
+   * @param width - Hit area width
+   * @param height - Hit area height
+   * @param options - Optional additional data (dx, dy, isInside, state)
+   * @returns Event data with stopPropagation support
+   */
+  private createEventData(
+    pointer: Phaser.Input.Pointer,
+    localX: number,
+    localY: number,
+    width: number,
+    height: number,
+    options: {
+      dx?: number
+      dy?: number
+      isInside?: boolean
+      state?: 'start' | 'move' | 'end'
+    } = {}
+  ): GestureEventData {
+    let propagationStopped = false
+
+    return {
+      pointer,
+      localX,
+      localY,
+      width,
+      height,
+      ...options,
+      stopPropagation() {
+        propagationStopped = true
+      },
+      isPropagationStopped() {
+        return propagationStopped
+      },
+    }
+  }
+
+  /**
+   * Bubble an event through overlapping containers
+   * Iterates all containers at pointer position and calls handler until stopPropagation
+   * @param pointer - The pointer that triggered the event
+   * @param eventType - Type of event for filtering callbacks
+   * @param handler - Function to call for each container, returns true if propagation stopped
+   */
+  private bubbleEvent(
+    pointer: Phaser.Input.Pointer,
+    eventType: keyof GestureCallbacks,
+    handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void
+  ): void {
+    // Get all containers at pointer position in reverse order (topmost first)
+    const containersArray = Array.from(this.containers.values()).reverse()
+
+    for (const state of containersArray) {
+      // Only process containers that have the callback for this event type
+      if (!state.callbacks[eventType]) continue
+
+      // Check if pointer is within this container
+      if (!this.isPointerInContainer(pointer, state)) continue
+
+      // Calculate local position
+      const localPos = this.getLocalPosition(pointer, state.container)
+
+      // Call handler and check if propagation was stopped
+      const stopped = handler(state, localPos)
+      if (stopped) break
+    }
+  }
+
+  /**
    * Update hit area for a container
    * @param container - Container to update
    * @param hitArea - New hit area
@@ -172,13 +244,13 @@ export class GestureManager {
         if (state.callbacks.onLongPress) {
           state.longPressTimer = setTimeout(() => {
             if (this.activePointerDown?.container === state.container) {
-              const data: GestureEventData = {
+              const data = this.createEventData(
                 pointer,
-                localX: localPos.x,
-                localY: localPos.y,
-                width: state.hitArea.width,
-                height: state.hitArea.height,
-              }
+                localPos.x,
+                localPos.y,
+                state.hitArea.width,
+                state.hitArea.height
+              )
               state.callbacks.onLongPress?.(data)
 
               // Mark that long press was triggered to prevent onTouch
@@ -228,17 +300,14 @@ export class GestureManager {
       const dx = last ? pointer.x - last.x : 0
       const dy = last ? pointer.y - last.y : 0
 
-      const finalMoveData: GestureEventData = {
+      const finalMoveData = this.createEventData(
         pointer,
-        localX: localPos.x,
-        localY: localPos.y,
-        dx,
-        dy,
-        width: state.hitArea.width,
-        height: state.hitArea.height,
-        isInside,
-        state: 'end',
-      }
+        localPos.x,
+        localPos.y,
+        state.hitArea.width,
+        state.hitArea.height,
+        { dx, dy, isInside, state: 'end' }
+      )
       state.callbacks.onTouchMove(finalMoveData)
     }
 
@@ -250,21 +319,24 @@ export class GestureManager {
     // Check if pointer is still within the container (basic tap/click detection)
     // For now, we require pointer up to be inside - could be made configurable
     if (this.isPointerInContainer(pointer, state)) {
-      const localPos = this.getLocalPosition(pointer, state.container)
-      const data: GestureEventData = {
-        pointer,
-        localX: localPos.x,
-        localY: localPos.y,
-        width: state.hitArea.width,
-        height: state.hitArea.height,
-      }
-
       // Fire onTouch only if:
       // - Long press wasn't triggered
       // - Touch duration is within acceptable range (not held too long)
       const shouldFireTouch = !state.longPressTriggered && !isTouchTooLong
+
+      // Bubble onTouch event to parent containers
       if (state.callbacks.onTouch && shouldFireTouch) {
-        state.callbacks.onTouch(data)
+        this.bubbleEvent(pointer, 'onTouch', (targetState, targetLocalPos) => {
+          const data = this.createEventData(
+            pointer,
+            targetLocalPos.x,
+            targetLocalPos.y,
+            targetState.hitArea.width,
+            targetState.hitArea.height
+          )
+          targetState.callbacks.onTouch?.(data)
+          return data.isPropagationStopped()
+        })
       }
 
       // Check for double tap (also skip if touch was too long)
@@ -273,7 +345,17 @@ export class GestureManager {
         const timeSinceLastTap = state.lastTapTime ? now - state.lastTapTime : Infinity
 
         if (timeSinceLastTap <= state.config.doubleTapDelay) {
-          state.callbacks.onDoubleTap(data)
+          this.bubbleEvent(pointer, 'onDoubleTap', (targetState, targetLocalPos) => {
+            const data = this.createEventData(
+              pointer,
+              targetLocalPos.x,
+              targetLocalPos.y,
+              targetState.hitArea.width,
+              targetState.hitArea.height
+            )
+            targetState.callbacks.onDoubleTap?.(data)
+            return data.isPropagationStopped()
+          })
           state.lastTapTime = undefined // Reset to prevent triple-tap
         } else {
           state.lastTapTime = now
@@ -315,17 +397,14 @@ export class GestureManager {
           state.isFirstMove = false
         }
 
-        const data: GestureEventData = {
+        const data = this.createEventData(
           pointer,
-          localX: localPos.x,
-          localY: localPos.y,
-          dx,
-          dy,
-          width: state.hitArea.width,
-          height: state.hitArea.height,
-          isInside,
-          state: moveState,
-        }
+          localPos.x,
+          localPos.y,
+          state.hitArea.width,
+          state.hitArea.height,
+          { dx, dy, isInside, state: moveState }
+        )
         state.callbacks.onTouchMove(data)
       }
     }

@@ -3,6 +3,12 @@
  * These prop groups can be composed to build component-specific props
  */
 
+// Import gesture types first so they can be used in GestureProps
+import type { GestureEventData, TouchMoveState } from './gestures/gesture-types'
+
+// Re-export for public API
+export type { GestureEventData, TouchMoveState }
+
 /**
  * Transform properties - position, rotation, scale, depth, visibility
  */
@@ -205,35 +211,6 @@ export interface TextSpecificProps {
   fontStyle?: string
   align?: 'left' | 'center' | 'right'
   maxWidth?: number
-}
-
-/**
- * Touch move gesture state
- */
-export type TouchMoveState = 'start' | 'move' | 'end'
-
-/**
- * Data passed to gesture event handlers
- */
-export interface GestureEventData {
-  /** The Phaser pointer that triggered the event */
-  pointer: Phaser.Input.Pointer
-  /** Local X coordinate relative to container origin (0,0) */
-  localX: number
-  /** Local Y coordinate relative to container origin (0,0) */
-  localY: number
-  /** Delta X since last move event (only for onTouchMove) */
-  dx?: number
-  /** Delta Y since last move event (only for onTouchMove) */
-  dy?: number
-  /** Width of the container's hit area */
-  width: number
-  /** Height of the container's hit area */
-  height: number
-  /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
-  isInside?: boolean
-  /** Current state of touch move gesture: 'start' (first move), 'move' (during), 'end' (pointer up) (only for onTouchMove) */
-  state?: TouchMoveState
 }
 
 /**
