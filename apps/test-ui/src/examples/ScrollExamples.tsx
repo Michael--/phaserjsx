@@ -3,21 +3,47 @@ import type Phaser from 'phaser'
 import { ScrollView } from '../components'
 
 function Content(props: { count: number; width: string }) {
-  return (
-    <View padding={0} gap={0}>
-      {Array.from({ length: props.count }).map((_, index) => (
+  const entry = (index: number) => {
+    if (index === 7) {
+      // return a button like view
+      return (
         <View
           key={index}
           width={props.width}
           height={50}
-          backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
-          backgroundAlpha={1.0}
           justifyContent="center"
           alignItems="center"
         >
-          <Text text={`Item ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />
+          <View
+            backgroundColor={0x0000aa}
+            backgroundAlpha={1.0}
+            enableGestures={true}
+            onTouch={() => {
+              console.log('Button clicked!')
+            }}
+          >
+            <Text text={`Button ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />
+          </View>
         </View>
-      ))}
+      )
+    }
+    return (
+      <View
+        key={index}
+        width={props.width}
+        height={50}
+        backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
+        backgroundAlpha={1.0}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text text={`Item ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />
+      </View>
+    )
+  }
+  return (
+    <View padding={0} gap={0}>
+      {Array.from({ length: props.count }).map((_, index) => entry(index))}
     </View>
   )
 }
