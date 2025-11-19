@@ -131,6 +131,10 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
     width: 0,
     height: 0,
   })
+  // define the view and content sizes for scroll calculations
+  const viewSize = 200
+  const contentSize = 300
+  const rect = 50
 
   const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
     // Calculate absolute scroll positions from percentages
@@ -151,7 +155,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
   }
 
   const handleVScroll = (percent: number) => {
-    const vh = 200
+    const vh = viewSize
     const ch = vh / (scroll.height / 100)
     const maxScrollY = Math.max(0, ch - vh)
     const dy = (percent / 100) * maxScrollY
@@ -159,7 +163,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
   }
 
   const handleHScroll = (percent: number) => {
-    const vw = 200
+    const vw = viewSize
     const cw = vw / (scroll.width / 100)
     const maxScrollX = Math.max(0, cw - vw)
     const dx = (percent / 100) * maxScrollX
@@ -172,33 +176,45 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
           <View
-            height={204}
-            width={204}
+            height={viewSize + 4}
+            width={viewSize + 4}
             borderColor={0xffffff}
             borderWidth={2}
             padding={2}
             direction="row"
             gap={0}
           >
-            <View width={200} height={200} padding={0}>
+            <View width={viewSize} height={viewSize} padding={0}>
               <ScrollView scroll={scroll} onScroll={handleScroll}>
                 <View
                   direction="stack"
-                  width={300}
-                  height={300}
+                  width={contentSize}
+                  height={contentSize}
                   padding={0}
                   backgroundColor={0x444400}
                 >
-                  <View x={0} y={0} width={50} height={50} backgroundColor={0xff00000}></View>
-                  <View x={125} y={125} width={50} height={50} backgroundColor={0xff00000}></View>
-                  <View x={250} y={250} width={50} height={50} backgroundColor={0xff00000}></View>
+                  <View x={0} y={0} width={rect} height={rect} backgroundColor={0xff00000}></View>
+                  <View
+                    x={(contentSize - rect) / 2}
+                    y={(contentSize - rect) / 2}
+                    width={rect}
+                    height={rect}
+                    backgroundColor={0xff00000}
+                  ></View>
+                  <View
+                    x={contentSize - rect}
+                    y={contentSize - rect}
+                    width={rect}
+                    height={rect}
+                    backgroundColor={0xff00000}
+                  ></View>
                 </View>
               </ScrollView>
             </View>
           </View>
           <ScrollSlider
             direction="vertical"
-            trackSize={200}
+            trackSize={viewSize}
             scrollInfo={scroll}
             onScroll={handleVScroll}
           />
@@ -206,7 +222,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
         {/** Horizontal slider */}
         <ScrollSlider
           direction="horizontal"
-          trackSize={200}
+          trackSize={viewSize}
           scrollInfo={scroll}
           onScroll={handleHScroll}
         />
@@ -216,11 +232,27 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
         />
         <Button
           text="Scroll to center"
-          onClick={() => setScroll({ ...scroll, dx: 50, dy: 50, scrollX: 50, scrollY: 50 })}
+          onClick={() =>
+            setScroll({
+              ...scroll,
+              dx: (contentSize - viewSize) / 2,
+              dy: (contentSize - viewSize) / 2,
+              scrollX: 50,
+              scrollY: 50,
+            })
+          }
         />
         <Button
           text="Scroll to bottom/right"
-          onClick={() => setScroll({ ...scroll, dx: 100, dy: 100, scrollX: 100, scrollY: 100 })}
+          onClick={() =>
+            setScroll({
+              ...scroll,
+              dx: contentSize - viewSize,
+              dy: contentSize - viewSize,
+              scrollX: 100,
+              scrollY: 100,
+            })
+          }
         />
       </View>
     </View>
