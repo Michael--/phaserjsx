@@ -39,12 +39,11 @@ export function createGestures(
   // Get scene's gesture manager
   const manager = getGestureManager(scene)
 
-  // Calculate hit area (same logic as createInteraction for consistency)
+  // Calculate hit area dimensions
   const width = typeof props.width === 'number' ? props.width : 100
   const height = typeof props.height === 'number' ? props.height : 100
 
-  // Create hit area centered around container's origin
-  // Phaser containers treat hit areas relative to their center
+  // Create hit area with origin at (0,0) - matches our component system
   const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
   // Build callbacks object

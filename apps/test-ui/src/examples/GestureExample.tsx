@@ -55,10 +55,11 @@ function DoubleTapButton() {
 }
 
 /**
- * Long press detection example
+ * Long press detection example - no onTouch after long press
  */
 function LongPressButton() {
   const [longPressCount, setLongPressCount] = useState(0)
+  const [touchCount, setTouchCount] = useState(0)
 
   return (
     <View
@@ -71,24 +72,28 @@ function LongPressButton() {
       justifyContent="center"
       enableGestures={true}
       longPressDuration={800}
+      onTouch={() => {
+        setTouchCount((c) => c + 1)
+      }}
       onLongPress={() => {
         setLongPressCount((c) => c + 1)
       }}
     >
       <Text
-        text={`Long Press (800ms): ${longPressCount}`}
-        style={{ fontSize: 14, color: 'black' }}
+        text={`Long: ${longPressCount} | Touch: ${touchCount}`}
+        style={{ fontSize: 13, color: 'black' }}
       />
     </View>
   )
 }
 
 /**
- * Touch move / drag example with delta tracking
+ * Touch move / drag example with delta tracking and hitArea info
  */
 function DragBox() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const [localPos, setLocalPos] = useState({ x: 0, y: 0 })
 
   return (
     <View
@@ -110,13 +115,20 @@ function DragBox() {
           x: pos.x + dx,
           y: pos.y + dy,
         }))
+        // Store local position and hitArea dimensions for display
+        setLocalPos({ x: data.localX, y: data.localY })
       }}
     >
-      <Text text={`Drag Me!`} style={{ fontSize: 16, color: 'white', fontStyle: 'bold' }} y={-20} />
+      <Text text={`Drag Me!`} style={{ fontSize: 16, color: 'white', fontStyle: 'bold' }} y={-25} />
       <Text
-        text={`dx: ${position.x.toFixed(0)}, dy: ${position.y.toFixed(0)}`}
+        text={`Δ: ${position.x.toFixed(0)}, ${position.y.toFixed(0)}`}
         style={{ fontSize: 12, color: 'white' }}
-        y={10}
+        y={0}
+      />
+      <Text
+        text={`Local: ${localPos.x.toFixed(0)}, ${localPos.y.toFixed(0)}`}
+        style={{ fontSize: 10, color: '#cccccc' }}
+        y={15}
       />
     </View>
   )
@@ -151,7 +163,7 @@ export function GestureExample() {
 
         <View>
           <Text
-            text="Long Press (hold 800ms):"
+            text="Long Press vs Touch (hold 800ms, no Touch after LongPress):"
             style={{ fontSize: 12, color: '#cccccc' }}
             y={-25}
           />

@@ -9,14 +9,18 @@ import type Phaser from 'phaser'
 export interface GestureEventData {
   /** The Phaser pointer that triggered the event */
   pointer: Phaser.Input.Pointer
-  /** Local X coordinate relative to container origin */
+  /** Local X coordinate relative to container origin (0,0) */
   localX: number
-  /** Local Y coordinate relative to container origin */
+  /** Local Y coordinate relative to container origin (0,0) */
   localY: number
   /** Delta X since last move event (only for onTouchMove) */
   dx?: number
   /** Delta Y since last move event (only for onTouchMove) */
   dy?: number
+  /** Width of the container's hit area */
+  width: number
+  /** Height of the container's hit area */
+  height: number
 }
 
 /**
@@ -64,4 +68,5 @@ export interface GestureContainerState {
   lastTapTime?: number | undefined
   longPressTimer?: NodeJS.Timeout | undefined
   pointerDownPosition?: { x: number; y: number } | undefined
+  longPressTriggered?: boolean | undefined
 }

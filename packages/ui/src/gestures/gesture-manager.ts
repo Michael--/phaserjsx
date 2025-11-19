@@ -149,6 +149,9 @@ export class GestureManager {
           startY: pointer.y,
         }
 
+        // Reset long press triggered flag
+        state.longPressTriggered = false
+
         // Start long press timer if callback exists
         if (state.callbacks.onLongPress) {
           state.longPressTimer = setTimeout(() => {
@@ -157,10 +160,13 @@ export class GestureManager {
                 pointer,
                 localX: localPos.x,
                 localY: localPos.y,
+                width: state.hitArea.width,
+                height: state.hitArea.height,
               }
               state.callbacks.onLongPress?.(data)
 
-              // Clear active pointer so onTouch doesn't fire after long press
+              // Mark that long press was triggered to prevent onTouch
+              state.longPressTriggered = true
               this.activePointerDown = null
             }
           }, state.config.longPressDuration)
@@ -188,7 +194,8 @@ export class GestureManager {
       return
     }
 
-    // Clear long press timer
+    // Clear long press timer if still pending
+    const wasLongPressActive = !!state.longPressTimer
     if (state.longPressTimer) {
       clearTimeout(state.longPressTimer)
       state.longPressTimer = undefined
@@ -202,15 +209,20 @@ export class GestureManager {
         pointer,
         localX: localPos.x,
         localY: localPos.y,
+        width: state.hitArea.width,
+        height: state.hitArea.height,
       }
 
-      // Fire onTouch
-      if (state.callbacks.onTouch) {
+      // Fire onTouch only if long press wasn't triggered or timer was cancelled early
+      // Don't fire onTouch if the long press timer was active for significant time
+      const shouldFireTouch =
+        !state.longPressTriggered && (!wasLongPressActive || !state.callbacks.onLongPress)
+      if (state.callbacks.onTouch && shouldFireTouch) {
         state.callbacks.onTouch(data)
       }
 
-      // Check for double tap
-      if (state.callbacks.onDoubleTap) {
+      // Check for double tap (also skip if long press was involved)
+      if (state.callbacks.onDoubleTap && shouldFireTouch) {
         const now = Date.now()
         const timeSinceLastTap = state.lastTapTime ? now - state.lastTapTime : Infinity
 
@@ -222,6 +234,9 @@ export class GestureManager {
         }
       }
     }
+
+    // Reset long press triggered flag
+    state.longPressTriggered = false
 
     this.activePointerDown = null
     state.pointerDownPosition = undefined
@@ -251,6 +266,8 @@ export class GestureManager {
           localY: localPos.y,
           dx,
           dy,
+          width: state.hitArea.width,
+          height: state.hitArea.height,
         }
         state.callbacks.onTouchMove(data)
       }
