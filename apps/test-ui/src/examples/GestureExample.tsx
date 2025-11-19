@@ -127,7 +127,14 @@ function DragBox() {
 
         // Handle state transitions
         if (data.state === 'start') {
-          console.log('Drag started at:', data.localX.toFixed(0), data.localY.toFixed(0))
+          console.log(
+            'Drag started at:',
+            data.localX.toFixed(0),
+            data.localY.toFixed(0),
+            'dimension',
+            data.width,
+            data.height
+          )
           setGestureState(true)
         } else if (data.state === 'end') {
           console.log('Drag ended at:', data.localX.toFixed(0), data.localY.toFixed(0))

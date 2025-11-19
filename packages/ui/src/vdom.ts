@@ -6,6 +6,7 @@ import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
+import { getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
@@ -14,6 +15,29 @@ import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
+
+/**
+ * Updates gesture hit area based on current layout size
+ * Called after layout recalculation to sync hit area with actual container size
+ * @param container - Container with potential gesture registration
+ */
+function updateGestureHitAreaAfterLayout(container: Phaser.GameObjects.Container): void {
+  const containerWithLayout = container as typeof container & {
+    __getLayoutSize?: () => { width: number; height: number }
+  }
+
+  // Only update if container has gesture system enabled and layout size available
+  if (!containerWithLayout.__getLayoutSize) return
+
+  try {
+    const manager = getGestureManager(container.scene)
+    const size = containerWithLayout.__getLayoutSize()
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, size.width, size.height)
+    manager.updateHitArea(container, hitArea)
+  } catch {
+    // Gesture manager or container not registered, ignore
+  }
+}
 
 /**
  * Layout-relevant props that trigger layout recalculation when changed
@@ -262,6 +286,9 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     }
 
     calculateLayout(container, container.__layoutProps ?? {}, parentSize)
+
+    // Update gesture hit area after initial layout
+    updateGestureHitAreaAfterLayout(container)
   }
 
   return node
@@ -546,6 +573,9 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       }
 
       calculateLayout(container, container.__layoutProps, parentSize)
+
+      // Update gesture hit area after layout recalculation
+      updateGestureHitAreaAfterLayout(container)
     }
   }
 }

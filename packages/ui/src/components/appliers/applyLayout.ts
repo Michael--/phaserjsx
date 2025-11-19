@@ -3,7 +3,32 @@
  */
 import equal from 'fast-deep-equal'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
+import { getGestureManager } from '../../gestures/gesture-manager'
 import { calculateLayout } from '../../layout/index'
+
+/**
+ * Updates gesture hit area based on current layout size
+ * Called after layout recalculation to sync hit area with actual container size
+ * @param node - Container with potential gesture registration
+ */
+function updateGestureHitAreaIfNeeded(node: Phaser.GameObjects.Container): void {
+  const containerWithLayout = node as typeof node & {
+    __getLayoutSize?: () => { width: number; height: number }
+    scene: Phaser.Scene
+  }
+
+  // Only update if container has gesture system enabled and layout size available
+  if (!containerWithLayout.__getLayoutSize) return
+
+  try {
+    const manager = getGestureManager(containerWithLayout.scene)
+    const size = containerWithLayout.__getLayoutSize()
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, size.width, size.height)
+    manager.updateHitArea(node, hitArea)
+  } catch {
+    // Gesture manager or container not registered, ignore
+  }
+}
 
 /**
  * Layout-relevant props that trigger layout recalculation when changed
@@ -79,6 +104,9 @@ export function applyLayoutProps(
   // This prevents double-calculation while still catching container prop changes
   if (hasLayoutPropsChanged(prev, next)) {
     calculateLayout(node, next)
+    // Update gesture hit area after layout recalculation
+    // This ensures hit area matches actual container size (important for auto-sized containers)
+    updateGestureHitAreaIfNeeded(node)
   }
   // Note: If children changed (text content, child added/removed, etc.),
   // the VDOM layer will detect that and call calculateLayout separately
