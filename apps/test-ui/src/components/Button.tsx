@@ -1,17 +1,20 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, View, type ChildrenType } from '@phaserjsx/ui'
 
-// Module augmentation to add ScrollSlider theme to CustomComponentThemes
+// Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Button: {
-      dummy?: number
-    } & PhaserJSX.NestedComponentThemes
+      disabledColor?: number
+      primary?: PhaserJSX.ViewTheme
+      secondary?: PhaserJSX.ViewTheme
+      outline?: PhaserJSX.ViewTheme
+    } & PhaserJSX.ViewTheme
   }
 }
 
 /**
- * A simple button component with text and click handler
+ * Props for Button component
  */
 export interface ButtonProps {
   text?: string
@@ -19,26 +22,44 @@ export interface ButtonProps {
   width?: number
   height?: number
   children?: ChildrenType
+  disabled?: boolean
+  variant?: 'primary' | 'secondary' | 'outline'
 }
 
+/**
+ * Button component with variant support and disabled state
+ * @param props - Button properties
+ * @returns Button JSX element
+ */
 export function Button(props: ButtonProps) {
   const { props: themed, nestedTheme } = getThemedProps('Button', undefined, {})
 
-  // Example usage of themed prop & avoid unused variable warning for a while
-  if (themed.dummy == 42) console.log(themed.dummy)
+  // Merge base theme with variant-specific overrides
+  const variantTheme = props.variant
+    ? { ...themed, ...(themed as Record<string, PhaserJSX.ViewTheme>)[props.variant] }
+    : themed
+
+  // Apply disabled state styling
+  const effectiveTheme = props.disabled
+    ? {
+        ...variantTheme,
+        backgroundColor: themed.disabledColor ?? variantTheme?.backgroundColor,
+        alpha: 0.5,
+      }
+    : variantTheme
+
+  const handleTouch = !props.disabled && props.onClick ? () => props.onClick?.() : undefined
 
   return (
     <View
       theme={nestedTheme}
       width={props.width}
       height={props.height}
-      enableGestures
-      onTouch={() => {
-        props.onClick?.()
-      }}
+      enableGestures={!props.disabled}
+      {...(handleTouch && { onTouch: handleTouch })}
+      {...effectiveTheme}
     >
-      {props.text != null && <Text text={props.text} />}
-      {props.children}
+      {props.text != null ? <Text text={props.text} /> : props.children}
     </View>
   )
 }

@@ -55,16 +55,28 @@ export const globalTheme = createTheme({
   },
 
   Button: {
-    dummy: 0x0044aa,
-    View: {
-      backgroundColor: 0x0044aa,
-      backgroundAlpha: 1.0,
-      borderColor: 0x002266,
+    disabledColor: 0x666666,
+    backgroundColor: 0x4a90e2,
+    backgroundAlpha: 1.0,
+    borderColor: 0x357abd,
+    borderWidth: 1,
+    cornerRadius: 6,
+    padding: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    primary: {
+      backgroundColor: 0x007bff,
+      borderColor: 0x0056b3,
+    },
+    secondary: {
+      backgroundColor: 0x6c757d,
+      borderColor: 0x545b62,
+    },
+    outline: {
+      backgroundColor: 0x000000,
+      backgroundAlpha: 0.0,
+      borderColor: 0xaa7bff,
       borderWidth: 2,
-      cornerRadius: 8,
-      padding: 10,
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     Text: {
       style: {

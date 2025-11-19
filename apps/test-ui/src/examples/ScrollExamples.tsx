@@ -226,10 +226,12 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           onScroll={handleHScroll}
         />
         <Button
+          variant="primary"
           text="Scroll to left/top"
           onClick={() => setScroll({ ...scroll, dx: 0, dy: 0, scrollX: 0, scrollY: 0 })}
         />
         <Button
+          variant="primary"
           text="Scroll to center"
           onClick={() =>
             setScroll({
@@ -242,6 +244,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           }
         />
         <Button
+          variant="primary"
           text="Scroll to bottom/right"
           onClick={() =>
             setScroll({

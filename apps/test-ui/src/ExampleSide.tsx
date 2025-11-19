@@ -3,6 +3,7 @@ import { getThemedProps, Text, View } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
+import { ButtonExample } from './examples/ButtonExample'
 import { FlexExample } from './examples/FlexExample'
 import { GestureExample } from './examples/GestureExample'
 import { LayoutExample } from './examples/LayoutExample'
@@ -25,6 +26,7 @@ declare module '@phaserjsx/ui' {
 const examples = {
   layout: { label: 'Layout System', component: LayoutExample },
   advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
+  button: { label: 'Button Variants', component: ButtonExample },
   toggle: { label: 'Toggle Buttons', component: ToggleButtonExample },
   gesture: { label: 'Gesture System', component: GestureExample },
   stack: { label: 'Stack', component: StackExample },
