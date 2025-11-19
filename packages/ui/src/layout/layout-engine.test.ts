@@ -619,6 +619,99 @@ describe('alignItems with gap', () => {
     expect(child1.y).toBe(5)
     expect(child2.y).toBe(5)
   })
+
+  it('stretches children to full cross-axis in row direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(60, 20, false)
+    const child2 = mockContainer(60, 40, false)
+    const child3 = mockContainer(60, 30, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 300,
+      height: 100,
+      gap: 10,
+      alignItems: 'stretch',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 100 - 10 (padding) = 90
+    // All children should be stretched to 90px height
+    expect(child1.height).toBe(90)
+    expect(child2.height).toBe(90)
+    expect(child3.height).toBe(90)
+
+    // All should be positioned at start
+    expect(child1.y).toBe(5)
+    expect(child2.y).toBe(5)
+    expect(child3.y).toBe(5)
+  })
+
+  it('stretches children to full cross-axis in column direction', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(20, 60, false)
+    const child2 = mockContainer(40, 60, false)
+    const child3 = mockContainer(30, 60, false)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 100,
+      height: 300,
+      gap: 10,
+      alignItems: 'stretch',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available width: 100 - 10 (padding) = 90
+    // All children should be stretched to 90px width
+    expect(child1.width).toBe(90)
+    expect(child2.width).toBe(90)
+    expect(child3.width).toBe(90)
+
+    // All should be positioned at start
+    expect(child1.x).toBe(5)
+    expect(child2.x).toBe(5)
+    expect(child3.x).toBe(5)
+  })
+
+  it('respects margins when stretching', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(60, 20, false)
+    const child2 = mockContainer(60, 40, false)
+    container.add(child1)
+    container.add(child2)
+
+    // Add margins to children
+    Object.assign(child1, { __layoutProps: { margin: { top: 5, bottom: 10 } } })
+    Object.assign(child2, { __layoutProps: { margin: 5 } }) // all sides
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 200,
+      height: 100,
+      gap: 10,
+      alignItems: 'stretch',
+      padding: { top: 5, right: 5, bottom: 5, left: 5 },
+    }
+
+    calculateLayout(container, props)
+
+    // Available height: 100 - 10 (padding) = 90
+    // Child1: 90 - 5 (top margin) - 10 (bottom margin) = 75
+    expect(child1.height).toBe(75)
+    // Child2: 90 - 5 (top margin) - 5 (bottom margin) = 80
+    expect(child2.height).toBe(80)
+  })
 })
 
 describe('edge cases', () => {

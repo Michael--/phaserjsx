@@ -598,6 +598,55 @@ function calculateLayoutImmediate(
     spaceBetween = justifyResult.spaceBetween
   }
 
+  // 9a. Apply stretch if alignItems is 'stretch'
+  const alignItems = containerProps.alignItems ?? 'start'
+  if (alignItems === 'stretch' && direction !== 'stack') {
+    for (const layoutChild of finalLayoutChildren) {
+      const margin = getMargin(layoutChild.child)
+      const child = layoutChild.child
+
+      if (direction === 'row') {
+        // Stretch height to full cross-axis (minus margins)
+        const stretchHeight = contentArea.height - (margin.top ?? 0) - (margin.bottom ?? 0)
+        layoutChild.size.height = Math.max(0, stretchHeight)
+
+        // If child is a container with layout props, update its height prop and recalculate nested layout
+        if (child.__layoutProps) {
+          const originalHeight = child.__layoutProps.height
+          child.__layoutProps = { ...child.__layoutProps, height: stretchHeight }
+
+          // Recalculate nested container layout with new height
+          processNestedContainer(child, calculateLayout, {
+            width: containerWidth,
+            height: containerHeight,
+          })
+
+          // Restore original height prop (in case it was percentage or undefined)
+          child.__layoutProps = { ...child.__layoutProps, height: originalHeight }
+        }
+      } else if (direction === 'column') {
+        // Stretch width to full cross-axis (minus margins)
+        const stretchWidth = contentArea.width - (margin.left ?? 0) - (margin.right ?? 0)
+        layoutChild.size.width = Math.max(0, stretchWidth)
+
+        // If child is a container with layout props, update its width prop and recalculate nested layout
+        if (child.__layoutProps) {
+          const originalWidth = child.__layoutProps.width
+          child.__layoutProps = { ...child.__layoutProps, width: stretchWidth }
+
+          // Recalculate nested container layout with new width
+          processNestedContainer(child, calculateLayout, {
+            width: containerWidth,
+            height: containerHeight,
+          })
+
+          // Restore original width prop (in case it was percentage or undefined)
+          child.__layoutProps = { ...child.__layoutProps, width: originalWidth }
+        }
+      }
+    }
+  }
+
   // 10. Position all children using strategy
   const positions: Position[] = []
   let currentMain = mainStart

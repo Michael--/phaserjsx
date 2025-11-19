@@ -82,7 +82,7 @@ export function calculateAlignItems(
     case 'end':
       return contentArea - childSize - marginEnd
     case 'stretch':
-      // TODO: Implement stretch - for now, behave like start
+      // Stretch: position at start (size is stretched in layout engine)
       return marginStart
     default:
       return marginStart

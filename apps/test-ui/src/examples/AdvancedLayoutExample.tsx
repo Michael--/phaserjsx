@@ -181,6 +181,21 @@ function AlignItemsRowExample() {
         <Box color={0x4ecdc4} text="B" width={80} height={60} />
         <Box color={0x45b7d1} text="C" width={80} height={20} />
       </View>
+
+      {/* Stretch */}
+      <View
+        height={80}
+        backgroundColor={0x444444}
+        direction="row"
+        alignItems="stretch"
+        padding={5}
+        gap={5}
+      >
+        <Text text="stretch:" style={{ fontSize: 10, color: 'cyan' }} />
+        <Box color={0xff6b6b} text="A" width={80} height={40} />
+        <Box color={0x4ecdc4} text="B" width={80} height={60} />
+        <Box color={0x45b7d1} text="C" width={80} height={20} />
+      </View>
     </View>
   )
 }
