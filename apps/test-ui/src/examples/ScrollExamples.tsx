@@ -1,7 +1,6 @@
 import type { GestureEventData } from '@phaserjsx/ui'
 import { Text, useState, View } from '@phaserjsx/ui'
-import { Button } from '../App'
-import { ScrollView } from '../components'
+import { Button, ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
 import { Spacer } from '../components/Spacer'
 

@@ -21,32 +21,6 @@ export interface AppProps {
   height: number
 }
 
-export function Button(props: {
-  text: string
-  onClick?: () => void
-  width?: number
-  height?: number
-  backgroundColor?: number
-}) {
-  return (
-    <View
-      width={props.width}
-      height={props.height}
-      backgroundColor={props.backgroundColor ?? 0x000088}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      alignItems="center"
-      justifyContent="center"
-      enableGestures
-      onTouch={() => {
-        props.onClick?.()
-      }}
-    >
-      <Text text={props.text} style={{ fontSize: 16, color: 'white' }} />
-    </View>
-  )
-}
-
 /**
  * Main app component with example selector
  * @param props - App props from Phaser scene
