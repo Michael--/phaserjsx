@@ -53,8 +53,6 @@ function Slider(props: {
   const isDraggingRef = useRef(false)
 
   const handleThumbTouchMove = (data: { dy?: number; state?: string }) => {
-    console.log('thumb move', data)
-
     if (data.state === 'start') {
       isDraggingRef.current = true
       return
@@ -79,7 +77,6 @@ function Slider(props: {
     const effectiveHeight = props.trackHeight - 2
     const normalizedY = (data.localY - 1) / effectiveHeight
     const targetScrollY = Math.max(0, Math.min(100, normalizedY * 100))
-    console.log('bg touch', data.localY, targetScrollY)
     props.onScroll(targetScrollY)
   }
 

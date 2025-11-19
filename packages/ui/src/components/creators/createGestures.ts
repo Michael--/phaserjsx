@@ -37,15 +37,6 @@ export function createGestures(
     return
   }
 
-  console.log('createGestures: Registering container with callbacks', {
-    onTouch: !!props.onTouch,
-    onTouchMove: !!props.onTouchMove,
-    onDoubleTap: !!props.onDoubleTap,
-    onLongPress: !!props.onLongPress,
-    containerPos: { x: container.x, y: container.y },
-    propsSize: { width: props.width, height: props.height },
-  })
-
   // Get scene's gesture manager
   const manager = getGestureManager(scene)
 
@@ -71,13 +62,6 @@ export function createGestures(
 
   // Create hit area with origin at (0,0) - matches our component system
   const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
-
-  console.log('createGestures: Calculated hit area', {
-    width,
-    height,
-    hasGetLayoutSize: !!containerWithLayout.__getLayoutSize,
-    bounds: { width: container.getBounds().width, height: container.getBounds().height },
-  })
 
   // Build callbacks object
   const callbacks: GestureCallbacks = {}

@@ -40,17 +40,10 @@ function updateGestureHitAreaAfterLayout(container: Phaser.GameObjects.Container
     // __getLayoutSize may return 0x0 for containers with fill sizing before parent is laid out
     const width = container.width
     const height = container.height
-
-    console.log('[updateGestureHitAreaAfterLayout]', {
-      width,
-      height,
-      containerPos: { x: container.x, y: container.y },
-    })
     const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
     manager.updateHitArea(container, hitArea)
-  } catch (e) {
+  } catch {
     // Gesture manager or container not registered, ignore
-    console.log('[updateGestureHitAreaAfterLayout] Error:', e)
   }
 }
 
