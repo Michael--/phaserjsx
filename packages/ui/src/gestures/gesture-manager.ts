@@ -292,29 +292,28 @@ export class GestureManager {
     const touchDuration = state.pointerDownTime ? Date.now() - state.pointerDownTime : 0
     const isTouchTooLong = touchDuration > state.config.maxTouchDuration
 
-    // Send final move event if callback exists
-    if (state.callbacks.onTouchMove) {
-      const localPos = this.getLocalPosition(pointer, state.container)
-      const isInside = this.isPointerInContainer(pointer, state)
-      const last = this.lastPointerPositions.get(pointer.id)
-      const dx = last ? pointer.x - last.x : 0
-      const dy = last ? pointer.y - last.y : 0
+    // Send final move event to all containers with onTouchMove (bubbling)
+    const last = this.lastPointerPositions.get(pointer.id)
+    const dx = last ? pointer.x - last.x : 0
+    const dy = last ? pointer.y - last.y : 0
 
+    this.bubbleEvent(pointer, 'onTouchMove', (targetState, targetLocalPos) => {
+      const isInside = this.isPointerInContainer(pointer, targetState)
       const finalMoveData = this.createEventData(
         pointer,
-        localPos.x,
-        localPos.y,
-        state.hitArea.width,
-        state.hitArea.height,
+        targetLocalPos.x,
+        targetLocalPos.y,
+        targetState.hitArea.width,
+        targetState.hitArea.height,
         { dx, dy, isInside, state: 'end' }
       )
-      state.callbacks.onTouchMove(finalMoveData)
-    }
+      targetState.callbacks.onTouchMove?.(finalMoveData)
 
-    // Reset first move flag
-    if (state.callbacks.onTouchMove) {
-      state.isFirstMove = undefined
-    }
+      // Reset first move flag for this container
+      targetState.isFirstMove = undefined
+
+      return finalMoveData.isPropagationStopped()
+    })
 
     // Check if pointer is still within the container (basic tap/click detection)
     // For now, we require pointer up to be inside - could be made configurable
@@ -373,7 +372,8 @@ export class GestureManager {
 
   /**
    * Handle global pointer move event
-   * This fires for ALL registered containers with onTouchMove, even if pointer is outside
+   * Bubbles through all overlapping containers with onTouchMove
+   * Continues until stopPropagation() is called
    */
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
     // Calculate delta
@@ -382,31 +382,41 @@ export class GestureManager {
     const dy = last ? pointer.y - last.y : 0
     this.lastPointerPositions.set(pointer.id, { x: pointer.x, y: pointer.y })
 
-    // Notify all containers that have onTouchMove and an active pointer down
-    // NOTE: Currently only notifies the container where pointer was pressed down
-    // TODO: Consider if we should notify ALL containers during move (configurable?)
-    if (this.activePointerDown && pointer.id === this.activePointerDown.pointerId) {
-      const state = this.containers.get(this.activePointerDown.container)
-      if (state?.callbacks.onTouchMove) {
-        const localPos = this.getLocalPosition(pointer, state.container)
-        const isInside = this.isPointerInContainer(pointer, state)
+    // Only process if there's an active pointer down
+    if (!this.activePointerDown || pointer.id !== this.activePointerDown.pointerId) {
+      return
+    }
 
-        // Determine state: 'start' for first move, 'move' for subsequent
-        const moveState = state.isFirstMove === undefined ? 'start' : 'move'
-        if (state.isFirstMove === undefined) {
-          state.isFirstMove = false
-        }
+    // Bubble onTouchMove to all overlapping containers
+    // Check in reverse order (topmost first)
+    const containersArray = Array.from(this.containers.values()).reverse()
 
-        const data = this.createEventData(
-          pointer,
-          localPos.x,
-          localPos.y,
-          state.hitArea.width,
-          state.hitArea.height,
-          { dx, dy, isInside, state: moveState }
-        )
-        state.callbacks.onTouchMove(data)
+    for (const state of containersArray) {
+      // Only process containers with onTouchMove callback
+      if (!state.callbacks.onTouchMove) continue
+
+      const localPos = this.getLocalPosition(pointer, state.container)
+      const isInside = this.isPointerInContainer(pointer, state)
+
+      // Determine state: 'start' for first move, 'move' for subsequent
+      const moveState = state.isFirstMove === undefined ? 'start' : 'move'
+      if (state.isFirstMove === undefined) {
+        state.isFirstMove = false
       }
+
+      const data = this.createEventData(
+        pointer,
+        localPos.x,
+        localPos.y,
+        state.hitArea.width,
+        state.hitArea.height,
+        { dx, dy, isInside, state: moveState }
+      )
+
+      state.callbacks.onTouchMove(data)
+
+      // Stop bubbling if propagation was stopped
+      if (data.isPropagationStopped()) break
     }
   }
 
