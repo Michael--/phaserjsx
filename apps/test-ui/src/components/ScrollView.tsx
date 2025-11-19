@@ -100,8 +100,7 @@ export function ScrollView(props: ScrollViewProps) {
       direction="stack"
       width="fill"
       height="fill"
-      backgroundColor={0x555555}
-      backgroundAlpha={1.0}
+      backgroundAlpha={0.0}
       enableGestures={true}
       onTouchMove={handleTouchMove}
       overflow="hidden"
