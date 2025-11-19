@@ -1,6 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useRef, View, type ChildrenType } from '@phaserjsx/ui'
-import { createShakeEffect, useGameObjectEffect } from '../hooks'
+import { createPulseEffect, useGameObjectEffect } from '../hooks'
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -69,8 +69,8 @@ export function Button(props: ButtonProps) {
     !props.disabled && props.onClick
       ? () => {
           props.onClick?.()
-          applyEffect(createShakeEffect, { magnitude: 2, time: 200 })
-          // applyEffect(createPulseEffect, { intensity: 1.1, time: 100 })
+          // applyEffect(createShakeEffect, { magnitude: 2, time: 200 })
+          applyEffect(createPulseEffect, { intensity: 1.1, time: 100 })
         }
       : undefined
 

@@ -22,7 +22,11 @@ interface PositionState {
   originalX: number
   originalY: number
   originalAlpha: number
+  originalScaleX: number
+  originalScaleY: number
   effectCount: number
+  scaleOffsetX: number
+  scaleOffsetY: number
 }
 
 /**
@@ -42,7 +46,11 @@ function getPositionState(obj: Phaser.GameObjects.Container): PositionState {
       originalX: obj.x,
       originalY: obj.y,
       originalAlpha: obj.alpha,
+      originalScaleX: obj.scaleX,
+      originalScaleY: obj.scaleY,
       effectCount: 0,
+      scaleOffsetX: 0,
+      scaleOffsetY: 0,
     })
   }
   const state = positionStates.get(obj)
@@ -70,9 +78,10 @@ function decrementEffectCount(obj: Phaser.GameObjects.Container): void {
   const state = getPositionState(obj)
   state.effectCount--
 
-  // Reset to original position and alpha when all effects are done
+  // Reset to original position, scale and alpha when all effects are done
   if (state.effectCount <= 0) {
     obj.setPosition(state.originalX, state.originalY)
+    obj.setScale(state.originalScaleX, state.originalScaleY)
     obj.setAlpha(state.originalAlpha)
     state.effectCount = 0
   }
@@ -113,8 +122,9 @@ export const createShakeEffect: EffectFn = (obj, config) => {
       const decayFactor = Math.pow(remainingTime / totalTime, 2)
       const mag = magnitude * decayFactor
 
-      const newX = baseX + Phaser.Math.Between(-mag, mag)
-      const newY = baseY + Phaser.Math.Between(-mag, mag)
+      // Apply shake relative to original position, considering scale offset
+      const newX = baseX + Phaser.Math.Between(-mag, mag) - state.scaleOffsetX
+      const newY = baseY + Phaser.Math.Between(-mag, mag) - state.scaleOffsetY
       obj.setPosition(newX, newY)
     },
     onComplete: () => {
@@ -135,35 +145,37 @@ export const createPulseEffect: EffectFn = (obj, config) => {
   incrementEffectCount(obj)
 
   const scene = obj.scene
-  const originalScaleX = obj.scaleX
-  const originalScaleY = obj.scaleY
   const width = obj.width
   const height = obj.height
-  // Start from the original position, not the current (affected by other effects)
   const baseX = state.originalX
   const baseY = state.originalY
 
   scene.tweens.add({
     targets: obj,
-    scaleX: intensity,
-    scaleY: intensity,
+    scaleX: intensity * state.originalScaleX,
+    scaleY: intensity * state.originalScaleY,
     duration: time / 2,
     ease: 'Quad.easeOut',
     yoyo: true,
     repeat: 0,
     onUpdate: (tween) => {
-      // Adjust position to scale from center
-      const scale = tween.getValue()
-      if (scale === null) return
-      const offsetX = (width * (scale - originalScaleX)) / 2
-      const offsetY = (height * (scale - originalScaleY)) / 2
-      const newX = baseX - offsetX
-      const newY = baseY - offsetY
-      obj.setPosition(newX, newY)
+      // Calculate scale offset to center the scaling
+      const currentScale = tween.getValue()
+      if (currentScale === null) return
+      const offsetX = (width * (currentScale - state.originalScaleX)) / 2
+      const offsetY = (height * (currentScale - state.originalScaleY)) / 2
+
+      // Update shared scale offset
+      state.scaleOffsetX = offsetX
+      state.scaleOffsetY = offsetY
+
+      // Apply position with scale compensation
+      obj.setPosition(baseX - offsetX, baseY - offsetY)
     },
     onComplete: () => {
-      // Restore original scale
-      obj.setScale(originalScaleX, originalScaleY)
+      // Clear scale offset
+      state.scaleOffsetX = 0
+      state.scaleOffsetY = 0
       decrementEffectCount(obj)
     },
   })
