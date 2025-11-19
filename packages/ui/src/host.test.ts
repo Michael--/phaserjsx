@@ -94,7 +94,15 @@ describe('Host', () => {
 
     it('should attach pointer handlers for View when provided', () => {
       const handler = vi.fn()
+      const mockGestureManager = {
+        registerContainer: vi.fn(),
+        unregisterContainer: vi.fn(),
+        updateHitArea: vi.fn(),
+        updateCallbacks: vi.fn(),
+      }
       const mockContainer = {
+        x: 0,
+        y: 0,
         visible: true,
         setDepth: vi.fn(),
         setAlpha: vi.fn(),
@@ -104,11 +112,29 @@ describe('Host', () => {
         setInteractive: vi.fn(),
         on: vi.fn(),
         input: { cursor: undefined as string | undefined },
+        list: [], // Empty children list for layout size calculation
+        getBounds: vi.fn(() => ({ width: 100, height: 50 })),
+        scene: {
+          data: {
+            get: vi.fn(() => mockGestureManager),
+            set: vi.fn(),
+          },
+          input: {
+            on: vi.fn(),
+          },
+        },
       }
       const mockScene = {
         add: {
           container: vi.fn(() => mockContainer),
           rectangle: vi.fn(),
+        },
+        data: {
+          get: vi.fn(() => mockGestureManager),
+          set: vi.fn(),
+        },
+        input: {
+          on: vi.fn(),
         },
       }
 
@@ -118,9 +144,13 @@ describe('Host', () => {
         mockScene as unknown as Phaser.Scene
       )
 
-      expect(mockContainer.setInteractive).toHaveBeenCalled()
-      expect(mockContainer.input?.cursor).toBe('pointer')
-      expect(mockContainer.on).toHaveBeenCalledWith('pointerdown', handler)
+      // Verify gesture manager was called with the handler
+      expect(mockGestureManager.registerContainer).toHaveBeenCalledWith(
+        mockContainer,
+        expect.objectContaining({ onTouch: handler }), // callbacks
+        expect.any(Object), // hitArea (Rectangle)
+        expect.any(Object) // config
+      )
     })
   })
 
@@ -169,6 +199,12 @@ describe('Host', () => {
         setRotation: vi.fn(),
         scaleX: 1,
         scaleY: 1,
+        scene: {
+          data: {
+            get: vi.fn(),
+            set: vi.fn(),
+          },
+        },
       }
 
       host.patch(

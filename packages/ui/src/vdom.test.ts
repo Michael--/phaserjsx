@@ -61,7 +61,7 @@ describe('VDOM', () => {
 
       expect(vi.mocked(host.create)).toHaveBeenCalledWith(
         'View',
-        { x: 10, y: 20 },
+        { x: 10, y: 20, alpha: 1, visible: true },
         mockSceneWithSys
       )
       expect(vi.mocked(host.append)).toHaveBeenCalledWith(mockSceneWithSys, { id: 'mounted' })
@@ -132,7 +132,17 @@ describe('VDOM', () => {
         id: 'old',
         parentContainer: mockSceneWithSys,
       })
-      expect(vi.mocked(host.create)).toHaveBeenCalledWith('Text', { text: 'new' }, mockSceneWithSys)
+      expect(vi.mocked(host.create)).toHaveBeenCalledWith(
+        'Text',
+        {
+          text: 'new',
+          align: 'left',
+          alpha: 1,
+          visible: true,
+          style: { color: '#ffffff', fontSize: '16px', fontFamily: 'Arial' },
+        },
+        mockSceneWithSys
+      )
     })
   })
 })
