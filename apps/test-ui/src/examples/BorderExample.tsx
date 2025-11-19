@@ -1,26 +1,15 @@
 /**
  * Border and CornerRadius Demo - showcasing new background features
  */
-import { Text, useState, View } from '@phaserjsx/ui'
+import { Text, View } from '@phaserjsx/ui'
 
 /**
  * Border and corner radius demonstration
  * @returns BorderDemo component
  */
 export function BorderExample() {
-  const [px, setPx] = useState(20)
-
   return (
-    <View
-      x={20}
-      y={20}
-      gap={px}
-      direction="column"
-      enableGestures={true}
-      onTouch={() => {
-        setPx(px == 0 ? 20 : 0)
-      }}
-    >
+    <View>
       <Text text="Border & Corner Radius Demo" style={{ fontSize: 18, color: 'yellow' }} />
 
       {/* Simple border */}
