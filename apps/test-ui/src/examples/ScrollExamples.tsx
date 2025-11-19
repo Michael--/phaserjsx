@@ -1,4 +1,3 @@
-import type { GestureEventData } from '@phaserjsx/ui'
 import { Text, useState, View } from '@phaserjsx/ui'
 import { Button, ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
@@ -9,18 +8,14 @@ function ListButton(props: { index: number }) {
   return (
     <View key={props.index} justifyContent="center" alignItems="center" direction="row">
       <Spacer />
-      <View
-        backgroundColor={0x0000aa}
-        backgroundAlpha={1.0}
-        enableGestures={true}
-        onTouch={(e: GestureEventData) => {
-          e.stopPropagation() // prevent bubble up to ScrollView
+      <Button
+        size="small"
+        text={`Button ${props.index + 1}`}
+        onClick={() => {
           setCount(count + 1)
         }}
-      >
-        <Text text={`Button ${props.index + 1}`} style={{ fontSize: 14, color: 'white' }} />
-      </View>
-      <Text text={`${count}`} style={{ fontSize: 12, color: 'yellow' }} />
+      />
+      <Text text={`${count}`} />
     </View>
   )
 }
@@ -40,7 +35,7 @@ function Content(props: { count: number; width: string }) {
         justifyContent="center"
         alignItems="center"
       >
-        <Text text={`Item ${index + 1}`} style={{ fontSize: 14, color: 'white' }} />
+        <Text text={`Item ${index + 1}`} />
       </View>
     )
   }

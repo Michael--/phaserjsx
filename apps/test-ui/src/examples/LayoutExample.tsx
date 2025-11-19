@@ -1,4 +1,5 @@
 import { Text, View, useState } from '@phaserjsx/ui'
+import { Button } from '../components'
 
 /**
  * Counter component with configurable step
@@ -9,32 +10,14 @@ function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
   const step = props.step ?? 1
   return (
-    <View
-      margin={{ top: 10, bottom: 10 }}
-      backgroundColor={0x008800}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      direction="row"
-      gap={20}
-      alignItems="center"
-    >
-      <View
-        backgroundColor={0x880000}
-        backgroundAlpha={1.0}
-        enableGestures={true}
-        onTouch={() => {
+    <View backgroundColor={0x445566} direction="row" alignItems="center">
+      <Button
+        text={`Add +${step}`}
+        onClick={() => {
           setN((v) => v + step)
         }}
-      >
-        <Text
-          text={`Add +${step}`}
-          style={{ fontSize: 20 }}
-          margin={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        />
-      </View>
-      <View backgroundColor={0x444444} backgroundAlpha={1.0}>
-        <Text text={`${props.label ?? 'Count'}: ${n}`} />
-      </View>
+      />
+      <Text text={`${props.label ?? 'Count'}: ${n}`} />
     </View>
   )
 }
