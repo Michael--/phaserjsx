@@ -1,5 +1,5 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, View, type ChildrenType } from '@phaserjsx/ui'
+import { getThemedProps, Text, useRef, View, type ChildrenType } from '@phaserjsx/ui'
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -38,6 +38,7 @@ export interface ButtonProps {
  */
 export function Button(props: ButtonProps) {
   const { props: themed } = getThemedProps('Button', undefined, {})
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
 
   type ThemeRecord = Record<
     string,
@@ -62,13 +63,81 @@ export function Button(props: ButtonProps) {
       }
     : sizeTheme
 
-  const handleTouch = !props.disabled && props.onClick ? () => props.onClick?.() : undefined
+  const shakeEffect = (magnitude: number, time: number) => {
+    if (!ref.current) return
+
+    const scene = ref.current.scene
+    const start = 0
+    const end = 0 + time
+
+    // Store original position on first shake
+    const refWithPos = ref.current as Phaser.GameObjects.Container & {
+      __originalX?: number
+      __originalY?: number
+    }
+    const originalX = refWithPos.__originalX
+    const originalY = refWithPos.__originalY
+    const isFirstShake = originalX === undefined || originalY === undefined
+
+    if (isFirstShake) {
+      refWithPos.__originalX = ref.current.x
+      refWithPos.__originalY = ref.current.y
+    }
+
+    scene.tweens.add({
+      targets: ref.current,
+      duration: time,
+      x: 0, // ! without any target, the tween wouldn't start
+      onUpdate: () => {
+        // decay reducing the shake magnitude over time
+        const totalTime = end - start
+        const remainingTime = end - 0
+        // Exponential decay (Linear decay: const decayFactor = remainingTime / totalTime)
+        const decayFactor = Math.pow(remainingTime / totalTime, 2)
+        const mag = magnitude * decayFactor
+
+        const baseX = refWithPos.__originalX ?? 0
+        const baseY = refWithPos.__originalY ?? 0
+        ref.current?.setPosition(
+          baseX + Phaser.Math.Between(-mag, mag),
+          baseY + Phaser.Math.Between(-mag, mag)
+        )
+      },
+      onComplete: () => {
+        if (!ref.current) return
+
+        // Reset to original position only if no other shakes are active
+        const activeTweens = scene.tweens
+          .getTweensOf(ref.current)
+          .filter((tween: Phaser.Tweens.Tween) => tween.isActive())
+
+        if (activeTweens.length === 0) {
+          const baseX = refWithPos.__originalX ?? 0
+          const baseY = refWithPos.__originalY ?? 0
+          ref.current.setPosition(baseX, baseY)
+
+          // Clear stored position when all shakes are done
+          delete refWithPos.__originalX
+          delete refWithPos.__originalY
+        }
+      },
+    })
+  }
+
+  const handleTouch =
+    !props.disabled && props.onClick
+      ? () => {
+          props.onClick?.()
+          shakeEffect(5, 200)
+        }
+      : undefined
 
   // Extract textStyle from theme for Text component only
   const textStyle = (effectiveTheme as ThemeRecord[string]).textStyle
 
   return (
     <View
+      ref={ref}
       width={props.width}
       height={props.height}
       enableGestures={!props.disabled}
