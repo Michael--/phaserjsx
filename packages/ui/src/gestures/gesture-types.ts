@@ -4,6 +4,11 @@
 import type Phaser from 'phaser'
 
 /**
+ * Touch move gesture state
+ */
+export type TouchMoveState = 'start' | 'move' | 'end'
+
+/**
  * Data passed to gesture event handlers
  */
 export interface GestureEventData {
@@ -23,8 +28,8 @@ export interface GestureEventData {
   height: number
   /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
   isInside?: boolean
-  /** Whether this is the final move event (pointer up) (only for onTouchMove) */
-  isFinal?: boolean
+  /** Current state of touch move gesture: 'start' (first move), 'move' (during), 'end' (pointer up) (only for onTouchMove) */
+  state?: TouchMoveState
 }
 
 /**
@@ -77,4 +82,5 @@ export interface GestureContainerState {
   pointerDownPosition?: { x: number; y: number } | undefined
   pointerDownTime?: number | undefined
   longPressTriggered?: boolean | undefined
+  isFirstMove?: boolean | undefined
 }

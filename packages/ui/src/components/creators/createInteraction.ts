@@ -27,7 +27,7 @@ export function createInteraction(
     const height = typeof props.height === 'number' ? props.height : 100
     // Create hit area centered around container's origin
     // Phaser containers treat hit areas relative to their center
-    const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height)
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
     container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
     if (container.input) container.input.cursor = 'pointer'
 

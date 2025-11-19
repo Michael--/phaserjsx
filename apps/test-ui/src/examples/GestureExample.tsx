@@ -26,8 +26,8 @@ function TouchButton() {
         setLastWasTooLong(false)
       }}
       onTouchMove={(data) => {
-        // Visual feedback when holding too long
-        if (data.isFinal) {
+        // Visual feedback when holding too long (on end state)
+        if (data.state === 'end') {
           setLastWasTooLong(true)
           setTimeout(() => setLastWasTooLong(false), 300)
         }
@@ -95,21 +95,20 @@ function LongPressButton() {
 }
 
 /**
- * Touch move / drag example with isInside and isFinal flags
+ * Touch move / drag example with isInside and state ('start' | 'move' | 'end')
  */
 function DragBox() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
   const [localPos, setLocalPos] = useState({ x: 0, y: 0 })
   const [isInside, setIsInside] = useState(true)
+  const [gestureState, setGestureState] = useState(false)
 
-  const status = isDragging ? (isInside ? 'Dragging Inside' : 'Dragging Outside') : 'Idle'
+  const bgColor = gestureState === false ? 0x5500aa : isInside ? 0x55aa00 : 0xaa5500
 
   return (
     <View
       width={200}
-      //height={100}
-      backgroundColor={isDragging ? (isInside ? 0xffaa00 : 0xff6600) : 0xaa00ff}
+      backgroundColor={bgColor}
       alignItems="center"
       enableGestures={true}
       onTouchMove={(data) => {
@@ -126,12 +125,13 @@ function DragBox() {
         setLocalPos({ x: data.localX, y: data.localY })
         setIsInside(data.isInside ?? true)
 
-        // Check if this is the final move event
-        if (!data.isFinal && !isDragging) {
-          setIsDragging(true)
-        } else if (data.isFinal) {
-          setIsDragging(false)
+        // Handle state transitions
+        if (data.state === 'start') {
+          console.log('Drag started at:', data.localX.toFixed(0), data.localY.toFixed(0))
+          setGestureState(true)
+        } else if (data.state === 'end') {
           console.log('Drag ended at:', data.localX.toFixed(0), data.localY.toFixed(0))
+          setGestureState(false)
         }
       }}
     >
@@ -144,7 +144,7 @@ function DragBox() {
         text={`Local: ${localPos.x.toFixed(0)}, ${localPos.y.toFixed(0)}`}
         style={{ color: '#cccccc' }}
       />
-      <Text text={status} style={{ color: isInside ? '#00ff00' : '#ff0000' }} />
+      <Text text={gestureState ? `${isInside ? 'Inside' : 'Outside'}` : 'idle'} />
     </View>
   )
 }
@@ -180,7 +180,7 @@ export function GestureExample() {
 
         <View>
           <Text
-            text="Drag (isInside, isFinal flags + outside tracking):"
+            text="Drag (state: 'start' | 'move' | 'end' + isInside):"
             style={{ color: '#cccccc' }}
           />
           <DragBox />

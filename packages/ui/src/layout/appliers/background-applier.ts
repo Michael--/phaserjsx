@@ -81,12 +81,12 @@ export function updateHitArea(
     if (oldWidth !== width || oldHeight !== height) {
       // Position hit area centered around origin (container's local 0,0)
       // This is needed because Phaser containers treat hit areas relative to their center
-      hitArea.setPosition(width / 2, height / 2)
+      hitArea.setPosition(0, 0)
       hitArea.setSize(width, height)
 
       DebugLogger.log('layout', 'Hit area resized:', {
         from: { x: hitArea.x, y: hitArea.y, width: oldWidth, height: oldHeight },
-        to: { x: width / 2, y: height / 2, width, height },
+        to: { x: 0, y: 0, width, height },
       })
     }
   }

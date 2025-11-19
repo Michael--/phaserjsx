@@ -224,9 +224,14 @@ export class GestureManager {
         width: state.hitArea.width,
         height: state.hitArea.height,
         isInside,
-        isFinal: true,
+        state: 'end',
       }
       state.callbacks.onTouchMove(finalMoveData)
+    }
+
+    // Reset first move flag
+    if (state.callbacks.onTouchMove) {
+      state.isFirstMove = undefined
     }
 
     // Check if pointer is still within the container (basic tap/click detection)
@@ -290,6 +295,13 @@ export class GestureManager {
       if (state?.callbacks.onTouchMove) {
         const localPos = this.getLocalPosition(pointer, state.container)
         const isInside = this.isPointerInContainer(pointer, state)
+
+        // Determine state: 'start' for first move, 'move' for subsequent
+        const moveState = state.isFirstMove === undefined ? 'start' : 'move'
+        if (state.isFirstMove === undefined) {
+          state.isFirstMove = false
+        }
+
         const data: GestureEventData = {
           pointer,
           localX: localPos.x,
@@ -299,7 +311,7 @@ export class GestureManager {
           width: state.hitArea.width,
           height: state.hitArea.height,
           isInside,
-          isFinal: false,
+          state: moveState,
         }
         state.callbacks.onTouchMove(data)
       }

@@ -220,6 +220,11 @@ export interface InteractionProps {
 }
 
 /**
+ * Touch move gesture state
+ */
+export type TouchMoveState = 'start' | 'move' | 'end'
+
+/**
  * Data passed to gesture event handlers
  */
 export interface GestureEventData {
@@ -239,8 +244,8 @@ export interface GestureEventData {
   height: number
   /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
   isInside?: boolean
-  /** Whether this is the final move event (pointer up) (only for onTouchMove) */
-  isFinal?: boolean
+  /** Current state of touch move gesture: 'start' (first move), 'move' (during), 'end' (pointer up) (only for onTouchMove) */
+  state?: TouchMoveState
 }
 
 /**
@@ -265,7 +270,7 @@ export interface GestureProps {
   /**
    * Called during pointer movement - continues even when outside bounds
    * Provides dx/dy deltas for tracking drag operations
-   * Includes isInside flag and isFinal flag (last event on pointer up)
+   * Includes isInside flag and state ('start' | 'move' | 'end')
    * Requires enableGestures: true
    */
   onTouchMove?: (data: GestureEventData) => void
