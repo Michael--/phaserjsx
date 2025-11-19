@@ -65,15 +65,12 @@ export function Button(props: ButtonProps) {
       }
     : sizeTheme
 
-  const shakeEffect = (magnitude: number, time: number) => {
-    applyEffect(createShakeEffect, { magnitude, time })
-  }
-
   const handleTouch =
     !props.disabled && props.onClick
       ? () => {
           props.onClick?.()
-          shakeEffect(5, 200)
+          applyEffect(createShakeEffect, { magnitude: 2, time: 200 })
+          // applyEffect(createPulseEffect, { intensity: 1.1, time: 100 })
         }
       : undefined
 
