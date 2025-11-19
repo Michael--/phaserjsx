@@ -2,7 +2,7 @@
  * Example demonstrating the new gesture system
  * Shows all gesture types: onTouch, onTouchMove, onDoubleTap, onLongPress
  */
-import { Text, View, useState } from '@phaserjsx/ui'
+import { Text, View, useState, type GestureEventData } from '@phaserjsx/ui'
 
 /**
  * Simple gesture button demonstrating onTouch with maxTouchDuration
@@ -25,7 +25,7 @@ function TouchButton() {
         setTouchCount((c) => c + 1)
         setLastWasTooLong(false)
       }}
-      onTouchMove={(data) => {
+      onTouchMove={(data: GestureEventData) => {
         // Visual feedback when holding too long (on end state)
         if (data.state === 'end') {
           setLastWasTooLong(true)
@@ -111,7 +111,7 @@ function DragBox() {
       backgroundColor={bgColor}
       alignItems="center"
       enableGestures={true}
-      onTouchMove={(data) => {
+      onTouchMove={(data: GestureEventData) => {
         const dx = data.dx ?? 0
         const dy = data.dy ?? 0
 

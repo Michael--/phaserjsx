@@ -208,18 +208,6 @@ export interface TextSpecificProps {
 }
 
 /**
- * Interaction props for pointer events
- * @deprecated Use GestureProps instead for better cross-platform support
- */
-export interface InteractionProps {
-  onPointerDown?: (pointer: Phaser.Input.Pointer) => void
-  onPointerUp?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOver?: (pointer: Phaser.Input.Pointer) => void
-  onPointerOut?: (pointer: Phaser.Input.Pointer) => void
-  onPointerMove?: (pointer: Phaser.Input.Pointer) => void
-}
-
-/**
  * Touch move gesture state
  */
 export type TouchMoveState = 'start' | 'move' | 'end'

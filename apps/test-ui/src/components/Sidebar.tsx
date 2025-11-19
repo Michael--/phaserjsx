@@ -1,7 +1,7 @@
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
-import type { NestedComponentThemes, ViewProps } from '@phaserjsx/ui'
+import type { ViewProps } from '@phaserjsx/ui'
 import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes

@@ -22,6 +22,8 @@ export {
   normalizeEdgeInsets,
   type CornerRadiusInsets,
   type EdgeInsets,
+  type GestureEventData,
+  type TouchMoveState,
 } from './core-props'
 
 // Explicit export for convenience functions

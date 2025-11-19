@@ -51,62 +51,34 @@ function Slider(props: {
   const newScrollY = (props.scroll.scrollY / 100) * (props.trackHeight - scrollHeight)
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
-  const lastPointerRef = useRef({ y: 0 })
 
-  const getGlobalY = (obj: Phaser.GameObjects.GameObject): number => {
-    let y = (obj as Phaser.GameObjects.Container).y
-    let parent = obj.parentContainer
-    while (parent) {
-      y += (parent as Phaser.GameObjects.Container).y
-      parent = parent.parentContainer
-    }
-    return y
-  }
-
-  const handleThumbPointerDown = (pointer: Phaser.Input.Pointer) => {
-    if (pointer.leftButtonDown()) {
+  const handleThumbTouchMove = (data: { dy?: number; state?: string }) => {
+    if (data.state === 'start') {
       isDraggingRef.current = true
-      lastPointerRef.current = { y: pointer.y }
+      return
     }
-  }
 
-  const handlePointerUp = (pointer: Phaser.Input.Pointer) => {
-    if (pointer.leftButtonReleased()) {
-      isDraggingRef.current = false
-    }
-  }
-
-  const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
-    if (!isDraggingRef.current) return
-
-    if (!pointer.leftButtonDown()) {
+    if (data.state === 'end') {
       isDraggingRef.current = false
       return
     }
 
-    if (!sliderRef.current) return
-
-    const deltaY = pointer.y - lastPointerRef.current.y
-    lastPointerRef.current = { y: pointer.y }
+    if (!isDraggingRef.current || !data.dy) return
 
     const thumbRange = props.trackHeight - scrollHeight
     const currentThumbY = (props.scroll.scrollY / 100) * thumbRange
-    const newThumbY = Math.max(0, Math.min(thumbRange, currentThumbY + deltaY))
+    const newThumbY = Math.max(0, Math.min(thumbRange, currentThumbY + data.dy))
     const newScrollYPercent = thumbRange > 0 ? (newThumbY / thumbRange) * 100 : 0
 
     props.onScroll(newScrollYPercent)
   }
 
-  const handleBackgroundPointerDown = (pointer: Phaser.Input.Pointer) => {
-    if (pointer.leftButtonDown() && sliderRef.current) {
-      const globalSliderY = getGlobalY(sliderRef.current)
-      const localY = pointer.y - globalSliderY
-      const effectiveHeight = props.trackHeight - 2
-      const normalizedY = (localY - 1) / effectiveHeight
-      const targetScrollY = Math.max(0, Math.min(100, normalizedY * 100))
-      console.log('bg down', localY, targetScrollY)
-      props.onScroll(targetScrollY)
-    }
+  const handleBackgroundTouch = (data: { localY: number }) => {
+    const effectiveHeight = props.trackHeight - 2
+    const normalizedY = (data.localY - 1) / effectiveHeight
+    const targetScrollY = Math.max(0, Math.min(100, normalizedY * 100))
+    console.log('bg touch', data.localY, targetScrollY)
+    props.onScroll(targetScrollY)
   }
 
   return (
@@ -117,14 +89,13 @@ function Slider(props: {
       backgroundColor={0xdddddd}
       direction="stack"
       padding={1}
-      onPointerUp={handlePointerUp}
-      onPointerMove={handlePointerMove}
     >
       <View
         width={'fill'}
         height={'fill'}
         backgroundColor={0xaaaaaa}
-        onPointerDown={handleBackgroundPointerDown}
+        enableGestures
+        onTouch={handleBackgroundTouch}
       ></View>
       <View
         width={'fill'}
@@ -132,9 +103,8 @@ function Slider(props: {
         y={newScrollY}
         height={scrollHeight}
         backgroundColor={0xeeeebb}
-        onPointerDown={handleThumbPointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        enableGestures
+        onTouchMove={handleThumbTouchMove}
       ></View>
     </View>
   )

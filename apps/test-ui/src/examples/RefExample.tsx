@@ -108,7 +108,8 @@ export function RefContainerExample() {
       originX={0.5}
       originY={0.5}
       ref={handleContainerRef}
-      onPointerDown={() => setValue(value + 1)}
+      enableGestures
+      onTouch={() => setValue(value + 1)}
     >
       <Text text={`Smooth rotation ${value}`} style={{ fontSize: 16, color: '#ffffff' }} />
     </OriginView>

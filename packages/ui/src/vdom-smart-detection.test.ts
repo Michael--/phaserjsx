@@ -87,10 +87,10 @@ describe('VDOM Smart Layout Detection', () => {
       const handler1 = () => {}
       const handler2 = () => {}
 
-      const oldV: VNode = { type: 'View', props: { onPointerDown: handler1 }, children: [] }
-      const newV: VNode = { type: 'View', props: { onPointerDown: handler2 }, children: [] }
+      const oldV: VNode = { type: 'View', props: { onTouch: handler1 }, children: [] }
+      const newV: VNode = { type: 'View', props: { onTouch: handler2 }, children: [] }
 
-      expect(oldV.props?.onPointerDown).not.toBe(newV.props?.onPointerDown)
+      expect(oldV.props?.onTouch).not.toBe(newV.props?.onTouch)
     })
   })
 

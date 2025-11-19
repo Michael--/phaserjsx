@@ -1,4 +1,4 @@
-import { getThemedProps, Text, View, type NestedComponentThemes } from '@phaserjsx/ui'
+import { getThemedProps, Text, View } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
@@ -17,7 +17,7 @@ declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     ExampleContainer: {
       // default is empty
-    } & NestedComponentThemes
+    }
   }
 }
 

@@ -37,7 +37,8 @@ export function Button(props: {
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       alignItems="center"
       justifyContent="center"
-      onPointerDown={() => {
+      enableGestures
+      onTouch={() => {
         props.onClick?.()
       }}
     >
