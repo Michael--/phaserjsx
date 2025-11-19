@@ -5,6 +5,7 @@ import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
 import { FlexExample } from './examples/FlexExample'
+import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
 import { LayoutExample } from './examples/LayoutExample'
 import { NineSliceExample } from './examples/NineSliceExample'
@@ -34,6 +35,7 @@ const examples = {
   nineslice: { label: 'NineSlice UI', component: NineSliceExample },
   scroll: { label: 'Scroll Example', component: ScrollExample },
   theme: { label: 'Theme System', component: ThemeExample },
+  effects: { label: 'Object Effects', component: GameObjectEffectsExample },
 } as const
 
 export type ExampleKey = keyof typeof examples
