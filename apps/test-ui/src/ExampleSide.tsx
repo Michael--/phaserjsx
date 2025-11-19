@@ -9,6 +9,7 @@ import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
 import { LayoutExample } from './examples/LayoutExample'
 import { NineSliceExample } from './examples/NineSliceExample'
+import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { StackExample } from './examples/StackExample'
@@ -36,6 +37,7 @@ const examples = {
   scroll: { label: 'Scroll Example', component: ScrollExample },
   theme: { label: 'Theme System', component: ThemeExample },
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
+  origin: { label: 'Origin View', component: OriginExample },
 } as const
 
 export type ExampleKey = keyof typeof examples

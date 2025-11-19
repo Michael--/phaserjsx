@@ -9,14 +9,14 @@
  *   <Text>Rotates around center</Text>
  * </OriginView>
  */
-import type { ViewProps } from '@phaserjsx/ui'
+import type { ViewProps, VNode } from '@phaserjsx/ui'
 import { useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
 /**
  * Extended ViewProps with origin support
  */
-export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y'> {
+export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'> {
   /**
    * Origin X for rotation and scale (0 = left, 0.5 = center, 1 = right)
    * @default 0.5
@@ -35,6 +35,10 @@ export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y'> {
    * Y position of the view
    */
   y?: number
+  /**
+   * Child node! Only one child allowed.
+   */
+  children?: VNode
 }
 
 /**
@@ -90,7 +94,16 @@ export function OriginView({
   const offsetY = -numericDimension.y * originY
 
   return (
-    <View ref={handleOuterRef} direction="stack" width={width} height={height} x={x} y={y}>
+    <View
+      ref={handleOuterRef}
+      direction="stack"
+      width={width}
+      height={height}
+      x={x}
+      y={y}
+      // padding={0}
+      // margin={0}
+    >
       {/* Middle View: Positioned at origin point, receives ref for rotation */}
       <View
         ref={ref as ((instance: Phaser.GameObjects.Container | null) => void) | undefined}
@@ -99,9 +112,12 @@ export function OriginView({
         width={0}
         height={0}
         padding={{ left: offsetX, top: offsetY }}
+        margin={0}
+        direction="stack"
+        backgroundColor={0xff88ff}
       >
         {/* Inner View: Contains actual content with all original props */}
-        <View width={width} height={height} {...viewProps}>
+        <View width={width} height={height} {...viewProps} direction="stack" padding={0} margin={0}>
           {children}
         </View>
       </View>
