@@ -30,6 +30,9 @@ export class GestureManager {
     startY: number
   } | null = null
 
+  // Track which containers were hit during pointer down (for move event filtering)
+  private activeContainersForMove = new Map<number, Set<Phaser.GameObjects.Container>>()
+
   private isInitialized = false
 
   constructor(scene: Phaser.Scene) {
@@ -163,11 +166,13 @@ export class GestureManager {
    * @param pointer - The pointer that triggered the event
    * @param eventType - Type of event for filtering callbacks
    * @param handler - Function to call for each container, returns true if propagation stopped
+   * @param filterSet - Optional set of containers to limit bubbling to (for move events)
    */
   private bubbleEvent(
     pointer: Phaser.Input.Pointer,
     eventType: keyof GestureCallbacks,
-    handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void
+    handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void,
+    filterSet?: Set<Phaser.GameObjects.Container>
   ): void {
     // Get all containers at pointer position in reverse order (topmost first)
     const containersArray = Array.from(this.containers.values()).reverse()
@@ -175,6 +180,9 @@ export class GestureManager {
     for (const state of containersArray) {
       // Only process containers that have the callback for this event type
       if (!state.callbacks[eventType]) continue
+
+      // If filterSet provided, only process containers in the set
+      if (filterSet && !filterSet.has(state.container)) continue
 
       // Check if pointer is within this container
       if (!this.isPointerInContainer(pointer, state)) continue
@@ -214,57 +222,72 @@ export class GestureManager {
 
   /**
    * Handle global pointer down event
-   * Iterates containers in reverse order (last registered = topmost = checked first)
-   * This ensures overlapping containers respect z-order
+   * Registers all containers that were hit for move event tracking
+   * Only the topmost gets touch/longpress callbacks
    */
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
-    // Find which container was hit
+    // Create set to track all hit containers for this pointer
+    const hitContainers = new Set<Phaser.GameObjects.Container>()
+
+    // Find which containers were hit
     // Check in reverse order so topmost (last added) containers are checked first
     const containersArray = Array.from(this.containers.values()).reverse()
+    let isFirstHit = true
+
     for (const state of containersArray) {
       const isHit = this.isPointerInContainer(pointer, state)
       if (isHit) {
-        const localPos = this.getLocalPosition(pointer, state.container)
+        // Add to hit set (for move event filtering)
+        hitContainers.add(state.container)
 
-        // Store active pointer down for touch detection
-        this.activePointerDown = {
-          pointerId: pointer.id,
-          container: state.container,
-          startX: pointer.x,
-          startY: pointer.y,
+        // Only the first (topmost) hit gets touch/longpress handling
+        if (isFirstHit) {
+          isFirstHit = false
+          const localPos = this.getLocalPosition(pointer, state.container)
+
+          // Store active pointer down for touch detection
+          this.activePointerDown = {
+            pointerId: pointer.id,
+            container: state.container,
+            startX: pointer.x,
+            startY: pointer.y,
+          }
+
+          // Reset long press triggered flag
+          state.longPressTriggered = false
+
+          // Store down time for touch duration check
+          state.pointerDownTime = Date.now()
+
+          // Start long press timer if callback exists
+          if (state.callbacks.onLongPress) {
+            state.longPressTimer = setTimeout(() => {
+              if (this.activePointerDown?.container === state.container) {
+                const data = this.createEventData(
+                  pointer,
+                  localPos.x,
+                  localPos.y,
+                  state.hitArea.width,
+                  state.hitArea.height
+                )
+                state.callbacks.onLongPress?.(data)
+
+                // Mark that long press was triggered to prevent onTouch
+                state.longPressTriggered = true
+                this.activePointerDown = null
+              }
+            }, state.config.longPressDuration)
+          }
+
+          // Store down position for tracking
+          state.pointerDownPosition = { x: pointer.x, y: pointer.y }
         }
-
-        // Reset long press triggered flag
-        state.longPressTriggered = false
-
-        // Store down time for touch duration check
-        state.pointerDownTime = Date.now()
-
-        // Start long press timer if callback exists
-        if (state.callbacks.onLongPress) {
-          state.longPressTimer = setTimeout(() => {
-            if (this.activePointerDown?.container === state.container) {
-              const data = this.createEventData(
-                pointer,
-                localPos.x,
-                localPos.y,
-                state.hitArea.width,
-                state.hitArea.height
-              )
-              state.callbacks.onLongPress?.(data)
-
-              // Mark that long press was triggered to prevent onTouch
-              state.longPressTriggered = true
-              this.activePointerDown = null
-            }
-          }, state.config.longPressDuration)
-        }
-
-        // Store down position for tracking
-        state.pointerDownPosition = { x: pointer.x, y: pointer.y }
-
-        break // Only handle topmost container (no bubbling)
       }
+    }
+
+    // Store hit containers for move event filtering
+    if (hitContainers.size > 0) {
+      this.activeContainersForMove.set(pointer.id, hitContainers)
     }
   }
 
@@ -292,28 +315,34 @@ export class GestureManager {
     const touchDuration = state.pointerDownTime ? Date.now() - state.pointerDownTime : 0
     const isTouchTooLong = touchDuration > state.config.maxTouchDuration
 
-    // Send final move event to all containers with onTouchMove (bubbling)
+    // Send final move event to containers that were hit during pointer down
     const last = this.lastPointerPositions.get(pointer.id)
     const dx = last ? pointer.x - last.x : 0
     const dy = last ? pointer.y - last.y : 0
+    const hitContainers = this.activeContainersForMove.get(pointer.id)
 
-    this.bubbleEvent(pointer, 'onTouchMove', (targetState, targetLocalPos) => {
-      const isInside = this.isPointerInContainer(pointer, targetState)
-      const finalMoveData = this.createEventData(
-        pointer,
-        targetLocalPos.x,
-        targetLocalPos.y,
-        targetState.hitArea.width,
-        targetState.hitArea.height,
-        { dx, dy, isInside, state: 'end' }
-      )
-      targetState.callbacks.onTouchMove?.(finalMoveData)
+    this.bubbleEvent(
+      pointer,
+      'onTouchMove',
+      (targetState, targetLocalPos) => {
+        const isInside = this.isPointerInContainer(pointer, targetState)
+        const finalMoveData = this.createEventData(
+          pointer,
+          targetLocalPos.x,
+          targetLocalPos.y,
+          targetState.hitArea.width,
+          targetState.hitArea.height,
+          { dx, dy, isInside, state: 'end' }
+        )
+        targetState.callbacks.onTouchMove?.(finalMoveData)
 
-      // Reset first move flag for this container
-      targetState.isFirstMove = undefined
+        // Reset first move flag for this container
+        targetState.isFirstMove = undefined
 
-      return finalMoveData.isPropagationStopped()
-    })
+        return finalMoveData.isPropagationStopped()
+      },
+      hitContainers
+    )
 
     // Check if pointer is still within the container (basic tap/click detection)
     // For now, we require pointer up to be inside - could be made configurable
@@ -368,12 +397,15 @@ export class GestureManager {
 
     this.activePointerDown = null
     state.pointerDownPosition = undefined
+
+    // Clear active containers for move tracking
+    this.activeContainersForMove.delete(pointer.id)
   }
 
   /**
    * Handle global pointer move event
-   * Bubbles through all overlapping containers with onTouchMove
-   * Continues until stopPropagation() is called
+   * Only notifies containers that were hit during pointer down
+   * Bubbles through them until stopPropagation() is called
    */
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
     // Calculate delta
@@ -387,13 +419,20 @@ export class GestureManager {
       return
     }
 
-    // Bubble onTouchMove to all overlapping containers
+    // Get containers that were hit during pointer down
+    const hitContainers = this.activeContainersForMove.get(pointer.id)
+    if (!hitContainers) return
+
+    // Bubble onTouchMove only to containers that were hit at pointer down
     // Check in reverse order (topmost first)
     const containersArray = Array.from(this.containers.values()).reverse()
 
     for (const state of containersArray) {
-      // Only process containers with onTouchMove callback
+      // Only process if:
+      // 1. Container has onTouchMove callback
+      // 2. Container was hit during pointer down
       if (!state.callbacks.onTouchMove) continue
+      if (!hitContainers.has(state.container)) continue
 
       const localPos = this.getLocalPosition(pointer, state.container)
       const isInside = this.isPointerInContainer(pointer, state)
