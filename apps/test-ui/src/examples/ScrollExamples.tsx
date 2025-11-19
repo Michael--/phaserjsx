@@ -1,6 +1,7 @@
-import { Text, useRef, useState, View } from '@phaserjsx/ui'
-import type Phaser from 'phaser'
+import type { GestureEventData } from '@phaserjsx/ui'
+import { Text, useState, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
+import { ScrollSlider } from '../components/ScrollSlider'
 import { Spacer } from '../components/Spacer'
 
 function ListButton(props: { index: number }) {
@@ -12,7 +13,7 @@ function ListButton(props: { index: number }) {
         backgroundColor={0x0000aa}
         backgroundAlpha={1.0}
         enableGestures={true}
-        onTouch={(e) => {
+        onTouch={(e: GestureEventData) => {
           e.stopPropagation() // prevent bubble up to ScrollView
           setCount(count + 1)
         }}
@@ -70,73 +71,6 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
   )
 }
 
-function Slider(props: {
-  scroll: { scrollX: number; scrollY: number; width: number; height: number }
-  trackHeight: number
-  onScroll: (scrollY: number) => void
-}) {
-  const scrollHeight = (props.trackHeight * props.scroll.height) / 100
-  const newScrollY = (props.scroll.scrollY / 100) * (props.trackHeight - scrollHeight)
-  const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const isDraggingRef = useRef(false)
-
-  const handleThumbTouchMove = (data: { dy?: number; state?: string }) => {
-    if (data.state === 'start') {
-      isDraggingRef.current = true
-      return
-    }
-
-    if (data.state === 'end') {
-      isDraggingRef.current = false
-      return
-    }
-
-    if (!isDraggingRef.current || !data.dy) return
-
-    const thumbRange = props.trackHeight - scrollHeight
-    const currentThumbY = (props.scroll.scrollY / 100) * thumbRange
-    const newThumbY = Math.max(0, Math.min(thumbRange, currentThumbY + data.dy))
-    const newScrollYPercent = thumbRange > 0 ? (newThumbY / thumbRange) * 100 : 0
-
-    props.onScroll(newScrollYPercent)
-  }
-
-  const handleBackgroundTouch = (data: { localY: number }) => {
-    const effectiveHeight = props.trackHeight - 2
-    const normalizedY = (data.localY - 1) / effectiveHeight
-    const targetScrollY = Math.max(0, Math.min(100, normalizedY * 100))
-    props.onScroll(targetScrollY)
-  }
-
-  return (
-    <View
-      ref={sliderRef}
-      width={24}
-      height={props.trackHeight}
-      backgroundColor={0xdddddd}
-      direction="stack"
-      padding={1}
-    >
-      <View
-        width={'fill'}
-        height={'fill'}
-        backgroundColor={0xaaaaaa}
-        enableGestures={true}
-        onTouch={handleBackgroundTouch}
-      ></View>
-      <View
-        width={'fill'}
-        x={1}
-        y={newScrollY}
-        height={scrollHeight}
-        backgroundColor={0xeeeebb}
-        enableGestures={true}
-        onTouchMove={handleThumbTouchMove}
-      ></View>
-    </View>
-  )
-}
-
 function ScrollExampleSliderLocal(props: { title: string; count: number; width: string }) {
   const [scroll, setScroll] = useState({
     dx: 0,
@@ -147,22 +81,28 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
     height: 0,
   })
 
-  const handleScrollViewScroll = (x: number, y: number, w: number, h: number) => {
+  const handleScrollViewScroll = (
+    x: number,
+    y: number,
+    vw: number,
+    vh: number,
+    cw: number,
+    ch: number
+  ) => {
     // Calculate absolute scroll positions from percentages
-    const contentHeight = 400 / (h / 100)
-    const maxScrollY = contentHeight - 400
+    const maxScrollY = Math.max(0, ch - vh)
     const dy = (y / 100) * maxScrollY
 
-    const contentWidth = 200 / (w / 100)
-    const maxScrollX = contentWidth - 200
+    const maxScrollX = Math.max(0, cw - vw)
     const dx = (x / 100) * maxScrollX
 
-    setScroll({ dx, dy, scrollX: x, scrollY: y, width: w, height: h })
+    setScroll({ dx, dy, scrollX: x, scrollY: y, width: (vw / cw) * 100, height: (vh / ch) * 100 })
   }
 
   const handleSliderScroll = (scrollYPercent: number) => {
-    const contentHeight = 400 / (scroll.height / 100)
-    const maxScrollY = contentHeight - 400
+    const vh = 400
+    const ch = vh / (scroll.height / 100)
+    const maxScrollY = Math.max(0, ch - vh)
     const dy = (scrollYPercent / 100) * maxScrollY
 
     setScroll({ ...scroll, dy, scrollY: scrollYPercent })
@@ -178,7 +118,12 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
-        <Slider scroll={scroll} trackHeight={400} onScroll={handleSliderScroll} />
+        <ScrollSlider
+          direction="vertical"
+          trackSize={400}
+          scrollInfo={scroll}
+          onScroll={handleSliderScroll}
+        />
       </View>
     </View>
   )
@@ -194,22 +139,35 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
     height: 0,
   })
 
-  const handleScrollViewScroll = (x: number, y: number, w: number, h: number) => {
+  const handleScrollViewScroll = (
+    x: number,
+    y: number,
+    vw: number,
+    vh: number,
+    cw: number,
+    ch: number
+  ) => {
     // Calculate absolute scroll positions from percentages
-    const contentHeight = 200 / (h / 100)
-    const maxScrollY = contentHeight - 200
+    const maxScrollY = Math.max(0, ch - vh)
     const dy = (y / 100) * maxScrollY
 
-    const contentWidth = 200 / (w / 100)
-    const maxScrollX = contentWidth - 200
+    const maxScrollX = Math.max(0, cw - vw)
     const dx = (x / 100) * maxScrollX
 
-    setScroll({ dx, dy, scrollX: x, scrollY: y, width: w, height: h })
+    setScroll({
+      dx,
+      dy,
+      scrollX: x,
+      scrollY: y,
+      width: (vw / cw) * 100,
+      height: (vh / ch) * 100,
+    })
   }
 
   const handleSliderScroll = (scrollYPercent: number) => {
-    const contentHeight = 200 / (scroll.height / 100)
-    const maxScrollY = contentHeight - 200
+    const vh = 200
+    const ch = vh / (scroll.height / 100)
+    const maxScrollY = Math.max(0, ch - vh)
     const dy = (scrollYPercent / 100) * maxScrollY
 
     setScroll({ ...scroll, dy, scrollY: scrollYPercent })
@@ -245,10 +203,26 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
               </ScrollView>
             </View>
           </View>
-          <Slider scroll={scroll} trackHeight={200} onScroll={handleSliderScroll} />
+          <ScrollSlider
+            direction="vertical"
+            trackSize={200}
+            scrollInfo={scroll}
+            onScroll={handleSliderScroll}
+          />
         </View>
-        {/** Adjust to be a horizontal slider in Slider itself (not yet supported) */}
-        <Slider scroll={scroll} trackHeight={200} onScroll={handleSliderScroll} />
+        {/** Horizontal slider */}
+        <ScrollSlider
+          direction="horizontal"
+          trackSize={200}
+          scrollInfo={scroll}
+          onScroll={(percent) => {
+            const vw = 200
+            const cw = vw / (scroll.width / 100)
+            const maxScrollX = Math.max(0, cw - vw)
+            const dx = (percent / 100) * maxScrollX
+            setScroll({ ...scroll, dx, scrollX: percent })
+          }}
+        />
       </View>
     </View>
   )

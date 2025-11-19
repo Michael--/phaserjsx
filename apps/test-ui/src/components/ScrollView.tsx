@@ -13,12 +13,22 @@ export interface ScrollViewProps {
   children?: VNode
   /** Initial scroll position */
   scroll?: { dx: number; dy: number }
-  /** Called when scroll position changes, values are in percent 0..100
-   * @param scrollX - Horizontal scroll position in percent (0 = left, 100 = right)
-   * @param scrollWidth - Total scrollable width size, 100 means the slider fills the viewport
-   * @param scrollHeight - Total scrollable height, 100 means the slider fills the viewport
+  /** Called when scroll position changes
+   * @param scrollXPercent - Horizontal scroll position in percent (0 = left, 100 = right)
+   * @param scrollYPercent - Vertical scroll position in percent (0 = top, 100 = bottom)
+   * @param viewportWidth - Width of the viewport in pixels
+   * @param viewportHeight - Height of the viewport in pixels
+   * @param contentWidth - Width of the content in pixels
+   * @param contentHeight - Height of the content in pixels
    */
-  onScroll?: (scrollX: number, scrollY: number, scrollWidth: number, scrollHeight: number) => void
+  onScroll?: (
+    scrollXPercent: number,
+    scrollYPercent: number,
+    viewportWidth: number,
+    viewportHeight: number,
+    contentWidth: number,
+    contentHeight: number
+  ) => void
 }
 
 /**
@@ -62,11 +72,15 @@ export function ScrollView(props: ScrollViewProps) {
     const newScrollYPercent = maxScrollY != 0 ? (newScrollY / maxScrollY) * 100 : 0
     const newScrollXPercent = maxScrollX != 0 ? (newScrollX / maxScrollX) * 100 : 0
 
-    // Calculate scrollbar size percentages
-    const scrollWidthPercent = contentWidth > 0 ? (viewportWidth / contentWidth) * 100 : 100
-    const scrollHeightPercent = contentHeight > 0 ? (viewportHeight / contentHeight) * 100 : 100
     setScroll({ dx: newScrollX, dy: newScrollY })
-    onScroll?.(newScrollXPercent, newScrollYPercent, scrollWidthPercent, scrollHeightPercent)
+    onScroll?.(
+      newScrollXPercent,
+      newScrollYPercent,
+      viewportWidth,
+      viewportHeight,
+      contentWidth,
+      contentHeight
+    )
   }
 
   const handleTouchMove = (data: GestureEventData) => {
