@@ -21,6 +21,7 @@ export interface EffectConfig {
 interface PositionState {
   originalX: number
   originalY: number
+  originalAlpha: number
   effectCount: number
 }
 
@@ -40,6 +41,7 @@ function getPositionState(obj: Phaser.GameObjects.Container): PositionState {
     positionStates.set(obj, {
       originalX: obj.x,
       originalY: obj.y,
+      originalAlpha: obj.alpha,
       effectCount: 0,
     })
   }
@@ -68,9 +70,10 @@ function decrementEffectCount(obj: Phaser.GameObjects.Container): void {
   const state = getPositionState(obj)
   state.effectCount--
 
-  // Reset to original position when all effects are done
+  // Reset to original position and alpha when all effects are done
   if (state.effectCount <= 0) {
     obj.setPosition(state.originalX, state.originalY)
+    obj.setAlpha(state.originalAlpha)
     state.effectCount = 0
   }
 }
@@ -173,8 +176,12 @@ export const createPulseEffect: EffectFn = (obj, config) => {
  */
 export const createFadeEffect: EffectFn = (obj, config) => {
   const { time = 300 } = config
+
+  const state = getPositionState(obj)
+  incrementEffectCount(obj)
+
   const scene = obj.scene
-  const originalAlpha = obj.alpha
+  const originalAlpha = state.originalAlpha
 
   scene.tweens.add({
     targets: obj,
@@ -184,7 +191,7 @@ export const createFadeEffect: EffectFn = (obj, config) => {
     yoyo: true,
     repeat: 0,
     onComplete: () => {
-      obj.setAlpha(originalAlpha)
+      decrementEffectCount(obj)
     },
   })
 }
