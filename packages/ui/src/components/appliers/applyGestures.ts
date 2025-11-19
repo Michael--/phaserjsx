@@ -31,8 +31,24 @@ export function applyGesturesProps(
   // Case 1: Gestures newly enabled
   if (!prevEnabled && nextEnabled && hasAnyGesture) {
     // Register for the first time
-    const width = typeof next.width === 'number' ? next.width : 100
-    const height = typeof next.height === 'number' ? next.height : 100
+    // Use __getLayoutSize for actual calculated dimensions
+    const containerWithLayout = container as typeof container & {
+      __getLayoutSize?: () => { width: number; height: number }
+    }
+
+    let width = 100
+    let height = 100
+
+    if (containerWithLayout.__getLayoutSize) {
+      const size = containerWithLayout.__getLayoutSize()
+      width = size.width
+      height = size.height
+    } else {
+      const bounds = container.getBounds()
+      width = bounds.width || 100
+      height = bounds.height || 100
+    }
+
     const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
     const callbacks: GestureCallbacks = {}
@@ -76,8 +92,24 @@ export function applyGesturesProps(
 
     // Update hit area if width/height changed
     if (prev.width !== next.width || prev.height !== next.height) {
-      const width = typeof next.width === 'number' ? next.width : 100
-      const height = typeof next.height === 'number' ? next.height : 100
+      // Use __getLayoutSize for actual calculated dimensions
+      const containerWithLayout = container as typeof container & {
+        __getLayoutSize?: () => { width: number; height: number }
+      }
+
+      let width = 100
+      let height = 100
+
+      if (containerWithLayout.__getLayoutSize) {
+        const size = containerWithLayout.__getLayoutSize()
+        width = size.width
+        height = size.height
+      } else {
+        const bounds = container.getBounds()
+        width = bounds.width || 100
+        height = bounds.height || 100
+      }
+
       const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
       manager.updateHitArea(container, hitArea)

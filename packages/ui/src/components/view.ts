@@ -70,11 +70,12 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Setup pointer interaction if any event handlers are provided
   createInteraction(container, props)
 
+  // Setup layout system (props and size provider)
+  // Must be before createGestures so __getLayoutSize is available
+  createLayout(container, props)
+
   // Setup gesture system (high-level touch/mouse gestures)
   createGestures(scene, container, props)
-
-  // Setup layout system (props and size provider)
-  createLayout(container, props)
 
   // Debug: Log layout props storage
   DebugLogger.log('layout', 'View creator storing __layoutProps with padding:', props.padding)

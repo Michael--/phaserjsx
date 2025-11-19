@@ -39,9 +39,25 @@ export function createGestures(
   // Get scene's gesture manager
   const manager = getGestureManager(scene)
 
-  // Calculate hit area dimensions
-  const width = typeof props.width === 'number' ? props.width : 100
-  const height = typeof props.height === 'number' ? props.height : 100
+  // Get actual calculated container size from layout system
+  // Use __getLayoutSize if available (set by createLayout), otherwise fallback to getBounds
+  const containerWithLayout = container as typeof container & {
+    __getLayoutSize?: () => { width: number; height: number }
+  }
+
+  let width = 100
+  let height = 100
+
+  if (containerWithLayout.__getLayoutSize) {
+    const size = containerWithLayout.__getLayoutSize()
+    width = size.width
+    height = size.height
+  } else {
+    // Fallback to getBounds if __getLayoutSize not available yet
+    const bounds = container.getBounds()
+    width = bounds.width || 100
+    height = bounds.height || 100
+  }
 
   // Create hit area with origin at (0,0) - matches our component system
   const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
