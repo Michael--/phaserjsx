@@ -21,8 +21,7 @@ export function createInteraction(
     props.onPointerUp ||
     props.onPointerOver ||
     props.onPointerOut ||
-    props.onPointerMove ||
-    props.onPointerUpOutside
+    props.onPointerMove
   ) {
     const width = typeof props.width === 'number' ? props.width : 100
     const height = typeof props.height === 'number' ? props.height : 100
@@ -37,6 +36,5 @@ export function createInteraction(
     if (props.onPointerOver) container.on('pointerover', props.onPointerOver)
     if (props.onPointerOut) container.on('pointerout', props.onPointerOut)
     if (props.onPointerMove) container.on('pointermove', props.onPointerMove)
-    if (props.onPointerUpOutside) container.on('pointerupoutside', props.onPointerUpOutside)
   }
 }

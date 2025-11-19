@@ -216,5 +216,4 @@ export interface InteractionProps {
   onPointerOver?: (pointer: Phaser.Input.Pointer) => void
   onPointerOut?: (pointer: Phaser.Input.Pointer) => void
   onPointerMove?: (pointer: Phaser.Input.Pointer) => void
-  onPointerUpOutside?: (pointer: Phaser.Input.Pointer) => void
 }
