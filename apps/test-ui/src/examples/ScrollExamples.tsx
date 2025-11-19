@@ -96,7 +96,7 @@ function Slider(props: {
         width={'fill'}
         height={'fill'}
         backgroundColor={0xaaaaaa}
-        enableGestures
+        enableGestures={true}
         onTouch={handleBackgroundTouch}
       ></View>
       <View
