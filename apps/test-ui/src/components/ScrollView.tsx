@@ -1,7 +1,7 @@
 /**
  * ScrollView component for scrollable content areas
  */
-import type { VNode } from '@phaserjsx/ui'
+import type { GestureEventData, VNode } from '@phaserjsx/ui'
 import { useEffect, useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
@@ -33,8 +33,6 @@ export function ScrollView(props: ScrollViewProps) {
   const [scroll, setScroll] = useState(initialScroll || { dx: 0, dy: 0 })
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const isDraggingRef = useRef(false)
-  const lastPointerRef = useRef({ x: 0, y: 0 })
 
   useEffect(() => {
     if (initialScroll) {
@@ -48,23 +46,10 @@ export function ScrollView(props: ScrollViewProps) {
     }, 0)
   }, [])
 
-  const handlePointerDown = (pointer: Phaser.Input.Pointer) => {
-    if (pointer.leftButtonDown()) {
-      isDraggingRef.current = true
-      lastPointerRef.current = { x: pointer.x, y: pointer.y }
-    }
-  }
-
-  const handlePointerUp = (pointer: Phaser.Input.Pointer) => {
-    if (pointer.leftButtonReleased()) {
-      isDraggingRef.current = false
-    }
-  }
-
   const calc = (deltaX: number, deltaY: number) => {
     if (!contentRef.current || !viewportRef.current) return
 
-    // Get viewport and content heights
+    // Get viewport and content dimensions
     const viewportHeight = viewportRef.current.height
     const viewportWidth = viewportRef.current.width
     const contentHeight = contentRef.current.height
@@ -86,20 +71,12 @@ export function ScrollView(props: ScrollViewProps) {
     onScroll?.(newScrollXPercent, newScrollYPercent, scrollWidthPercent, scrollHeightPercent)
   }
 
-  const handlePointerMove = (pointer: Phaser.Input.Pointer) => {
-    if (!isDraggingRef.current) return
+  const handleTouchMove = (data: GestureEventData) => {
+    // Only process move events, ignore start/end
+    if (data.state !== 'move') return
 
-    // Check if pointer is actually down - stops dragging if button was released outside
-    if (!pointer.leftButtonDown()) {
-      isDraggingRef.current = false
-      return
-    }
-    if (!contentRef.current || !viewportRef.current) return
-
-    // Calculate pointer movement delta
-    const deltaY = pointer.y - lastPointerRef.current.y
-    const deltaX = pointer.x - lastPointerRef.current.x
-    lastPointerRef.current = { x: pointer.x, y: pointer.y }
+    const deltaX = data.dx ?? 0
+    const deltaY = data.dy ?? 0
 
     calc(deltaX, deltaY)
   }
@@ -113,9 +90,8 @@ export function ScrollView(props: ScrollViewProps) {
       height="fill"
       backgroundColor={0x555555}
       backgroundAlpha={1.0}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerMove={handlePointerMove}
+      enableGestures
+      onTouchMove={handleTouchMove}
       overflow="hidden"
     >
       {/** B: next view is the dynamic sized content which could be scrolled in parent, when size is bigger then parent */}
