@@ -1,11 +1,11 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, View } from '@phaserjsx/ui'
+import { getThemedProps, Text, View, type ChildrenType } from '@phaserjsx/ui'
 
 // Module augmentation to add ScrollSlider theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Button: {
-      backgroundColor?: number
+      dummy?: number
     } & PhaserJSX.NestedComponentThemes
   }
 }
@@ -14,30 +14,31 @@ declare module '@phaserjsx/ui' {
  * A simple button component with text and click handler
  */
 export interface ButtonProps {
-  text: string
+  text?: string
   onClick?: () => void
   width?: number
   height?: number
+  children?: ChildrenType
 }
 
 export function Button(props: ButtonProps) {
-  const { props: themed } = getThemedProps('Button', undefined, {})
+  const { props: themed, nestedTheme } = getThemedProps('Button', undefined, {})
+
+  // Example usage of themed prop & avoid unused variable warning for a while
+  if (themed.dummy == 42) console.log(themed.dummy)
 
   return (
     <View
+      theme={nestedTheme}
       width={props.width}
       height={props.height}
-      backgroundColor={themed.backgroundColor ?? 0x000088}
-      backgroundAlpha={1.0}
-      padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-      alignItems="center"
-      justifyContent="center"
       enableGestures
       onTouch={() => {
         props.onClick?.()
       }}
     >
-      <Text text={props.text} style={{ fontSize: 16, color: 'white' }} />
+      {props.text != null && <Text text={props.text} />}
+      {props.children}
     </View>
   )
 }

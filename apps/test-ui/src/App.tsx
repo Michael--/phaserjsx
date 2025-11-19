@@ -78,7 +78,23 @@ const globalTheme = createTheme({
   },
 
   Button: {
-    backgroundColor: 0x0044aa,
+    dummy: 0x0044aa,
+    View: {
+      backgroundColor: 0x0044aa,
+      backgroundAlpha: 1.0,
+      borderColor: 0x002266,
+      borderWidth: 2,
+      cornerRadius: 8,
+      padding: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    Text: {
+      style: {
+        color: '#ffffff',
+        fontSize: '20px',
+      },
+    },
   },
 
   ExampleContainer: {
