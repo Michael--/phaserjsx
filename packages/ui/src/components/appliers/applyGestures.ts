@@ -33,7 +33,7 @@ export function applyGesturesProps(
     // Register for the first time
     const width = typeof next.width === 'number' ? next.width : 100
     const height = typeof next.height === 'number' ? next.height : 100
-    const hitArea = new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height)
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
     const callbacks: GestureCallbacks = {}
     if (next.onTouch) callbacks.onTouch = next.onTouch
@@ -78,7 +78,7 @@ export function applyGesturesProps(
     if (prev.width !== next.width || prev.height !== next.height) {
       const width = typeof next.width === 'number' ? next.width : 100
       const height = typeof next.height === 'number' ? next.height : 100
-      const hitArea = new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height)
+      const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
       manager.updateHitArea(container, hitArea)
     }

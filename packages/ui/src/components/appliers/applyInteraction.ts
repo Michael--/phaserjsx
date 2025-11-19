@@ -37,7 +37,7 @@ export function applyInteractionProps(
     const width = typeof next.width === 'number' ? next.width : 100
     const height = typeof next.height === 'number' ? next.height : 100
     // Create hit area - must match the position used in createInteraction
-    const hitArea = new Phaser.Geom.Rectangle(width / 2, height / 2, width, height)
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
     container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains)
     if (container.input) container.input.cursor = 'pointer'
   } else if (hadAnyEvent && !hasAnyEvent) {
@@ -52,7 +52,7 @@ export function applyInteractionProps(
       const width = typeof next.width === 'number' ? next.width : 100
       const height = typeof next.height === 'number' ? next.height : 100
       // Reposition and resize - must match the position used in createInteraction
-      container.input.hitArea.setPosition(width / 2, height / 2)
+      container.input.hitArea.setPosition(0, 0)
       container.input.hitArea.setSize(width, height)
     }
   }

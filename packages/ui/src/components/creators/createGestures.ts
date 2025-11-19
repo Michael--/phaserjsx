@@ -45,7 +45,7 @@ export function createGestures(
 
   // Create hit area centered around container's origin
   // Phaser containers treat hit areas relative to their center
-  const hitArea = new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height)
+  const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
   // Build callbacks object
   const callbacks: GestureCallbacks = {}
