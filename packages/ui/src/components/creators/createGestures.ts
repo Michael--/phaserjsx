@@ -54,9 +54,11 @@ export function createGestures(
   if (props.onLongPress) callbacks.onLongPress = props.onLongPress
 
   // Build config (only include defined values)
-  const config: { longPressDuration?: number; doubleTapDelay?: number } = {}
+  const config: { longPressDuration?: number; doubleTapDelay?: number; maxTouchDuration?: number } =
+    {}
   if (props.longPressDuration !== undefined) config.longPressDuration = props.longPressDuration
   if (props.doubleTapDelay !== undefined) config.doubleTapDelay = props.doubleTapDelay
+  if (props.maxTouchDuration !== undefined) config.maxTouchDuration = props.maxTouchDuration
 
   // Register with manager
   manager.registerContainer(container, callbacks, hitArea, config)

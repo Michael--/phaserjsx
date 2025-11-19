@@ -225,14 +225,22 @@ export interface InteractionProps {
 export interface GestureEventData {
   /** The Phaser pointer that triggered the event */
   pointer: Phaser.Input.Pointer
-  /** Local X coordinate relative to container origin */
+  /** Local X coordinate relative to container origin (0,0) */
   localX: number
-  /** Local Y coordinate relative to container origin */
+  /** Local Y coordinate relative to container origin (0,0) */
   localY: number
   /** Delta X since last move event (only for onTouchMove) */
   dx?: number
   /** Delta Y since last move event (only for onTouchMove) */
   dy?: number
+  /** Width of the container's hit area */
+  width: number
+  /** Height of the container's hit area */
+  height: number
+  /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
+  isInside?: boolean
+  /** Whether this is the final move event (pointer up) (only for onTouchMove) */
+  isFinal?: boolean
 }
 
 /**
@@ -250,12 +258,14 @@ export interface GestureProps {
   /**
    * Called on pointer down + up on the same target (click/tap)
    * Works for both mouse click and touch tap
+   * Only fires if touch duration is within maxTouchDuration
    */
   onTouch?: (data: GestureEventData) => void
 
   /**
    * Called during pointer movement - continues even when outside bounds
    * Provides dx/dy deltas for tracking drag operations
+   * Includes isInside flag and isFinal flag (last event on pointer up)
    * Requires enableGestures: true
    */
   onTouchMove?: (data: GestureEventData) => void
@@ -283,4 +293,10 @@ export interface GestureProps {
    * Default: 300ms
    */
   doubleTapDelay?: number
+
+  /**
+   * Max time in ms for a valid touch/click (prevents delayed touch after long hold)
+   * Default: 500ms
+   */
+  maxTouchDuration?: number
 }

@@ -21,6 +21,10 @@ export interface GestureEventData {
   width: number
   /** Height of the container's hit area */
   height: number
+  /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
+  isInside?: boolean
+  /** Whether this is the final move event (pointer up) (only for onTouchMove) */
+  isFinal?: boolean
 }
 
 /**
@@ -45,6 +49,8 @@ export interface GestureConfig {
   longPressDuration?: number
   /** Max time in ms between taps for double tap (default: 300) */
   doubleTapDelay?: number
+  /** Max time in ms for a valid touch/click (prevents delayed touch after long hold) (default: 500) */
+  maxTouchDuration?: number
 }
 
 /**
@@ -53,6 +59,7 @@ export interface GestureConfig {
 export const DEFAULT_GESTURE_CONFIG: Required<GestureConfig> = {
   longPressDuration: 500,
   doubleTapDelay: 300,
+  maxTouchDuration: 500,
 }
 
 /**
@@ -68,5 +75,6 @@ export interface GestureContainerState {
   lastTapTime?: number | undefined
   longPressTimer?: NodeJS.Timeout | undefined
   pointerDownPosition?: { x: number; y: number } | undefined
+  pointerDownTime?: number | undefined
   longPressTriggered?: boolean | undefined
 }

@@ -152,6 +152,9 @@ export class GestureManager {
         // Reset long press triggered flag
         state.longPressTriggered = false
 
+        // Store down time for touch duration check
+        state.pointerDownTime = Date.now()
+
         // Start long press timer if callback exists
         if (state.callbacks.onLongPress) {
           state.longPressTimer = setTimeout(() => {
@@ -195,10 +198,35 @@ export class GestureManager {
     }
 
     // Clear long press timer if still pending
-    const wasLongPressActive = !!state.longPressTimer
     if (state.longPressTimer) {
       clearTimeout(state.longPressTimer)
       state.longPressTimer = undefined
+    }
+
+    // Calculate touch duration
+    const touchDuration = state.pointerDownTime ? Date.now() - state.pointerDownTime : 0
+    const isTouchTooLong = touchDuration > state.config.maxTouchDuration
+
+    // Send final move event if callback exists
+    if (state.callbacks.onTouchMove) {
+      const localPos = this.getLocalPosition(pointer, state.container)
+      const isInside = this.isPointerInContainer(pointer, state)
+      const last = this.lastPointerPositions.get(pointer.id)
+      const dx = last ? pointer.x - last.x : 0
+      const dy = last ? pointer.y - last.y : 0
+
+      const finalMoveData: GestureEventData = {
+        pointer,
+        localX: localPos.x,
+        localY: localPos.y,
+        dx,
+        dy,
+        width: state.hitArea.width,
+        height: state.hitArea.height,
+        isInside,
+        isFinal: true,
+      }
+      state.callbacks.onTouchMove(finalMoveData)
     }
 
     // Check if pointer is still within the container (basic tap/click detection)
@@ -213,15 +241,15 @@ export class GestureManager {
         height: state.hitArea.height,
       }
 
-      // Fire onTouch only if long press wasn't triggered or timer was cancelled early
-      // Don't fire onTouch if the long press timer was active for significant time
-      const shouldFireTouch =
-        !state.longPressTriggered && (!wasLongPressActive || !state.callbacks.onLongPress)
+      // Fire onTouch only if:
+      // - Long press wasn't triggered
+      // - Touch duration is within acceptable range (not held too long)
+      const shouldFireTouch = !state.longPressTriggered && !isTouchTooLong
       if (state.callbacks.onTouch && shouldFireTouch) {
         state.callbacks.onTouch(data)
       }
 
-      // Check for double tap (also skip if long press was involved)
+      // Check for double tap (also skip if touch was too long)
       if (state.callbacks.onDoubleTap && shouldFireTouch) {
         const now = Date.now()
         const timeSinceLastTap = state.lastTapTime ? now - state.lastTapTime : Infinity
@@ -235,8 +263,9 @@ export class GestureManager {
       }
     }
 
-    // Reset long press triggered flag
+    // Reset state
     state.longPressTriggered = false
+    state.pointerDownTime = undefined
 
     this.activePointerDown = null
     state.pointerDownPosition = undefined
@@ -260,6 +289,7 @@ export class GestureManager {
       const state = this.containers.get(this.activePointerDown.container)
       if (state?.callbacks.onTouchMove) {
         const localPos = this.getLocalPosition(pointer, state.container)
+        const isInside = this.isPointerInContainer(pointer, state)
         const data: GestureEventData = {
           pointer,
           localX: localPos.x,
@@ -268,6 +298,8 @@ export class GestureManager {
           dy,
           width: state.hitArea.width,
           height: state.hitArea.height,
+          isInside,
+          isFinal: false,
         }
         state.callbacks.onTouchMove(data)
       }
