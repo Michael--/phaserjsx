@@ -1,7 +1,8 @@
 /**
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
-import { Text, View, getThemedProps, useState, type NestedComponentThemes } from '@phaserjsx/ui'
+import type * as PhaserJSX from '@phaserjsx/ui'
+import { Text, View, getThemedProps, useState } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -11,7 +12,7 @@ declare module '@phaserjsx/ui' {
       unselectedColor?: number
       labelColor?: number
       gap?: number
-    } & NestedComponentThemes
+    } & PhaserJSX.NestedComponentThemes
   }
 }
 

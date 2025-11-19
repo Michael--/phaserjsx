@@ -54,7 +54,6 @@ export function ScrollView(props: ScrollViewProps) {
     const viewportWidth = viewportRef.current.width
     const contentHeight = contentRef.current.height
     const contentWidth = contentRef.current.width
-
     // Calculate new scroll position
     const maxScrollY = Math.max(0, contentHeight - viewportHeight)
     const maxScrollX = Math.max(0, contentWidth - viewportWidth)
@@ -72,8 +71,8 @@ export function ScrollView(props: ScrollViewProps) {
   }
 
   const handleTouchMove = (data: GestureEventData) => {
-    // Only process move events, ignore start/end
-    if (data.state !== 'move') return
+    // Process start and move events, ignore end
+    if (data.state === 'end') return
 
     const deltaX = data.dx ?? 0
     const deltaY = data.dy ?? 0

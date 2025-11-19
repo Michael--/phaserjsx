@@ -22,9 +22,10 @@ export {
   normalizeEdgeInsets,
   type CornerRadiusInsets,
   type EdgeInsets,
-  type GestureEventData,
-  type TouchMoveState,
 } from './core-props'
+
+// Export gesture types explicitly for better IDE support
+export type { GestureEventData, GestureProps, TouchMoveState } from './core-props'
 
 // Explicit export for convenience functions
 export { mountJSX as mountComponent } from './vdom'

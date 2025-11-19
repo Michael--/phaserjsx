@@ -1,6 +1,8 @@
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
+
+import type * as PhaserJSX from '@phaserjsx/ui'
 import type { ViewProps } from '@phaserjsx/ui'
 import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
 
@@ -19,7 +21,7 @@ declare module '@phaserjsx/ui' {
             left?: number
           }
       gap?: number
-    } & NestedComponentThemes
+    } & PhaserJSX.NestedComponentThemes
   }
 }
 
