@@ -253,7 +253,7 @@ export function FlexExample() {
         <View
           direction="column"
           gap={10}
-          height={130}
+          height={200}
           backgroundColor={0x555500}
           backgroundAlpha={1.0}
           width={'fill'}
@@ -262,7 +262,7 @@ export function FlexExample() {
             direction="row"
             gap={10}
             flex={1}
-            backgroundColor={0x0077777}
+            backgroundColor={0x777777}
             backgroundAlpha={1.0}
             width={'fill'}
           >
@@ -300,7 +300,7 @@ export function FlexExample() {
           <View
             direction="row"
             gap={10}
-            flex={2}
+            flex={1.5}
             backgroundColor={0x0077777}
             backgroundAlpha={1.0}
             width={'fill'}

@@ -34,7 +34,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('advanced')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('flex')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
 
   return (
