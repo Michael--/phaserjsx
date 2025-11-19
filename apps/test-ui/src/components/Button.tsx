@@ -6,9 +6,13 @@ declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Button: {
       disabledColor?: number
-      primary?: PhaserJSX.ViewTheme
-      secondary?: PhaserJSX.ViewTheme
-      outline?: PhaserJSX.ViewTheme
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      primary?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      secondary?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      outline?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      small?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      medium?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      large?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
     } & PhaserJSX.ViewTheme
   }
 }
@@ -24,6 +28,7 @@ export interface ButtonProps {
   children?: ChildrenType
   disabled?: boolean
   variant?: 'primary' | 'secondary' | 'outline'
+  size?: 'small' | 'medium' | 'large'
 }
 
 /**
@@ -32,34 +37,49 @@ export interface ButtonProps {
  * @returns Button JSX element
  */
 export function Button(props: ButtonProps) {
-  const { props: themed, nestedTheme } = getThemedProps('Button', undefined, {})
+  const { props: themed } = getThemedProps('Button', undefined, {})
 
-  // Merge base theme with variant-specific overrides
+  type ThemeRecord = Record<
+    string,
+    PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+  >
+
+  // Merge base theme with variant and size overrides
   const variantTheme = props.variant
-    ? { ...themed, ...(themed as Record<string, PhaserJSX.ViewTheme>)[props.variant] }
+    ? { ...themed, ...(themed as ThemeRecord)[props.variant] }
     : themed
+
+  const sizeTheme = props.size
+    ? { ...variantTheme, ...(themed as ThemeRecord)[props.size] }
+    : variantTheme
 
   // Apply disabled state styling
   const effectiveTheme = props.disabled
     ? {
-        ...variantTheme,
-        backgroundColor: themed.disabledColor ?? variantTheme?.backgroundColor,
+        ...sizeTheme,
+        backgroundColor: themed.disabledColor ?? sizeTheme?.backgroundColor,
         alpha: 0.5,
       }
-    : variantTheme
+    : sizeTheme
 
   const handleTouch = !props.disabled && props.onClick ? () => props.onClick?.() : undefined
 
+  // Extract textStyle from theme for Text component only
+  const textStyle = (effectiveTheme as ThemeRecord[string]).textStyle
+
   return (
     <View
-      theme={nestedTheme}
       width={props.width}
       height={props.height}
       enableGestures={!props.disabled}
       {...(handleTouch && { onTouch: handleTouch })}
       {...effectiveTheme}
     >
-      {props.text != null ? <Text text={props.text} /> : props.children}
+      {props.text != null ? (
+        <Text text={props.text} {...(textStyle && { style: textStyle })} />
+      ) : (
+        props.children
+      )}
     </View>
   )
 }

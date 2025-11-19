@@ -31,11 +31,11 @@ export function ButtonExample() {
         <Button text="Outline Disabled" variant="outline" disabled />
       </View>
 
-      {/* Custom Sizes */}
+      {/* Size Variants */}
       <View direction="row" gap={10} alignItems="center">
-        <Button text="Small" width={80} height={30} />
-        <Button text="Medium" width={120} height={40} />
-        <Button text="Large" width={160} height={50} />
+        <Button text="Small" size="small" width={80} height={30} />
+        <Button text="Medium" size="medium" width={120} height={40} />
+        <Button text="Large" size="large" width={160} height={50} />
       </View>
 
       {/* With Children */}

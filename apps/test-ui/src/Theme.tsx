@@ -64,6 +64,10 @@ export const globalTheme = createTheme({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    textStyle: {
+      color: '#ffffff',
+      fontSize: '18px',
+    },
     primary: {
       backgroundColor: 0x007bff,
       borderColor: 0x0056b3,
@@ -78,10 +82,25 @@ export const globalTheme = createTheme({
       borderColor: 0xaa7bff,
       borderWidth: 2,
     },
-    Text: {
-      style: {
-        color: '#ffffff',
-        fontSize: '20px',
+    small: {
+      padding: 6,
+      cornerRadius: 4,
+      textStyle: {
+        fontSize: '14px',
+      },
+    },
+    medium: {
+      padding: 8,
+      cornerRadius: 6,
+      textStyle: {
+        fontSize: '18px',
+      },
+    },
+    large: {
+      padding: 12,
+      cornerRadius: 8,
+      textStyle: {
+        fontSize: '24px',
       },
     },
   },
