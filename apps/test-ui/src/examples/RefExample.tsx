@@ -161,7 +161,8 @@ export function RefAnimationExample() {
       height={60}
       justifyContent="center"
       alignItems="center"
-      onPointerDown={handleClick}
+      enableGestures={true}
+      onTouch={handleClick}
     >
       <Text text="Bouncing text" ref={handleTextRef} style={{ fontSize: 16, color: '#e94560' }} />
     </View>
@@ -220,7 +221,8 @@ export function TypeSafeRefExample() {
       height={80}
       alignItems="center"
       justifyContent="center"
-      onPointerDown={handleClick}
+      enableGestures={true}
+      onTouch={handleClick}
     >
       <Text text="Click me!" ref={textRef} style={{ fontSize: 16, color: '#ffffff' }} />
     </View>

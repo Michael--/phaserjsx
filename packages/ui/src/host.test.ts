@@ -114,7 +114,7 @@ describe('Host', () => {
 
       host.create(
         'View',
-        { x: 0, y: 0, width: 100, height: 50, onPointerDown: handler },
+        { x: 0, y: 0, width: 100, height: 50, onTouch: handler },
         mockScene as unknown as Phaser.Scene
       )
 

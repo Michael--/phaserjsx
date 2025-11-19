@@ -234,7 +234,10 @@ export function NineSliceButton(props: NineSliceButtonProps) {
       backgroundAlpha={0.0}
       width={props.width}
       height={props.height}
-      {...(props.onClick !== undefined && { onPointerDown: props.onClick })}
+      {...(props.onClick !== undefined && {
+        enableGestures: true,
+        onTouch: props.onClick,
+      })}
       {...(props.depth !== undefined && { depth: props.depth })}
       {...(props.alpha !== undefined && { alpha: props.alpha })}
       {...(props.visible !== undefined && { visible: props.visible })}

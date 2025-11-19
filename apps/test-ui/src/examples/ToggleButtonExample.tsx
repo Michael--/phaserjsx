@@ -22,7 +22,8 @@ export function ToggleButton(props: {
       padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
       alignItems="center"
       justifyContent="center"
-      onPointerDown={() => {
+      enableGestures={true}
+      onTouch={() => {
         const newState = !toggled
         setToggled(newState)
         props.onToggle?.(newState)

@@ -16,7 +16,8 @@ export function BorderExample() {
       y={20}
       gap={px}
       direction="column"
-      onPointerDown={() => {
+      enableGestures={true}
+      onTouch={() => {
         setPx(px == 0 ? 20 : 0)
       }}
     >

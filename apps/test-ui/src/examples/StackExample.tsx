@@ -46,7 +46,8 @@ export function StackExample() {
             height={item.height}
             backgroundColor={item.color}
             backgroundAlpha={1.0}
-            onPointerDown={() => handleClick(item.id)}
+            enableGestures={true}
+            onTouch={() => handleClick(item.id)}
             justifyContent="center"
             alignItems="center"
           >

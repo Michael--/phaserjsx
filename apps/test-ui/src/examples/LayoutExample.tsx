@@ -21,7 +21,8 @@ function Counter(props: { step?: number; label?: string }) {
       <View
         backgroundColor={0x880000}
         backgroundAlpha={1.0}
-        onPointerDown={() => {
+        enableGestures={true}
+        onTouch={() => {
           setN((v) => v + step)
         }}
       >

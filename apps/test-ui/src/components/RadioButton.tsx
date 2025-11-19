@@ -41,7 +41,8 @@ export function RadioButton(props: RadioButtonProps) {
       gap={8}
       alignItems="center"
       padding={{ left: 4, top: 4, right: 4, bottom: 4 }}
-      onPointerDown={() => props.onClick?.()}
+      enableGestures={true}
+      onTouch={() => props.onClick?.()}
       backgroundAlpha={1.0}
       backgroundColor={0xffff00}
     >

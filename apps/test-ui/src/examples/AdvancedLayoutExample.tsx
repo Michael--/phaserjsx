@@ -215,7 +215,8 @@ export function AdvancedLayoutExample() {
     <View
       x={10}
       y={10}
-      onPointerDown={() => {
+      enableGestures={true}
+      onTouch={() => {
         setN((n) => n + 1)
       }}
     >

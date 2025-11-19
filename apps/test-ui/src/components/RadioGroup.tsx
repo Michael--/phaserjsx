@@ -1,7 +1,7 @@
 /**
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
-import { Text, View, getThemedProps, useState } from '@phaserjsx/ui'
+import { Text, View, getThemedProps, useState, type NestedComponentThemes } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -71,7 +71,8 @@ export function RadioGroup(props: RadioGroupProps) {
             gap={8}
             alignItems="center"
             padding={{ left: 4, top: 4, right: 4, bottom: 4 }}
-            onPointerDown={() => handleSelect(option.value)}
+            enableGestures={true}
+            onTouch={() => handleSelect(option.value)}
           >
             <View
               width={size}
