@@ -1,4 +1,4 @@
-import { Text, View, useColors, useState } from '@phaserjsx/ui'
+import { Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
 import { Button } from '../components'
 
 /**
@@ -8,7 +8,9 @@ import { Button } from '../components'
  */
 function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
+
   const step = props.step ?? 1
   return (
     <View
@@ -25,7 +27,7 @@ function Counter(props: { step?: number; label?: string }) {
           setN((v) => v + step)
         }}
       />
-      <Text text={`${props.label ?? 'Count'}: ${n}`} />
+      <Text text={`${props.label ?? 'Count'}: ${n}`} style={tokens?.textStyles.large} />
     </View>
   )
 }
@@ -36,7 +38,7 @@ function Counter(props: { step?: number; label?: string }) {
  * @returns Layout demo JSX
  */
 export function LayoutExample() {
-  const colors = useColors()
+  const colors = useThemeTokens()?.colors
   return (
     <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
       <Text text="Automatic vertical stacking:" />

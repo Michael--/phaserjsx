@@ -199,7 +199,7 @@ export interface BackgroundProps {
   backgroundAlpha?: number | undefined
   cornerRadius?: number | CornerRadiusInsets
   borderWidth?: number
-  borderColor?: number
+  borderColor?: number | undefined
   borderAlpha?: number
 }
 

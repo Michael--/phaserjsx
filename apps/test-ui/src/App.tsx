@@ -7,9 +7,9 @@ import {
   Text,
   themeRegistry,
   useColorMode,
-  useColors,
   useEffect,
   useState,
+  useThemeTokens,
   View,
 } from '@phaserjsx/ui'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
@@ -106,12 +106,12 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('layout')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('advanced')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
-  const colors = useColors()
+  const token = useThemeTokens()
 
   return (
-    <View width={width} height={height - 50} direction="row" justifyContent="start">
+    <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'}>
         <LightDarkModeToggle />
@@ -124,39 +124,35 @@ export function App(props: AppProps) {
         height={'100%'}
         padding={0}
         width={2}
-        backgroundColor={colors?.border.DEFAULT.toNumber()}
+        backgroundColor={token?.colors.border.DEFAULT.toNumber()}
       ></View>
 
       <View
         height={'100%'}
         flex={1}
         padding={0}
-        backgroundColor={colors?.background.DEFAULT.toNumber()}
+        backgroundColor={token?.colors.background.DEFAULT.toNumber()}
+        backgroundAlpha={0.5}
       >
         <ExampleContainer selectedExample={selectedDemo} />
         <View
           width={'100%'}
           padding={0}
           height={2}
-          backgroundColor={colors?.border.DEFAULT.toNumber()}
+          backgroundColor={token?.colors.border.DEFAULT.toNumber()}
         ></View>
         <View
           height={25}
           direction="row"
           justifyContent="space-between"
+          backgroundColor={token?.colors.background.DEFAULT.toNumber()}
           key="footer"
           width={'fill'}
           padding={{ left: 12, right: 12, top: 5, bottom: 5 }}
         >
-          <Text
-            text={`Demo: ${selectedDemo}`}
-            style={{ fontSize: 14, color: colors?.text.DEFAULT.toString() ?? 'pink' }}
-          />
+          <Text text={`Demo: ${selectedDemo}`} style={token?.textStyles.small} />
           <Spacer />
-          <Text
-            text={`Screen: ${width} x ${height}`}
-            style={{ fontSize: 14, color: colors?.text.DEFAULT.toString() ?? 'pink' }}
-          />
+          <Text text={`Screen: ${width} x ${height}`} style={token?.textStyles.small} />
         </View>
       </View>
     </View>

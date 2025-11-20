@@ -39,7 +39,7 @@ export const defaultRadiusTokens: RadiusTokens = {
   md: 8,
   lg: 16,
   xl: 24,
-  full: 9999,
+  xxl: 48,
 }
 
 /**

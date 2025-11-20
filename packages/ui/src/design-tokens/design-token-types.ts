@@ -92,7 +92,7 @@ export interface RadiusTokens {
   /** Extra large - 24px */
   xl: number
   /** Full - 9999px (pill shape) */
-  full: number
+  xxl: number
 }
 
 /**

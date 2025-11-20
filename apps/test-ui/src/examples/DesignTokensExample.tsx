@@ -156,7 +156,7 @@ export function DesignTokensExample() {
             width={tokens.sizes.lg}
             height={tokens.sizes.lg}
             backgroundColor={tokens.colors.primary.DEFAULT.toNumber()}
-            cornerRadius={tokens.radius.full}
+            cornerRadius={tokens.radius.xxl}
           />
           <Text text="full: pill/circle" style={tokens.textStyles.small} />
         </View>

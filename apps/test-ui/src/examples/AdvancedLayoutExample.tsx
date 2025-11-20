@@ -1,14 +1,15 @@
 /**
  * Advanced Layout Demo - showcasing gap, justifyContent, alignItems
  */
-import { Text, useState, View } from '@phaserjsx/ui'
+import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 
 /**
  * Demo box component for visual testing
  * @param props - Box properties
  * @returns Box component
  */
-function Box(props: { color: number; text: string; width?: number; height?: number }) {
+function Box(props: { color?: number | undefined; text: string; width?: number; height?: number }) {
+  const tokens = useThemeTokens()
   return (
     <View
       width={props.width ?? 60}
@@ -18,22 +19,7 @@ function Box(props: { color: number; text: string; width?: number; height?: numb
       alignItems="center"
       justifyContent="center"
     >
-      <Text text={props.text} style={{ fontSize: 12, color: 'white' }} />
-    </View>
-  )
-}
-
-/**
- * Gap demonstration
- * @returns Gap demo
- */
-function GapExample() {
-  return (
-    <View backgroundColor={0x2a2a2a} backgroundAlpha={1.0} padding={10} gap={15}>
-      <Text text="Gap(15)" style={{ fontSize: 14, color: 'yellow' }} />
-      <Box color={0xff6b6b} text="Box 1" />
-      <Box color={0x4ecdc4} text="Box 2" />
-      <Box color={0x45b7d1} text="Box 3" />
+      <Text text={props.text} style={tokens?.textStyles.medium} />
     </View>
   )
 }
@@ -43,85 +29,96 @@ function GapExample() {
  * @returns JustifyContent demo
  */
 function JustifyContentColumnExample() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   return (
-    <View backgroundColor={0x2a2a2a} padding={10} direction="column" gap={10}>
-      <Text text="JustifyContent (Column)" style={{ fontSize: 16, color: 'yellow' }} />
+    <View
+      backgroundColor={colors?.surface.DEFAULT.toNumber()}
+      padding={10}
+      direction="column"
+      gap={10}
+    >
+      <Text text="JustifyContent (Column)" style={tokens?.textStyles.large} />
 
       <View direction="row" gap={10}>
         {/* Start */}
         <View
-          width={100}
-          height={120}
-          backgroundColor={0x444444}
-          backgroundAlpha={1.0}
+          height={150}
+          borderColor={colors?.border.DEFAULT.toNumber()}
           direction="column"
           justifyContent="start"
           padding={5}
           gap={5}
         >
-          <Box color={0x44ccbb} text="start" width={80} height={20} />
-          <Box color={0xff6b6b} text="1" width={80} height={20} />
-          <Box color={0x4ecdc4} text="2" width={80} height={20} />
+          <Box color={colors?.secondary.light.toNumber()} text="start" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="2" width={100} height={30} />
         </View>
 
         {/* Center */}
         <View
-          width={100}
-          height={120}
-          backgroundColor={0x444444}
+          height={150}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
           direction="column"
           justifyContent="center"
           padding={5}
           gap={5}
         >
-          <Box color={0x44ccbb} text="center" width={80} height={20} />
-          <Box color={0xff6b6b} text="1" width={80} height={20} />
-          <Box color={0x4ecdc4} text="2" width={80} height={20} />
+          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="center" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
         </View>
 
         {/* End */}
         <View
-          width={100}
-          height={120}
-          backgroundColor={0x444444}
+          height={150}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
           direction="column"
           justifyContent="end"
           padding={5}
           gap={5}
         >
-          <Box color={0x44ccbb} text="end" width={80} height={20} />
-          <Box color={0xff6b6b} text="1" width={80} height={20} />
-          <Box color={0x4ecdc4} text="2" width={80} height={20} />
+          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="2" width={100} height={30} />
+          <Box color={colors?.secondary.light.toNumber()} text="end" width={100} height={30} />
         </View>
 
         {/* Space Between */}
         <View
-          width={100}
-          height={120}
-          backgroundColor={0x444444}
+          height={150}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
           direction="column"
           justifyContent="space-between"
           padding={5}
           gap={5}
         >
-          <Box color={0x44ccbb} text="space-btw" width={80} height={20} />
-          <Box color={0xff6b6b} text="1" width={80} height={20} />
-          <Box color={0x4ecdc4} text="2" width={80} height={20} />
+          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
+          <Box
+            color={colors?.secondary.light.toNumber()}
+            text="space-btw"
+            width={100}
+            height={30}
+          />
+          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
         </View>
 
         {/* Space Around */}
         <View
-          width={100}
-          height={120}
-          backgroundColor={0x444444}
+          height={150}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
           direction="column"
           justifyContent="space-around"
           padding={5}
           gap={5}
         >
-          <Box color={0x44ccbb} text="space-ard" width={80} height={20} />
-          <Box color={0xff6b6b} text="1" width={80} height={20} />
-          <Box color={0x4ecdc4} text="2" width={80} height={20} />
+          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
+          <Box
+            color={colors?.secondary.light.toNumber()}
+            text="space-ard"
+            width={100}
+            height={30}
+          />
+          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
         </View>
       </View>
     </View>
@@ -205,19 +202,8 @@ function AlignItemsRowExample() {
  * @returns Layout example
  */
 export function AdvancedLayoutExample() {
-  const [n, setN] = useState(0)
-
   return (
-    <View
-      x={10}
-      y={10}
-      enableGestures={true}
-      onTouch={() => {
-        setN((n) => n + 1)
-      }}
-    >
-      <Text text={`Pointer Down Count: ${n}`} style={{ fontSize: 18, color: 'white' }} />
-      <GapExample />
+    <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
       <JustifyContentColumnExample />
       <AlignItemsRowExample />
     </View>
