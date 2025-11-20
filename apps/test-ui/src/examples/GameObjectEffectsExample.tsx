@@ -34,7 +34,18 @@ import {
 export function GameObjectEffectsExample() {
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(viewRef)
-  const [isVisible, setIsVisible] = useState(true)
+  const [isVisible, setVisible] = useState(true)
+
+  const setIsVisible = (visible: boolean) => {
+    // immediate hide, delayed show to avoid flicker
+    if (!visible) viewRef.current?.setAlpha(0)
+    else {
+      setTimeout(() => {
+        viewRef.current?.setAlpha(1)
+      }, 50)
+    }
+    setVisible(visible)
+  }
 
   return (
     <View
@@ -86,19 +97,17 @@ export function GameObjectEffectsExample() {
         {/* Target View */}
         <View justifyContent="center" direction="column" alignItems="center">
           <View height={100} />
-          {isVisible && (
-            <View
-              ref={viewRef}
-              width={180}
-              height={180}
-              backgroundColor={0x995522}
-              justifyContent="center"
-              alignItems="center"
-              cornerRadius={16}
-            >
-              <Text text="Target" style={{ fontSize: 18, color: 'white', fontStyle: 'bold' }} />
-            </View>
-          )}
+          <View
+            ref={viewRef}
+            width={180}
+            height={180}
+            backgroundColor={0x995522}
+            justifyContent="center"
+            alignItems="center"
+            cornerRadius={16}
+          >
+            <Text text="Target" style={{ fontSize: 18, color: 'white', fontStyle: 'bold' }} />
+          </View>
         </View>
 
         {/* Attention Effects */}
@@ -120,6 +129,7 @@ export function GameObjectEffectsExample() {
             <Text text="Entrance/Exit" style={{ fontSize: 14, color: 'cyan', fontStyle: 'bold' }} />
           </View>
           <Button
+            disabled={isVisible}
             text="Slide In ←"
             onClick={() => {
               if (!isVisible) {
@@ -131,59 +141,56 @@ export function GameObjectEffectsExample() {
             }}
           />
           <Button
+            disabled={!isVisible}
             text="Slide Out →"
             onClick={() => {
-              if (isVisible) {
-                applyEffect(createSlideOutEffect, {
-                  direction: 'right',
-                  time: 400,
-                  onComplete: () => setIsVisible(false),
-                })
-              }
+              applyEffect(createSlideOutEffect, {
+                direction: 'right',
+                time: 400,
+                onComplete: () => {
+                  setIsVisible(false)
+                },
+              })
             }}
           />
           <Button
+            disabled={isVisible}
             text="Zoom In"
             onClick={() => {
-              if (!isVisible) {
-                setIsVisible(true)
-                setTimeout(() => {
-                  applyEffect(createZoomInEffect, { time: 400 })
-                }, 50)
-              }
+              setIsVisible(true)
+              setTimeout(() => {
+                applyEffect(createZoomInEffect, { time: 400 })
+              }, 50)
             }}
           />
           <Button
+            disabled={!isVisible}
             text="Zoom Out"
             onClick={() => {
-              if (isVisible) {
-                applyEffect(createZoomOutEffect, {
-                  time: 400,
-                  onComplete: () => setIsVisible(false),
-                })
-              }
+              applyEffect(createZoomOutEffect, {
+                time: 400,
+                onComplete: () => setIsVisible(false),
+              })
             }}
           />
           <Button
+            disabled={isVisible}
             text="Flip In"
             onClick={() => {
-              if (!isVisible) {
-                setIsVisible(true)
-                setTimeout(() => {
-                  applyEffect(createFlipInEffect, { time: 500 })
-                }, 50)
-              }
+              setIsVisible(true)
+              setTimeout(() => {
+                applyEffect(createFlipInEffect, { time: 500 })
+              }, 50)
             }}
           />
           <Button
+            disabled={!isVisible}
             text="Flip Out"
             onClick={() => {
-              if (isVisible) {
-                applyEffect(createFlipOutEffect, {
-                  time: 500,
-                  onComplete: () => setIsVisible(false),
-                })
-              }
+              applyEffect(createFlipOutEffect, {
+                time: 500,
+                onComplete: () => setIsVisible(false),
+              })
             }}
           />
         </View>
