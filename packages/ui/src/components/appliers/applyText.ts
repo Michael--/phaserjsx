@@ -23,8 +23,10 @@ type TextNode = {
  */
 export function applyTextProps<T extends TextNode>(
   node: T,
-  prev: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>,
-  next: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle }>
+  prev: Partial<
+    TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle | undefined }
+  >,
+  next: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle | undefined }>
 ): void {
   let needsUpdate = false
 

@@ -18,7 +18,7 @@ import { createTransform } from './creators/createTransform'
 export interface TextBaseProps extends TransformProps, TextSpecificProps {
   margin?: EdgeInsets
   // Legacy: support Phaser's style object directly
-  style?: Phaser.Types.GameObjects.Text.TextStyle
+  style?: Phaser.Types.GameObjects.Text.TextStyle | undefined
 }
 
 /**
