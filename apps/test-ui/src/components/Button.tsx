@@ -1,26 +1,11 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useRef, View, type ChildrenType } from '@phaserjsx/ui'
 import {
-  createBounceEffect,
-  createFlashEffect,
-  createPressEffect,
-  createPulseEffect,
-  createShakeEffect,
+  applyEffectByName,
+  resolveEffect,
   useGameObjectEffect,
-  type EffectFn,
+  type EffectDefinition,
 } from '../hooks'
-
-/**
- * Map effect names to effect functions
- */
-const EFFECT_MAP: Record<string, EffectFn | null> = {
-  pulse: createPulseEffect,
-  shake: createShakeEffect,
-  bounce: createBounceEffect,
-  press: createPressEffect,
-  flash: createFlashEffect,
-  none: null,
-}
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -28,34 +13,27 @@ declare module '@phaserjsx/ui' {
     Button: {
       disabledColor?: number
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
-      effectConfig?: import('../hooks').EffectConfig
       primary?: PhaserJSX.ViewTheme & {
         textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
-        effectConfig?: import('../hooks').EffectConfig
-      }
+      } & import('../hooks').EffectDefinition
       secondary?: PhaserJSX.ViewTheme & {
         textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
-        effectConfig?: import('../hooks').EffectConfig
-      }
+      } & import('../hooks').EffectDefinition
       outline?: PhaserJSX.ViewTheme & {
         textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
-        effectConfig?: import('../hooks').EffectConfig
-      }
+      } & import('../hooks').EffectDefinition
       small?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       medium?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       large?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-    } & PhaserJSX.ViewTheme
+    } & PhaserJSX.ViewTheme &
+      import('../hooks').EffectDefinition
   }
 }
 
 /**
  * Props for Button component
  */
-export interface ButtonProps {
+export interface ButtonProps extends EffectDefinition {
   text?: string
   onClick?: () => void
   width?: number
@@ -64,8 +42,6 @@ export interface ButtonProps {
   disabled?: boolean
   variant?: 'primary' | 'secondary' | 'outline'
   size?: 'small' | 'medium' | 'large'
-  effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
-  effectConfig?: import('../hooks').EffectConfig
 }
 
 /**
@@ -107,14 +83,8 @@ export function Button(props: ButtonProps) {
           props.onClick?.()
 
           // Apply effect: props override theme, theme overrides default
-          const effectName = props.effect ?? effectiveTheme.effect ?? 'pulse'
-          const effectConfig = props.effectConfig ??
-            effectiveTheme.effectConfig ?? { intensity: 1.1, time: 100 }
-          const effectFn = EFFECT_MAP[effectName]
-
-          if (effectFn) {
-            applyEffect(effectFn, effectConfig)
-          }
+          const resolved = resolveEffect(props, effectiveTheme)
+          applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
         }
       : undefined
 

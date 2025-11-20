@@ -27,3 +27,12 @@ export {
 } from './useGameObjectEffect'
 
 export type { EffectConfig, EffectFn } from './useGameObjectEffect'
+
+export {
+  DEFAULT_EFFECT,
+  EFFECT_REGISTRY,
+  applyEffectByName,
+  resolveEffect,
+} from './effectRepository'
+
+export type { EffectDefinition, EffectName } from './effectRepository'
