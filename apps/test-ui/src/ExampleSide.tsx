@@ -16,6 +16,7 @@ import { ScrollExample } from './examples/ScrollExamples'
 import { SpringAnimationExample } from './examples/SpringAnimationExample'
 import { StackExample } from './examples/StackExample'
 import { ThemeExample } from './examples/ThemeExample'
+import { ThemePreviewExample } from './examples/ThemePreviewExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -39,6 +40,7 @@ const examples = {
   springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
   scroll: { label: 'Scroll Example', component: ScrollExample },
   theme: { label: 'Theme System', component: ThemeExample },
+  themePreview: { label: 'Theme Preview', component: ThemePreviewExample },
   colorMode: { label: 'Color Mode', component: ColorModeExample },
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
   origin: { label: 'Origin View', component: OriginExample },

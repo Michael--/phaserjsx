@@ -111,7 +111,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('themePreview')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const [, setForceUpdate] = useState(0)
 
