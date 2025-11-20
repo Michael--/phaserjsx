@@ -66,10 +66,9 @@ function ColorBox({ color, shade }: { color: string; shade: string }) {
 function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
   const colors = useColors()
 
-  const shadeOrder: Array<keyof ColorShade> = [
+  const shadeOrder: Array<'lightest' | 'light' | 'medium' | 'dark' | 'darkest'> = [
     'lightest',
     'light',
-    'DEFAULT',
     'medium',
     'dark',
     'darkest',
@@ -84,15 +83,29 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
       gap={8}
       direction="column"
     >
-      <Text
-        text={name}
-        style={{
-          fontSize: '18px',
-          color: colors?.text.DEFAULT.toString() || '#ffffff',
-        }}
-      />
+      <View gap={8} direction="row" alignItems="center">
+        <Text
+          text={name}
+          style={{
+            fontSize: '18px',
+            color: colors?.text.DEFAULT.toString() || '#ffffff',
+          }}
+        />
+        <Text
+          text="(DEFAULT → medium)"
+          style={{
+            fontSize: '12px',
+            color: colors?.text.light.toString() || '#999999',
+          }}
+        />
+      </View>
       <View gap={8} direction="row">
-        {...shadeOrder.map((shade) => <ColorBox color={shades[shade].toString()} shade={shade} />)}
+        {shadeOrder.map((shade) => (
+          <ColorBox
+            color={shades[shade].toString()}
+            shade={shade === 'medium' ? 'medium ★' : shade}
+          />
+        ))}
       </View>
     </View>
   )

@@ -7,7 +7,7 @@
  * Named shade levels for color scales
  * Uses semantic names instead of numeric values
  */
-export type ShadeLevel = 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 'DEFAULT'
+export type ShadeLevel = 'lightest' | 'light' | 'medium' | 'dark' | 'darkest'
 
 /**
  * Hex color string with conversion method
@@ -36,6 +36,7 @@ export class HexColor extends String {
  * Color shade scale with semantic naming
  * Each color token has multiple shades for different use cases
  * Uses HexColor type for VS Code color picker support and .toNumber() method
+ * DEFAULT is computed property pointing to medium (not in interface)
  * @example
  * ```typescript
  * const primaryShade: ColorShade = {
@@ -44,9 +45,10 @@ export class HexColor extends String {
  *   medium: HexColor.from('#42a5f5'),
  *   dark: HexColor.from('#1976d2'),
  *   darkest: HexColor.from('#0d47a1'),
- *   DEFAULT: HexColor.from('#2196f3')
  * }
- * // Usage:
+ * // DEFAULT is available via getter:
+ * backgroundColor: colors.primary.DEFAULT.toNumber() // returns medium
+ * // Direct usage:
  * backgroundColor: colors.primary.medium.toNumber()
  * ```
  */
@@ -55,14 +57,14 @@ export interface ColorShade {
   lightest: HexColor
   /** Light shade - secondary elements */
   light: HexColor
-  /** Medium shade - interactive elements */
+  /** Medium shade - interactive elements (also available as DEFAULT) */
   medium: HexColor
   /** Dark shade - borders, dividers */
   dark: HexColor
   /** Darkest shade - text, emphasis */
   darkest: HexColor
-  /** Default shade - primary usage */
-  DEFAULT: HexColor
+  /** DEFAULT shade - computed property that points to medium */
+  readonly DEFAULT: HexColor
 }
 
 /**
