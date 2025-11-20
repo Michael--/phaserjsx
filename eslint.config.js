@@ -45,6 +45,8 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-redeclare': 'off',
+      'no-redeclare': 'off',
       'prettier/prettier': 'warn',
       // 'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-undef': 'off',

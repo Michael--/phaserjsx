@@ -44,18 +44,17 @@ export function isAnimatedSignal(value: unknown): value is AnimatedSignal {
  * @param value - Signal or raw value
  * @returns Unwrapped value
  */
-export function unwrapSignal(value: AnimatedSignal): number
-export function unwrapSignal(value: number): number
-export function unwrapSignal(value: string): string
-export function unwrapSignal(value: number | AnimatedSignal): number
-export function unwrapSignal(value: string | AnimatedSignal): string | number
-export function unwrapSignal(value: number | string | AnimatedSignal): number | string
-export function unwrapSignal(
-  value: number | string | AnimatedSignal | undefined
-): number | string | undefined
-export function unwrapSignal(
+function unwrapSignal(value: AnimatedSignal): number
+function unwrapSignal(value: number): number
+function unwrapSignal(value: string): string
+function unwrapSignal(value: number | AnimatedSignal): number
+function unwrapSignal(value: string | AnimatedSignal): string | number
+function unwrapSignal(value: number | string | AnimatedSignal): number | string
+function unwrapSignal(
   value: number | string | AnimatedSignal | undefined
 ): number | string | undefined {
   if (value === undefined) return undefined
   return isAnimatedSignal(value) ? value.value : value
 }
+
+export { unwrapSignal }
