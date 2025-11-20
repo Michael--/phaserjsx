@@ -27,10 +27,10 @@ export function applyBackgroundProps(
   const nextHeight = typeof next.height === 'number' ? next.height : 100
   const prevCornerRadius = prev.cornerRadius ?? 0
   const nextCornerRadius = next.cornerRadius ?? 0
-  const prevBorderWidth = prev.borderWidth ?? 0
-  const nextBorderWidth = next.borderWidth ?? 0
   const prevBorderColor = prev.borderColor
   const nextBorderColor = next.borderColor
+  const prevBorderWidth = prev.borderWidth ?? 0
+  const nextBorderWidth = next.borderWidth ?? 0
   const prevBorderAlpha = prev.borderAlpha ?? 1
   const nextBorderAlpha = next.borderAlpha ?? 1
 

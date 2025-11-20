@@ -18,20 +18,19 @@ export function createBackground(
     BackgroundProps & { width?: number | string | undefined; height?: number | string | undefined }
   >
 ): void {
-  const hasBorder =
-    props.borderWidth !== undefined && props.borderWidth > 0 && props.borderColor !== undefined
   const hasBackground = props.backgroundColor !== undefined
+  const hasBorder = props.borderColor !== undefined
 
   // Create graphics if either background or border is specified
   if (hasBackground || hasBorder) {
     const width = typeof props.width === 'number' ? props.width : 100
     const height = typeof props.height === 'number' ? props.height : 100
     const bgColor = props.backgroundColor as number | undefined
-    const bgAlpha = (props.backgroundAlpha as number | undefined) ?? 1
+    const bgAlpha = props.backgroundAlpha ?? 1
     const cornerRadius = props.cornerRadius ?? 0
-    const borderWidth = props.borderWidth ?? 0
     const borderColor = props.borderColor
-    const borderAlpha = (props.borderAlpha as number | undefined) ?? 1
+    const borderWidth = props.borderWidth ?? 0
+    const borderAlpha = props.borderAlpha ?? 1
 
     const background = scene.add.graphics()
 
