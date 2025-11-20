@@ -3,7 +3,7 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import type { ColorShade } from '@phaserjsx/ui'
-import { Text, useColors, View } from '@phaserjsx/ui'
+import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 import { ScrollView } from '../components/ScrollView'
 
@@ -11,48 +11,44 @@ import { ScrollView } from '../components/ScrollView'
  * Section header component
  */
 function SectionHeader({ title }: { title: string }) {
-  const colors = useColors()
+  const tokens = useThemeTokens()
 
-  return (
-    <Text
-      text={title}
-      style={{
-        fontSize: '28px',
-        color: colors?.text.DEFAULT.toString() || '#ffffff',
-      }}
-    />
-  )
+  if (!tokens) return null
+
+  return <Text text={title} style={tokens.textStyles.title} />
 }
 
 /**
  * Display a single color shade with hex value
  */
 function ColorBox({ color, shade }: { color: string; shade: string }) {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+
+  if (!tokens) return null
 
   return (
     <View
       width={120}
       height={80}
       backgroundColor={parseInt(color.replace('#', ''), 16)}
-      borderColor={colors?.border.medium.toNumber() || 0x666666}
+      borderColor={tokens.colors.border.medium.toNumber()}
       borderWidth={1}
-      cornerRadius={4}
-      padding={8}
+      cornerRadius={tokens.radius.sm}
+      padding={tokens.spacing.sm}
       direction="column"
       justifyContent="space-between"
     >
       <Text
         text={shade}
         style={{
-          fontSize: '12px',
+          ...tokens.textStyles.small,
           color: shade === 'lightest' || shade === 'light' ? '#000000' : '#ffffff',
         }}
       />
       <Text
         text={color}
         style={{
-          fontSize: '10px',
+          ...tokens.textStyles.caption,
           color: shade === 'lightest' || shade === 'light' ? '#333333' : '#eeeeee',
         }}
       />
@@ -64,7 +60,9 @@ function ColorBox({ color, shade }: { color: string; shade: string }) {
  * Display all shades of a color category
  */
 function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+
+  if (!tokens) return null
 
   const shadeOrder: Array<'lightest' | 'light' | 'medium' | 'dark' | 'darkest'> = [
     'lightest',
@@ -76,34 +74,25 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
 
   return (
     <View
-      backgroundColor={colors?.surface.DEFAULT.toNumber()}
-      cornerRadius={8}
-      padding={12}
-      gap={8}
+      backgroundColor={tokens.colors.surface.DEFAULT.toNumber()}
+      cornerRadius={tokens.radius.md}
+      padding={tokens.spacing.md}
+      gap={tokens.spacing.sm}
       direction="row"
       alignItems="center"
     >
       <View
-        gap={8}
+        gap={tokens.spacing.sm}
         width={250}
         direction="column"
         alignItems="center"
         justifyContent="center"
         overflow="hidden"
       >
-        <Text
-          text={name}
-          style={{
-            fontSize: '18px',
-            color: colors?.text.DEFAULT.toString() || '#ffffff',
-          }}
-        />
+        <Text text={name} style={tokens.textStyles.large} />
         <Text
           text="(DEFAULT → medium)"
-          style={{
-            fontSize: '12px',
-            color: colors?.text.light.toString() || '#999999',
-          }}
+          style={{ ...tokens.textStyles.small, color: tokens.colors.text.light.toString() }}
         />
       </View>
       <View gap={8} direction="row">
@@ -122,7 +111,8 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
  * Display all color categories
  */
 function ColorSection() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
 
   if (!colors) {
     return <Text text="No colors available" />
@@ -154,7 +144,8 @@ function ColorSection() {
  * Display typography examples
  */
 function TypographySection() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
 
   const fontSizes = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px']
 
@@ -187,7 +178,8 @@ function TypographySection() {
  * Display spacing scale
  */
 function SpacingSection() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
 
   const spacings = [
     { name: 'xs', value: 4 },
@@ -236,7 +228,8 @@ function SpacingSection() {
  * Display border radius examples
  */
 function BorderRadiusSection() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
 
   const radii = [
     { name: 'none', value: 0 },
@@ -283,7 +276,8 @@ function BorderRadiusSection() {
  * Display component showcase with real buttons
  */
 function ComponentShowcase() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
 
   if (!colors) {
     return <Text text="No colors available" />

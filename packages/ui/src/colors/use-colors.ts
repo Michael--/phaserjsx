@@ -10,19 +10,19 @@ import type { ColorTokens } from './color-types'
  * Hook to access color tokens from theme context
  * Automatically updates when color mode or preset changes
  * @returns Current ColorTokens or undefined
+ * @deprecated Use `useThemeTokens()` instead for access to colors, text styles, spacing, and more
  * @example
  * ```typescript
- * function MyComponent() {
- *   const colors = useColors()
+ * // Old way (deprecated):
+ * const colors = useColors()
  *
- *   if (!colors) return null
+ * // New way:
+ * const tokens = useThemeTokens()
+ * const colors = tokens?.colors
  *
- *   return (
- *     <View backgroundColor={colors.primary.DEFAULT}>
- *       <Text style={{ color: colors.text.DEFAULT }} />
- *     </View>
- *   )
- * }
+ * // Access text styles, spacing, etc.:
+ * <Text style={tokens.textStyles.DEFAULT} />
+ * <View padding={tokens.spacing.lg} />
  * ```
  */
 export function useColors(): ColorTokens | undefined {

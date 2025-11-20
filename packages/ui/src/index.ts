@@ -39,6 +39,9 @@ export * from './animation'
 // Color system utilities and presets
 export * from './colors'
 
+// Design token system - semantic tokens for colors, text styles, spacing, etc.
+export * from './design-tokens'
+
 /**
  * Consumers can import JSX runtime from here:
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";

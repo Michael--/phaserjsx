@@ -1,5 +1,5 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, useColors, View } from '@phaserjsx/ui'
+import { getThemedProps, Text, View } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
@@ -72,7 +72,6 @@ export function ExampleSide(props: {
 export function ExampleContainer(props: { selectedExample: ExampleKey }) {
   const { nestedTheme } = getThemedProps('ExampleContainer', undefined, {})
   const Component = examples[props.selectedExample].component
-  const colors = useColors()
 
   return (
     <View width={'100%'} key="demo-container" theme={nestedTheme} flex={1}>

@@ -1,45 +1,39 @@
 /**
  * Color Mode Example - demonstrates dynamic theme switching
  */
-import { setColorPreset, Text, useColorMode, useColors, View } from '@phaserjsx/ui'
+import { setColorPreset, Text, useColorMode, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 
 /**
- * Component demonstrating useColors hook
+ * Component demonstrating useThemeTokens hook
  */
 function ColoredBox() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
 
-  if (!colors) {
-    return <Text text="No colors available" />
+  if (!tokens) {
+    return <Text text="No tokens available" />
   }
 
   return (
     <View
       width={300}
       height={150}
-      backgroundColor={colors.primary.DEFAULT.toNumber()}
-      borderColor={colors.primary.dark.toNumber()}
+      backgroundColor={tokens.colors.primary.DEFAULT.toNumber()}
+      borderColor={tokens.colors.primary.dark.toNumber()}
       borderWidth={2}
-      cornerRadius={8}
-      padding={20}
-      gap={10}
+      cornerRadius={tokens.radius.md}
+      padding={tokens.spacing.lg}
+      gap={tokens.spacing.sm}
       direction="column"
       alignItems="center"
       justifyContent="center"
     >
+      <Text text="Primary Color Box" style={tokens.textStyles.large} />
       <Text
-        text="Primary Color Box"
+        text={`Background: ${tokens.colors.primary.DEFAULT.toString()}`}
         style={{
-          color: '#ffffff',
-          fontSize: '20px',
-        }}
-      />
-      <Text
-        text={`Background: ${colors.primary.DEFAULT.toString()}`}
-        style={{
-          color: colors.primary.lightest.toString(),
-          fontSize: '14px',
+          ...tokens.textStyles.small,
+          color: tokens.colors.primary.lightest.toString(),
         }}
       />
     </View>
@@ -51,14 +45,15 @@ function ColoredBox() {
  */
 function ModeToggle() {
   const { colorMode, toggleColorMode } = useColorMode()
+  const tokens = useThemeTokens()
+
+  if (!tokens) return null
 
   return (
     <Button width={200} height={50} onClick={toggleColorMode}>
       <Text
         text={`Switch to ${colorMode === 'light' ? 'Dark' : 'Light'} Mode`}
-        style={{
-          fontSize: '16px',
-        }}
+        style={tokens.textStyles.medium}
       />
     </Button>
   )
@@ -68,10 +63,14 @@ function ModeToggle() {
  * Preset selector buttons
  */
 function PresetSelector() {
+  const tokens = useThemeTokens()
+
+  if (!tokens) return null
+
   return (
-    <View direction="row" gap={10}>
+    <View direction="row" gap={tokens.spacing.sm}>
       <Button width={120} height={50} onClick={() => setColorPreset('oceanBlue')} variant="primary">
-        <Text text="Ocean Blue" style={{ fontSize: '14px' }} />
+        <Text text="Ocean Blue" style={tokens.textStyles.small} />
       </Button>
       <Button
         width={120}
@@ -79,10 +78,10 @@ function PresetSelector() {
         onClick={() => setColorPreset('forestGreen')}
         variant="secondary"
       >
-        <Text text="Forest Green" style={{ fontSize: '14px' }} />
+        <Text text="Forest Green" style={tokens.textStyles.small} />
       </Button>
       <Button width={120} height={50} onClick={() => setColorPreset('midnight')} variant="outline">
-        <Text text="Midnight" style={{ fontSize: '14px' }} />
+        <Text text="Midnight" style={tokens.textStyles.small} />
       </Button>
     </View>
   )
@@ -92,9 +91,10 @@ function PresetSelector() {
  * Color palette display
  */
 function ColorPalette() {
-  const colors = useColors()
+  const tokens = useThemeTokens()
 
-  if (!colors) return null
+  if (!tokens) return null
+  const colors = tokens.colors
 
   const colorSets: Array<{
     name: string
@@ -137,46 +137,36 @@ function ColorPalette() {
 }
 
 /**
- * Full color mode example
+ * Full color mode example - demonstrates useThemeTokens with text styles
  */
 export function ColorModeExample() {
   const { colorMode } = useColorMode()
-  const colors = useColors()
+  const tokens = useThemeTokens()
+
+  if (!tokens) return null
 
   return (
     <View
       width="100%"
       height="100%"
-      backgroundColor={colors ? colors.background.DEFAULT.toNumber() : 0x1a1a1a}
-      padding={20}
-      gap={20}
+      backgroundColor={tokens.colors.background.DEFAULT.toNumber()}
+      padding={tokens.spacing.lg}
+      gap={tokens.spacing.lg}
       direction="column"
     >
-      <Text
-        text="Color Mode & Preset Demo"
-        style={{
-          fontSize: '24px',
-          color: colors ? colors.text.DEFAULT.toString() : '#ffffff',
-        }}
-      />
+      <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
 
       <Text
         text={`Current Mode: ${colorMode}`}
         style={{
-          fontSize: '16px',
-          color: colors ? colors.text.medium.toString() : '#cccccc',
+          ...tokens.textStyles.medium,
+          color: tokens.colors.text.medium.toString(),
         }}
       />
 
       <ModeToggle />
 
-      <Text
-        text="Choose Preset:"
-        style={{
-          fontSize: '18px',
-          color: colors ? colors.text.DEFAULT.toString() : '#ffffff',
-        }}
-      />
+      <Text text="Choose Preset:" style={tokens.textStyles.large} />
 
       <PresetSelector />
 
