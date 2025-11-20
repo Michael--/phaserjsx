@@ -13,7 +13,7 @@ import {
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
-import { Sidebar } from './components'
+import { Button, Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 
 // Set global theme ONCE (safe in function body for SPA)
@@ -37,6 +37,24 @@ export interface AppProps {
 }
 
 /**
+ * Color mode toggle button
+ */
+function LightDarkModeToggle() {
+  const { colorMode, toggleColorMode } = useColorMode()
+
+  return (
+    <Button size="small" onClick={toggleColorMode}>
+      <Text
+        text={`${colorMode === 'light' ? 'Dark' : 'Light'} Mode`}
+        style={{
+          fontSize: '16px',
+        }}
+      />
+    </Button>
+  )
+}
+
+/**
  * Main app component with example selector
  * @param props - App props from Phaser scene
  * @returns App component JSX
@@ -50,6 +68,7 @@ export function App(props: AppProps) {
 
   const { colorMode } = useColorMode()
   const currentPreset = themeRegistry.getCurrentPresetName() || 'oceanBlue'
+  const [_, setForceUpdate] = useState(0)
 
   // Reload theme when color mode or preset changes
   useEffect(() => {
@@ -58,11 +77,14 @@ export function App(props: AppProps) {
       colorMode
     )
     themeRegistry.updateGlobalTheme(newTheme)
+    // Force re-render to apply new theme
+    setForceUpdate((c) => c + 1)
   }, [colorMode, currentPreset])
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
       <Sidebar height={'100%'}>
+        <LightDarkModeToggle />
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />
         <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
