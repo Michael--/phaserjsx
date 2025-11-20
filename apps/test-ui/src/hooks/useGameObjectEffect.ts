@@ -14,6 +14,7 @@ export interface EffectConfig {
   duration?: number
   direction?: 'left' | 'right' | 'up' | 'down'
   angle?: number
+  onComplete?: () => void
 }
 
 /**
@@ -178,7 +179,7 @@ export type EffectFn = (obj: Phaser.GameObjects.Container, config: EffectConfig)
  * @param config - Effect config (magnitude, time)
  */
 export const createShakeEffect: EffectFn = (obj, config) => {
-  const { magnitude = 5, time = 200 } = config
+  const { magnitude = 5, time = 200, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -204,6 +205,7 @@ export const createShakeEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -214,7 +216,7 @@ export const createShakeEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (intensity, time)
  */
 export const createPulseEffect: EffectFn = (obj, config) => {
-  const { intensity = 1.2, time = 300 } = config
+  const { intensity = 1.2, time = 300, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -237,6 +239,7 @@ export const createPulseEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -247,7 +250,7 @@ export const createPulseEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time, duration)
  */
 export const createFadeEffect: EffectFn = (obj, config) => {
-  const { time = 300 } = config
+  const { time = 300, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -264,6 +267,7 @@ export const createFadeEffect: EffectFn = (obj, config) => {
     repeat: 0,
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -274,7 +278,7 @@ export const createFadeEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (intensity, time)
  */
 export const createBounceEffect: EffectFn = (obj, config) => {
-  const { intensity = 1.3, time = 600 } = config
+  const { intensity = 1.3, time = 600, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -294,6 +298,7 @@ export const createBounceEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -304,7 +309,7 @@ export const createBounceEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time, intensity)
  */
 export const createFlashEffect: EffectFn = (obj, config) => {
-  const { time = 200, intensity = 1.15 } = config
+  const { time = 200, intensity = 1.15, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -326,6 +331,7 @@ export const createFlashEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -336,7 +342,7 @@ export const createFlashEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (magnitude, time)
  */
 export const createWobbleEffect: EffectFn = (obj, config) => {
-  const { magnitude = 0.1, time = 400 } = config
+  const { magnitude = 0.1, time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -354,6 +360,7 @@ export const createWobbleEffect: EffectFn = (obj, config) => {
     onComplete: () => {
       obj.setRotation(baseRotation)
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -364,7 +371,7 @@ export const createWobbleEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (intensity, time)
  */
 export const createJelloEffect: EffectFn = (obj, config) => {
-  const { intensity = 0.15, time = 600 } = config
+  const { intensity = 0.15, time = 600, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -384,6 +391,7 @@ export const createJelloEffect: EffectFn = (obj, config) => {
   const runStep = () => {
     if (step >= steps.length) {
       decrementEffectCount(obj)
+      userOnComplete?.()
       return
     }
 
@@ -415,7 +423,7 @@ export const createJelloEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (intensity, time)
  */
 export const createPressEffect: EffectFn = (obj, config) => {
-  const { intensity = 0.9, time = 200 } = config
+  const { intensity = 0.9, time = 200, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -438,6 +446,7 @@ export const createPressEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -448,7 +457,7 @@ export const createPressEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (intensity, time)
  */
 export const createTadaEffect: EffectFn = (obj, config) => {
-  const { intensity = 1.1, time = 600 } = config
+  const { intensity = 1.1, time = 600, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -473,6 +482,7 @@ export const createTadaEffect: EffectFn = (obj, config) => {
     onComplete: () => {
       obj.setRotation(baseRotation)
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -483,7 +493,7 @@ export const createTadaEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (magnitude, time)
  */
 export const createSwingEffect: EffectFn = (obj, config) => {
-  const { magnitude = 0.15, time = 800 } = config
+  const { magnitude = 0.15, time = 800, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -501,6 +511,7 @@ export const createSwingEffect: EffectFn = (obj, config) => {
     onComplete: () => {
       obj.setRotation(baseRotation)
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -511,7 +522,7 @@ export const createSwingEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (magnitude, time)
  */
 export const createWiggleEffect: EffectFn = (obj, config) => {
-  const { magnitude = 3, time = 400 } = config
+  const { magnitude = 3, time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -529,6 +540,7 @@ export const createWiggleEffect: EffectFn = (obj, config) => {
     onComplete: () => {
       obj.setPosition(baseX, state.originalY)
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -539,7 +551,7 @@ export const createWiggleEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (direction, time)
  */
 export const createSlideInEffect: EffectFn = (obj, config) => {
-  const { direction = 'left', time = 400 } = config
+  const { direction = 'left', time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -578,6 +590,7 @@ export const createSlideInEffect: EffectFn = (obj, config) => {
     ease: 'Quad.easeOut',
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -588,7 +601,7 @@ export const createSlideInEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (direction, time)
  */
 export const createSlideOutEffect: EffectFn = (obj, config) => {
-  const { direction = 'right', time = 400 } = config
+  const { direction = 'right', time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -625,6 +638,7 @@ export const createSlideOutEffect: EffectFn = (obj, config) => {
     ease: 'Quad.easeIn',
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -635,7 +649,7 @@ export const createSlideOutEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time)
  */
 export const createZoomInEffect: EffectFn = (obj, config) => {
-  const { time = 400 } = config
+  const { time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -657,6 +671,7 @@ export const createZoomInEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -667,7 +682,7 @@ export const createZoomInEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time)
  */
 export const createZoomOutEffect: EffectFn = (obj, config) => {
-  const { time = 400 } = config
+  const { time = 400, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -685,6 +700,7 @@ export const createZoomOutEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -695,7 +711,7 @@ export const createZoomOutEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time)
  */
 export const createFlipInEffect: EffectFn = (obj, config) => {
-  const { time = 500 } = config
+  const { time = 500, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -715,6 +731,7 @@ export const createFlipInEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }
@@ -725,7 +742,7 @@ export const createFlipInEffect: EffectFn = (obj, config) => {
  * @param config - Effect config (time)
  */
 export const createFlipOutEffect: EffectFn = (obj, config) => {
-  const { time = 500 } = config
+  const { time = 500, onComplete: userOnComplete } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
@@ -742,6 +759,7 @@ export const createFlipOutEffect: EffectFn = (obj, config) => {
     },
     onComplete: () => {
       decrementEffectCount(obj)
+      userOnComplete?.()
     },
   })
 }

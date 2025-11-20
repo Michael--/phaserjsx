@@ -2,7 +2,7 @@
  * Example: Using game object effects (shake, pulse, fade, etc.)
  * Demonstrates the complete effect system with all available animations
  */
-import { Text, View, useRef } from '@phaserjsx/ui'
+import { Text, View, useRef, useState } from '@phaserjsx/ui'
 import { Button } from '../components'
 import {
   createBounceEffect,
@@ -34,6 +34,7 @@ import {
 export function GameObjectEffectsExample() {
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(viewRef)
+  const [isVisible, setIsVisible] = useState(true)
 
   return (
     <View
@@ -85,17 +86,19 @@ export function GameObjectEffectsExample() {
         {/* Target View */}
         <View justifyContent="center" direction="column" alignItems="center">
           <View height={100} />
-          <View
-            ref={viewRef}
-            width={180}
-            height={180}
-            backgroundColor={0x995522}
-            justifyContent="center"
-            alignItems="center"
-            cornerRadius={16}
-          >
-            <Text text="Target" style={{ fontSize: 18, color: 'white', fontStyle: 'bold' }} />
-          </View>
+          {isVisible && (
+            <View
+              ref={viewRef}
+              width={180}
+              height={180}
+              backgroundColor={0x995522}
+              justifyContent="center"
+              alignItems="center"
+              cornerRadius={16}
+            >
+              <Text text="Target" style={{ fontSize: 18, color: 'white', fontStyle: 'bold' }} />
+            </View>
+          )}
         </View>
 
         {/* Attention Effects */}
@@ -118,16 +121,71 @@ export function GameObjectEffectsExample() {
           </View>
           <Button
             text="Slide In ←"
-            onClick={() => applyEffect(createSlideInEffect, { direction: 'left', time: 400 })}
+            onClick={() => {
+              if (!isVisible) {
+                setIsVisible(true)
+                setTimeout(() => {
+                  applyEffect(createSlideInEffect, { direction: 'left', time: 400 })
+                }, 50)
+              }
+            }}
           />
           <Button
             text="Slide Out →"
-            onClick={() => applyEffect(createSlideOutEffect, { direction: 'right', time: 400 })}
+            onClick={() => {
+              if (isVisible) {
+                applyEffect(createSlideOutEffect, {
+                  direction: 'right',
+                  time: 400,
+                  onComplete: () => setIsVisible(false),
+                })
+              }
+            }}
           />
-          <Button text="Zoom In" onClick={() => applyEffect(createZoomInEffect, { time: 400 })} />
-          <Button text="Zoom Out" onClick={() => applyEffect(createZoomOutEffect, { time: 400 })} />
-          <Button text="Flip In" onClick={() => applyEffect(createFlipInEffect, { time: 500 })} />
-          <Button text="Flip Out" onClick={() => applyEffect(createFlipOutEffect, { time: 500 })} />
+          <Button
+            text="Zoom In"
+            onClick={() => {
+              if (!isVisible) {
+                setIsVisible(true)
+                setTimeout(() => {
+                  applyEffect(createZoomInEffect, { time: 400 })
+                }, 50)
+              }
+            }}
+          />
+          <Button
+            text="Zoom Out"
+            onClick={() => {
+              if (isVisible) {
+                applyEffect(createZoomOutEffect, {
+                  time: 400,
+                  onComplete: () => setIsVisible(false),
+                })
+              }
+            }}
+          />
+          <Button
+            text="Flip In"
+            onClick={() => {
+              if (!isVisible) {
+                setIsVisible(true)
+                setTimeout(() => {
+                  applyEffect(createFlipInEffect, { time: 500 })
+                }, 50)
+              }
+            }}
+          />
+          <Button
+            text="Flip Out"
+            onClick={() => {
+              if (isVisible) {
+                applyEffect(createFlipOutEffect, {
+                  time: 500,
+                  onComplete: () => setIsVisible(false),
+                })
+              }
+            }}
+          />
         </View>
 
         {/* Continuous Effects */}
@@ -172,10 +230,16 @@ export function GameObjectEffectsExample() {
         </View>
       </View>
 
-      <Text
-        text="Note: Continuous effects loop infinitely until component unmounts"
-        style={{ fontSize: 11, color: 'gray', fontStyle: 'italic' }}
-      />
+      <View direction="column" gap={5} alignItems="center">
+        <Text
+          text="Note: Entrance/Exit effects show/hide the target box with onComplete callbacks"
+          style={{ fontSize: 11, color: 'gray', fontStyle: 'italic' }}
+        />
+        <Text
+          text="Continuous effects loop infinitely until component unmounts"
+          style={{ fontSize: 11, color: 'gray', fontStyle: 'italic' }}
+        />
+      </View>
     </View>
   )
 }
