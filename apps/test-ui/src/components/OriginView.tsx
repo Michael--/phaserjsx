@@ -60,6 +60,7 @@ export function OriginView({
   width,
   height,
   ref,
+  padding,
   children,
   ...viewProps
 }: OriginViewProps) {
@@ -101,8 +102,7 @@ export function OriginView({
       height={height}
       x={x}
       y={y}
-      // padding={0}
-      // margin={0}
+      padding={padding}
     >
       {/* Middle View: Positioned at origin point, receives ref for rotation */}
       <View

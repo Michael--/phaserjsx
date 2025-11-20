@@ -1,15 +1,7 @@
 /**
  * Spring Animation Example - demonstrates physics-based animations with useSpring
  */
-import {
-  SPRING_PRESETS,
-  Text,
-  useForceRedraw,
-  useSpring,
-  useSprings,
-  useState,
-  View,
-} from '@phaserjsx/ui'
+import { SPRING_PRESETS, Text, useForceRedraw, useSpring, useSprings, View } from '@phaserjsx/ui'
 import { Button } from '../components'
 
 /**
@@ -29,8 +21,6 @@ export function SpringAnimationExample() {
 
   // Scale with default preset - start small so it's visible
   const [scale, setScale] = useSpring(1.0, SPRING_PRESETS.default)
-  const [force, setForce] = useState<number>(50)
-  // console.log('Force value:', JSON.stringify(force))
 
   // Force redraw when signals change (throttled to 20ms ~50fps)
   useForceRedraw(20, width, pos.x, pos.y, rotation, scale)
@@ -38,13 +28,6 @@ export function SpringAnimationExample() {
   return (
     <View direction="column" gap={20} padding={20} alignItems="center">
       <Text text="Spring Animation Examples" style={{ fontSize: 24, color: '#ffff00' }} />
-      <Button
-        width={force}
-        text={`Redraw`}
-        onClick={() => {
-          setForce((f) => f + 1)
-        }}
-      />
       <Button
         text="Animate All"
         onClick={() => {
@@ -66,7 +49,7 @@ export function SpringAnimationExample() {
           backgroundColor={0x00aa00}
           cornerRadius={8}
           enableGestures
-          onTouch={() => setWidth(width.value === 50 ? 100 : 50)}
+          onTouch={() => setWidth(width.value === 50 ? 200 : 50)}
         />
       </View>
 
@@ -76,9 +59,10 @@ export function SpringAnimationExample() {
         <View
           width={400}
           height={100}
-          backgroundColor={0x333333}
+          backgroundColor={0x555555}
           cornerRadius={8}
           direction="stack"
+          padding={0}
         >
           <View
             x={pos.x.value}
@@ -100,14 +84,7 @@ export function SpringAnimationExample() {
       {/* Example 3: Animated Rotation */}
       <View direction="column" gap={10} alignItems="center">
         <Text text="3. Animated Rotation (Gentle)" style={{ fontSize: 18 }} />
-        <View
-          //borderColor={0xffff00}
-          //borderWidth={2}
-          direction="stack"
-          width={80}
-          height={80}
-          padding={0}
-        >
+        <View width={80} height={80} padding={0} direction="stack">
           <View
             x={40}
             y={40}
@@ -117,8 +94,6 @@ export function SpringAnimationExample() {
             direction="stack"
             rotation={rotation.value}
             backgroundAlpha={0}
-            //borderWidth={3}
-            //borderColor={0x005588}
           >
             <View
               x={-40}
@@ -126,7 +101,6 @@ export function SpringAnimationExample() {
               width={80}
               height={80}
               backgroundColor={0xff00ff}
-              backgroundAlpha={0.2}
               cornerRadius={12}
               enableGestures
               onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
@@ -138,15 +112,29 @@ export function SpringAnimationExample() {
       {/* Example 4: Animated Scale */}
       <View direction="column" gap={10} alignItems="center">
         <Text text="4. Animated Scale (Default)" style={{ fontSize: 18 }} />
-        <View
-          width={60}
-          height={60}
-          backgroundColor={0x00ffff}
-          cornerRadius={30}
-          scale={scale.value} // TODO: scale at creation is not working properly. Its is always starting at 1.0! Fix it!
-          enableGestures
-          onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
-        />
+        <View width={60} height={60} padding={0} direction="stack">
+          <View
+            x={30}
+            y={30}
+            width={60}
+            height={60}
+            backgroundAlpha={0}
+            scale={scale.value} // TODO: scale at creation is not working properly. Its is always starting at 1.0! Fix it!
+            padding={0}
+            direction="stack"
+          >
+            <View
+              x={-30}
+              y={-30}
+              width={60}
+              height={60}
+              backgroundColor={0x00ffff}
+              cornerRadius={30}
+              enableGestures
+              onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
+            />
+          </View>
+        </View>
       </View>
 
       {/* Preset Comparison */}
