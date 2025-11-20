@@ -34,7 +34,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('effects')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
 
   return (

@@ -108,26 +108,30 @@ function ColorPalette() {
     { name: 'Error', shade: 'error' },
   ]
 
+  const colorMap = colorSets.map(({ name, shade }) => {
+    return (
+      <View key={name} direction="row" gap={5} alignItems="center">
+        <View
+          width={80}
+          height={30}
+          backgroundColor={colors[shade].DEFAULT}
+          cornerRadius={4}
+          borderWidth={1}
+          borderColor={colors.border.DEFAULT}
+        />
+        <Text text={name} style={{ fontSize: '14px' }} />
+        <Text
+          text={`#${colors[shade].DEFAULT.toString(16).padStart(6, '0')}`}
+          style={{ fontSize: '12px', fontFamily: 'monospace' }}
+        />
+      </View>
+    )
+  })
+
   return (
     <View direction="column" gap={5}>
       <Text text="Color Palette" style={{ fontSize: '16px' }} />
-      {colorSets.map(({ name, shade }) => (
-        <View key={name} direction="row" gap={5} alignItems="center">
-          <View
-            width={80}
-            height={30}
-            backgroundColor={colors[shade].DEFAULT}
-            cornerRadius={4}
-            borderWidth={1}
-            borderColor={colors.border.DEFAULT}
-          />
-          <Text text={name} style={{ fontSize: '14px' }} />
-          <Text
-            text={`#${colors[shade].DEFAULT.toString(16).padStart(6, '0')}`}
-            style={{ fontSize: '12px', fontFamily: 'monospace' }}
-          />
-        </View>
-      ))}
+      {...colorMap}
     </View>
   )
 }
