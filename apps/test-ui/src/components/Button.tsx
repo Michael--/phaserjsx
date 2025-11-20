@@ -64,6 +64,8 @@ export interface ButtonProps {
   disabled?: boolean
   variant?: 'primary' | 'secondary' | 'outline'
   size?: 'small' | 'medium' | 'large'
+  effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+  effectConfig?: import('../hooks').EffectConfig
 }
 
 /**
@@ -104,9 +106,10 @@ export function Button(props: ButtonProps) {
       ? () => {
           props.onClick?.()
 
-          // Apply effect from theme
-          const effectName = effectiveTheme.effect ?? 'pulse'
-          const effectConfig = effectiveTheme.effectConfig ?? { intensity: 1.1, time: 100 }
+          // Apply effect: props override theme, theme overrides default
+          const effectName = props.effect ?? effectiveTheme.effect ?? 'pulse'
+          const effectConfig = props.effectConfig ??
+            effectiveTheme.effectConfig ?? { intensity: 1.1, time: 100 }
           const effectFn = EFFECT_MAP[effectName]
 
           if (effectFn) {
