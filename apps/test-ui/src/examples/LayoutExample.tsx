@@ -29,7 +29,7 @@ function Counter(props: { step?: number; label?: string }) {
  */
 export function LayoutExample() {
   return (
-    <View x={20} y={20} justifyContent="start">
+    <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
       <Text text="Layout System Demo (gap: 10)" style={{ color: 'yellow' }} />
       <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />
