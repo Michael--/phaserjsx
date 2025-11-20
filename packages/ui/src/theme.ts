@@ -126,6 +126,9 @@ class ThemeRegistry {
   private globalTheme: Theme = { ...defaultTheme }
   private customThemes: Map<string, Record<string, unknown>> = new Map()
   private colorTokens: ColorTokens | undefined = undefined
+  private colorMode: 'light' | 'dark' = 'light'
+  private currentPresetName: string | undefined = undefined
+  private listeners: Set<() => void> = new Set()
 
   /**
    * Get the complete global theme
@@ -221,6 +224,60 @@ class ThemeRegistry {
    */
   getColorTokens(): ColorTokens | undefined {
     return this.colorTokens
+  }
+
+  /**
+   * Get current color mode
+   * @returns Current color mode
+   */
+  getColorMode(): 'light' | 'dark' {
+    return this.colorMode
+  }
+
+  /**
+   * Set color mode and notify listeners
+   * @param mode - Color mode to set
+   */
+  setColorMode(mode: 'light' | 'dark'): void {
+    if (this.colorMode !== mode) {
+      this.colorMode = mode
+      this.notifyListeners()
+    }
+  }
+
+  /**
+   * Get current preset name
+   * @returns Current preset name or undefined
+   */
+  getCurrentPresetName(): string | undefined {
+    return this.currentPresetName
+  }
+
+  /**
+   * Set current preset name
+   * @param name - Preset name
+   */
+  setCurrentPresetName(name: string | undefined): void {
+    this.currentPresetName = name
+  }
+
+  /**
+   * Subscribe to theme changes
+   * @param listener - Callback to invoke on theme change
+   * @returns Unsubscribe function
+   */
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener)
+    return () => {
+      this.listeners.delete(listener)
+    }
+  }
+
+  /**
+   * Notify all listeners of theme change
+   */
+  private notifyListeners(): void {
+    this.listeners.forEach((listener) => listener())
   }
 }
 

@@ -30,6 +30,7 @@ export {
 export type { ColorPreset, PresetName } from './color-presets'
 
 // Hooks
+export { useColorMode } from './use-color-mode'
 export { useColors } from './use-colors'
 
 // Theme helpers
@@ -40,3 +41,6 @@ export {
   getSurfaceColor,
   getTextColor,
 } from './color-theme-helpers'
+
+// Preset management
+export { getCurrentPreset, setColorPreset } from './preset-manager'

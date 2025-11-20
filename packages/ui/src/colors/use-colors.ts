@@ -1,13 +1,14 @@
 /**
  * Color system hooks for component usage
  */
-import { useTheme } from '../hooks'
+import { useEffect, useState, useTheme } from '../hooks'
 import { themeRegistry } from '../theme'
+import { getPresetWithMode } from './color-presets'
 import type { ColorTokens } from './color-types'
 
 /**
  * Hook to access color tokens from theme context
- * Returns ColorTokens if available in theme, otherwise undefined
+ * Automatically updates when color mode or preset changes
  * @returns Current ColorTokens or undefined
  * @example
  * ```typescript
@@ -27,13 +28,42 @@ import type { ColorTokens } from './color-types'
 export function useColors(): ColorTokens | undefined {
   const localTheme = useTheme()
 
-  // Check if local theme has color preset info
-  if (localTheme?.__colorPreset) {
-    // This would be resolved by preset system in Phase 4
-    // For now, return undefined as presets aren't yet integrated
-    return undefined
+  // Initialize colors state
+  const getInitialColors = (): ColorTokens | undefined => {
+    // Check if local theme has color preset info
+    if (localTheme?.__colorPreset) {
+      const preset = getPresetWithMode(
+        localTheme.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
+        localTheme.__colorPreset.mode ?? 'light'
+      )
+      return preset.colors
+    }
+
+    // Fall back to global color tokens
+    return themeRegistry.getColorTokens()
   }
 
-  // Fall back to global color tokens
-  return themeRegistry.getColorTokens()
+  const [colors, setColors] = useState<ColorTokens | undefined>(getInitialColors())
+
+  useEffect(() => {
+    // Subscribe to theme changes (mode/preset switches)
+    const unsubscribe = themeRegistry.subscribe(() => {
+      // Check if local theme has preset
+      if (localTheme?.__colorPreset) {
+        const currentMode = themeRegistry.getColorMode()
+        const preset = getPresetWithMode(
+          localTheme.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
+          currentMode
+        )
+        setColors(preset.colors)
+      } else {
+        // Use global tokens
+        setColors(themeRegistry.getColorTokens())
+      }
+    })
+
+    return unsubscribe
+  }, [localTheme])
+
+  return colors
 }

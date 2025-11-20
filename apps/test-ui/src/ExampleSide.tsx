@@ -4,6 +4,7 @@ import { RadioGroup, type RadioGroupOption } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
+import { ColorModeExample } from './examples/ColorModeExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
@@ -38,6 +39,7 @@ const examples = {
   springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
   scroll: { label: 'Scroll Example', component: ScrollExample },
   theme: { label: 'Theme System', component: ThemeExample },
+  colorMode: { label: 'Color Mode', component: ColorModeExample },
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
   origin: { label: 'Origin View', component: OriginExample },
 } as const
