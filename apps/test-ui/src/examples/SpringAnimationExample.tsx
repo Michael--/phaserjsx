@@ -28,7 +28,7 @@ export function SpringAnimationExample() {
   const [rotation, setRotation] = useSpring(0, 'gentle')
 
   // Scale with default preset - start small so it's visible
-  const [scale, setScale] = useSpring(0.5, SPRING_PRESETS.default)
+  const [scale, setScale] = useSpring(1.0, SPRING_PRESETS.default)
   const [force, setForce] = useState<number>(50)
   // console.log('Force value:', JSON.stringify(force))
 
@@ -119,9 +119,9 @@ export function SpringAnimationExample() {
           height={60}
           backgroundColor={0x00ffff}
           cornerRadius={30}
-          scale={scale.value}
+          scale={scale.value} // TODO: scale at creation is not working properly. Its is always starting at 1.0! Fix it!
           enableGestures
-          onTouch={() => setScale(scale.value === 0.5 ? 1 : 0.5)}
+          onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
         />
       </View>
 
@@ -143,9 +143,10 @@ export function SpringAnimationExample() {
  */
 function PresetDemo({ preset, label }: { preset: keyof typeof SPRING_PRESETS; label: string }) {
   const [size, setSize] = useSpring(40, preset)
+  useForceRedraw(20, size)
 
   return (
-    <View direction="column" gap={5} alignItems="center">
+    <View direction="column" gap={5} alignItems="center" width={80} height={80}>
       <Text text={label} style={{ fontSize: 14 }} />
       <View
         width={size.value}
