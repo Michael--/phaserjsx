@@ -101,14 +101,38 @@ export function SpringAnimationExample() {
       <View direction="column" gap={10} alignItems="center">
         <Text text="3. Animated Rotation (Gentle)" style={{ fontSize: 18 }} />
         <View
+          //borderColor={0xffff00}
+          //borderWidth={2}
+          direction="stack"
           width={80}
           height={80}
-          backgroundColor={0xff00ff}
-          cornerRadius={12}
-          rotation={rotation.value}
-          enableGestures
-          onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
-        />
+          padding={0}
+        >
+          <View
+            x={40}
+            y={40}
+            width={80}
+            height={80}
+            padding={0}
+            direction="stack"
+            rotation={rotation.value}
+            backgroundAlpha={0}
+            //borderWidth={3}
+            //borderColor={0x005588}
+          >
+            <View
+              x={-40}
+              y={-40}
+              width={80}
+              height={80}
+              backgroundColor={0xff00ff}
+              backgroundAlpha={0.2}
+              cornerRadius={12}
+              enableGestures
+              onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
+            />
+          </View>
+        </View>
       </View>
 
       {/* Example 4: Animated Scale */}
