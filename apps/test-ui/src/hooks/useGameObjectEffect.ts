@@ -299,26 +299,31 @@ export const createBounceEffect: EffectFn = (obj, config) => {
 }
 
 /**
- * Create a flash effect (quick brightness pulse)
+ * Create a flash effect (quick scale pulse for visibility)
  * @param obj - Game object to flash
- * @param config - Effect config (time)
+ * @param config - Effect config (time, intensity)
  */
 export const createFlashEffect: EffectFn = (obj, config) => {
-  const { time = 150 } = config
+  const { time = 200, intensity = 1.15 } = config
 
   const state = getPositionState(obj)
   incrementEffectCount(obj)
 
   const scene = obj.scene
-  const originalAlpha = state.originalAlpha
+  const targetScaleX = intensity * state.originalScaleX
+  const targetScaleY = intensity * state.originalScaleY
 
   scene.tweens.add({
     targets: obj,
-    alpha: Math.min(originalAlpha * 1.5, 1),
+    scaleX: targetScaleX,
+    scaleY: targetScaleY,
     duration: time / 2,
     ease: 'Quad.easeOut',
     yoyo: true,
     repeat: 0,
+    onUpdate: () => {
+      applyScaleWithOrigin(obj, state, obj.scaleX, obj.scaleY)
+    },
     onComplete: () => {
       decrementEffectCount(obj)
     },
