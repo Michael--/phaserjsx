@@ -116,6 +116,40 @@ export function darken(color: number, amount: number): number {
 }
 
 /**
+ * Lighten a hex color by a given amount
+ * @param hex - Hex color string (e.g., '#ffffff' or 'ffffff')
+ * @param amount - Amount to lighten (0.0 to 1.0, where 1.0 is white)
+ * @returns Lightened hex color string with '#' prefix
+ * @example
+ * ```typescript
+ * lightenHex('#0000ff', 0.3) // returns lighter blue
+ * lightenHex('#ff0000', 0.5) // returns light red/pink
+ * ```
+ */
+export function lightenHex(hex: string, amount: number): string {
+  const num = hexToNumber(hex)
+  const lightened = lighten(num, amount)
+  return numberToHex(lightened)
+}
+
+/**
+ * Darken a hex color by a given amount
+ * @param hex - Hex color string (e.g., '#ffffff' or 'ffffff')
+ * @param amount - Amount to darken (0.0 to 1.0, where 1.0 is black)
+ * @returns Darkened hex color string with '#' prefix
+ * @example
+ * ```typescript
+ * darkenHex('#0000ff', 0.3) // returns darker blue
+ * darkenHex('#ff0000', 0.5) // returns dark red
+ * ```
+ */
+export function darkenHex(hex: string, amount: number): string {
+  const num = hexToNumber(hex)
+  const darkened = darken(num, amount)
+  return numberToHex(darkened)
+}
+
+/**
  * Convert color to rgba string for Phaser Text style
  * @param color - Phaser color number
  * @param alphaValue - Alpha value (0.0 to 1.0, default: 1.0)

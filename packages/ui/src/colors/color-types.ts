@@ -12,31 +12,32 @@ export type ShadeLevel = 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 
 /**
  * Color shade scale with semantic naming
  * Each color token has multiple shades for different use cases
+ * Uses hex string format for VS Code color picker support
  * @example
  * ```typescript
  * const primaryShade: ColorShade = {
- *   lightest: 0xe3f2fd,
- *   light: 0x90caf9,
- *   medium: 0x42a5f5,
- *   dark: 0x1976d2,
- *   darkest: 0x0d47a1,
- *   DEFAULT: 0x2196f3
+ *   lightest: '#e3f2fd',
+ *   light: '#90caf9',
+ *   medium: '#42a5f5',
+ *   dark: '#1976d2',
+ *   darkest: '#0d47a1',
+ *   DEFAULT: '#2196f3'
  * }
  * ```
  */
 export interface ColorShade {
   /** Lightest shade - backgrounds, hover states */
-  lightest: number
+  lightest: string
   /** Light shade - secondary elements */
-  light: number
+  light: string
   /** Medium shade - interactive elements */
-  medium: number
+  medium: string
   /** Dark shade - borders, dividers */
-  dark: number
+  dark: string
   /** Darkest shade - text, emphasis */
-  darkest: number
+  darkest: string
   /** Default shade - primary usage */
-  DEFAULT: number
+  DEFAULT: string
 }
 
 /**

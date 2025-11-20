@@ -3,7 +3,7 @@
  * @param props - App props from Phaser scene
  * @returns App component JSX
  */
-import { createTheme, getPresetWithMode, type PresetName } from '@phaserjsx/ui'
+import { createTheme, getPresetWithMode, hexToNumber, type PresetName } from '@phaserjsx/ui'
 
 /**
  * Create theme from preset and mode
@@ -23,7 +23,7 @@ export function createAppTheme(
       // the default Text theme
       Text: {
         style: {
-          color: `#${colors.text.DEFAULT.toString(16).padStart(6, '0')}`,
+          color: colors.text.DEFAULT,
           fontSize: '20px',
           fontFamily: 'Arial',
         },
@@ -37,22 +37,22 @@ export function createAppTheme(
 
       // custom component theme for Sidebar
       Sidebar: {
-        backgroundColor: colors.surface.light,
+        backgroundColor: hexToNumber(colors.surface.light),
         backgroundAlpha: 1.0,
         padding: 10,
         gap: 10,
         Text: {
           style: {
-            color: `#${colors.text.light.toString(16).padStart(6, '0')}`,
+            color: colors.text.light,
             fontSize: '30px',
           },
         },
       },
 
       RadioGroup: {
-        labelColor: colors.text.DEFAULT,
-        selectedColor: colors.accent.DEFAULT,
-        unselectedColor: colors.border.medium,
+        labelColor: hexToNumber(colors.text.DEFAULT),
+        selectedColor: hexToNumber(colors.accent.DEFAULT),
+        unselectedColor: hexToNumber(colors.border.medium),
         gap: 10,
         View: {
           cornerRadius: 8, // rounded radio buttons
@@ -60,19 +60,19 @@ export function createAppTheme(
       },
 
       ScrollSlider: {
-        borderColor: colors.border.dark,
-        trackColor: colors.surface.dark,
-        thumbColor: colors.primary.light,
+        borderColor: hexToNumber(colors.border.dark),
+        trackColor: hexToNumber(colors.surface.dark),
+        thumbColor: hexToNumber(colors.primary.light),
         borderWidth: 2,
         minThumbSize: 30,
         size: 30,
       },
 
       Button: {
-        disabledColor: colors.border.medium,
-        backgroundColor: colors.primary.DEFAULT,
+        disabledColor: hexToNumber(colors.border.medium),
+        backgroundColor: hexToNumber(colors.primary.DEFAULT),
         backgroundAlpha: 1.0,
-        borderColor: colors.primary.dark,
+        borderColor: hexToNumber(colors.primary.dark),
         borderWidth: 1,
         cornerRadius: 6,
         padding: 8,
@@ -85,21 +85,21 @@ export function createAppTheme(
           fontSize: '18px',
         },
         primary: {
-          backgroundColor: colors.primary.medium,
-          borderColor: colors.primary.dark,
+          backgroundColor: hexToNumber(colors.primary.medium),
+          borderColor: hexToNumber(colors.primary.dark),
           effect: 'pulse',
           effectConfig: { intensity: 1.2, time: 150 },
         },
         secondary: {
-          backgroundColor: colors.secondary.DEFAULT,
-          borderColor: colors.secondary.dark,
+          backgroundColor: hexToNumber(colors.secondary.DEFAULT),
+          borderColor: hexToNumber(colors.secondary.dark),
           effect: 'press',
           effectConfig: { intensity: 0.9, time: 200 },
         },
         outline: {
           backgroundColor: 0x000000,
           backgroundAlpha: 0.0,
-          borderColor: colors.accent.DEFAULT,
+          borderColor: hexToNumber(colors.accent.DEFAULT),
           borderWidth: 2,
           effect: 'flash',
           effectConfig: { intensity: 1.15, time: 200 },
@@ -129,7 +129,7 @@ export function createAppTheme(
 
       ExampleContainer: {
         View: {
-          backgroundColor: colors.surface.DEFAULT,
+          backgroundColor: hexToNumber(colors.surface.DEFAULT),
           backgroundAlpha: 1.0,
           padding: 10,
           gap: 10,

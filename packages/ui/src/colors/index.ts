@@ -10,7 +10,7 @@ export type { ColorMode, ColorShade, ColorTokens, RGBColor, ShadeLevel } from '.
 export { hexToNumber, numberToHex, numberToRgb, rgbToNumber } from './color-utils'
 
 // Color manipulation
-export { alpha, darken, lighten } from './color-utils'
+export { alpha, darken, darkenHex, lighten, lightenHex } from './color-utils'
 
 // Contrast utilities
 export { ensureContrast, getContrastRatio } from './color-utils'

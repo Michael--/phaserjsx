@@ -4,26 +4,26 @@
  */
 
 import type { ColorShade, ColorTokens } from './color-types'
-import { darken, lighten } from './color-utils'
+import { darkenHex, lightenHex } from './color-utils'
 
 /**
  * Generate a complete color scale from a base color
  * Creates shades from lightest to darkest with the base color as DEFAULT
- * @param baseColor - The base color to generate shades from
- * @returns Complete ColorShade with all semantic levels
+ * @param baseColor - The base color in hex format (e.g., '#2196f3')
+ * @returns Complete ColorShade with all semantic levels as hex strings
  * @example
  * ```typescript
- * const primaryScale = generateColorScale(0x2196f3)
- * // Returns: { lightest: ..., light: ..., medium: ..., dark: ..., darkest: ..., DEFAULT: 0x2196f3 }
+ * const primaryScale = generateColorScale('#2196f3')
+ * // Returns: { lightest: '#...', light: '#...', medium: '#...', dark: '#...', darkest: '#...', DEFAULT: '#2196f3' }
  * ```
  */
-export function generateColorScale(baseColor: number): ColorShade {
+export function generateColorScale(baseColor: string): ColorShade {
   return {
-    lightest: lighten(baseColor, 0.7),
-    light: lighten(baseColor, 0.4),
-    medium: lighten(baseColor, 0.15),
-    dark: darken(baseColor, 0.15),
-    darkest: darken(baseColor, 0.4),
+    lightest: lightenHex(baseColor, 0.7),
+    light: lightenHex(baseColor, 0.4),
+    medium: lightenHex(baseColor, 0.15),
+    dark: darkenHex(baseColor, 0.15),
+    darkest: darkenHex(baseColor, 0.4),
     DEFAULT: baseColor,
   }
 }
@@ -47,48 +47,48 @@ export const oceanBluePreset: ColorPreset = {
   name: 'oceanBlue',
   colors: {
     // Brand colors
-    primary: generateColorScale(0x2196f3), // Material Blue
-    secondary: generateColorScale(0x607d8b), // Blue Grey
-    accent: generateColorScale(0x00bcd4), // Cyan
+    primary: generateColorScale('#2196f3'), // Material Blue
+    secondary: generateColorScale('#607d8b'), // Blue Grey
+    accent: generateColorScale('#00bcd4'), // Cyan
 
     // Feedback colors
-    success: generateColorScale(0x4caf50), // Green
-    warning: generateColorScale(0xff9800), // Orange
-    error: generateColorScale(0xf44336), // Red
-    info: generateColorScale(0x2196f3), // Blue (same as primary)
+    success: generateColorScale('#4caf50'), // Green
+    warning: generateColorScale('#ff9800'), // Orange
+    error: generateColorScale('#f44336'), // Red
+    info: generateColorScale('#2196f3'), // Blue (same as primary)
 
     // Neutral colors - designed for light mode
     background: {
-      lightest: 0xffffff,
-      light: 0xf5f5f5,
-      medium: 0xe0e0e0,
-      dark: 0xbdbdbd,
-      darkest: 0x9e9e9e,
-      DEFAULT: 0xfafafa,
+      lightest: '#ffffff',
+      light: '#f5f5f5',
+      medium: '#e0e0e0',
+      dark: '#bdbdbd',
+      darkest: '#9e9e9e',
+      DEFAULT: '#fafafa',
     },
     surface: {
-      lightest: 0xffffff,
-      light: 0xf5f5f5,
-      medium: 0xeeeeee,
-      dark: 0xe0e0e0,
-      darkest: 0xbdbdbd,
-      DEFAULT: 0xffffff,
+      lightest: '#ffffff',
+      light: '#f5f5f5',
+      medium: '#eeeeee',
+      dark: '#e0e0e0',
+      darkest: '#bdbdbd',
+      DEFAULT: '#ffffff',
     },
     text: {
-      lightest: 0x9e9e9e,
-      light: 0x757575,
-      medium: 0x616161,
-      dark: 0x424242,
-      darkest: 0x212121,
-      DEFAULT: 0x212121,
+      lightest: '#9e9e9e',
+      light: '#757575',
+      medium: '#616161',
+      dark: '#424242',
+      darkest: '#212121',
+      DEFAULT: '#212121',
     },
     border: {
-      lightest: 0xe0e0e0,
-      light: 0xbdbdbd,
-      medium: 0x9e9e9e,
-      dark: 0x757575,
-      darkest: 0x424242,
-      DEFAULT: 0xbdbdbd,
+      lightest: '#e0e0e0',
+      light: '#bdbdbd',
+      medium: '#9e9e9e',
+      dark: '#757575',
+      darkest: '#424242',
+      DEFAULT: '#bdbdbd',
     },
   },
 }
@@ -101,48 +101,48 @@ export const forestGreenPreset: ColorPreset = {
   name: 'forestGreen',
   colors: {
     // Brand colors
-    primary: generateColorScale(0x4caf50), // Green
-    secondary: generateColorScale(0x8bc34a), // Light Green
-    accent: generateColorScale(0xffeb3b), // Yellow
+    primary: generateColorScale('#4caf50'), // Green
+    secondary: generateColorScale('#8bc34a'), // Light Green
+    accent: generateColorScale('#ffeb3b'), // Yellow
 
     // Feedback colors
-    success: generateColorScale(0x66bb6a), // Light Green
-    warning: generateColorScale(0xffa726), // Orange
-    error: generateColorScale(0xef5350), // Red
-    info: generateColorScale(0x29b6f6), // Light Blue
+    success: generateColorScale('#66bb6a'), // Light Green
+    warning: generateColorScale('#ffa726'), // Orange
+    error: generateColorScale('#ef5350'), // Red
+    info: generateColorScale('#29b6f6'), // Light Blue
 
     // Neutral colors - designed for light mode
     background: {
-      lightest: 0xffffff,
-      light: 0xf1f8e9,
-      medium: 0xdcedc8,
-      dark: 0xc5e1a5,
-      darkest: 0xaed581,
-      DEFAULT: 0xf9fbe7,
+      lightest: '#ffffff',
+      light: '#f1f8e9',
+      medium: '#dcedc8',
+      dark: '#c5e1a5',
+      darkest: '#aed581',
+      DEFAULT: '#f9fbe7',
     },
     surface: {
-      lightest: 0xffffff,
-      light: 0xf9fbe7,
-      medium: 0xf0f4c3,
-      dark: 0xe6ee9c,
-      darkest: 0xdce775,
-      DEFAULT: 0xffffff,
+      lightest: '#ffffff',
+      light: '#f9fbe7',
+      medium: '#f0f4c3',
+      dark: '#e6ee9c',
+      darkest: '#dce775',
+      DEFAULT: '#ffffff',
     },
     text: {
-      lightest: 0x9e9e9e,
-      light: 0x757575,
-      medium: 0x616161,
-      dark: 0x424242,
-      darkest: 0x1b5e20,
-      DEFAULT: 0x1b5e20,
+      lightest: '#9e9e9e',
+      light: '#757575',
+      medium: '#616161',
+      dark: '#424242',
+      darkest: '#1b5e20',
+      DEFAULT: '#1b5e20',
     },
     border: {
-      lightest: 0xdcedc8,
-      light: 0xc5e1a5,
-      medium: 0xaed581,
-      dark: 0x9ccc65,
-      darkest: 0x7cb342,
-      DEFAULT: 0xc5e1a5,
+      lightest: '#dcedc8',
+      light: '#c5e1a5',
+      medium: '#aed581',
+      dark: '#9ccc65',
+      darkest: '#7cb342',
+      DEFAULT: '#c5e1a5',
     },
   },
 }
@@ -155,48 +155,48 @@ export const midnightPreset: ColorPreset = {
   name: 'midnight',
   colors: {
     // Brand colors
-    primary: generateColorScale(0x9c27b0), // Purple
-    secondary: generateColorScale(0x673ab7), // Deep Purple
-    accent: generateColorScale(0xe91e63), // Pink
+    primary: generateColorScale('#9c27b0'), // Purple
+    secondary: generateColorScale('#673ab7'), // Deep Purple
+    accent: generateColorScale('#e91e63'), // Pink
 
     // Feedback colors
-    success: generateColorScale(0x66bb6a), // Green
-    warning: generateColorScale(0xffa726), // Orange
-    error: generateColorScale(0xef5350), // Red
-    info: generateColorScale(0x42a5f5), // Blue
+    success: generateColorScale('#66bb6a'), // Green
+    warning: generateColorScale('#ffa726'), // Orange
+    error: generateColorScale('#ef5350'), // Red
+    info: generateColorScale('#42a5f5'), // Blue
 
     // Neutral colors - designed for dark mode
     background: {
-      lightest: 0x424242,
-      light: 0x303030,
-      medium: 0x212121,
-      dark: 0x1a1a1a,
-      darkest: 0x0a0a0a,
-      DEFAULT: 0x121212,
+      lightest: '#424242',
+      light: '#303030',
+      medium: '#212121',
+      dark: '#1a1a1a',
+      darkest: '#0a0a0a',
+      DEFAULT: '#121212',
     },
     surface: {
-      lightest: 0x424242,
-      light: 0x303030,
-      medium: 0x262626,
-      dark: 0x1e1e1e,
-      darkest: 0x121212,
-      DEFAULT: 0x1e1e1e,
+      lightest: '#424242',
+      light: '#303030',
+      medium: '#262626',
+      dark: '#1e1e1e',
+      darkest: '#121212',
+      DEFAULT: '#1e1e1e',
     },
     text: {
-      lightest: 0xffffff,
-      light: 0xe0e0e0,
-      medium: 0xbdbdbd,
-      dark: 0x9e9e9e,
-      darkest: 0x757575,
-      DEFAULT: 0xffffff,
+      lightest: '#ffffff',
+      light: '#e0e0e0',
+      medium: '#bdbdbd',
+      dark: '#9e9e9e',
+      darkest: '#757575',
+      DEFAULT: '#ffffff',
     },
     border: {
-      lightest: 0x616161,
-      light: 0x424242,
-      medium: 0x303030,
-      dark: 0x212121,
-      darkest: 0x1a1a1a,
-      DEFAULT: 0x424242,
+      lightest: '#616161',
+      light: '#424242',
+      medium: '#303030',
+      dark: '#212121',
+      darkest: '#1a1a1a',
+      DEFAULT: '#424242',
     },
   },
 }
@@ -213,36 +213,36 @@ export function applyLightMode(preset: ColorPreset): ColorPreset {
     colors: {
       ...preset.colors,
       background: {
-        lightest: 0xffffff,
-        light: 0xf5f5f5,
-        medium: 0xe0e0e0,
-        dark: 0xbdbdbd,
-        darkest: 0x9e9e9e,
-        DEFAULT: 0xfafafa,
+        lightest: '#ffffff',
+        light: '#f5f5f5',
+        medium: '#e0e0e0',
+        dark: '#bdbdbd',
+        darkest: '#9e9e9e',
+        DEFAULT: '#fafafa',
       },
       surface: {
-        lightest: 0xffffff,
-        light: 0xf5f5f5,
-        medium: 0xeeeeee,
-        dark: 0xe0e0e0,
-        darkest: 0xbdbdbd,
-        DEFAULT: 0xffffff,
+        lightest: '#ffffff',
+        light: '#f5f5f5',
+        medium: '#eeeeee',
+        dark: '#e0e0e0',
+        darkest: '#bdbdbd',
+        DEFAULT: '#ffffff',
       },
       text: {
-        lightest: 0x9e9e9e,
-        light: 0x757575,
-        medium: 0x616161,
-        dark: 0x424242,
-        darkest: 0x212121,
-        DEFAULT: 0x212121,
+        lightest: '#9e9e9e',
+        light: '#757575',
+        medium: '#616161',
+        dark: '#424242',
+        darkest: '#212121',
+        DEFAULT: '#212121',
       },
       border: {
-        lightest: 0xe0e0e0,
-        light: 0xbdbdbd,
-        medium: 0x9e9e9e,
-        dark: 0x757575,
-        darkest: 0x424242,
-        DEFAULT: 0xbdbdbd,
+        lightest: '#e0e0e0',
+        light: '#bdbdbd',
+        medium: '#9e9e9e',
+        dark: '#757575',
+        darkest: '#424242',
+        DEFAULT: '#bdbdbd',
       },
     },
   }
@@ -260,36 +260,36 @@ export function applyDarkMode(preset: ColorPreset): ColorPreset {
     colors: {
       ...preset.colors,
       background: {
-        lightest: 0x424242,
-        light: 0x303030,
-        medium: 0x212121,
-        dark: 0x1a1a1a,
-        darkest: 0x0a0a0a,
-        DEFAULT: 0x121212,
+        lightest: '#424242',
+        light: '#303030',
+        medium: '#212121',
+        dark: '#1a1a1a',
+        darkest: '#0a0a0a',
+        DEFAULT: '#121212',
       },
       surface: {
-        lightest: 0x424242,
-        light: 0x303030,
-        medium: 0x262626,
-        dark: 0x1e1e1e,
-        darkest: 0x121212,
-        DEFAULT: 0x1e1e1e,
+        lightest: '#424242',
+        light: '#303030',
+        medium: '#262626',
+        dark: '#1e1e1e',
+        darkest: '#121212',
+        DEFAULT: '#1e1e1e',
       },
       text: {
-        lightest: 0xffffff,
-        light: 0xe0e0e0,
-        medium: 0xbdbdbd,
-        dark: 0x9e9e9e,
-        darkest: 0x757575,
-        DEFAULT: 0xffffff,
+        lightest: '#ffffff',
+        light: '#e0e0e0',
+        medium: '#bdbdbd',
+        dark: '#9e9e9e',
+        darkest: '#757575',
+        DEFAULT: '#ffffff',
       },
       border: {
-        lightest: 0x616161,
-        light: 0x424242,
-        medium: 0x303030,
-        dark: 0x212121,
-        darkest: 0x1a1a1a,
-        DEFAULT: 0x424242,
+        lightest: '#616161',
+        light: '#424242',
+        medium: '#303030',
+        dark: '#212121',
+        darkest: '#1a1a1a',
+        DEFAULT: '#424242',
       },
     },
   }
