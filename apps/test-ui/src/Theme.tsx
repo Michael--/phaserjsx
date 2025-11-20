@@ -129,8 +129,8 @@ export function createAppTheme(
 
       ExampleContainer: {
         View: {
-          backgroundColor: colors.surface.DEFAULT.toNumber(),
-          backgroundAlpha: 1.0,
+          //backgroundColor: colors.surface.DEFAULT.toNumber(),
+          //backgroundAlpha: 0.1,
           padding: 10,
           gap: 10,
         },

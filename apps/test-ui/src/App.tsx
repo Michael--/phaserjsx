@@ -7,6 +7,7 @@ import {
   Text,
   themeRegistry,
   useColorMode,
+  useColors,
   useEffect,
   useState,
   View,
@@ -114,6 +115,7 @@ export function App(props: AppProps) {
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('themePreview')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const [, setForceUpdate] = useState(0)
+  const colors = useColors()
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
@@ -125,13 +127,15 @@ export function App(props: AppProps) {
         <Spacer />
         <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
       </Sidebar>
-
       <View
         height={'100%'}
-        flex={1}
-        padding={{ left: 20, top: 20, right: 20, bottom: 20 }}
-        justifyContent="space-between"
-      >
+        padding={0}
+        width={2}
+        backgroundAlpha={1}
+        backgroundColor={colors?.border.DEFAULT.toNumber()}
+      ></View>
+
+      <View height={'100%'} flex={1} padding={0} justifyContent="space-between">
         <ExampleContainer selectedExample={selectedDemo} />
 
         <View direction="row" justifyContent="space-between" key="footer" width={'fill'}>

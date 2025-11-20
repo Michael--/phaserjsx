@@ -76,14 +76,21 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
 
   return (
     <View
-      width={780}
-      backgroundColor={colors?.surface.lightest.toNumber() || 0x1a1a1a}
+      backgroundColor={colors?.surface.DEFAULT.toNumber()}
       cornerRadius={8}
       padding={12}
       gap={8}
-      direction="column"
+      direction="row"
+      alignItems="center"
     >
-      <View gap={8} direction="row" alignItems="center">
+      <View
+        gap={8}
+        width={250}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        overflow="hidden"
+      >
         <Text
           text={name}
           style={{
@@ -199,7 +206,7 @@ function SpacingSection() {
         cornerRadius={8}
         padding={16}
         gap={16}
-        direction="column"
+        direction="row"
       >
         {...spacings.map((spacing) => (
           <View key={spacing.name} gap={8} direction="row" alignItems="center">
@@ -445,10 +452,10 @@ export function ThemePreviewExample() {
           </View>
 
           <ColorSection />
-          <TypographySection />
           <ComponentShowcase />
           <SpacingSection />
           <BorderRadiusSection />
+          <TypographySection />
         </View>
       </ScrollView>
     </View>
