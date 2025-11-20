@@ -100,13 +100,12 @@ export function ScrollView(props: ScrollViewProps) {
       direction="stack"
       width="fill"
       height="fill"
-      backgroundAlpha={0.0}
       enableGestures={true}
       onTouchMove={handleTouchMove}
       overflow="hidden"
     >
       {/** B: next view is the dynamic sized content which could be scrolled in parent, when size is bigger then parent */}
-      <View ref={contentRef} x={-scroll.dx} y={-scroll.dy} backgroundColor={0x888888} padding={0}>
+      <View ref={contentRef} x={-scroll.dx} y={-scroll.dy} padding={0}>
         {children}
       </View>
     </View>

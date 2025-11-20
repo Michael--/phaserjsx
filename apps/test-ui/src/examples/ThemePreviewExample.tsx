@@ -429,28 +429,10 @@ function ComponentShowcase() {
  * Main theme preview component
  */
 export function ThemePreviewExample() {
-  const colors = useColors()
-
   return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
         <View gap={32} direction="column" padding={20}>
-          <View
-            gap={16}
-            direction="column"
-            alignItems="start"
-            backgroundColor={colors?.background.DEFAULT.toNumber() || 0x0a0a0a}
-            backgroundAlpha={1.0}
-          >
-            <Text
-              text="Theme Preview"
-              style={{
-                fontSize: '36px',
-                color: colors?.text.DEFAULT.toString() || '#ffffff',
-              }}
-            />
-          </View>
-
           <ColorSection />
           <ComponentShowcase />
           <SpacingSection />

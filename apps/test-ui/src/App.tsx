@@ -131,7 +131,6 @@ export function App(props: AppProps) {
         height={'100%'}
         padding={0}
         width={2}
-        backgroundAlpha={1}
         backgroundColor={colors?.border.DEFAULT.toNumber()}
       ></View>
 

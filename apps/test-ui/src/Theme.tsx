@@ -30,9 +30,9 @@ export function createAppTheme(
       },
       // the default View theme is transparent
       View: {
-        backgroundColor: 0x000000,
+        //backgroundColor: 0x000000,
         cornerRadius: 0,
-        backgroundAlpha: 0,
+        //backgroundAlpha: 0,
       },
 
       // custom component theme for Sidebar
@@ -131,7 +131,7 @@ export function createAppTheme(
         View: {
           //backgroundColor: colors.surface.DEFAULT.toNumber(),
           //backgroundAlpha: 0.1,
-          padding: 10,
+          // padding: 10,
           gap: 10,
         },
       },

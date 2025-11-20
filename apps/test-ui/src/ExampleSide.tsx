@@ -78,7 +78,6 @@ export function ExampleContainer(props: { selectedExample: ExampleKey }) {
     <View
       key="demo-container"
       theme={nestedTheme}
-      backgroundAlpha={1.0}
       backgroundColor={colors?.background.DEFAULT.toNumber()}
     >
       <Component key={props.selectedExample} />
