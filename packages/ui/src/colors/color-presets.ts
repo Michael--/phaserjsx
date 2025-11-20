@@ -19,11 +19,11 @@ import { darkenHex, lightenHex } from './color-utils'
  */
 export function generateColorScale(baseColor: string): ColorShade {
   return {
-    lightest: HexColor.from(lightenHex(baseColor, 0.7)),
-    light: HexColor.from(lightenHex(baseColor, 0.4)),
-    medium: HexColor.from(lightenHex(baseColor, 0.15)),
-    dark: HexColor.from(darkenHex(baseColor, 0.15)),
-    darkest: HexColor.from(darkenHex(baseColor, 0.4)),
+    lightest: lightenHex(baseColor, 0.7),
+    light: lightenHex(baseColor, 0.4),
+    medium: lightenHex(baseColor, 0.15),
+    dark: darkenHex(baseColor, 0.15),
+    darkest: darkenHex(baseColor, 0.4),
     DEFAULT: HexColor.from(baseColor),
   }
 }

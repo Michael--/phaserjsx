@@ -3,7 +3,7 @@
  * Provides conversion between formats and color manipulation
  */
 
-import type { RGBColor } from './color-types'
+import { HexColor, type RGBColor } from './color-types'
 
 /**
  * Convert hex string to Phaser number format
@@ -117,7 +117,7 @@ export function darken(color: number, amount: number): number {
 
 /**
  * Lighten a hex color by a given amount
- * @param hex - Hex color string (e.g., '#ffffff' or 'ffffff')
+ * @param hex - Hex color (e.g., '#ffffff' or 'ffffff')
  * @param amount - Amount to lighten (0.0 to 1.0, where 1.0 is white)
  * @returns Lightened hex color string with '#' prefix
  * @example
@@ -126,15 +126,15 @@ export function darken(color: number, amount: number): number {
  * lightenHex('#ff0000', 0.5) // returns light red/pink
  * ```
  */
-export function lightenHex(hex: string, amount: number): string {
+export function lightenHex(hex: string, amount: number): HexColor {
   const num = hexToNumber(hex)
   const lightened = lighten(num, amount)
-  return numberToHex(lightened)
+  return HexColor.from(numberToHex(lightened))
 }
 
 /**
  * Darken a hex color by a given amount
- * @param hex - Hex color string (e.g., '#ffffff' or 'ffffff')
+ * @param hex - Hex color (e.g., '#ffffff' or 'ffffff')
  * @param amount - Amount to darken (0.0 to 1.0, where 1.0 is black)
  * @returns Darkened hex color string with '#' prefix
  * @example
@@ -143,10 +143,10 @@ export function lightenHex(hex: string, amount: number): string {
  * darkenHex('#ff0000', 0.5) // returns dark red
  * ```
  */
-export function darkenHex(hex: string, amount: number): string {
+export function darkenHex(hex: string, amount: number): HexColor {
   const num = hexToNumber(hex)
   const darkened = darken(num, amount)
-  return numberToHex(darkened)
+  return HexColor.from(numberToHex(darkened))
 }
 
 /**
