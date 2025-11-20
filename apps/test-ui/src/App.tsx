@@ -1,15 +1,26 @@
 /**
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
-import { Text, View, themeRegistry, useState } from '@phaserjsx/ui'
+import {
+  setColorPreset,
+  Text,
+  themeRegistry,
+  useColorMode,
+  useEffect,
+  useState,
+  View,
+} from '@phaserjsx/ui'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
-import { globalTheme } from './Theme'
+import { createAppTheme, globalTheme } from './Theme'
 import { Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 
 // Set global theme ONCE (safe in function body for SPA)
 themeRegistry.updateGlobalTheme(globalTheme)
+
+// Initialize preset
+setColorPreset('oceanBlue')
 
 // Activate desired debug preset by default:
 // import { DevPresets } from '@phaserjsx/ui'
@@ -36,6 +47,18 @@ export function App(props: AppProps) {
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
+
+  const { colorMode } = useColorMode()
+  const currentPreset = themeRegistry.getCurrentPresetName() || 'oceanBlue'
+
+  // Reload theme when color mode or preset changes
+  useEffect(() => {
+    const newTheme = createAppTheme(
+      currentPreset as 'oceanBlue' | 'forestGreen' | 'midnight',
+      colorMode
+    )
+    themeRegistry.updateGlobalTheme(newTheme)
+  }, [colorMode, currentPreset])
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">

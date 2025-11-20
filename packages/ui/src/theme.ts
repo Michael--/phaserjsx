@@ -236,11 +236,19 @@ class ThemeRegistry {
 
   /**
    * Set color mode and notify listeners
+   * Updates color tokens if a preset is active
    * @param mode - Color mode to set
    */
   setColorMode(mode: 'light' | 'dark'): void {
     if (this.colorMode !== mode) {
       this.colorMode = mode
+
+      // If a preset is active, reload it with the new mode
+      if (this.currentPresetName && this.colorTokens) {
+        // This will be handled by preset-manager to avoid circular dependency
+        // We just notify listeners here
+      }
+
       this.notifyListeners()
     }
   }
