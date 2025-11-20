@@ -773,7 +773,18 @@ export const createFloatEffect: EffectFn = (obj, config) => {
   const { magnitude = 10, time = 2000 } = config
 
   const state = getPositionState(obj)
-  incrementEffectCount(obj)
+  // Initialize original values if not done yet (without incrementing count)
+  if (!state.initialized) {
+    state.originalX = obj.x
+    state.originalY = obj.y
+    state.originalAlpha = obj.alpha
+    state.originalScaleX = obj.scaleX
+    state.originalScaleY = obj.scaleY
+    state.originalRotation = obj.rotation
+    state.originX = obj.originX ?? 0
+    state.originY = obj.originY ?? 0
+    state.initialized = true
+  }
 
   const scene = obj.scene
   const baseY = state.originalY
@@ -803,7 +814,18 @@ export const createBreatheEffect: EffectFn = (obj, config) => {
   const { intensity = 1.05, time = 2000 } = config
 
   const state = getPositionState(obj)
-  incrementEffectCount(obj)
+  // Initialize original values if not done yet (without incrementing count)
+  if (!state.initialized) {
+    state.originalX = obj.x
+    state.originalY = obj.y
+    state.originalAlpha = obj.alpha
+    state.originalScaleX = obj.scaleX
+    state.originalScaleY = obj.scaleY
+    state.originalRotation = obj.rotation
+    state.originX = obj.originX ?? 0
+    state.originY = obj.originY ?? 0
+    state.initialized = true
+  }
 
   const scene = obj.scene
   const targetScaleX = intensity * state.originalScaleX
@@ -834,7 +856,18 @@ export const createSpinEffect: EffectFn = (obj, config) => {
   const { time = 2000 } = config
 
   const state = getPositionState(obj)
-  incrementEffectCount(obj)
+  // Initialize original values if not done yet (without incrementing count)
+  if (!state.initialized) {
+    state.originalX = obj.x
+    state.originalY = obj.y
+    state.originalAlpha = obj.alpha
+    state.originalScaleX = obj.scaleX
+    state.originalScaleY = obj.scaleY
+    state.originalRotation = obj.rotation
+    state.originX = obj.originX ?? 0
+    state.originY = obj.originY ?? 0
+    state.initialized = true
+  }
 
   const scene = obj.scene
   const baseRotation = state.originalRotation
@@ -880,6 +913,42 @@ export function useGameObjectEffect(ref: RefObject<Phaser.GameObjects.Container 
     }
   }
 
+  /**
+   * Stop all active effects/tweens
+   */
+  const stopEffects = () => {
+    if (!ref.current) return
+
+    const scene = ref.current.scene
+    const tweens = scene.tweens.getTweensOf(ref.current)
+
+    tweens.forEach((tween) => {
+      if (!tween.isDestroyed()) {
+        tween.stop()
+        tween.remove()
+      }
+    })
+
+    tweenIdsRef.current = []
+
+    // Reset to original state if there's a state
+    const obj = ref.current
+    if (positionStates.has(obj)) {
+      const state = positionStates.get(obj)
+      if (state) {
+        obj.setPosition(state.originalX, state.originalY)
+        obj.setScale(state.originalScaleX, state.originalScaleY)
+        obj.setAlpha(state.originalAlpha)
+        obj.setRotation(state.originalRotation)
+        state.effectCount = 0
+        state.scaleOffsetX = 0
+        state.scaleOffsetY = 0
+        state.rotationOffset = 0
+        state.initialized = false
+      }
+    }
+  }
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
@@ -892,5 +961,5 @@ export function useGameObjectEffect(ref: RefObject<Phaser.GameObjects.Container 
     }
   }, [])
 
-  return { applyEffect }
+  return { applyEffect, stopEffects }
 }

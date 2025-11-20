@@ -33,8 +33,9 @@ import {
  */
 export function GameObjectEffectsExample() {
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const { applyEffect } = useGameObjectEffect(viewRef)
+  const { applyEffect, stopEffects } = useGameObjectEffect(viewRef)
   const [isVisible, setVisible] = useState(true)
+  const [activeContinuous, setActiveContinuous] = useState<Set<string>>(new Set())
 
   const setIsVisible = (visible: boolean) => {
     // immediate hide, delayed show to avoid flicker
@@ -202,14 +203,39 @@ export function GameObjectEffectsExample() {
             style={{ fontSize: 14, color: 'orange', fontStyle: 'bold' }}
           />
           <Button
+            disabled={activeContinuous.has('float')}
             text="Float"
-            onClick={() => applyEffect(createFloatEffect, { magnitude: 15, time: 2000 })}
+            onClick={() => {
+              applyEffect(createFloatEffect, { magnitude: 15, time: 2000 })
+              setActiveContinuous((prev) => new Set(prev).add('float'))
+            }}
           />
           <Button
+            disabled={activeContinuous.has('breathe')}
             text="Breathe"
-            onClick={() => applyEffect(createBreatheEffect, { intensity: 1.08, time: 2000 })}
+            onClick={() => {
+              applyEffect(createBreatheEffect, { intensity: 1.08, time: 2000 })
+              setActiveContinuous((prev) => new Set(prev).add('breathe'))
+            }}
           />
-          <Button text="Spin" onClick={() => applyEffect(createSpinEffect, { time: 2000 })} />
+          <Button
+            disabled={activeContinuous.has('spin')}
+            text="Spin"
+            onClick={() => {
+              applyEffect(createSpinEffect, { time: 2000 })
+              setActiveContinuous((prev) => new Set(prev).add('spin'))
+            }}
+          />
+          <View margin={{ top: 8 }}>
+            <Button
+              disabled={activeContinuous.size === 0}
+              text="Stop All"
+              onClick={() => {
+                stopEffects()
+                setActiveContinuous(new Set())
+              }}
+            />
+          </View>
           <View margin={{ top: 12 }}>
             <Text text="Combined" style={{ fontSize: 14, color: 'lime', fontStyle: 'bold' }} />
           </View>
@@ -243,7 +269,7 @@ export function GameObjectEffectsExample() {
           style={{ fontSize: 11, color: 'gray', fontStyle: 'italic' }}
         />
         <Text
-          text="Continuous effects loop infinitely until component unmounts"
+          text="Continuous effects can be combined. Each can only be activated once. Use 'Stop All' to reset."
           style={{ fontSize: 11, color: 'gray', fontStyle: 'italic' }}
         />
       </View>
