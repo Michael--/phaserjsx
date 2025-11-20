@@ -266,7 +266,10 @@ class ThemeRegistry {
    * @param name - Preset name
    */
   setCurrentPresetName(name: string | undefined): void {
-    this.currentPresetName = name
+    if (this.currentPresetName !== name) {
+      this.currentPresetName = name
+      this.notifyListeners()
+    }
   }
 
   /**
