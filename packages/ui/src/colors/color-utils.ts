@@ -150,6 +150,41 @@ export function darkenHex(hex: string, amount: number): string {
 }
 
 /**
+ * Hex color wrapper with chainable conversion methods
+ * Provides fluent API for color conversions
+ */
+export interface HexColorWrapper {
+  /** Original hex string value */
+  value: string
+  /** Convert to Phaser number format */
+  toNumber: () => number
+  /** Convert to string (returns hex) */
+  toString: () => string
+}
+
+/**
+ * Create a hex color wrapper with chainable methods
+ * @param hex - Hex color string
+ * @returns Wrapper object with conversion methods
+ * @example
+ * ```typescript
+ * const color = hex('#ff0000')
+ * color.toNumber()  // 0xff0000
+ * color.toString()  // '#ff0000'
+ *
+ * // Direct usage:
+ * backgroundColor: hex(colors.primary.DEFAULT).toNumber()
+ * ```
+ */
+export function hex(hexColor: string): HexColorWrapper {
+  return {
+    value: hexColor,
+    toNumber: () => hexToNumber(hexColor),
+    toString: () => hexColor,
+  }
+}
+
+/**
  * Convert color to rgba string for Phaser Text style
  * @param color - Phaser color number
  * @param alphaValue - Alpha value (0.0 to 1.0, default: 1.0)

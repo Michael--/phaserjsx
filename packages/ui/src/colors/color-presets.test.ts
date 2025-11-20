@@ -31,18 +31,21 @@ describe('Color Presets', () => {
       const baseColor = '#2196f3'
       const scale = generateColorScale(baseColor)
 
-      expect(scale.DEFAULT).toBe(baseColor)
+      expect(scale.DEFAULT.toString()).toBe(baseColor)
     })
 
-    it('returns hex strings', () => {
+    it('returns HexColor objects with toNumber method', () => {
       const scale = generateColorScale('#808080')
 
-      expect(scale.lightest).toMatch(/^#[0-9a-f]{6}$/i)
-      expect(scale.light).toMatch(/^#[0-9a-f]{6}$/i)
-      expect(scale.medium).toMatch(/^#[0-9a-f]{6}$/i)
-      expect(scale.dark).toMatch(/^#[0-9a-f]{6}$/i)
-      expect(scale.darkest).toMatch(/^#[0-9a-f]{6}$/i)
-      expect(scale.DEFAULT).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(scale.lightest.toNumber).toBeDefined()
+      expect(scale.light.toNumber).toBeDefined()
+      expect(scale.medium.toNumber).toBeDefined()
+      expect(scale.dark.toNumber).toBeDefined()
+      expect(scale.darkest.toNumber).toBeDefined()
+      expect(scale.DEFAULT.toNumber).toBeDefined()
+
+      // Test conversion
+      expect(typeof scale.DEFAULT.toNumber()).toBe('number')
     })
 
     it('creates progressively lighter shades', () => {
@@ -118,9 +121,11 @@ describe('Color Presets', () => {
 
       Object.values(colors).forEach((colorShade) => {
         shadeKeys.forEach((key) => {
-          expect(colorShade).toHaveProperty(key)
-          expect(typeof colorShade[key as keyof typeof colorShade]).toBe('string')
-          expect(colorShade[key as keyof typeof colorShade]).toMatch(/^#[0-9a-f]{6}$/i)
+          const color = colorShade[key as keyof typeof colorShade]
+          expect(color).toBeDefined()
+          expect(color.toNumber).toBeDefined()
+          expect(typeof color.toNumber()).toBe('number')
+          expect(color.toString()).toMatch(/^#[0-9a-f]{6}$/i)
         })
       })
     })
@@ -131,22 +136,22 @@ describe('Color Presets', () => {
       const lightPreset = applyLightMode(oceanBluePreset)
 
       // Light backgrounds should be bright (white-ish)
-      expect(lightPreset.colors.background.DEFAULT).toBe('#fafafa')
-      expect(lightPreset.colors.surface.DEFAULT).toBe('#ffffff')
+      expect(lightPreset.colors.background.DEFAULT.toString()).toBe('#fafafa')
+      expect(lightPreset.colors.surface.DEFAULT.toString()).toBe('#ffffff')
 
       // Text should be dark in light mode
-      expect(lightPreset.colors.text.DEFAULT).toBe('#212121')
+      expect(lightPreset.colors.text.DEFAULT.toString()).toBe('#212121')
     })
 
     it('applyDarkMode adjusts neutral colors', () => {
       const darkPreset = applyDarkMode(oceanBluePreset)
 
       // Dark backgrounds should be dark
-      expect(darkPreset.colors.background.DEFAULT).toBe('#121212')
-      expect(darkPreset.colors.surface.DEFAULT).toBe('#1e1e1e')
+      expect(darkPreset.colors.background.DEFAULT.toString()).toBe('#121212')
+      expect(darkPreset.colors.surface.DEFAULT.toString()).toBe('#1e1e1e')
 
       // Text should be light in dark mode
-      expect(darkPreset.colors.text.DEFAULT).toBe('#ffffff')
+      expect(darkPreset.colors.text.DEFAULT.toString()).toBe('#ffffff')
     })
 
     it('mode application preserves brand colors', () => {
@@ -180,15 +185,15 @@ describe('Color Presets', () => {
     it('getPresetWithMode applies light mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'light')
 
-      expect(preset.colors.background.DEFAULT).toBe('#fafafa')
-      expect(preset.colors.text.DEFAULT).toBe('#212121')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#fafafa')
+      expect(preset.colors.text.DEFAULT.toString()).toBe('#212121')
     })
 
     it('getPresetWithMode applies dark mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'dark')
 
-      expect(preset.colors.background.DEFAULT).toBe('#121212')
-      expect(preset.colors.text.DEFAULT).toBe('#ffffff')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#121212')
+      expect(preset.colors.text.DEFAULT.toString()).toBe('#ffffff')
     })
   })
 

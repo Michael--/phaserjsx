@@ -10,34 +10,59 @@
 export type ShadeLevel = 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 'DEFAULT'
 
 /**
+ * Hex color string with conversion method
+ * Extends string but adds toNumber() for Phaser compatibility
+ */
+export class HexColor extends String {
+  /**
+   * Convert to Phaser number format
+   * @returns Color as number (0xffffff)
+   */
+  toNumber(): number {
+    const hex = this.valueOf().replace('#', '')
+    return parseInt(hex, 16)
+  }
+
+  /**
+   * Create a HexColor from a hex string
+   * @param hex - Hex color string
+   */
+  static from(hex: string): HexColor {
+    return new HexColor(hex) as HexColor
+  }
+}
+
+/**
  * Color shade scale with semantic naming
  * Each color token has multiple shades for different use cases
- * Uses hex string format for VS Code color picker support
+ * Uses HexColor type for VS Code color picker support and .toNumber() method
  * @example
  * ```typescript
  * const primaryShade: ColorShade = {
- *   lightest: '#e3f2fd',
- *   light: '#90caf9',
- *   medium: '#42a5f5',
- *   dark: '#1976d2',
- *   darkest: '#0d47a1',
- *   DEFAULT: '#2196f3'
+ *   lightest: HexColor.from('#e3f2fd'),
+ *   light: HexColor.from('#90caf9'),
+ *   medium: HexColor.from('#42a5f5'),
+ *   dark: HexColor.from('#1976d2'),
+ *   darkest: HexColor.from('#0d47a1'),
+ *   DEFAULT: HexColor.from('#2196f3')
  * }
+ * // Usage:
+ * backgroundColor: colors.primary.medium.toNumber()
  * ```
  */
 export interface ColorShade {
   /** Lightest shade - backgrounds, hover states */
-  lightest: string
+  lightest: HexColor
   /** Light shade - secondary elements */
-  light: string
+  light: HexColor
   /** Medium shade - interactive elements */
-  medium: string
+  medium: HexColor
   /** Dark shade - borders, dividers */
-  dark: string
+  dark: HexColor
   /** Darkest shade - text, emphasis */
-  darkest: string
+  darkest: HexColor
   /** Default shade - primary usage */
-  DEFAULT: string
+  DEFAULT: HexColor
 }
 
 /**

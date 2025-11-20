@@ -1,7 +1,7 @@
 /**
  * Color Mode Example - demonstrates dynamic theme switching
  */
-import { hexToNumber, setColorPreset, Text, useColorMode, useColors, View } from '@phaserjsx/ui'
+import { setColorPreset, Text, useColorMode, useColors, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 
 /**
@@ -18,8 +18,8 @@ function ColoredBox() {
     <View
       width={300}
       height={150}
-      backgroundColor={hexToNumber(colors.primary.DEFAULT)}
-      borderColor={hexToNumber(colors.primary.dark)}
+      backgroundColor={colors.primary.DEFAULT.toNumber()}
+      borderColor={colors.primary.dark.toNumber()}
       borderWidth={2}
       cornerRadius={8}
       padding={20}
@@ -36,9 +36,9 @@ function ColoredBox() {
         }}
       />
       <Text
-        text={`Background: ${colors.primary.DEFAULT}`}
+        text={`Background: ${colors.primary.DEFAULT.toString()}`}
         style={{
-          color: colors.primary.lightest,
+          color: colors.primary.lightest.toString(),
           fontSize: '14px',
         }}
       />
@@ -114,13 +114,16 @@ function ColorPalette() {
         <View
           width={80}
           height={30}
-          backgroundColor={hexToNumber(colors[shade].DEFAULT)}
+          backgroundColor={colors[shade].DEFAULT.toNumber()}
           cornerRadius={4}
           borderWidth={1}
-          borderColor={hexToNumber(colors.border.DEFAULT)}
+          borderColor={colors.border.DEFAULT.toNumber()}
         />
         <Text text={name} style={{ fontSize: '14px' }} />
-        <Text text={colors[shade].DEFAULT} style={{ fontSize: '12px', fontFamily: 'monospace' }} />
+        <Text
+          text={colors[shade].DEFAULT.toString()}
+          style={{ fontSize: '12px', fontFamily: 'monospace' }}
+        />
       </View>
     )
   })
@@ -144,7 +147,7 @@ export function ColorModeExample() {
     <View
       width="100%"
       height="100%"
-      backgroundColor={colors ? hexToNumber(colors.background.DEFAULT) : 0x1a1a1a}
+      backgroundColor={colors ? colors.background.DEFAULT.toNumber() : 0x1a1a1a}
       padding={20}
       gap={20}
       direction="column"
@@ -153,7 +156,7 @@ export function ColorModeExample() {
         text="Color Mode & Preset Demo"
         style={{
           fontSize: '24px',
-          color: colors ? colors.text.DEFAULT : '#ffffff',
+          color: colors ? colors.text.DEFAULT.toString() : '#ffffff',
         }}
       />
 
@@ -161,7 +164,7 @@ export function ColorModeExample() {
         text={`Current Mode: ${colorMode}`}
         style={{
           fontSize: '16px',
-          color: colors ? colors.text.medium : '#cccccc',
+          color: colors ? colors.text.medium.toString() : '#cccccc',
         }}
       />
 
@@ -171,7 +174,7 @@ export function ColorModeExample() {
         text="Choose Preset:"
         style={{
           fontSize: '18px',
-          color: colors ? colors.text.DEFAULT : '#ffffff',
+          color: colors ? colors.text.DEFAULT.toString() : '#ffffff',
         }}
       />
 

@@ -2,7 +2,7 @@
  * Helper functions for color system integration with theme
  */
 import type { ColorTokens } from './color-types'
-import { alpha, hexToNumber } from './color-utils'
+import { alpha } from './color-utils'
 
 /**
  * Convert ColorTokens to a theme-compatible object
@@ -40,11 +40,11 @@ export function colorsToTheme(
   const { backgroundShade = 'DEFAULT', borderShade = 'dark', includeBorder = true } = options
 
   const result: { backgroundColor: number; borderColor?: number } = {
-    backgroundColor: hexToNumber(colors[colorKey][backgroundShade]),
+    backgroundColor: colors[colorKey][backgroundShade].toNumber(),
   }
 
   if (includeBorder) {
-    result.borderColor = hexToNumber(colors[colorKey][borderShade])
+    result.borderColor = colors[colorKey][borderShade].toNumber()
   }
 
   return result
@@ -71,7 +71,7 @@ export function getTextColor(
   alphaValue?: number
 ): string {
   const color = colors.text[shade]
-  return alphaValue !== undefined ? alpha(hexToNumber(color), alphaValue) : color
+  return alphaValue !== undefined ? alpha(color.toNumber(), alphaValue) : color.toString()
 }
 
 /**
@@ -84,7 +84,7 @@ export function getBackgroundColor(
   colors: ColorTokens,
   shade: 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 'DEFAULT' = 'DEFAULT'
 ): number {
-  return hexToNumber(colors.background[shade])
+  return colors.background[shade].toNumber()
 }
 
 /**
@@ -97,7 +97,7 @@ export function getSurfaceColor(
   colors: ColorTokens,
   shade: 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 'DEFAULT' = 'DEFAULT'
 ): number {
-  return hexToNumber(colors.surface[shade])
+  return colors.surface[shade].toNumber()
 }
 
 /**
@@ -110,5 +110,5 @@ export function getBorderColor(
   colors: ColorTokens,
   shade: 'lightest' | 'light' | 'medium' | 'dark' | 'darkest' | 'DEFAULT' = 'DEFAULT'
 ): number {
-  return hexToNumber(colors.border[shade])
+  return colors.border[shade].toNumber()
 }
