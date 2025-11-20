@@ -139,6 +139,11 @@ export function createElement(
  * @returns Created Phaser GameObject
  */
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
+  // Set global scene reference for animation hooks
+  if (parentOrScene && typeof parentOrScene === 'object' && 'sys' in parentOrScene) {
+    ;(window as { __phaserScene?: Phaser.Scene }).__phaserScene = parentOrScene as Phaser.Scene
+  }
+
   // Fragment - mount children directly without creating a container
   if (vnode.type === Fragment) {
     // Mount all children directly to parent
@@ -596,7 +601,7 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
  * @param props - Component props
  * @returns Created Phaser GameObject
  */
-/* eslint-disable no-redeclare */
+
 export function mountJSX<T extends NodeType>(
   parentOrScene: ParentType,
   type: T,
@@ -617,4 +622,3 @@ export function mountJSX(
   const vnode: VNode = { type, props, children: [] }
   return mount(parentOrScene, vnode)
 }
-/* eslint-enable no-redeclare */

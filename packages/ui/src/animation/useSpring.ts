@@ -2,7 +2,7 @@
  * Spring animation hook
  * Provides physics-based animations using signals for direct updates
  */
-import { type Signal } from '@preact/signals-core'
+import { computed, type Signal } from '@preact/signals-core'
 import type Phaser from 'phaser'
 import { useEffect, useRef } from '../hooks'
 import { animatedSignal, type AnimatedSignal } from './animated-signal'
@@ -266,4 +266,4 @@ export function useSprings<T extends Record<string, number>>(
 /**
  * Export presets for convenience
  */
-export { SPRING_PRESETS }
+export { computed, SPRING_PRESETS }

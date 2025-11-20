@@ -33,6 +33,9 @@ export { mountJSX as mountComponent } from './vdom'
 // Re-export component creators/patchers for advanced usage
 export * from './components'
 
+// Animation utilities for spring-based transitions
+export * from './animation'
+
 /**
  * Consumers can import JSX runtime from here:
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";

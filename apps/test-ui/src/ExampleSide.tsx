@@ -12,6 +12,7 @@ import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
+import { SpringAnimationExample } from './examples/SpringAnimationExample'
 import { StackExample } from './examples/StackExample'
 import { ThemeExample } from './examples/ThemeExample'
 
@@ -34,6 +35,7 @@ const examples = {
   border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },
   nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+  springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
   scroll: { label: 'Scroll Example', component: ScrollExample },
   theme: { label: 'Theme System', component: ThemeExample },
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
