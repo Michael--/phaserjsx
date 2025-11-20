@@ -1,8 +1,5 @@
 /**
  * Spring Animation Example - demonstrates physics-based animations with useSpring
- *
- * ⚠️ IMPORTANT: AnimatedSignals work best on LEAF NODES (no children or simple children).
- * Animating width/height on containers with percentage-sized children will cause issues!
  */
 import {
   SPRING_PRESETS,
@@ -35,8 +32,8 @@ export function SpringAnimationExample() {
   const [force, setForce] = useState<number>(50)
   // console.log('Force value:', JSON.stringify(force))
 
-  // Force redraw when signals change
-  useForceRedraw(width, pos.x, pos.y, rotation, scale)
+  // Force redraw when signals change (throttled to 20ms ~50fps)
+  useForceRedraw(20, width, pos.x, pos.y, rotation, scale)
 
   return (
     <View direction="column" gap={20} padding={20} alignItems="center">

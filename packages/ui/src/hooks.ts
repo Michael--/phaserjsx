@@ -98,20 +98,33 @@ export function useRef<T>(val: T): { current: T } {
 /**
  * Hook to force component re-render when signals change
  * @param signals - Array of signals to watch for changes
+ * @param throttleMs - Optional throttle time in milliseconds
  *
  * ⚠️ IMPORTANT: Obey performance, massive redraw could have an effect!
  */
-export function useForceRedraw(...signals: Signal<unknown>[]): void {
+export function useForceRedraw(throttleMs: number, ...signals: Signal<unknown>[]): void
+export function useForceRedraw(...signals: Signal<unknown>[]): void
+export function useForceRedraw(first: number | Signal<unknown>, ...rest: Signal<unknown>[]): void {
   const [, setForceRedraw] = useState<unknown>(0)
+
+  // Check if first parameter is throttle time
+  const throttleMs = typeof first === 'number' ? first : undefined
+  const signals = typeof first === 'number' ? rest : [first, ...rest]
 
   useEffect(() => {
     const unsubscribes: (() => void)[] = []
+    let lastUpdate = 0
+
+    const triggerUpdate = () => {
+      const now = Date.now()
+      if (throttleMs && now - lastUpdate < throttleMs) return
+      lastUpdate = now
+      setForceRedraw({})
+    }
 
     for (const signal of signals) {
       if (signal && typeof signal === 'object' && 'subscribe' in signal) {
-        const subscriptions = signal.subscribe(() => {
-          setForceRedraw({})
-        })
+        const subscriptions = signal.subscribe(triggerUpdate)
         unsubscribes.push(subscriptions)
       }
     }
@@ -119,7 +132,7 @@ export function useForceRedraw(...signals: Signal<unknown>[]): void {
     return () => {
       unsubscribes.forEach((unsubscribe) => unsubscribe())
     }
-  }, signals)
+  }, [throttleMs, ...signals])
 }
 
 /**
