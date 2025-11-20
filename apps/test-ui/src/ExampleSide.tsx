@@ -75,11 +75,7 @@ export function ExampleContainer(props: { selectedExample: ExampleKey }) {
   const colors = useColors()
 
   return (
-    <View
-      key="demo-container"
-      theme={nestedTheme}
-      backgroundColor={colors?.background.DEFAULT.toNumber()}
-    >
+    <View width={'100%'} key="demo-container" theme={nestedTheme} flex={1}>
       <Component key={props.selectedExample} />
     </View>
   )

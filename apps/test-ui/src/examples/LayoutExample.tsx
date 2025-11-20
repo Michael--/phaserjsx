@@ -1,4 +1,4 @@
-import { Text, View, useState } from '@phaserjsx/ui'
+import { Text, View, useColors, useState } from '@phaserjsx/ui'
 import { Button } from '../components'
 
 /**
@@ -8,10 +8,18 @@ import { Button } from '../components'
  */
 function Counter(props: { step?: number; label?: string }) {
   const [n, setN] = useState(0)
+  const colors = useColors()
   const step = props.step ?? 1
   return (
-    <View backgroundColor={0x445566} direction="row" alignItems="center">
+    <View
+      backgroundColor={colors?.background.dark.toNumber()}
+      direction="row"
+      alignItems="center"
+      padding={10}
+      gap={10}
+    >
       <Button
+        width={150}
         text={`Add +${step}`}
         onClick={() => {
           setN((v) => v + step)
@@ -28,18 +36,18 @@ function Counter(props: { step?: number; label?: string }) {
  * @returns Layout demo JSX
  */
 export function LayoutExample() {
+  const colors = useColors()
   return (
     <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
-      <Text text="Layout System Demo (gap: 10)" style={{ color: 'yellow' }} />
       <Text text="Automatic vertical stacking:" />
       <Counter step={1} label="Counter A" />
       <Counter step={5} label="Counter B" />
       <Counter step={10} label="Counter C" />
       <View
         margin={{ top: 20 }}
-        backgroundColor={0x444444}
+        backgroundColor={colors?.background.dark.toNumber()}
         backgroundAlpha={1.0}
-        padding={{ left: 15, top: 15, right: 15, bottom: 15 }}
+        padding={15}
         direction="row"
         gap={15}
         alignItems="center"

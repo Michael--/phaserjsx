@@ -31,7 +31,7 @@ export function createAppTheme(
       // the default View theme is transparent
       View: {
         //backgroundColor: 0x000000,
-        cornerRadius: 0,
+        //cornerRadius: 0,
         //backgroundAlpha: 0,
       },
 
@@ -133,7 +133,7 @@ export function createAppTheme(
           //backgroundAlpha: 0.1,
           // padding: 10,
           //gap: 10,
-          cornerRadius: 0,
+          //cornerRadius: 0,
         },
       },
     },

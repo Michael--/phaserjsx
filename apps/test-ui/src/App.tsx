@@ -111,7 +111,7 @@ export function App(props: AppProps) {
   const colors = useColors()
 
   return (
-    <View width={width} height={height} direction="row" justifyContent="start">
+    <View width={width} height={height - 50} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'}>
         <LightDarkModeToggle />
@@ -127,13 +127,36 @@ export function App(props: AppProps) {
         backgroundColor={colors?.border.DEFAULT.toNumber()}
       ></View>
 
-      <View height={'100%'} flex={1} padding={0} justifyContent="space-between">
+      <View
+        height={'100%'}
+        flex={1}
+        padding={0}
+        backgroundColor={colors?.background.DEFAULT.toNumber()}
+      >
         <ExampleContainer selectedExample={selectedDemo} />
-
-        <View direction="row" justifyContent="space-between" key="footer" width={'fill'}>
-          <Text text={`Demo: ${selectedDemo}`} style={{ fontSize: 14, color: 'white' }} />
+        <View
+          width={'100%'}
+          padding={0}
+          height={2}
+          backgroundColor={colors?.border.DEFAULT.toNumber()}
+        ></View>
+        <View
+          height={25}
+          direction="row"
+          justifyContent="space-between"
+          key="footer"
+          width={'fill'}
+          padding={{ left: 12, right: 12, top: 5, bottom: 5 }}
+        >
+          <Text
+            text={`Demo: ${selectedDemo}`}
+            style={{ fontSize: 14, color: colors?.text.DEFAULT.toString() ?? 'pink' }}
+          />
           <Spacer />
-          <Text text={`Screen: ${width} x ${height}`} style={{ fontSize: 14, color: 'white' }} />
+          <Text
+            text={`Screen: ${width} x ${height}`}
+            style={{ fontSize: 14, color: colors?.text.DEFAULT.toString() ?? 'pink' }}
+          />
         </View>
       </View>
     </View>
