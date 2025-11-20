@@ -2,6 +2,7 @@
  * Tiny hook runtime to enable function components with local subtree re-render.
  * It is independent from React/Preact renderers.
  */
+import type { Signal } from '@preact/signals-core'
 import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
 import { patchVNode } from './vdom'
@@ -92,6 +93,33 @@ export function useRef<T>(val: T): { current: T } {
   const i = c.index++
   if (i >= c.slots.length) c.slots[i] = { current: val }
   return c.slots[i] as { current: T }
+}
+
+/**
+ * Hook to force component re-render when signals change
+ * @param signals - Array of signals to watch for changes
+ *
+ * ⚠️ IMPORTANT: Obey performance, massive redraw could have an effect!
+ */
+export function useForceRedraw(...signals: Signal<unknown>[]): void {
+  const [, setForceRedraw] = useState<unknown>(0)
+
+  useEffect(() => {
+    const unsubscribes: (() => void)[] = []
+
+    for (const signal of signals) {
+      if (signal && typeof signal === 'object' && 'subscribe' in signal) {
+        const subscriptions = signal.subscribe(() => {
+          setForceRedraw({})
+        })
+        unsubscribes.push(subscriptions)
+      }
+    }
+
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe())
+    }
+  }, signals)
 }
 
 /**

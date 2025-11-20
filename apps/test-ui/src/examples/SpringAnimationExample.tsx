@@ -4,7 +4,15 @@
  * ⚠️ IMPORTANT: AnimatedSignals work best on LEAF NODES (no children or simple children).
  * Animating width/height on containers with percentage-sized children will cause issues!
  */
-import { SPRING_PRESETS, Text, useSpring, useSprings, useState, View } from '@phaserjsx/ui'
+import {
+  SPRING_PRESETS,
+  Text,
+  useForceRedraw,
+  useSpring,
+  useSprings,
+  useState,
+  View,
+} from '@phaserjsx/ui'
 import { Button } from '../components'
 
 /**
@@ -14,11 +22,6 @@ import { Button } from '../components'
 export function SpringAnimationExample() {
   // Single value animation with wobbly preset - for LEAF NODE only
   const [width, setWidth] = useSpring(50, 'wobbly')
-  const [_, setForceRedraw] = useState<unknown>(0)
-
-  width.subscribe((v) => {
-    setForceRedraw(v)
-  })
 
   // Multiple values with different presets
   const [pos, setPos] = useSprings({ x: 25, y: 25 }, 'stiff')
@@ -31,6 +34,9 @@ export function SpringAnimationExample() {
   const [scale, setScale] = useSpring(0.5, SPRING_PRESETS.default)
   const [force, setForce] = useState<number>(50)
   // console.log('Force value:', JSON.stringify(force))
+
+  // Force redraw when signals change
+  useForceRedraw(width, pos.x, pos.y, rotation, scale)
 
   return (
     <View direction="column" gap={20} padding={20} alignItems="center">
