@@ -14,3 +14,17 @@ export { alpha, darken, lighten } from './color-utils'
 
 // Contrast utilities
 export { ensureContrast, getContrastRatio } from './color-utils'
+
+// Presets
+export {
+  applyDarkMode,
+  applyLightMode,
+  forestGreenPreset,
+  generateColorScale,
+  getPreset,
+  getPresetWithMode,
+  midnightPreset,
+  oceanBluePreset,
+  presets,
+} from './color-presets'
+export type { ColorPreset, PresetName } from './color-presets'
