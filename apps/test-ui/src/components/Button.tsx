@@ -7,26 +7,27 @@ import {
   type EffectDefinition,
 } from '../hooks'
 
+/**
+ * Button variant theme with text style and effect support
+ */
+type ButtonVariantTheme = PhaserJSX.ViewTheme & {
+  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+} & EffectDefinition
+
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Button: {
       disabledColor?: number
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      primary?: PhaserJSX.ViewTheme & {
-        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      } & import('../hooks').EffectDefinition
-      secondary?: PhaserJSX.ViewTheme & {
-        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      } & import('../hooks').EffectDefinition
-      outline?: PhaserJSX.ViewTheme & {
-        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      } & import('../hooks').EffectDefinition
+      primary?: ButtonVariantTheme
+      secondary?: ButtonVariantTheme
+      outline?: ButtonVariantTheme
       small?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       medium?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       large?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
     } & PhaserJSX.ViewTheme &
-      import('../hooks').EffectDefinition
+      EffectDefinition
   }
 }
 
