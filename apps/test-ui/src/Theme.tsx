@@ -64,6 +64,8 @@ export const globalTheme = createTheme({
     padding: 8,
     justifyContent: 'center',
     alignItems: 'center',
+    effect: 'pulse',
+    effectConfig: { intensity: 1.1, time: 100 },
     textStyle: {
       color: '#ffffff',
       fontSize: '18px',
@@ -71,16 +73,22 @@ export const globalTheme = createTheme({
     primary: {
       backgroundColor: 0x007bff,
       borderColor: 0x0056b3,
+      effect: 'pulse',
+      effectConfig: { intensity: 1.2, time: 150 },
     },
     secondary: {
       backgroundColor: 0x6c757d,
       borderColor: 0x545b62,
+      effect: 'press',
+      effectConfig: { intensity: 0.9, time: 200 },
     },
     outline: {
       backgroundColor: 0x000000,
       backgroundAlpha: 0.0,
       borderColor: 0xaa7bff,
       borderWidth: 2,
+      effect: 'flash',
+      effectConfig: { intensity: 1.15, time: 200 },
     },
     small: {
       padding: 6,

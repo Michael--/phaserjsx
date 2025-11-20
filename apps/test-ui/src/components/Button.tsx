@@ -1,6 +1,26 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useRef, View, type ChildrenType } from '@phaserjsx/ui'
-import { createPulseEffect, useGameObjectEffect } from '../hooks'
+import {
+  createBounceEffect,
+  createFlashEffect,
+  createPressEffect,
+  createPulseEffect,
+  createShakeEffect,
+  useGameObjectEffect,
+  type EffectFn,
+} from '../hooks'
+
+/**
+ * Map effect names to effect functions
+ */
+const EFFECT_MAP: Record<string, EffectFn | null> = {
+  pulse: createPulseEffect,
+  shake: createShakeEffect,
+  bounce: createBounceEffect,
+  press: createPressEffect,
+  flash: createFlashEffect,
+  none: null,
+}
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -8,9 +28,23 @@ declare module '@phaserjsx/ui' {
     Button: {
       disabledColor?: number
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      primary?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-      secondary?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-      outline?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+      effectConfig?: import('../hooks').EffectConfig
+      primary?: PhaserJSX.ViewTheme & {
+        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+        effectConfig?: import('../hooks').EffectConfig
+      }
+      secondary?: PhaserJSX.ViewTheme & {
+        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+        effectConfig?: import('../hooks').EffectConfig
+      }
+      outline?: PhaserJSX.ViewTheme & {
+        textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+        effect?: 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+        effectConfig?: import('../hooks').EffectConfig
+      }
       small?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       medium?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
       large?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
@@ -69,8 +103,15 @@ export function Button(props: ButtonProps) {
     !props.disabled && props.onClick
       ? () => {
           props.onClick?.()
-          // applyEffect(createShakeEffect, { magnitude: 2, time: 200 })
-          applyEffect(createPulseEffect, { intensity: 1.1, time: 100 })
+
+          // Apply effect from theme
+          const effectName = effectiveTheme.effect ?? 'pulse'
+          const effectConfig = effectiveTheme.effectConfig ?? { intensity: 1.1, time: 100 }
+          const effectFn = EFFECT_MAP[effectName]
+
+          if (effectFn) {
+            applyEffect(effectFn, effectConfig)
+          }
         }
       : undefined
 
