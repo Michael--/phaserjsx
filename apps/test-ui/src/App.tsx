@@ -71,12 +71,15 @@ function PresetSelector() {
   )
 }
 
-function PresetUpdater() {
+function PresetUpdater({
+  setForceUpdate,
+}: {
+  setForceUpdate: (value: number | ((prev: number) => number)) => void
+}) {
   const { colorMode } = useColorMode()
   const [currentPreset, setCurrentPreset] = useState(
     themeRegistry.getCurrentPresetName() || 'oceanBlue'
   )
-  const [_, setForceUpdate] = useState(0)
 
   // Subscribe to preset changes
   useEffect(() => {
@@ -98,27 +101,23 @@ function PresetUpdater() {
     )
     themeRegistry.updateGlobalTheme(newTheme)
     // Force re-render to apply new theme
-    setForceUpdate((c) => c + 1)
+    setForceUpdate((c: number) => c + 1)
   }, [colorMode, currentPreset])
 
   return <View />
 }
 
-/**
- * Main app component with example selector
- * @param props - App props from Phaser scene
- * @returns App component JSX
- */
 export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
+  const [, setForceUpdate] = useState(0)
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
-      <PresetUpdater />
+      <PresetUpdater setForceUpdate={setForceUpdate} />
       <Sidebar height={'100%'}>
         <LightDarkModeToggle />
         <PresetSelector />
