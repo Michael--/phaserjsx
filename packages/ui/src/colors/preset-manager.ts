@@ -61,6 +61,6 @@ export function getCurrentPreset(): string | undefined {
  * const presets = getAvailablePresets() // ['oceanBlue', 'forestGreen', 'midnight']
  * ```
  */
-export function getAvailablePresets(): string[] {
+export function getAvailablePresets(): PresetName[] {
   return ['oceanBlue', 'forestGreen', 'midnight']
 }

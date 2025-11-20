@@ -1,7 +1,7 @@
 /**
  * Color Mode Example - demonstrates dynamic theme switching
  */
-import { setColorPreset, Text, useColorMode, useColors, useState, View } from '@phaserjsx/ui'
+import { setColorPreset, Text, useColorMode, useColors, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 
 /**
@@ -142,7 +142,6 @@ function ColorPalette() {
 export function ColorModeExample() {
   const { colorMode } = useColorMode()
   const colors = useColors()
-  const [_, setForceUpdate] = useState(0)
 
   return (
     <View
@@ -159,12 +158,6 @@ export function ColorModeExample() {
           fontSize: '24px',
           color: colors ? `#${colors.text.DEFAULT.toString(16).padStart(6, '0')}` : '#ffffff',
         }}
-      />
-      <Button
-        variant="primary"
-        size="small"
-        text="Force Update"
-        onClick={() => setForceUpdate((c) => c + 1)}
       />
 
       <Text

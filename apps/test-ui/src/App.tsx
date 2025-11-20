@@ -2,6 +2,7 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import {
+  getAvailablePresets,
   setColorPreset,
   Text,
   themeRegistry,
@@ -55,17 +56,22 @@ function LightDarkModeToggle() {
 }
 
 /**
- * Main app component with example selector
- * @param props - App props from Phaser scene
- * @returns App component JSX
+ * Preset selector buttons
  */
-export function App(props: AppProps) {
-  const width = props.width
-  const height = props.height
+function PresetSelector() {
+  const pre = getAvailablePresets()
+  const btn = pre.map((p) => {
+    return <Button size="small" variant="secondary" text={p} onClick={() => setColorPreset(p)} />
+  })
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
-  const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
+  return (
+    <View direction="row" gap={10}>
+      {...btn}
+    </View>
+  )
+}
 
+function PresetUpdater() {
   const { colorMode } = useColorMode()
   const [currentPreset, setCurrentPreset] = useState(
     themeRegistry.getCurrentPresetName() || 'oceanBlue'
@@ -95,10 +101,27 @@ export function App(props: AppProps) {
     setForceUpdate((c) => c + 1)
   }, [colorMode, currentPreset])
 
+  return <View />
+}
+
+/**
+ * Main app component with example selector
+ * @param props - App props from Phaser scene
+ * @returns App component JSX
+ */
+export function App(props: AppProps) {
+  const width = props.width
+  const height = props.height
+
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('colorMode')
+  const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
+
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
+      <PresetUpdater />
       <Sidebar height={'100%'}>
         <LightDarkModeToggle />
+        <PresetSelector />
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />
         <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
