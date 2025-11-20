@@ -2,6 +2,7 @@
  * Global theme system for PhaserJSX
  * Provides type-safe theming with inheritance and component-specific styles
  */
+import type { ColorTokens } from './colors'
 import type { BackgroundProps, LayoutProps, TextSpecificProps, TransformProps } from './core-props'
 import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
@@ -77,6 +78,12 @@ export interface ComponentThemes extends BuiltInComponentThemes, CustomComponent
  */
 export type PartialTheme = {
   [K in keyof ComponentThemes]?: Partial<ComponentThemes[K]>
+} & {
+  /** Optional color preset configuration */
+  __colorPreset?: {
+    name: string
+    mode?: 'light' | 'dark'
+  }
 }
 
 /**
@@ -118,6 +125,7 @@ export const defaultTheme: Theme = {
 class ThemeRegistry {
   private globalTheme: Theme = { ...defaultTheme }
   private customThemes: Map<string, Record<string, unknown>> = new Map()
+  private colorTokens: ColorTokens | undefined = undefined
 
   /**
    * Get the complete global theme
@@ -198,6 +206,22 @@ class ThemeRegistry {
   getCustomComponentNames(): Set<string> {
     return new Set(this.customThemes.keys())
   }
+
+  /**
+   * Set color tokens for the global theme
+   * @param colors - ColorTokens to use globally
+   */
+  setColorTokens(colors: ColorTokens | undefined): void {
+    this.colorTokens = colors
+  }
+
+  /**
+   * Get current color tokens
+   * @returns Current ColorTokens or undefined
+   */
+  getColorTokens(): ColorTokens | undefined {
+    return this.colorTokens
+  }
 }
 
 /**
@@ -230,10 +254,40 @@ export function mergeThemes(base: PartialTheme, override: PartialTheme): Partial
 
 /**
  * Helper to create a partial theme with type safety
+ * Optionally accepts a color preset to automatically populate color tokens
  * @param theme - Partial theme definition
+ * @param colorPreset - Optional color preset to apply
  * @returns The same theme (for type checking)
+ * @example
+ * ```typescript
+ * import { getPreset } from './colors'
+ *
+ * const preset = getPreset('oceanBlue')
+ * const theme = createTheme({
+ *   Button: {
+ *     backgroundColor: preset.colors.primary.DEFAULT
+ *   }
+ * }, preset)
+ * ```
  */
-export function createTheme(theme: PartialTheme): PartialTheme {
+export function createTheme(
+  theme: PartialTheme,
+  colorPreset?: { name: string; colors: ColorTokens; mode?: 'light' | 'dark' }
+): PartialTheme {
+  if (colorPreset) {
+    // Store color tokens in registry for useColors hook
+    themeRegistry.setColorTokens(colorPreset.colors)
+
+    // Add preset metadata to theme
+    return {
+      ...theme,
+      __colorPreset: {
+        name: colorPreset.name,
+        mode: colorPreset.mode ?? 'light',
+      },
+    }
+  }
+
   return theme
 }
 

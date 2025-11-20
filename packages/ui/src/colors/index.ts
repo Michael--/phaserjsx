@@ -28,3 +28,15 @@ export {
   presets,
 } from './color-presets'
 export type { ColorPreset, PresetName } from './color-presets'
+
+// Hooks
+export { useColors } from './use-colors'
+
+// Theme helpers
+export {
+  colorsToTheme,
+  getBackgroundColor,
+  getBorderColor,
+  getSurfaceColor,
+  getTextColor,
+} from './color-theme-helpers'

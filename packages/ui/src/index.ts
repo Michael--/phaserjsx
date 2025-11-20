@@ -36,6 +36,9 @@ export * from './components'
 // Animation utilities for spring-based transitions
 export * from './animation'
 
+// Color system utilities and presets
+export * from './colors'
+
 /**
  * Consumers can import JSX runtime from here:
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";
