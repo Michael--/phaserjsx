@@ -1,11 +1,18 @@
 /**
- * OriginView - A View component that supports custom origin points for rotation and scale
+ * OriginView - ref-based component for imperative transforms with custom origin point
  *
- * This is a convenience wrapper that uses nested Views to enable rotation/scale
- * around a custom pivot point without changing the layout coordinate system.
+ * Returns a ref to the pivot container, enabling imperative manipulation
+ * (e.g., Phaser tweens) with correct origin point. Uses nested Views to
+ * calculate and maintain the pivot point based on actual rendered dimensions.
+ *
+ * Use TransformOriginView instead for declarative/reactive transforms via props.
  *
  * @example
- * <OriginView originX={0.5} originY={0.5} width={200} height={100}>
+ * const ref = useRef<Phaser.GameObjects.Container>(null)
+ * useEffect(() => {
+ *   ref.current?.scene.tweens.add({ targets: ref.current, rotation: Math.PI * 2 })
+ * }, [])
+ * <OriginView ref={ref} originX={0.5} originY={0.5} width={200} height={100}>
  *   <Text>Rotates around center</Text>
  * </OriginView>
  */
@@ -42,11 +49,14 @@ export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'>
 }
 
 /**
- * OriginView component - enables rotation/scale around custom origin point
+ * OriginView component - ref-based transforms around custom origin point
+ *
+ * Returns ref to middle View positioned at the origin point, enabling
+ * imperative transformations. Calculates actual dimensions after layout.
  *
  * Uses nested View structure internally:
  * - Outer View: Defines bounding box and position
- * - Middle View: Positioned at origin point, receives ref (rotation target)
+ * - Middle View: Positioned at origin point, receives ref (transform target)
  * - Inner View: Contains actual content, offset by negative padding
  *
  * @param props - OriginView props

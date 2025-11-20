@@ -1,84 +1,8 @@
 /**
  * Spring Animation Example - demonstrates physics-based animations with useSpring
  */
-import type { ChildrenType } from '@phaserjsx/ui'
 import { SPRING_PRESETS, Text, useForceRedraw, useSpring, useSprings, View } from '@phaserjsx/ui'
-import { Button } from '../components'
-
-/**
- * Props for origin-based transformations and optional styling
- * Only includes props where origin/pivot point is relevant (rotation, scale)
- * Background props are optional for styling the transformed content
- */
-interface CenteredTransformProps {
-  // Transform props where origin matters
-  rotation?: number
-  scale?: number
-  scaleX?: number
-  scaleY?: number
-  // Optional background styling (transforms with content)
-  backgroundColor?: number
-  backgroundAlpha?: number
-  cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
-  borderWidth?: number
-  borderColor?: number
-  borderAlpha?: number
-}
-
-/**
- * Reusable component for origin-based transformations (rotation, scale)
- * Applies rotation/scale around configurable origin point, plus optional background styling
- * @param originX - Origin X position (0..1, where 0.5 is center)
- * @param originY - Origin Y position (0..1, where 0.5 is center)
- * @param width - Width of the container
- * @param height - Height of the container
- * @param children - Child elements to render with centered origin
- * @param transformProps - rotation, scale/scaleX/scaleY, and optional backgroundColor/cornerRadius/border
- */
-export function CenteredOriginView({
-  originX = 0.5,
-  originY = 0.5,
-  width,
-  height,
-  children,
-  ...transformProps
-}: {
-  originX?: number
-  originY?: number
-  width: number
-  height: number
-  children: ChildrenType
-} & CenteredTransformProps) {
-  const offsetX = width * originX
-  const offsetY = height * originY
-
-  return (
-    <View width={width} height={height} padding={0} direction="stack">
-      <View
-        x={offsetX}
-        y={offsetY}
-        width={width}
-        height={height}
-        padding={0}
-        direction="stack"
-        backgroundAlpha={0}
-        {...transformProps}
-      >
-        <View
-          x={-offsetX}
-          y={-offsetY}
-          width={width}
-          height={height}
-          padding={0}
-          direction="stack"
-          backgroundAlpha={0}
-        >
-          {children}
-        </View>
-      </View>
-    </View>
-  )
-}
+import { Button, TransformOriginView } from '../components'
 
 /**
  * Example demonstrating various spring animation features
@@ -160,7 +84,7 @@ export function SpringAnimationExample() {
       {/* Example 3: Animated Rotation */}
       <View direction="column" gap={10} alignItems="center">
         <Text text="3. Animated Rotation (Gentle)" style={{ fontSize: 18 }} />
-        <CenteredOriginView width={80} height={80} rotation={rotation.value}>
+        <TransformOriginView width={80} height={80} rotation={rotation.value}>
           <View
             width={80}
             height={80}
@@ -169,13 +93,13 @@ export function SpringAnimationExample() {
             enableGestures
             onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
           />
-        </CenteredOriginView>
+        </TransformOriginView>
       </View>
 
       {/* Example 4: Animated Scale */}
       <View direction="column" gap={10} alignItems="center">
         <Text text="4. Animated Scale (Default)" style={{ fontSize: 18 }} />
-        <CenteredOriginView width={60} height={60} scale={scale.value}>
+        <TransformOriginView width={60} height={60} scale={scale.value}>
           <View
             width={60}
             height={60}
@@ -184,7 +108,7 @@ export function SpringAnimationExample() {
             enableGestures
             onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
           />
-        </CenteredOriginView>
+        </TransformOriginView>
       </View>
 
       {/* Preset Comparison */}
