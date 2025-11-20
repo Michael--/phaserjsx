@@ -4,7 +4,7 @@
 import type { RefObject } from '@phaserjsx/ui'
 import { Text, useEffect, useRef, useState, View } from '@phaserjsx/ui'
 import Phaser from 'phaser'
-import { OriginView } from '../components/OriginView'
+import { RefOriginView } from '../components/RefOriginView'
 
 /**
  * Example showing how to use refs with Text components
@@ -95,7 +95,7 @@ export function RefContainerExample() {
 
   // Use OriginView for clean rotation around center point
   return (
-    <OriginView
+    <RefOriginView
       cornerRadius={42}
       backgroundColor={0x16213e}
       backgroundAlpha={1.0}
@@ -112,7 +112,7 @@ export function RefContainerExample() {
       onTouch={() => setValue(value + 1)}
     >
       <Text text={`Smooth rotation ${value}`} style={{ fontSize: 16, color: '#ffffff' }} />
-    </OriginView>
+    </RefOriginView>
   )
 }
 

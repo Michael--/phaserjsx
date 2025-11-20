@@ -3,7 +3,7 @@
  */
 import { Text, useEffect, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { OriginView } from '../components/OriginView'
+import { RefOriginView } from '../components/RefOriginView'
 
 /**
  * Example showing rotation around different origin points
@@ -65,7 +65,7 @@ export function OriginRotationExample() {
 
       {/* Center origin (0.5, 0.5) - typical game object behavior */}
       <View direction="row" gap={50} alignItems="center">
-        <OriginView
+        <RefOriginView
           ref={centerRef}
           width={100}
           height={100}
@@ -76,7 +76,7 @@ export function OriginRotationExample() {
           cornerRadius={5}
         >
           <View width={10} height={10} backgroundColor={0xffff00} x={45} y={45} cornerRadius={5} />
-        </OriginView>
+        </RefOriginView>
         <View direction="column" gap={5}>
           <Text text="Center Origin" style={{ fontSize: 16, color: 'cyan' }} />
           <Text text="originX={0.5}" style={{ fontSize: 12, color: 'gray' }} />
@@ -86,7 +86,7 @@ export function OriginRotationExample() {
 
       {/* Top-left origin (0, 0) - default UI behavior */}
       <View direction="row" gap={50} alignItems="center">
-        <OriginView
+        <RefOriginView
           ref={topLeftRef}
           width={100}
           height={100}
@@ -97,7 +97,7 @@ export function OriginRotationExample() {
           cornerRadius={5}
         >
           <View width={10} height={10} backgroundColor={0xffff00} x={-5} y={-5} cornerRadius={5} />
-        </OriginView>
+        </RefOriginView>
         <View direction="column" gap={5}>
           <Text text="Top-Left Origin" style={{ fontSize: 16, color: 'cyan' }} />
           <Text text="originX={0}" style={{ fontSize: 12, color: 'gray' }} />
@@ -107,7 +107,7 @@ export function OriginRotationExample() {
 
       {/* Bottom-right origin (1, 1) - custom pivot */}
       <View direction="row" gap={50} alignItems="center">
-        <OriginView
+        <RefOriginView
           ref={bottomRightRef}
           width={100}
           height={100}
@@ -118,7 +118,7 @@ export function OriginRotationExample() {
           cornerRadius={5}
         >
           <View width={10} height={10} backgroundColor={0xffff00} x={95} y={95} cornerRadius={5} />
-        </OriginView>
+        </RefOriginView>
         <View direction="column" gap={5}>
           <Text text="Bottom-Right Origin" style={{ fontSize: 16, color: 'cyan' }} />
           <Text text="originX={1}" style={{ fontSize: 12, color: 'gray' }} />
@@ -193,7 +193,7 @@ export function OriginScaleExample() {
       {/* Center scale - grows from center (common for UI buttons) */}
       <View direction="row" gap={50} alignItems="center">
         <View width={120} height={120} backgroundColor={0x1a1a1a}>
-          <OriginView
+          <RefOriginView
             ref={centerRef}
             width={80}
             height={80}
@@ -204,7 +204,7 @@ export function OriginScaleExample() {
             alignItems="center"
           >
             <Text text="Scale" style={{ fontSize: 14, color: 'white', fontStyle: 'bold' }} />
-          </OriginView>
+          </RefOriginView>
         </View>
         <View direction="column" gap={5}>
           <Text text="Center Scale" style={{ fontSize: 16, color: 'cyan' }} />
@@ -216,7 +216,7 @@ export function OriginScaleExample() {
       {/* Left scale - grows from left edge */}
       <View direction="row" gap={50} alignItems="center">
         <View width={120} height={120} backgroundColor={0x1a1a1a}>
-          <OriginView
+          <RefOriginView
             ref={leftRef}
             width={80}
             height={80}
@@ -227,7 +227,7 @@ export function OriginScaleExample() {
             alignItems="center"
           >
             <Text text="Scale" style={{ fontSize: 14, color: 'black', fontStyle: 'bold' }} />
-          </OriginView>
+          </RefOriginView>
         </View>
         <View direction="column" gap={5}>
           <Text text="Left Scale" style={{ fontSize: 16, color: 'cyan' }} />
@@ -239,7 +239,7 @@ export function OriginScaleExample() {
       {/* Bottom scale - grows upward from bottom */}
       <View direction="row" gap={50} alignItems="center">
         <View width={120} height={120} backgroundColor={0x1a1a1a}>
-          <OriginView
+          <RefOriginView
             ref={bottomRef}
             width={80}
             height={80}
@@ -250,7 +250,7 @@ export function OriginScaleExample() {
             alignItems="center"
           >
             <Text text="Scale" style={{ fontSize: 14, color: 'white', fontStyle: 'bold' }} />
-          </OriginView>
+          </RefOriginView>
         </View>
         <View direction="column" gap={5}>
           <Text text="Bottom Scale" style={{ fontSize: 16, color: 'cyan' }} />

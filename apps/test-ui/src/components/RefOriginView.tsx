@@ -1,5 +1,5 @@
 /**
- * OriginView - ref-based component for imperative transforms with custom origin point
+ * RefOriginView - ref-based component for imperative transforms with custom origin point
  *
  * Returns a ref to the pivot container, enabling imperative manipulation
  * (e.g., Phaser tweens) with correct origin point. Uses nested Views to
@@ -12,9 +12,9 @@
  * useEffect(() => {
  *   ref.current?.scene.tweens.add({ targets: ref.current, rotation: Math.PI * 2 })
  * }, [])
- * <OriginView ref={ref} originX={0.5} originY={0.5} width={200} height={100}>
+ * <RefOriginView ref={ref} originX={0.5} originY={0.5} width={200} height={100}>
  *   <Text>Rotates around center</Text>
- * </OriginView>
+ * </RefOriginView>
  */
 import type { ViewProps, VNode } from '@phaserjsx/ui'
 import { useRef, useState, View } from '@phaserjsx/ui'
@@ -23,7 +23,7 @@ import type Phaser from 'phaser'
 /**
  * Extended ViewProps with origin support
  */
-export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'> {
+export interface RefOriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'> {
   /**
    * Origin X for rotation and scale (0 = left, 0.5 = center, 1 = right)
    * @default 0.5
@@ -49,7 +49,7 @@ export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'>
 }
 
 /**
- * OriginView component - ref-based transforms around custom origin point
+ * RefOriginView component - ref-based transforms around custom origin point
  *
  * Returns ref to middle View positioned at the origin point, enabling
  * imperative transformations. Calculates actual dimensions after layout.
@@ -59,10 +59,10 @@ export interface OriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'children'>
  * - Middle View: Positioned at origin point, receives ref (transform target)
  * - Inner View: Contains actual content, offset by negative padding
  *
- * @param props - OriginView props
+ * @param props - RefOriginView props
  * @returns JSX element
  */
-export function OriginView({
+export function RefOriginView({
   originX = 0.5,
   originY = 0.5,
   x = 0,
@@ -73,7 +73,7 @@ export function OriginView({
   padding,
   children,
   ...viewProps
-}: OriginViewProps) {
+}: RefOriginViewProps) {
   // Ref to outer View to get computed dimensions after layout
   const outerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const [numericDimension, setNumericWidth] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
