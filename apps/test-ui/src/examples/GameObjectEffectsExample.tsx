@@ -130,10 +130,15 @@ export function GameObjectEffectsExample() {
             <Text text="Entrance/Exit" style={{ fontSize: 14, color: 'cyan', fontStyle: 'bold' }} />
           </View>
           <Button
-            disabled={isVisible}
-            text="Slide In ←"
+            text={isVisible ? 'Slide Out →' : 'Slide In ← '}
             onClick={() => {
-              if (!isVisible) {
+              if (isVisible) {
+                applyEffect(createSlideOutEffect, {
+                  direction: 'right',
+                  time: 400,
+                  onComplete: () => setIsVisible(false),
+                })
+              } else {
                 setIsVisible(true)
                 setTimeout(() => {
                   applyEffect(createSlideInEffect, { direction: 'left', time: 400 })
@@ -142,56 +147,35 @@ export function GameObjectEffectsExample() {
             }}
           />
           <Button
-            disabled={!isVisible}
-            text="Slide Out →"
+            text={isVisible ? 'Zoom Out' : 'Zoom In'}
             onClick={() => {
-              applyEffect(createSlideOutEffect, {
-                direction: 'right',
-                time: 400,
-                onComplete: () => {
-                  setIsVisible(false)
-                },
-              })
+              if (isVisible) {
+                applyEffect(createZoomOutEffect, {
+                  time: 400,
+                  onComplete: () => setIsVisible(false),
+                })
+              } else {
+                setIsVisible(true)
+                setTimeout(() => {
+                  applyEffect(createZoomInEffect, { time: 400 })
+                }, 50)
+              }
             }}
           />
           <Button
-            disabled={isVisible}
-            text="Zoom In"
+            text={isVisible ? 'Flip Out' : 'Flip In'}
             onClick={() => {
-              setIsVisible(true)
-              setTimeout(() => {
-                applyEffect(createZoomInEffect, { time: 400 })
-              }, 50)
-            }}
-          />
-          <Button
-            disabled={!isVisible}
-            text="Zoom Out"
-            onClick={() => {
-              applyEffect(createZoomOutEffect, {
-                time: 400,
-                onComplete: () => setIsVisible(false),
-              })
-            }}
-          />
-          <Button
-            disabled={isVisible}
-            text="Flip In"
-            onClick={() => {
-              setIsVisible(true)
-              setTimeout(() => {
-                applyEffect(createFlipInEffect, { time: 500 })
-              }, 50)
-            }}
-          />
-          <Button
-            disabled={!isVisible}
-            text="Flip Out"
-            onClick={() => {
-              applyEffect(createFlipOutEffect, {
-                time: 500,
-                onComplete: () => setIsVisible(false),
-              })
+              if (isVisible) {
+                applyEffect(createFlipOutEffect, {
+                  time: 500,
+                  onComplete: () => setIsVisible(false),
+                })
+              } else {
+                setIsVisible(true)
+                setTimeout(() => {
+                  applyEffect(createFlipInEffect, { time: 500 })
+                }, 50)
+              }
             }}
           />
         </View>
