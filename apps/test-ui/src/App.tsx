@@ -72,11 +72,7 @@ function PresetSelector() {
   )
 }
 
-function PresetUpdater({
-  setForceUpdate,
-}: {
-  setForceUpdate: (value: number | ((prev: number) => number)) => void
-}) {
+function PresetUpdater() {
   const { colorMode } = useColorMode()
   const [currentPreset, setCurrentPreset] = useState(
     themeRegistry.getCurrentPresetName() || 'oceanBlue'
@@ -101,8 +97,6 @@ function PresetUpdater({
       colorMode
     )
     themeRegistry.updateGlobalTheme(newTheme)
-    // Force re-render to apply new theme
-    setForceUpdate((c: number) => c + 1)
   }, [colorMode, currentPreset])
 
   return <View />
@@ -114,12 +108,11 @@ export function App(props: AppProps) {
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('themePreview')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
-  const [, setForceUpdate] = useState(0)
   const colors = useColors()
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
-      <PresetUpdater setForceUpdate={setForceUpdate} />
+      <PresetUpdater />
       <Sidebar height={'100%'}>
         <LightDarkModeToggle />
         <PresetSelector />

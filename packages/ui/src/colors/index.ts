@@ -33,7 +33,7 @@ export type { ColorPreset, PresetName } from './color-presets'
 
 // Hooks
 export { useColorMode } from './use-color-mode'
-export { useColors } from './use-colors'
+export { useColors, useThemeSubscription } from './use-colors'
 
 // Theme helpers
 export {
