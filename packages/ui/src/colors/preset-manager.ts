@@ -52,3 +52,15 @@ export function updateColorTokensForMode(): void {
 export function getCurrentPreset(): string | undefined {
   return themeRegistry.getCurrentPresetName()
 }
+
+/**
+ * Get all available preset names
+ * @returns Array of preset names
+ * @example
+ * ```typescript
+ * const presets = getAvailablePresets() // ['oceanBlue', 'forestGreen', 'midnight']
+ * ```
+ */
+export function getAvailablePresets(): string[] {
+  return ['oceanBlue', 'forestGreen', 'midnight']
+}

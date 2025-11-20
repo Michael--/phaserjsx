@@ -67,11 +67,25 @@ export function App(props: AppProps) {
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
 
   const { colorMode } = useColorMode()
-  const currentPreset = themeRegistry.getCurrentPresetName() || 'oceanBlue'
+  const [currentPreset, setCurrentPreset] = useState(
+    themeRegistry.getCurrentPresetName() || 'oceanBlue'
+  )
   const [_, setForceUpdate] = useState(0)
+
+  // Subscribe to preset changes
+  useEffect(() => {
+    const unsubscribe = themeRegistry.subscribe(() => {
+      const newPreset = themeRegistry.getCurrentPresetName()
+      if (newPreset && newPreset !== currentPreset) {
+        setCurrentPreset(newPreset)
+      }
+    })
+    return unsubscribe
+  }, [currentPreset])
 
   // Reload theme when color mode or preset changes
   useEffect(() => {
+    console.log('App: updating theme for', currentPreset, 'in', colorMode, 'mode')
     const newTheme = createAppTheme(
       currentPreset as 'oceanBlue' | 'forestGreen' | 'midnight',
       colorMode
