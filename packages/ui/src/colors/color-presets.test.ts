@@ -27,11 +27,13 @@ describe('Color Presets', () => {
       expect(scale).toHaveProperty('DEFAULT')
     })
 
-    it('uses base color as DEFAULT', () => {
+    it('DEFAULT is alias to medium', () => {
       const baseColor = '#2196f3'
       const scale = generateColorScale(baseColor)
 
-      expect(scale.DEFAULT.toString()).toBe(baseColor)
+      // DEFAULT should reference the same object as medium
+      expect(scale.DEFAULT).toBe(scale.medium)
+      expect(scale.DEFAULT.toString()).toBe(scale.medium.toString())
     })
 
     it('returns HexColor objects with toNumber method', () => {
@@ -54,7 +56,8 @@ describe('Color Presets', () => {
       // Just verify they're different valid hex colors
       expect(scale.lightest).not.toBe(scale.light)
       expect(scale.light).not.toBe(scale.medium)
-      expect(scale.medium).not.toBe(scale.DEFAULT)
+      // DEFAULT is now alias to medium, so they should be the same
+      expect(scale.medium).toBe(scale.DEFAULT)
     })
 
     it('creates progressively darker shades', () => {
@@ -135,23 +138,23 @@ describe('Color Presets', () => {
     it('applyLightMode adjusts neutral colors', () => {
       const lightPreset = applyLightMode(oceanBluePreset)
 
-      // Light backgrounds should be bright (white-ish)
-      expect(lightPreset.colors.background.DEFAULT.toString()).toBe('#fafafa')
-      expect(lightPreset.colors.surface.DEFAULT.toString()).toBe('#ffffff')
+      // DEFAULT should be alias to medium
+      expect(lightPreset.colors.background.DEFAULT.toString()).toBe('#e0e0e0')
+      expect(lightPreset.colors.surface.DEFAULT.toString()).toBe('#eeeeee')
 
       // Text should be dark in light mode
-      expect(lightPreset.colors.text.DEFAULT.toString()).toBe('#212121')
+      expect(lightPreset.colors.text.DEFAULT.toString()).toBe('#616161')
     })
 
     it('applyDarkMode adjusts neutral colors', () => {
       const darkPreset = applyDarkMode(oceanBluePreset)
 
-      // Dark backgrounds should be dark
-      expect(darkPreset.colors.background.DEFAULT.toString()).toBe('#121212')
-      expect(darkPreset.colors.surface.DEFAULT.toString()).toBe('#1e1e1e')
+      // DEFAULT should be alias to medium
+      expect(darkPreset.colors.background.DEFAULT.toString()).toBe('#212121')
+      expect(darkPreset.colors.surface.DEFAULT.toString()).toBe('#262626')
 
       // Text should be light in dark mode
-      expect(darkPreset.colors.text.DEFAULT.toString()).toBe('#ffffff')
+      expect(darkPreset.colors.text.DEFAULT.toString()).toBe('#bdbdbd')
     })
 
     it('mode application preserves brand colors', () => {
@@ -185,15 +188,15 @@ describe('Color Presets', () => {
     it('getPresetWithMode applies light mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'light')
 
-      expect(preset.colors.background.DEFAULT.toString()).toBe('#fafafa')
-      expect(preset.colors.text.DEFAULT.toString()).toBe('#212121')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#e0e0e0')
+      expect(preset.colors.text.DEFAULT.toString()).toBe('#616161')
     })
 
     it('getPresetWithMode applies dark mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'dark')
 
-      expect(preset.colors.background.DEFAULT.toString()).toBe('#121212')
-      expect(preset.colors.text.DEFAULT.toString()).toBe('#ffffff')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#212121')
+      expect(preset.colors.text.DEFAULT.toString()).toBe('#bdbdbd')
     })
   })
 

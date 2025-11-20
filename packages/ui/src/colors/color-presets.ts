@@ -18,13 +18,14 @@ import { darkenHex, lightenHex } from './color-utils'
  * ```
  */
 export function generateColorScale(baseColor: string): ColorShade {
+  const medium = lightenHex(baseColor, 0.15)
   return {
     lightest: lightenHex(baseColor, 0.7),
     light: lightenHex(baseColor, 0.4),
-    medium: lightenHex(baseColor, 0.15),
+    medium,
     dark: darkenHex(baseColor, 0.15),
     darkest: darkenHex(baseColor, 0.4),
-    DEFAULT: HexColor.from(baseColor),
+    DEFAULT: medium, // Alias to medium - no separate color to maintain
   }
 }
 
@@ -64,7 +65,7 @@ export const oceanBluePreset: ColorPreset = {
       medium: HexColor.from('#e0e0e0'),
       dark: HexColor.from('#bdbdbd'),
       darkest: HexColor.from('#9e9e9e'),
-      DEFAULT: HexColor.from('#fafafa'),
+      DEFAULT: HexColor.from('#e0e0e0'), // Alias to medium
     },
     surface: {
       lightest: HexColor.from('#ffffff'),
@@ -72,7 +73,7 @@ export const oceanBluePreset: ColorPreset = {
       medium: HexColor.from('#eeeeee'),
       dark: HexColor.from('#e0e0e0'),
       darkest: HexColor.from('#bdbdbd'),
-      DEFAULT: HexColor.from('#ffffff'),
+      DEFAULT: HexColor.from('#eeeeee'), // Alias to medium
     },
     text: {
       lightest: HexColor.from('#9e9e9e'),
@@ -80,7 +81,7 @@ export const oceanBluePreset: ColorPreset = {
       medium: HexColor.from('#616161'),
       dark: HexColor.from('#424242'),
       darkest: HexColor.from('#212121'),
-      DEFAULT: HexColor.from('#212121'),
+      DEFAULT: HexColor.from('#616161'), // Alias to medium
     },
     border: {
       lightest: HexColor.from('#e0e0e0'),
@@ -88,7 +89,7 @@ export const oceanBluePreset: ColorPreset = {
       medium: HexColor.from('#9e9e9e'),
       dark: HexColor.from('#757575'),
       darkest: HexColor.from('#424242'),
-      DEFAULT: HexColor.from('#bdbdbd'),
+      DEFAULT: HexColor.from('#9e9e9e'), // Alias to medium
     },
   },
 }
@@ -118,7 +119,7 @@ export const forestGreenPreset: ColorPreset = {
       medium: HexColor.from('#dcedc8'),
       dark: HexColor.from('#c5e1a5'),
       darkest: HexColor.from('#aed581'),
-      DEFAULT: HexColor.from('#f9fbe7'),
+      DEFAULT: HexColor.from('#dcedc8'), // Alias to medium
     },
     surface: {
       lightest: HexColor.from('#ffffff'),
@@ -126,7 +127,7 @@ export const forestGreenPreset: ColorPreset = {
       medium: HexColor.from('#f0f4c3'),
       dark: HexColor.from('#e6ee9c'),
       darkest: HexColor.from('#dce775'),
-      DEFAULT: HexColor.from('#ffffff'),
+      DEFAULT: HexColor.from('#f0f4c3'), // Alias to medium
     },
     text: {
       lightest: HexColor.from('#9e9e9e'),
@@ -134,7 +135,7 @@ export const forestGreenPreset: ColorPreset = {
       medium: HexColor.from('#616161'),
       dark: HexColor.from('#424242'),
       darkest: HexColor.from('#1b5e20'),
-      DEFAULT: HexColor.from('#1b5e20'),
+      DEFAULT: HexColor.from('#616161'), // Alias to medium
     },
     border: {
       lightest: HexColor.from('#dcedc8'),
@@ -142,7 +143,7 @@ export const forestGreenPreset: ColorPreset = {
       medium: HexColor.from('#aed581'),
       dark: HexColor.from('#9ccc65'),
       darkest: HexColor.from('#7cb342'),
-      DEFAULT: HexColor.from('#c5e1a5'),
+      DEFAULT: HexColor.from('#aed581'), // Alias to medium
     },
   },
 }
@@ -172,7 +173,7 @@ export const midnightPreset: ColorPreset = {
       medium: HexColor.from('#212121'),
       dark: HexColor.from('#1a1a1a'),
       darkest: HexColor.from('#0a0a0a'),
-      DEFAULT: HexColor.from('#121212'),
+      DEFAULT: HexColor.from('#212121'), // Alias to medium
     },
     surface: {
       lightest: HexColor.from('#424242'),
@@ -180,7 +181,7 @@ export const midnightPreset: ColorPreset = {
       medium: HexColor.from('#262626'),
       dark: HexColor.from('#1e1e1e'),
       darkest: HexColor.from('#121212'),
-      DEFAULT: HexColor.from('#1e1e1e'),
+      DEFAULT: HexColor.from('#262626'), // Alias to medium
     },
     text: {
       lightest: HexColor.from('#ffffff'),
@@ -188,7 +189,7 @@ export const midnightPreset: ColorPreset = {
       medium: HexColor.from('#bdbdbd'),
       dark: HexColor.from('#9e9e9e'),
       darkest: HexColor.from('#757575'),
-      DEFAULT: HexColor.from('#ffffff'),
+      DEFAULT: HexColor.from('#bdbdbd'), // Alias to medium
     },
     border: {
       lightest: HexColor.from('#616161'),
@@ -196,7 +197,7 @@ export const midnightPreset: ColorPreset = {
       medium: HexColor.from('#303030'),
       dark: HexColor.from('#212121'),
       darkest: HexColor.from('#1a1a1a'),
-      DEFAULT: HexColor.from('#424242'),
+      DEFAULT: HexColor.from('#303030'), // Alias to medium
     },
   },
 }
@@ -218,7 +219,7 @@ export function applyLightMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#e0e0e0'),
         dark: HexColor.from('#bdbdbd'),
         darkest: HexColor.from('#9e9e9e'),
-        DEFAULT: HexColor.from('#fafafa'),
+        DEFAULT: HexColor.from('#e0e0e0'), // Alias to medium
       },
       surface: {
         lightest: HexColor.from('#ffffff'),
@@ -226,7 +227,7 @@ export function applyLightMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#eeeeee'),
         dark: HexColor.from('#e0e0e0'),
         darkest: HexColor.from('#bdbdbd'),
-        DEFAULT: HexColor.from('#ffffff'),
+        DEFAULT: HexColor.from('#eeeeee'), // Alias to medium
       },
       text: {
         lightest: HexColor.from('#9e9e9e'),
@@ -234,7 +235,7 @@ export function applyLightMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#616161'),
         dark: HexColor.from('#424242'),
         darkest: HexColor.from('#212121'),
-        DEFAULT: HexColor.from('#212121'),
+        DEFAULT: HexColor.from('#616161'), // Alias to medium
       },
       border: {
         lightest: HexColor.from('#e0e0e0'),
@@ -242,7 +243,7 @@ export function applyLightMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#9e9e9e'),
         dark: HexColor.from('#757575'),
         darkest: HexColor.from('#424242'),
-        DEFAULT: HexColor.from('#bdbdbd'),
+        DEFAULT: HexColor.from('#9e9e9e'), // Alias to medium
       },
     },
   }
@@ -265,7 +266,7 @@ export function applyDarkMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#212121'),
         dark: HexColor.from('#1a1a1a'),
         darkest: HexColor.from('#0a0a0a'),
-        DEFAULT: HexColor.from('#121212'),
+        DEFAULT: HexColor.from('#212121'), // Alias to medium
       },
       surface: {
         lightest: HexColor.from('#424242'),
@@ -273,7 +274,7 @@ export function applyDarkMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#262626'),
         dark: HexColor.from('#1e1e1e'),
         darkest: HexColor.from('#121212'),
-        DEFAULT: HexColor.from('#1e1e1e'),
+        DEFAULT: HexColor.from('#262626'), // Alias to medium
       },
       text: {
         lightest: HexColor.from('#ffffff'),
@@ -281,7 +282,7 @@ export function applyDarkMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#bdbdbd'),
         dark: HexColor.from('#9e9e9e'),
         darkest: HexColor.from('#757575'),
-        DEFAULT: HexColor.from('#ffffff'),
+        DEFAULT: HexColor.from('#bdbdbd'), // Alias to medium
       },
       border: {
         lightest: HexColor.from('#616161'),
@@ -289,7 +290,7 @@ export function applyDarkMode(preset: ColorPreset): ColorPreset {
         medium: HexColor.from('#303030'),
         dark: HexColor.from('#212121'),
         darkest: HexColor.from('#1a1a1a'),
-        DEFAULT: HexColor.from('#424242'),
+        DEFAULT: HexColor.from('#303030'), // Alias to medium
       },
     },
   }
