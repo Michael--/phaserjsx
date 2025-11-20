@@ -52,7 +52,7 @@ export function SpringAnimationExample() {
           const newX = pos.x.value === 25 ? 325 : 25
           const newY = pos.y.value === 25 ? 25 : 25
           setPos({ x: newX, y: newY })
-          setRotation(rotation.value + Math.PI / 2)
+          setRotation((prev) => prev + Math.PI / 2)
           setScale(scale.value === 0.5 ? 1 : 0.5)
         }}
       />
@@ -107,7 +107,7 @@ export function SpringAnimationExample() {
           cornerRadius={12}
           rotation={rotation.value}
           enableGestures
-          onTouch={() => setRotation(rotation.value + Math.PI / 2)}
+          onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
         />
       </View>
 

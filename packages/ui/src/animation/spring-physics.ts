@@ -45,6 +45,8 @@ export const DEFAULT_SPRING_CONFIG: Required<SpringConfig> = {
 
 /**
  * Preset spring configurations for common use cases
+ * Note: clamp prevents overshoot but can make animations feel less natural
+ * For UI animations, consider enabling clamp to prevent visual artifacts
  */
 export const SPRING_PRESETS = {
   /** Gentle, slow animation */

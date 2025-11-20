@@ -17,13 +17,6 @@ import {
  * Spring animation hook
  * Creates an animated signal that smoothly transitions to target values
  *
- * **⚠️ IMPORTANT LIMITATIONS:**
- * - Works best on LEAF NODES (components without children)
- * - Animating width/height on containers with percentage-sized children WILL BREAK
- * - Children with "100%", "fill" sizes will NOT update during animation
- * - Safe for: x, y, rotation, scale, alpha on any component
- * - Unsafe for: width/height on containers with complex layouts
- *
  * @param initialValue - Initial value
  * @param config - Spring configuration or preset name
  * @returns Tuple of [animated signal, setter function]
