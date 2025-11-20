@@ -157,13 +157,18 @@ function applyScaleWithOrigin(
   scaleX: number,
   scaleY: number
 ): void {
-  const offset = calculateScaleOffset(obj, state, scaleX, scaleY)
+  const newOffset = calculateScaleOffset(obj, state, scaleX, scaleY)
 
-  state.scaleOffsetX = offset.x
-  state.scaleOffsetY = offset.y
+  // Calculate the delta from previous offset to preserve other tween effects
+  const deltaX = newOffset.x - state.scaleOffsetX
+  const deltaY = newOffset.y - state.scaleOffsetY
+
+  state.scaleOffsetX = newOffset.x
+  state.scaleOffsetY = newOffset.y
 
   obj.setScale(scaleX, scaleY)
-  obj.setPosition(state.originalX - offset.x, state.originalY - offset.y)
+  // Adjust position by delta to preserve other effects (like Float changing Y)
+  obj.setPosition(obj.x - deltaX, obj.y - deltaY)
 }
 
 /**
