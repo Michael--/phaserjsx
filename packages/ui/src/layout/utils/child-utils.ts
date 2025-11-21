@@ -9,6 +9,7 @@ import { parseSize, resolveSize } from './size-resolver'
 
 /**
  * Check if a child should participate in layout calculations
+ * Headless objects participate in layout (for alignment) but report size 0
  * @param child - Child game object
  * @returns True if child should be included in layout
  */
@@ -16,10 +17,8 @@ export function isLayoutChild(child: GameObjectWithLayout): boolean {
   // Skip background graphics (special role - defines container dimensions)
   if (child.__isBackground) return false
 
-  // Skip headless objects (decorative/absolute positioned)
-  if (child.__layoutProps?.headless === true) return false
-
   // Require __getLayoutSize for layout participation
+  // Note: Headless objects still participate, they just report size 0
   return typeof child.__getLayoutSize === 'function'
 }
 

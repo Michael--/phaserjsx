@@ -26,7 +26,7 @@ export function createTextLayout(
   // Layout-aware text returns actual dimensions (rotation ignored for layout)
   text.__getLayoutSize = () => {
     if (text.__layoutProps?.headless) {
-      return { width: 0, height: 0 }
+      return { width: 1, height: 1 }
     }
     return {
       width: text.width,
