@@ -1,14 +1,24 @@
 /**
  * Spring Animation Example - demonstrates physics-based animations with useSpring
  */
-import { SPRING_PRESETS, Text, useForceRedraw, useSpring, useSprings, View } from '@phaserjsx/ui'
+import {
+  SPRING_PRESETS,
+  Text,
+  useForceRedraw,
+  useSpring,
+  useSprings,
+  useThemeTokens,
+  View,
+} from '@phaserjsx/ui'
 import { Button, TransformOriginView } from '../components'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Example demonstrating various spring animation features
  * Note: NineSliceButton example removed - animating containers with complex children is not supported
  */
 export function SpringAnimationExample() {
+  const tokens = useThemeTokens()
   // Single value animation with wobbly preset - for LEAF NODE only
   const [width, setWidth] = useSpring(50, 'wobbly')
 
@@ -26,101 +36,106 @@ export function SpringAnimationExample() {
   useForceRedraw(20, width, pos.x, pos.y, rotation, scale)
 
   return (
-    <View direction="column" gap={20} padding={20} alignItems="center">
-      <Text text="Spring Animation Examples" style={{ fontSize: 24, color: '#ffff00' }} />
-      <Button
-        text="Animate All"
-        onClick={() => {
-          setWidth(width.value === 50 ? 100 : 50)
-          const newX = pos.x.value === 25 ? 325 : 25
-          const newY = pos.y.value === 25 ? 25 : 25
-          setPos({ x: newX, y: newY })
-          setRotation((prev) => prev + Math.PI / 2)
-          setScale(scale.value === 0.5 ? 1 : 0.5)
-        }}
-      />
-
-      {/* Example 1: Animated Width - LEAF NODE (no children) */}
-      <View direction="column" gap={10} alignItems="center">
-        <Text text="1. Animated Width (Wobbly) - Leaf Node Only!" style={{ fontSize: 18 }} />
-        <View
-          width={width.value}
-          height={50}
-          backgroundColor={0x00aa00}
-          cornerRadius={8}
-          enableGestures
-          onTouch={() => setWidth(width.value === 50 ? 200 : 50)}
+    <ViewLevel1>
+      <ViewLevel2 alignItems="center">
+        <Text text="Spring Animation Examples" style={tokens?.textStyles.title} />
+        <Button
+          text="Animate All"
+          onClick={() => {
+            setWidth(width.value === 50 ? 100 : 50)
+            const newX = pos.x.value === 25 ? 325 : 25
+            const newY = pos.y.value === 25 ? 25 : 25
+            setPos({ x: newX, y: newY })
+            setRotation((prev) => prev + Math.PI / 2)
+            setScale(scale.value === 0.5 ? 1 : 0.5)
+          }}
         />
-      </View>
 
-      {/* Example 2: Animated Position */}
-      <View direction="column" gap={10} alignItems="center">
-        <Text text="2. Animated Position (Stiff)" style={{ fontSize: 18 }} />
-        <View
-          width={400}
-          height={100}
-          backgroundColor={0x555555}
-          cornerRadius={8}
-          direction="stack"
-          padding={0}
-        >
+        {/* Example 1: Animated Width - LEAF NODE (no children) */}
+        <View direction="column" gap={10} alignItems="center">
+          <Text
+            text="1. Animated Width (Wobbly) - Leaf Node Only!"
+            style={tokens?.textStyles.large}
+          />
           <View
-            x={pos.x.value}
-            y={pos.y.value}
-            width={50}
+            width={width.value}
             height={50}
-            backgroundColor={0x00ff00}
+            backgroundColor={0x00aa00}
             cornerRadius={8}
             enableGestures
-            onTouch={() => {
-              const newX = pos.x.value === 25 ? 325 : 25
-              const newY = pos.y.value === 25 ? 25 : 25
-              setPos({ x: newX, y: newY })
-            }}
+            onTouch={() => setWidth(width.value === 50 ? 200 : 50)}
           />
         </View>
-      </View>
 
-      {/* Example 3: Animated Rotation */}
-      <View direction="column" gap={10} alignItems="center">
-        <Text text="3. Animated Rotation (Gentle)" style={{ fontSize: 18 }} />
-        <TransformOriginView width={80} height={80} rotation={rotation.value}>
+        {/* Example 2: Animated Position */}
+        <View direction="column" gap={10} alignItems="center">
+          <Text text="2. Animated Position (Stiff)" style={tokens?.textStyles.large} />
           <View
-            width={80}
-            height={80}
-            backgroundColor={0xff00ff}
-            cornerRadius={12}
-            enableGestures
-            onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
-          />
-        </TransformOriginView>
-      </View>
-
-      {/* Example 4: Animated Scale */}
-      <View direction="column" gap={10} alignItems="center">
-        <Text text="4. Animated Scale (Default)" style={{ fontSize: 18 }} />
-        <TransformOriginView width={60} height={60} scale={scale.value}>
-          <View
-            width={60}
-            height={60}
-            backgroundColor={0x00ffff}
-            cornerRadius={30}
-            enableGestures
-            onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
-          />
-        </TransformOriginView>
-      </View>
-
-      {/* Preset Comparison */}
-      <View direction="column" gap={10} alignItems="center">
-        <Text text="5. Preset Comparison" style={{ fontSize: 18 }} />
-        <View direction="row" gap={10}>
-          <PresetDemo preset="gentle" label="Gentle" />
-          <PresetDemo preset="wobbly" label="Wobbly" />
-          <PresetDemo preset="stiff" label="Stiff" />
+            width={400}
+            height={100}
+            backgroundColor={0x555555}
+            cornerRadius={8}
+            direction="stack"
+            padding={0}
+          >
+            <View
+              x={pos.x.value}
+              y={pos.y.value}
+              width={50}
+              height={50}
+              backgroundColor={0x00ff00}
+              cornerRadius={8}
+              enableGestures
+              onTouch={() => {
+                const newX = pos.x.value === 25 ? 325 : 25
+                const newY = pos.y.value === 25 ? 25 : 25
+                setPos({ x: newX, y: newY })
+              }}
+            />
+          </View>
         </View>
-      </View>
-    </View>
+
+        {/* Example 3: Animated Rotation */}
+        <View direction="column" gap={10} alignItems="center">
+          <Text text="3. Animated Rotation (Gentle)" style={tokens?.textStyles.large} />
+          <TransformOriginView width={80} height={80} rotation={rotation.value}>
+            <View
+              width={80}
+              height={80}
+              backgroundColor={0xff00ff}
+              cornerRadius={12}
+              enableGestures
+              onTouch={() => setRotation((prev) => prev + Math.PI / 2)}
+            />
+          </TransformOriginView>
+        </View>
+
+        {/* Example 4: Animated Scale */}
+        <View direction="column" gap={10} alignItems="center">
+          <Text text="4. Animated Scale (Default)" style={tokens?.textStyles.large} />
+          <TransformOriginView width={60} height={60} scale={scale.value}>
+            <View
+              width={60}
+              height={60}
+              backgroundColor={0x00ffff}
+              cornerRadius={30}
+              enableGestures
+              onTouch={() => setScale(scale.value !== 1 ? 1 : 0.5)}
+            />
+          </TransformOriginView>
+        </View>
+
+        {/* Preset Comparison */}
+        <View direction="column" gap={10} alignItems="center">
+          <Text text="5. Preset Comparison" style={tokens?.textStyles.large} />
+          <View direction="row" gap={10}>
+            <PresetDemo preset="gentle" label="Gentle" />
+            <PresetDemo preset="wobbly" label="Wobbly" />
+            <PresetDemo preset="stiff" label="Stiff" />
+          </View>
+        </View>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }
 
@@ -128,12 +143,13 @@ export function SpringAnimationExample() {
  * Component demonstrating a specific spring preset
  */
 function PresetDemo({ preset, label }: { preset: keyof typeof SPRING_PRESETS; label: string }) {
+  const tokens = useThemeTokens()
   const [size, setSize] = useSpring(40, preset)
   useForceRedraw(20, size)
 
   return (
     <View direction="column" gap={5} alignItems="center" width={80} height={80}>
-      <Text text={label} style={{ fontSize: 14 }} />
+      <Text text={label} style={tokens?.textStyles.medium} />
       <View
         width={size.value}
         height={size.value}

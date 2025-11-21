@@ -3,6 +3,7 @@
  */
 import { setColorPreset, Text, useColorMode, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Component demonstrating useThemeTokens hook
@@ -15,16 +16,13 @@ function ColoredBox() {
   }
 
   return (
-    <View
+    <ViewLevel3
       width={300}
       height={150}
       backgroundColor={tokens.colors.primary.DEFAULT.toNumber()}
       borderColor={tokens.colors.primary.dark.toNumber()}
       borderWidth={2}
       cornerRadius={tokens.radius.md}
-      padding={tokens.spacing.lg}
-      gap={tokens.spacing.sm}
-      direction="column"
       alignItems="center"
       justifyContent="center"
     >
@@ -36,7 +34,7 @@ function ColoredBox() {
           color: tokens.colors.primary.lightest.toString(),
         }}
       />
-    </View>
+    </ViewLevel3>
   )
 }
 
@@ -146,33 +144,28 @@ export function ColorModeExample() {
   if (!tokens) return null
 
   return (
-    <View
-      width="100%"
-      height="100%"
-      backgroundColor={tokens.colors.background.DEFAULT.toNumber()}
-      padding={tokens.spacing.lg}
-      gap={tokens.spacing.lg}
-      direction="column"
-    >
-      <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
+    <ViewLevel1>
+      <ViewLevel2>
+        <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
 
-      <Text
-        text={`Current Mode: ${colorMode}`}
-        style={{
-          ...tokens.textStyles.medium,
-          color: tokens.colors.text.medium.toString(),
-        }}
-      />
+        <Text
+          text={`Current Mode: ${colorMode}`}
+          style={{
+            ...tokens.textStyles.medium,
+            color: tokens.colors.text.medium.toString(),
+          }}
+        />
 
-      <ModeToggle />
+        <ModeToggle />
 
-      <Text text="Choose Preset:" style={tokens.textStyles.large} />
+        <Text text="Choose Preset:" style={tokens.textStyles.large} />
 
-      <PresetSelector />
+        <PresetSelector />
 
-      <ColoredBox />
+        <ColoredBox />
 
-      <ColorPalette />
-    </View>
+        <ColorPalette />
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

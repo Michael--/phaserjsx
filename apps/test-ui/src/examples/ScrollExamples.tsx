@@ -1,4 +1,4 @@
-import { Text, useState, View } from '@phaserjsx/ui'
+import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button, ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
 import { Spacer } from '../components/Spacer'
@@ -20,6 +20,7 @@ function ListButton(props: { index: number }) {
   )
 }
 function Content(props: { count: number; width: string }) {
+  const tokens = useThemeTokens()
   const entry = (index: number) => {
     if (index % 3 === 0) {
       // return a button like view
@@ -30,12 +31,16 @@ function Content(props: { count: number; width: string }) {
         key={index}
         width={props.width}
         height={50}
-        backgroundColor={index % 2 === 0 ? 0xaa0000 : 0x00aa00}
+        backgroundColor={
+          index % 2 === 0
+            ? tokens?.colors.error.dark.toNumber()
+            : tokens?.colors.success.dark.toNumber()
+        }
         backgroundAlpha={1.0}
         justifyContent="center"
         alignItems="center"
       >
-        <Text text={`Item ${index + 1}`} />
+        <Text text={`Item ${index + 1}`} style={tokens?.textStyles.medium} />
       </View>
     )
   }
@@ -51,9 +56,11 @@ function Content(props: { count: number; width: string }) {
  * @param props title, count, width
  */
 function ScrollExampleLocal(props: { title: string; count: number; width: string }) {
+  const tokens = useThemeTokens()
+
   return (
     <View padding={0} alignItems="center">
-      <Text text={props.title} style={{ fontSize: 16, color: 'orange' }} />
+      <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
       <View borderColor={0xffffff} borderWidth={2} padding={2}>
         <View width={200} height={400} padding={0}>
@@ -67,6 +74,7 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
 }
 
 function ScrollExampleSliderLocal(props: { title: string; count: number; width: string }) {
+  const tokens = useThemeTokens()
   const [scroll, setScroll] = useState({
     dx: 0,
     dy: 0,
@@ -97,7 +105,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
 
   return (
     <View padding={0} alignItems="center">
-      <Text text={props.title} style={{ fontSize: 16, color: 'orange' }} />
+      <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
       <View borderColor={0xffffff} borderWidth={2} padding={2} direction="row" gap={0}>
         <View width={200} height={400} padding={0}>

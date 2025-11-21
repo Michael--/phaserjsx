@@ -1,9 +1,10 @@
 /**
  * Example demonstrating origin-based transforms (rotation and scale)
  */
-import { Text, useEffect, useRef, View } from '@phaserjsx/ui'
+import { Text, useEffect, useRef, useThemeTokens, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { RefOriginView } from '../components/RefOriginView'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Example showing rotation around different origin points
@@ -59,9 +60,11 @@ export function OriginRotationExample() {
     }
   }, [])
 
+  const tokens = useThemeTokens()
+
   return (
-    <View direction="column" gap={30} padding={20}>
-      <Text text="Origin-Based Rotation" style={{ fontSize: 20, color: 'yellow' }} />
+    <ViewLevel2 gap={30} padding={20}>
+      <Text text="Origin-Based Rotation" style={tokens?.textStyles.title} />
 
       {/* Center origin (0.5, 0.5) - typical game object behavior */}
       <View direction="row" gap={50} alignItems="center">
@@ -78,9 +81,9 @@ export function OriginRotationExample() {
           <View width={10} height={10} backgroundColor={0xffff00} x={45} y={45} cornerRadius={5} />
         </RefOriginView>
         <View direction="column" gap={5}>
-          <Text text="Center Origin" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={0.5}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={0.5}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Center Origin" style={tokens?.textStyles.large} />
+          <Text text="originX={0.5}" style={tokens?.textStyles.small} />
+          <Text text="originY={0.5}" style={tokens?.textStyles.small} />
         </View>
       </View>
 
@@ -99,9 +102,9 @@ export function OriginRotationExample() {
           <View width={10} height={10} backgroundColor={0xffff00} x={-5} y={-5} cornerRadius={5} />
         </RefOriginView>
         <View direction="column" gap={5}>
-          <Text text="Top-Left Origin" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={0}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={0}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Top-Left Origin" style={tokens?.textStyles.large} />
+          <Text text="originX={0}" style={tokens?.textStyles.small} />
+          <Text text="originY={0}" style={tokens?.textStyles.small} />
         </View>
       </View>
 
@@ -120,12 +123,12 @@ export function OriginRotationExample() {
           <View width={10} height={10} backgroundColor={0xffff00} x={95} y={95} cornerRadius={5} />
         </RefOriginView>
         <View direction="column" gap={5}>
-          <Text text="Bottom-Right Origin" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={1}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={1}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Bottom-Right Origin" style={tokens?.textStyles.large} />
+          <Text text="originX={1}" style={tokens?.textStyles.small} />
+          <Text text="originY={1}" style={tokens?.textStyles.small} />
         </View>
       </View>
-    </View>
+    </ViewLevel2>
   )
 }
 
@@ -134,6 +137,7 @@ export function OriginRotationExample() {
  * @returns JSX element
  */
 export function OriginScaleExample() {
+  const tokens = useThemeTokens()
   const centerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const leftRef = useRef<Phaser.GameObjects.Container | null>(null)
   const bottomRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -187,12 +191,12 @@ export function OriginScaleExample() {
   }, [])
 
   return (
-    <View direction="column" gap={40} padding={20}>
-      <Text text="Origin-Based Scaling" style={{ fontSize: 20, color: 'yellow' }} />
+    <ViewLevel2 direction="column" gap={40} padding={20}>
+      <Text text="Origin-Based Scaling" style={tokens?.textStyles.title} />
 
       {/* Center scale - grows from center (common for UI buttons) */}
       <View direction="row" gap={50} alignItems="center">
-        <View width={120} height={120} backgroundColor={0x1a1a1a}>
+        <View width={120} height={120} backgroundColor={0x1a1a1a} padding={20}>
           <RefOriginView
             ref={centerRef}
             width={80}
@@ -203,19 +207,19 @@ export function OriginScaleExample() {
             originY={0.5}
             alignItems="center"
           >
-            <Text text="Scale" style={{ fontSize: 14, color: 'white', fontStyle: 'bold' }} />
+            <Text text="Scale" style={tokens?.textStyles.medium} />
           </RefOriginView>
         </View>
         <View direction="column" gap={5}>
-          <Text text="Center Scale" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={0.5}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={0.5}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Center Scale" style={tokens?.textStyles.large} />
+          <Text text="originX={0.5}" style={tokens?.textStyles.small} />
+          <Text text="originY={0.5}" style={tokens?.textStyles.small} />
         </View>
       </View>
 
       {/* Left scale - grows from left edge */}
       <View direction="row" gap={50} alignItems="center">
-        <View width={120} height={120} backgroundColor={0x1a1a1a}>
+        <View width={120} height={120} backgroundColor={0x1a1a1a} padding={20}>
           <RefOriginView
             ref={leftRef}
             width={80}
@@ -226,19 +230,19 @@ export function OriginScaleExample() {
             originY={0.5}
             alignItems="center"
           >
-            <Text text="Scale" style={{ fontSize: 14, color: 'black', fontStyle: 'bold' }} />
+            <Text text="Scale" style={tokens?.textStyles.medium} />
           </RefOriginView>
         </View>
         <View direction="column" gap={5}>
-          <Text text="Left Scale" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={0}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={0.5}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Left Scale" style={tokens?.textStyles.large} />
+          <Text text="originX={0}" style={tokens?.textStyles.small} />
+          <Text text="originY={0.5}" style={tokens?.textStyles.small} />
         </View>
       </View>
 
       {/* Bottom scale - grows upward from bottom */}
       <View direction="row" gap={50} alignItems="center">
-        <View width={120} height={120} backgroundColor={0x1a1a1a}>
+        <View width={120} height={120} backgroundColor={0x1a1a1a} padding={20}>
           <RefOriginView
             ref={bottomRef}
             width={80}
@@ -249,16 +253,16 @@ export function OriginScaleExample() {
             originY={1}
             alignItems="center"
           >
-            <Text text="Scale" style={{ fontSize: 14, color: 'white', fontStyle: 'bold' }} />
+            <Text text="Scale" style={tokens?.textStyles.medium} />
           </RefOriginView>
         </View>
         <View direction="column" gap={5}>
-          <Text text="Bottom Scale" style={{ fontSize: 16, color: 'cyan' }} />
-          <Text text="originX={0.5}" style={{ fontSize: 12, color: 'gray' }} />
-          <Text text="originY={1}" style={{ fontSize: 12, color: 'gray' }} />
+          <Text text="Bottom Scale" style={tokens?.textStyles.large} />
+          <Text text="originX={0.5}" style={tokens?.textStyles.small} />
+          <Text text="originY={1}" style={tokens?.textStyles.small} />
         </View>
       </View>
-    </View>
+    </ViewLevel2>
   )
 }
 
@@ -268,9 +272,11 @@ export function OriginScaleExample() {
  */
 export function OriginExample() {
   return (
-    <View direction="row" gap={50} padding={10}>
-      <OriginRotationExample />
-      <OriginScaleExample />
-    </View>
+    <ViewLevel1>
+      <View direction="row" gap={50}>
+        <OriginRotationExample />
+        <OriginScaleExample />
+      </View>
+    </ViewLevel1>
   )
 }

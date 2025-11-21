@@ -2,15 +2,17 @@
  * Example demonstrating ref usage to access and manipulate Phaser objects directly
  */
 import type { RefObject } from '@phaserjsx/ui'
-import { Text, useEffect, useRef, useState, View } from '@phaserjsx/ui'
+import { Text, useEffect, useRef, useState, useThemeTokens } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import { RefOriginView } from '../components/RefOriginView'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Example showing how to use refs with Text components
  * @returns JSX element
  */
 export function RefTextExample() {
+  const tokens = useThemeTokens()
   const textRef = useRef<Phaser.GameObjects.Text | null>(null)
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
@@ -46,17 +48,9 @@ export function RefTextExample() {
   }, [])
 
   return (
-    <View
-      backgroundColor={0x1a1a2e}
-      backgroundAlpha={1.0}
-      width={250}
-      height={120}
-      padding={{ top: 20, left: 20, right: 20, bottom: 20 }}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Text text="Color cycling text" ref={handleTextRef} style={{ fontSize: 18 }} />
-    </View>
+    <ViewLevel3 width={250} height={120} alignItems="center" justifyContent="center">
+      <Text text="Bouncing text" ref={handleTextRef} style={tokens?.textStyles.large} />
+    </ViewLevel3>
   )
 }
 
@@ -65,6 +59,7 @@ export function RefTextExample() {
  * @returns JSX element
  */
 export function RefContainerExample() {
+  const tokens = useThemeTokens()
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
   const [value, setValue] = useState(0)
@@ -97,9 +92,8 @@ export function RefContainerExample() {
   return (
     <RefOriginView
       cornerRadius={42}
-      backgroundColor={0x16213e}
-      backgroundAlpha={1.0}
-      borderColor={0xaaaa00}
+      backgroundColor={tokens?.colors.surface.dark.toNumber()}
+      borderColor={tokens?.colors.warning.DEFAULT.toNumber()}
       borderWidth={2}
       width={200}
       height={100}
@@ -111,7 +105,7 @@ export function RefContainerExample() {
       enableGestures
       onTouch={() => setValue(value + 1)}
     >
-      <Text text={`Smooth rotation ${value}`} style={{ fontSize: 16, color: '#ffffff' }} />
+      <Text text={`Smooth rotation ${value}`} style={tokens?.textStyles.large} />
     </RefOriginView>
   )
 }
@@ -121,6 +115,7 @@ export function RefContainerExample() {
  * @returns JSX element
  */
 export function RefAnimationExample() {
+  const tokens = useThemeTokens()
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
   const textRef = useRef<Phaser.GameObjects.Text | null>(null)
 
@@ -154,9 +149,7 @@ export function RefAnimationExample() {
   }, [])
 
   return (
-    <View
-      backgroundColor={0x0f3460}
-      backgroundAlpha={1.0}
+    <ViewLevel3
       width={200}
       height={60}
       justifyContent="center"
@@ -164,8 +157,8 @@ export function RefAnimationExample() {
       enableGestures={true}
       onTouch={handleClick}
     >
-      <Text text="Bouncing text" ref={handleTextRef} style={{ fontSize: 16, color: '#e94560' }} />
-    </View>
+      <Text text="Bouncing text" ref={handleTextRef} style={tokens?.textStyles.large} />
+    </ViewLevel3>
   )
 }
 
@@ -174,6 +167,7 @@ export function RefAnimationExample() {
  * @returns JSX element
  */
 export function TypeSafeRefExample() {
+  const tokens = useThemeTokens()
   // Type-safe refs ensure you can only call valid Phaser methods
   const textRef: RefObject<Phaser.GameObjects.Text> = { current: null }
   const clickTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
@@ -214,9 +208,7 @@ export function TypeSafeRefExample() {
   }, [])
 
   return (
-    <View
-      backgroundColor={0x533483}
-      backgroundAlpha={1.0}
+    <ViewLevel3
       width={180}
       height={80}
       alignItems="center"
@@ -224,19 +216,23 @@ export function TypeSafeRefExample() {
       enableGestures={true}
       onTouch={handleClick}
     >
-      <Text text="Click me!" ref={textRef} style={{ fontSize: 16, color: '#ffffff' }} />
-    </View>
+      <Text text="Click me!" ref={textRef} style={tokens?.textStyles.large} />
+    </ViewLevel3>
   )
 }
 
 export function RefExample() {
+  const tokens = useThemeTokens()
+
   return (
-    <View>
-      <Text text="Ref Examples" style={{ fontSize: 24, color: '#ffffff' }} />
-      <RefTextExample />
-      <RefContainerExample />
-      <RefAnimationExample />
-      <TypeSafeRefExample />
-    </View>
+    <ViewLevel1>
+      <ViewLevel2>
+        <Text text="Ref Examples" style={tokens?.textStyles.title} />
+        <RefTextExample />
+        <RefContainerExample />
+        <RefAnimationExample />
+        <TypeSafeRefExample />
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

@@ -2,12 +2,14 @@
  * Example demonstrating the new gesture system
  * Shows all gesture types: onTouch, onTouchMove, onDoubleTap, onLongPress
  */
-import { Text, View, useState, type GestureEventData } from '@phaserjsx/ui'
+import { Text, View, useState, useThemeTokens, type GestureEventData } from '@phaserjsx/ui'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Simple gesture button demonstrating onTouch with maxTouchDuration
  */
 function TouchButton() {
+  const tokens = useThemeTokens()
   const [touchCount, setTouchCount] = useState(0)
   const [lastWasTooLong, setLastWasTooLong] = useState(false)
 
@@ -15,7 +17,11 @@ function TouchButton() {
     <View
       width={200}
       height={60}
-      backgroundColor={lastWasTooLong ? 0x666666 : 0x4444ff}
+      backgroundColor={
+        lastWasTooLong
+          ? tokens?.colors.info.medium.toNumber()
+          : tokens?.colors.info.light.toNumber()
+      }
       backgroundAlpha={1.0}
       padding={10}
       alignItems="center"
@@ -33,8 +39,8 @@ function TouchButton() {
         }
       }}
     >
-      <Text text={`Touch/Click: ${touchCount}`} style={{ color: 'white' }} />
-      <Text text="(hold <500ms)" style={{ color: '#aaaaaa' }} />
+      <Text text={`Touch/Click: ${touchCount}`} style={tokens?.textStyles.medium} />
+      <Text text="(hold <500ms)" style={tokens?.textStyles.small} />
     </View>
   )
 }
@@ -43,13 +49,14 @@ function TouchButton() {
  * Double tap detection example
  */
 function DoubleTapButton() {
+  const tokens = useThemeTokens()
   const [doubleTapCount, setDoubleTapCount] = useState(0)
 
   return (
     <View
       width={200}
       height={60}
-      backgroundColor={0xff4444}
+      backgroundColor={tokens?.colors.info.light.toNumber()}
       backgroundAlpha={1.0}
       padding={10}
       alignItems="center"
@@ -59,7 +66,7 @@ function DoubleTapButton() {
         setDoubleTapCount((c) => c + 1)
       }}
     >
-      <Text text={`Double Tap: ${doubleTapCount}`} style={{ color: 'white' }} />
+      <Text text={`Double Tap: ${doubleTapCount}`} style={tokens?.textStyles.medium} />
     </View>
   )
 }
@@ -68,6 +75,7 @@ function DoubleTapButton() {
  * Long press detection example - no onTouch after long press
  */
 function LongPressButton() {
+  const tokens = useThemeTokens()
   const [longPressCount, setLongPressCount] = useState(0)
   const [touchCount, setTouchCount] = useState(0)
 
@@ -75,7 +83,7 @@ function LongPressButton() {
     <View
       width={200}
       height={60}
-      backgroundColor={0x44ff44}
+      backgroundColor={tokens?.colors.info.light.toNumber()}
       backgroundAlpha={1.0}
       padding={10}
       alignItems="center"
@@ -89,7 +97,10 @@ function LongPressButton() {
         setLongPressCount((c) => c + 1)
       }}
     >
-      <Text text={`Long: ${longPressCount} | Touch: ${touchCount}`} style={{ color: 'black' }} />
+      <Text
+        text={`Long: ${longPressCount} | Touch: ${touchCount}`}
+        style={tokens?.textStyles.medium}
+      />
     </View>
   )
 }
@@ -98,12 +109,18 @@ function LongPressButton() {
  * Touch move / drag example with isInside and state ('start' | 'move' | 'end')
  */
 function DragBox() {
+  const tokens = useThemeTokens()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [localPos, setLocalPos] = useState({ x: 0, y: 0 })
   const [isInside, setIsInside] = useState(true)
   const [gestureState, setGestureState] = useState(false)
 
-  const bgColor = gestureState === false ? 0x5500aa : isInside ? 0x55aa00 : 0xaa5500
+  const bgColor =
+    gestureState === false
+      ? tokens?.colors.info.light.toNumber()
+      : isInside
+        ? tokens?.colors.success.medium.toNumber()
+        : tokens?.colors.warning.medium.toNumber()
 
   return (
     <View
@@ -142,16 +159,19 @@ function DragBox() {
         }
       }}
     >
-      <Text text={`Drag Me!`} style={{ color: 'white', fontStyle: 'bold' }} />
+      <Text text={`Drag Me!`} style={tokens?.textStyles.medium} />
       <Text
         text={`Δ: ${position.x.toFixed(0)}, ${position.y.toFixed(0)}`}
-        style={{ color: 'white' }}
+        style={tokens?.textStyles.small}
       />
       <Text
         text={`Local: ${localPos.x.toFixed(0)}, ${localPos.y.toFixed(0)}`}
-        style={{ color: '#cccccc' }}
+        style={tokens?.textStyles.small}
       />
-      <Text text={gestureState ? `${isInside ? 'Inside' : 'Outside'}` : 'idle'} />
+      <Text
+        text={gestureState ? `${isInside ? 'Inside' : 'Outside'}` : 'idle'}
+        style={tokens?.textStyles.small}
+      />
     </View>
   )
 }
@@ -160,41 +180,48 @@ function DragBox() {
  * Main example showing all gesture types
  */
 export function GestureExample() {
+  const tokens = useThemeTokens()
+
   return (
-    <View direction="column">
-      <Text text="Gesture System Demo" style={{ color: 'yellow', fontStyle: 'bold' }} />
+    <ViewLevel1>
+      <ViewLevel2>
+        <Text text="Gesture System Demo" style={tokens?.textStyles.title} />
 
-      <Text text="New high-level gesture API (mouse + touch)" style={{ color: 'white' }} />
+        <Text text="New high-level gesture API (mouse + touch)" style={tokens?.textStyles.large} />
 
-      <View gap={20} direction="column">
-        <View>
-          <Text text="Touch/Click (max 500ms duration):" style={{ color: '#cccccc' }} />
-          <TouchButton />
+        <View gap={20} direction="column">
+          <View>
+            <Text text="Touch/Click (max 500ms duration):" style={tokens?.textStyles.medium} />
+            <TouchButton />
+          </View>
+
+          <View>
+            <Text text="Double Tap/Click:" style={tokens?.textStyles.medium} />
+            <DoubleTapButton />
+          </View>
+
+          <View>
+            <Text
+              text="Long Press vs Touch (hold 800ms, no Touch after LongPress):"
+              style={tokens?.textStyles.medium}
+            />
+            <LongPressButton />
+          </View>
+
+          <View>
+            <Text
+              text="Drag (state: 'start' | 'move' | 'end' + isInside):"
+              style={tokens?.textStyles.medium}
+            />
+            <DragBox />
+          </View>
         </View>
 
-        <View>
-          <Text text="Double Tap/Click:" style={{ color: '#cccccc' }} />
-          <DoubleTapButton />
-        </View>
-
-        <View>
-          <Text
-            text="Long Press vs Touch (hold 800ms, no Touch after LongPress):"
-            style={{ color: '#cccccc' }}
-          />
-          <LongPressButton />
-        </View>
-
-        <View>
-          <Text
-            text="Drag (state: 'start' | 'move' | 'end' + isInside):"
-            style={{ color: '#cccccc' }}
-          />
-          <DragBox />
-        </View>
-      </View>
-
-      <Text text="💡 All gestures work with both mouse and touch" style={{ color: '#aaaaaa' }} />
-    </View>
+        <Text
+          text="💡 All gestures work with both mouse and touch"
+          style={tokens?.textStyles.small}
+        />
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

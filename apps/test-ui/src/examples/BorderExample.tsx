@@ -1,147 +1,118 @@
 /**
  * Border and CornerRadius Demo - showcasing new background features
  */
-import { Text, View } from '@phaserjsx/ui'
+import { Text, useThemeTokens } from '@phaserjsx/ui'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Border and corner radius demonstration
  * @returns BorderDemo component
  */
 export function BorderExample() {
+  const tokens = useThemeTokens()
+
   return (
-    <View>
-      <Text text="Border & Corner Radius Demo" style={{ fontSize: 18, color: 'yellow' }} />
+    <ViewLevel1>
+      <ViewLevel2>
+        <Text text="Border & Corner Radius Demo" style={tokens?.textStyles.title} />
 
-      {/* Simple border */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        borderWidth={2}
-        borderColor={0xff6b6b}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Simple Border" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* Simple border */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          borderWidth={2}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Simple Border" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* Rounded corners */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        cornerRadius={15}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Rounded Corners" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* Rounded corners */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          cornerRadius={15}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Rounded Corners" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* Border + rounded corners */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        borderWidth={3}
-        borderColor={0x4ecdc4}
-        borderAlpha={0.8}
-        cornerRadius={20}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Border + Rounded" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* Border + rounded corners */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          borderWidth={3}
+          borderColor={tokens?.colors.primary.DEFAULT.toNumber()}
+          cornerRadius={20}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Border + Rounded" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* Different corner radii */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        borderWidth={2}
-        borderColor={0xfeca57}
-        cornerRadius={{ tl: 5, tr: 20, bl: 20, br: 5 }}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Mixed Corners" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* Different corner radii */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          borderWidth={2}
+          borderColor={tokens?.colors.warning.DEFAULT.toNumber()}
+          cornerRadius={{ tl: 5, tr: 20, bl: 20, br: 5 }}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Mixed Corners" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* Thick border showcase */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x1e3a5f}
-        backgroundAlpha={1.0}
-        borderWidth={6}
-        borderColor={0x45b7d1}
-        cornerRadius={25}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Thick Border" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* Thick border showcase */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          borderWidth={6}
+          borderColor={tokens?.colors.info.DEFAULT.toNumber()}
+          cornerRadius={25}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Thick Border" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* No background, border only */}
-      <View
-        width={150}
-        height={80}
-        borderWidth={3}
-        borderColor={0xee5a6f}
-        cornerRadius={10}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Text text="Border Only" style={{ fontSize: 12, color: 'white' }} />
-      </View>
+        {/* No background, border only */}
+        <ViewLevel3
+          width={150}
+          height={80}
+          backgroundColor={undefined}
+          borderWidth={3}
+          borderColor={tokens?.colors.error.DEFAULT.toNumber()}
+          cornerRadius={10}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="Border Only" style={tokens?.textStyles.small} />
+        </ViewLevel3>
 
-      {/* Overflow hidden - text clipping */}
-      <View
-        width={150}
-        height={80}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        borderWidth={2}
-        borderColor={0xff9ff3}
-        cornerRadius={10}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        overflow="hidden"
-      >
-        <Text
-          text="This is a very long text that will be clipped by the overflow hidden property"
-          style={{ fontSize: 22, color: 'white' }}
-        />
-        <View width={70} height={35} borderWidth={2} borderColor={0xffffff} overflow="hidden">
-          <Text text="Nested Box" style={{ fontSize: 14, color: 'white' }} />
-        </View>
-      </View>
+        {/* Overflow hidden - text clipping */}
+        <ViewLevel3 width={150} height={80} cornerRadius={10} overflow="hidden">
+          <Text
+            text="This is a very long text that will be clipped by the overflow hidden property"
+            style={tokens?.textStyles.large}
+          />
+          <ViewLevel3
+            width={70}
+            height={35}
+            borderWidth={2}
+            borderColor={tokens?.colors.border.lightest.toNumber()}
+            overflow="hidden"
+          >
+            <Text text="Nested Box" style={tokens?.textStyles.caption} />
+          </ViewLevel3>
+        </ViewLevel3>
 
-      {/* Overflow visible - comparison */}
-      <View
-        width={150}
-        height={60}
-        backgroundColor={0x2a2a2a}
-        backgroundAlpha={1.0}
-        borderWidth={2}
-        borderColor={0x95e1d3}
-        cornerRadius={10}
-        padding={{ left: 10, top: 10, right: 10, bottom: 10 }}
-        overflow="visible"
-      >
-        <Text
-          text="Same text but overflow visible (default)"
-          style={{ fontSize: 12, color: 'white' }}
-        />
-      </View>
-    </View>
+        {/* Overflow visible - comparison */}
+        <ViewLevel3 width={150} height={60} cornerRadius={10} overflow="visible">
+          <Text text="Same text but overflow visible (default)" style={tokens?.textStyles.small} />
+        </ViewLevel3>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

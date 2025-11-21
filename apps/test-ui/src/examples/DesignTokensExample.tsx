@@ -2,6 +2,7 @@
  * Design Tokens Example - demonstrates the new useThemeTokens API
  */
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Example showing all text style presets
@@ -12,22 +13,9 @@ export function DesignTokensExample() {
   if (!tokens) return null
 
   return (
-    <View
-      width="100%"
-      height="100%"
-      backgroundColor={tokens.colors.background.DEFAULT.toNumber()}
-      padding={tokens.spacing.xl}
-      gap={tokens.spacing.lg}
-      direction="column"
-    >
+    <ViewLevel1>
       {/* Text Style Examples */}
-      <View
-        backgroundColor={tokens.colors.surface.DEFAULT.toNumber()}
-        padding={tokens.spacing.lg}
-        cornerRadius={tokens.radius.lg}
-        gap={tokens.spacing.md}
-        direction="column"
-      >
+      <ViewLevel2>
         <Text text="Text Style Tokens" style={tokens.textStyles.title} />
 
         <Text text="Heading Style (36px bold)" style={tokens.textStyles.heading} />
@@ -36,16 +24,10 @@ export function DesignTokensExample() {
         <Text text="Medium/Default Style (16px)" style={tokens.textStyles.medium} />
         <Text text="Small Style (12px)" style={tokens.textStyles.small} />
         <Text text="Caption Style (10px)" style={tokens.textStyles.caption} />
-      </View>
+      </ViewLevel2>
 
       {/* Spacing Examples */}
-      <View
-        backgroundColor={tokens.colors.surface.DEFAULT.toNumber()}
-        padding={tokens.spacing.lg}
-        cornerRadius={tokens.radius.lg}
-        gap={tokens.spacing.md}
-        direction="column"
-      >
+      <ViewLevel2>
         <Text text="Spacing Tokens" style={tokens.textStyles.title} />
         <View direction="row" gap={tokens.spacing.xs}>
           <View
@@ -95,16 +77,10 @@ export function DesignTokensExample() {
           />
           <Text text="xxl: 48px" style={tokens.textStyles.small} />
         </View>
-      </View>
+      </ViewLevel2>
 
       {/* Border Radius Examples */}
-      <View
-        backgroundColor={tokens.colors.surface.DEFAULT.toNumber()}
-        padding={tokens.spacing.lg}
-        cornerRadius={tokens.radius.lg}
-        gap={tokens.spacing.md}
-        direction="column"
-      >
+      <ViewLevel2>
         <Text text="Radius Tokens" style={tokens.textStyles.title} />
         <View direction="row" gap={tokens.spacing.md} alignItems="center">
           <View
@@ -160,7 +136,7 @@ export function DesignTokensExample() {
           />
           <Text text="full: pill/circle" style={tokens.textStyles.small} />
         </View>
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

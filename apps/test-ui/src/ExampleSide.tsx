@@ -5,6 +5,7 @@ import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
 import { ColorModeExample } from './examples/ColorModeExample'
+import { DesignTokensExample } from './examples/DesignTokensExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
@@ -42,6 +43,7 @@ const examples = {
   colorMode: { label: 'Color Mode', component: ColorModeExample },
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
   origin: { label: 'Origin View', component: OriginExample },
+  designToken: { label: 'Design Tokens', component: DesignTokensExample },
 } as const
 
 export type ExampleKey = keyof typeof examples
