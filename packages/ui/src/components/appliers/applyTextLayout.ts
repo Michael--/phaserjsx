@@ -27,6 +27,9 @@ export function applyTextLayout(
   if (prev.text !== next.text || prev.style !== next.style) {
     // Use unrotated dimensions for layout calculations
     text.__getLayoutSize = () => {
+      if (text.__layoutProps?.headless) {
+        return { width: 0.01, height: 0.01 }
+      }
       return {
         width: text.width,
         height: text.height,

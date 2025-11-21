@@ -25,6 +25,7 @@ export function isLayoutChild(child: GameObjectWithLayout): boolean {
 /**
  * Get effective margin for a child
  * Normalizes margin to EdgeInsets (supports number for all sides)
+ * Headless objects have no margin (positioned as point)
  * @param child - Child game object
  * @returns Edge insets
  */

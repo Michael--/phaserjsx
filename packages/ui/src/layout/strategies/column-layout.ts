@@ -57,23 +57,56 @@ export class ColumnLayoutStrategy extends BaseLayoutStrategy {
     currentMain: number
   ): { position: Position; nextMain: number } {
     const margin = this.getMarginValues(child)
+    const isHeadless = child.child.__layoutProps?.headless
 
-    // Main axis (vertical)
-    currentMain += margin.top
-    const y = context.padding.top + currentMain
+    let x: number
+    let y: number
+    let nextMain: number
 
-    // Cross axis (horizontal) - alignItems
-    const x =
-      context.padding.left +
-      calculateAlignItems(
+    if (isHeadless) {
+      // Headless: calculate position directly using alignItems/justifyContent on full parent size
+      const parentWidth = context.parentSize?.width ?? context.contentArea.width
+      const parentHeight = context.parentSize?.height ?? context.contentArea.height
+
+      // justifyContent on main axis (vertical) - manual calculation
+      const justify = context.containerProps.justifyContent ?? 'start'
+      let mainAxisOffset = 0
+      if (justify === 'center') {
+        mainAxisOffset = (parentHeight - child.size.height) / 2
+      } else if (justify === 'end') {
+        mainAxisOffset = parentHeight - child.size.height
+      }
+      // start and space-* variants use 0 for single item
+      y = mainAxisOffset
+
+      // alignItems on cross axis (horizontal)
+      const crossAxisOffset = calculateAlignItems(
+        context.containerProps.alignItems,
+        parentWidth,
+        child.size.width,
+        0,
+        0
+      )
+      x = crossAxisOffset
+
+      // Don't advance currentMain for headless (they don't participate in flow)
+      nextMain = currentMain
+    } else {
+      // Normal: use container padding and contentArea
+      currentMain += margin.top
+      y = context.padding.top + currentMain
+
+      const alignOffset = calculateAlignItems(
         context.containerProps.alignItems,
         context.contentArea.width,
         child.size.width,
         margin.left,
         margin.right
       )
+      x = context.padding.left + alignOffset
 
-    const nextMain = currentMain + child.size.height + margin.bottom
+      nextMain = currentMain + child.size.height + margin.bottom
+    }
 
     return {
       position: { x, y },

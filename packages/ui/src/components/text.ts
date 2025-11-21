@@ -167,18 +167,26 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
     text.setOrigin(0, 0)
   }
 
-  // Ignore rotation for layout-aware text (headless=false)
-  // Rotation is only supported with headless=true
-  const transformProps = { ...props }
-  if (!props.headless && props.rotation !== undefined) {
-    delete transformProps.rotation
+  // Normalize props for headless objects
+  // Headless objects are positioned as points - no spacing or rotation constraints
+  const normalizedProps = { ...props } as Record<string, unknown>
+  if (props.headless) {
+    // Remove spacing props (headless = positioned as point)
+    delete normalizedProps.padding
+    delete normalizedProps.margin
+    delete normalizedProps.gap
+  } else {
+    // Remove rotation (only supported with headless=true)
+    if (normalizedProps.rotation !== undefined) {
+      delete normalizedProps.rotation
+    }
   }
 
   // Apply transform props (visible, depth, alpha, scale, rotation if headless)
-  createTransform(text, transformProps)
+  createTransform(text, normalizedProps)
 
   // Setup layout system (props and size provider)
-  createTextLayout(text, props)
+  createTextLayout(text, normalizedProps)
 
   return text
 }
@@ -196,23 +204,38 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
     }
   }
 
-  // Ignore rotation for layout-aware text (headless=false)
-  // Rotation is only supported with headless=true
-  const transformPrev = { ...prev }
-  const transformNext = { ...next }
-  if (!next.headless && next.rotation !== undefined) {
-    delete transformNext.rotation
+  // Normalize props for headless objects
+  const normalizedPrev = { ...prev } as Record<string, unknown>
+  const normalizedNext = { ...next } as Record<string, unknown>
+
+  if (next.headless) {
+    // Remove spacing props (headless = positioned as point)
+    delete normalizedNext.padding
+    delete normalizedNext.margin
+    delete normalizedNext.gap
+  } else {
+    // Remove rotation (only supported with headless=true)
+    if (normalizedNext.rotation !== undefined) {
+      delete normalizedNext.rotation
+    }
   }
-  if (!prev.headless && prev.rotation !== undefined) {
-    delete transformPrev.rotation
+
+  if (prev.headless) {
+    delete normalizedPrev.padding
+    delete normalizedPrev.margin
+    delete normalizedPrev.gap
+  } else {
+    if (normalizedPrev.rotation !== undefined) {
+      delete normalizedPrev.rotation
+    }
   }
 
   // Apply transform props (position, rotation only if headless, scale, alpha, depth, visibility)
-  applyTransformProps(node, transformPrev, transformNext)
+  applyTransformProps(node, normalizedPrev, normalizedNext)
 
   // Apply text-specific props (text content, color, font, etc.)
-  applyTextProps(node, prev, next)
+  applyTextProps(node, normalizedPrev, normalizedNext)
 
   // Apply layout props and update size provider if needed
-  applyTextLayout(node, prev, next)
+  applyTextLayout(node, normalizedPrev, normalizedNext)
 }

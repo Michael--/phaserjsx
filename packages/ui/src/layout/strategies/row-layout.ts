@@ -57,17 +57,25 @@ export class RowLayoutStrategy extends BaseLayoutStrategy {
     currentMain: number
   ): { position: Position; nextMain: number } {
     const margin = this.getMarginValues(child)
+    const isHeadless = child.child.__layoutProps?.headless
+
+    // Headless objects: ignore container padding, use full parent size
+    const paddingLeft = isHeadless ? 0 : context.padding.left
+    const paddingTop = isHeadless ? 0 : context.padding.top
+    const crossAxisSize = isHeadless
+      ? (context.parentSize?.height ?? context.contentArea.height)
+      : context.contentArea.height
 
     // Main axis (horizontal)
     currentMain += margin.left
-    const x = context.padding.left + currentMain
+    const x = paddingLeft + currentMain
 
     // Cross axis (vertical) - alignItems
     const y =
-      context.padding.top +
+      paddingTop +
       calculateAlignItems(
         context.containerProps.alignItems,
-        context.contentArea.height,
+        crossAxisSize,
         child.size.height,
         margin.top,
         margin.bottom
