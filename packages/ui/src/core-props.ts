@@ -22,6 +22,21 @@ export interface TransformProps {
   alpha?: number
   depth?: number
   visible?: boolean
+
+  /**
+   * If true, object is rendered but excluded from layout calculations
+   * Use for decorative elements, sprites, particles, or absolute-positioned objects
+   * - true: Object is visual-only, doesn't affect parent/sibling layout
+   * - false/undefined: Object participates in layout (default for UI elements)
+   *
+   * @example
+   * // Decorative sprite that doesn't affect layout
+   * <Sprite texture="particle" headless={true} />
+   *
+   * // Text that participates in layout
+   * <Text text="Label" headless={false} />
+   */
+  headless?: boolean
 }
 
 /**

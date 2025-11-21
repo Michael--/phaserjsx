@@ -13,7 +13,7 @@ import { ColumnLayoutStrategy } from './strategies/column-layout'
 import { RowLayoutStrategy } from './strategies/row-layout'
 import { StackLayoutStrategy } from './strategies/stack-layout'
 import type { GameObjectWithLayout, LayoutChild, LayoutContext, Position } from './types'
-import { getChildSize, getMargin, processNestedContainer } from './utils/child-utils'
+import { getChildSize, getMargin, isLayoutChild, processNestedContainer } from './utils/child-utils'
 import { calculateContainerSize, normalizePadding } from './utils/dimension-calculator'
 import { distributeFlexSpace, hasFlexChildren } from './utils/flex-distributor'
 import { calculateJustifyContent } from './utils/spacing-calculator'
@@ -433,13 +433,17 @@ function calculateLayoutImmediate(
   DebugLogger.log('layout', 'Pre-calculated container size:', currentContainerSize)
   DebugLogger.log('layout', 'Available content size (for fill):', availableContentSize)
 
-  // 2. Prepare layout children (filter backgrounds, process nested containers)
+  // 2. Prepare layout children (filter backgrounds, headless objects, process nested containers)
   const layoutChildren: LayoutChild[] = []
 
   for (const child of children) {
-    // Skip background rectangles
-    if (child.__isBackground) {
-      DebugLogger.log('layout', 'Skipping background')
+    // Skip non-layout children (backgrounds, headless objects, missing __getLayoutSize)
+    if (!isLayoutChild(child)) {
+      DebugLogger.log('layout', 'Skipping non-layout child:', {
+        isBackground: child.__isBackground,
+        headless: child.__layoutProps?.headless,
+        hasLayoutSize: typeof child.__getLayoutSize === 'function',
+      })
       continue
     } // Skip processing nested containers with flex (they need parent size first)
     const hasFlex = (child.__layoutProps?.flex ?? 0) > 0

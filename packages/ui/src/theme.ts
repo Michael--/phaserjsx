@@ -49,12 +49,45 @@ export interface NineSliceTheme extends Partial<TransformProps>, NestedComponent
 }
 
 /**
+ * Theme definition for Sprite component (dummy - minimal theme support)
+ */
+export interface SpriteTheme extends Partial<TransformProps>, NestedComponentThemes {
+  texture?: string
+  tint?: number
+}
+
+/**
+ * Theme definition for Image component (dummy - minimal theme support)
+ */
+export interface ImageTheme extends Partial<TransformProps>, NestedComponentThemes {
+  texture?: string
+  tint?: number
+}
+
+/**
+ * Theme definition for Graphics component (dummy - minimal theme support)
+ */
+export interface GraphicsTheme extends Partial<TransformProps>, NestedComponentThemes {}
+
+/**
+ * Theme definition for TileSprite component (dummy - minimal theme support)
+ */
+export interface TileSpriteTheme extends Partial<TransformProps>, NestedComponentThemes {
+  texture?: string
+  tint?: number
+}
+
+/**
  * Built-in component theme definitions
  */
 export interface BuiltInComponentThemes {
   View: ViewTheme
   Text: TextTheme
   NineSlice: NineSliceTheme
+  Sprite: SpriteTheme
+  Image: ImageTheme
+  Graphics: GraphicsTheme
+  TileSprite: TileSpriteTheme
 }
 
 /**
@@ -113,6 +146,22 @@ export const defaultTheme: Theme = {
     },
   },
   NineSlice: {
+    alpha: 1,
+    visible: true,
+  },
+  Sprite: {
+    alpha: 1,
+    visible: true,
+  },
+  Image: {
+    alpha: 1,
+    visible: true,
+  },
+  Graphics: {
+    alpha: 1,
+    visible: true,
+  },
+  TileSprite: {
     alpha: 1,
     visible: true,
   },

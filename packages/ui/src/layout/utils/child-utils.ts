@@ -8,6 +8,22 @@ import type { GameObjectWithLayout, LayoutChild, LayoutSize } from '../types'
 import { parseSize, resolveSize } from './size-resolver'
 
 /**
+ * Check if a child should participate in layout calculations
+ * @param child - Child game object
+ * @returns True if child should be included in layout
+ */
+export function isLayoutChild(child: GameObjectWithLayout): boolean {
+  // Skip background graphics (special role - defines container dimensions)
+  if (child.__isBackground) return false
+
+  // Skip headless objects (decorative/absolute positioned)
+  if (child.__layoutProps?.headless === true) return false
+
+  // Require __getLayoutSize for layout participation
+  return typeof child.__getLayoutSize === 'function'
+}
+
+/**
  * Get effective margin for a child
  * Normalizes margin to EdgeInsets (supports number for all sides)
  * @param child - Child game object

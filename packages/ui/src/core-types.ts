@@ -3,8 +3,12 @@
  * Defines the mapping between node type names and their corresponding Phaser types
  */
 import type Phaser from 'phaser'
+import type { GraphicsBaseProps } from './components/graphics'
+import type { ImageBaseProps } from './components/image'
 import type { NineSliceBaseProps } from './components/nineslice'
+import type { SpriteBaseProps } from './components/sprite'
 import type { TextBaseProps } from './components/text'
+import type { TileSpriteBaseProps } from './components/tilesprite'
 import type { ViewBaseProps } from './components/view'
 
 /**
@@ -14,6 +18,10 @@ export interface NodeMap {
   View: Phaser.GameObjects.Container
   Text: Phaser.GameObjects.Text
   NineSlice: Phaser.GameObjects.NineSlice
+  Sprite: Phaser.GameObjects.Sprite
+  Image: Phaser.GameObjects.Image
+  Graphics: Phaser.GameObjects.Graphics
+  TileSprite: Phaser.GameObjects.TileSprite
 }
 
 /**
@@ -23,6 +31,10 @@ export interface NodePropsMap {
   View: ViewBaseProps
   Text: TextBaseProps
   NineSlice: NineSliceBaseProps
+  Sprite: SpriteBaseProps
+  Image: ImageBaseProps
+  Graphics: GraphicsBaseProps
+  TileSprite: TileSpriteBaseProps
 }
 
 /**
