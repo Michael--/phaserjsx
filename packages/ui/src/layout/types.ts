@@ -79,9 +79,9 @@ export interface ContentArea {
  * Parsed size representation
  */
 export interface ParsedSize {
-  /** Size type: fixed pixels, percentage of parent, auto (content-based), calc expression, or fill (parent content-area) */
-  type: 'fixed' | 'percent' | 'auto' | 'calc' | 'fill'
-  /** Numeric value - pixels for fixed, 0-100 for percent, undefined for auto/calc/fill */
+  /** Size type: fixed pixels, percentage of parent, viewport units (vw/vh), auto (content-based), calc expression, or fill (parent content-area) */
+  type: 'fixed' | 'percent' | 'vw' | 'vh' | 'auto' | 'calc' | 'fill'
+  /** Numeric value - pixels for fixed, 0-100 for percent, 0-100 for vw/vh, undefined for auto/calc/fill */
   value?: number
   /** Calc expression data (only for type='calc') */
   calc?: CalcExpression
@@ -89,7 +89,7 @@ export interface ParsedSize {
 
 /**
  * Calc expression representation
- * Supports: calc(50% - 20px), calc(100% + 10px), calc((50% + 10px) * 2), etc.
+ * Supports: calc(50% - 20px), calc(100vw - 40px), calc(100vh + 10px), calc((50% + 10px) * 2), etc.
  */
 export interface CalcExpression {
   /** Left operand or sub-expression */
@@ -101,11 +101,11 @@ export interface CalcExpression {
 }
 
 /**
- * Calc operand - can be fixed pixels or percentage
+ * Calc operand - can be fixed pixels, percentage, or viewport units
  */
 export interface CalcOperand {
   /** Operand type */
-  type: 'fixed' | 'percent'
+  type: 'fixed' | 'percent' | 'vw' | 'vh'
   /** Numeric value */
   value: number
 }

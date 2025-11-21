@@ -42,6 +42,9 @@ export * from './colors'
 // Design token system - semantic tokens for colors, text styles, spacing, etc.
 export * from './design-tokens'
 
+// Viewport context - provides screen dimensions for vw/vh units
+export { viewportRegistry, type ViewportSize } from './viewport-context'
+
 /**
  * Consumers can import JSX runtime from here:
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";

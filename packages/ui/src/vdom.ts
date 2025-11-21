@@ -13,6 +13,7 @@ import { Fragment } from './jsx-runtime'
 import { DeferredLayoutQueue, calculateLayout } from './layout/index'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
+import { viewportRegistry } from './viewport-context'
 
 export type VNodeLike = VNode | VNode[] | null
 
@@ -619,6 +620,16 @@ export function mountJSX(
   type: NodeType | ((props: unknown) => VNode),
   props: Record<string, unknown> = {}
 ): Phaser.GameObjects.GameObject {
+  // Extract scene and set viewport dimensions
+  const scene =
+    parentOrScene instanceof Phaser.Scene
+      ? parentOrScene
+      : (parentOrScene as Phaser.GameObjects.GameObject).scene
+
+  if (scene) {
+    viewportRegistry.setViewport(scene.scale.width, scene.scale.height, scene)
+  }
+
   const vnode: VNode = { type, props, children: [] }
   return mount(parentOrScene, vnode)
 }
