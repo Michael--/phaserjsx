@@ -405,7 +405,13 @@ export function ThemePreviewExample() {
     height: 0,
   })
 
+  // Store dimensions for slider calculations
+  const [dimensions, setDimensions] = useState({ vw: 0, vh: 0, cw: 0, ch: 0 })
+
   const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
+    // Store dimensions
+    setDimensions({ vw, vh, cw, ch })
+
     // Calculate absolute scroll positions from percentages
     const maxScrollY = Math.max(0, ch - vh)
     const dy = (y / 100) * maxScrollY
@@ -424,10 +430,12 @@ export function ThemePreviewExample() {
   }
 
   const handleVScroll = (percent: number) => {
-    const vh = scroll.height > 0 ? 100 / (scroll.height / 100) : 100
-    const ch = vh / (scroll.height / 100)
+    const { vh, ch } = dimensions
+    if (vh === 0 || ch === 0) return
+
     const maxScrollY = Math.max(0, ch - vh)
     const dy = (percent / 100) * maxScrollY
+
     setScroll({ ...scroll, dy, scrollY: percent })
   }
 

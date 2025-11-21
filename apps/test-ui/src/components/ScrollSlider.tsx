@@ -81,6 +81,9 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const thumbPosition = (scrollPercent / 100) * thumbRange
 
   const handleThumbTouchMove = (data: GestureEventData) => {
+    // Stop event propagation to prevent ScrollView from receiving the event
+    data.stopPropagation()
+
     if (data.state === 'start') {
       isDraggingRef.current = true
       return
@@ -101,7 +104,10 @@ export function ScrollSlider(props: ScrollSliderProps) {
     onScroll(newScrollPercent)
   }
 
-  const handleBackgroundTouch = (data: { localX?: number; localY?: number }) => {
+  const handleBackgroundTouch = (data: GestureEventData) => {
+    // Stop event propagation to prevent ScrollView from receiving the event
+    data.stopPropagation()
+
     const localPos = isVertical ? (data.localY ?? 0) : (data.localX ?? 0)
     const effectiveSize = trackSizeInner
     const normalizedPos = Math.max(0, Math.min(1, localPos / effectiveSize))
