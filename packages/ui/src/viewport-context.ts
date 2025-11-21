@@ -2,7 +2,7 @@
  * Viewport context - provides screen/canvas dimensions to all components
  * Enables viewport-relative units (vw, vh) in layout calculations
  */
-import type Phaser from 'phaser'
+import type { ParentType } from './types'
 
 /**
  * Viewport dimensions
@@ -18,17 +18,17 @@ export interface ViewportSize {
  */
 class ViewportRegistry {
   private viewport: ViewportSize = { width: 800, height: 600 }
-  private scene: Phaser.Scene | undefined
+  private parent: ParentType | undefined
 
   /**
    * Update viewport dimensions
    * @param width - Viewport width in pixels
    * @param height - Viewport height in pixels
-   * @param scene - Optional Phaser scene reference
+   * @param parent - Optional Phaser scene reference
    */
-  setViewport(width: number, height: number, scene?: Phaser.Scene): void {
+  setViewport(width: number, height: number, parent?: ParentType): void {
     this.viewport = { width, height }
-    this.scene = scene
+    this.parent = parent
   }
 
   /**
@@ -43,8 +43,8 @@ class ViewportRegistry {
    * Get Phaser scene reference
    * @returns Scene or undefined
    */
-  getScene(): Phaser.Scene | undefined {
-    return this.scene
+  getParent(): ParentType | undefined {
+    return this.parent
   }
 }
 
