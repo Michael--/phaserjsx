@@ -233,7 +233,10 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   applyBackgroundProps(container, normalizedPrev, normalizedNext)
 
   // Gesture event handlers (high-level touch/mouse gestures)
-  applyGesturesProps(container.scene, container, normalizedPrev, normalizedNext)
+  // Safety check: ensure container has valid scene before applying gestures
+  if (container.scene && container.scene.data) {
+    applyGesturesProps(container.scene, container, normalizedPrev, normalizedNext)
+  }
 
   // Apply layout props and recalculate if needed
   applyLayoutProps(container, normalizedPrev, normalizedNext)

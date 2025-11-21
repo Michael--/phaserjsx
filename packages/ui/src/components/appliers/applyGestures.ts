@@ -21,6 +21,12 @@ export function applyGesturesProps(
   prev: Partial<GestureProps & LayoutProps>,
   next: Partial<GestureProps & LayoutProps>
 ): void {
+  // Safety check: ensure scene and scene.data are valid
+  if (!scene || !scene.data) {
+    console.warn('applyGesturesProps: Invalid scene or scene.data is undefined')
+    return
+  }
+
   const hasAnyGesture = !!(next.onTouch || next.onTouchMove || next.onDoubleTap || next.onLongPress)
   const hadAnyGesture = !!(prev.onTouch || prev.onTouchMove || prev.onDoubleTap || prev.onLongPress)
 

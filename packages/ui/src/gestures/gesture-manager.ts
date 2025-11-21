@@ -586,10 +586,15 @@ export class GestureManager {
 }
 
 /**
- * Get or create the GestureManager for a scene
+ * Get or create GestureManager for a scene
  * Stored in scene.data to ensure singleton per scene
  */
 export function getGestureManager(scene: Phaser.Scene): GestureManager {
+  // Safety check: ensure scene.data exists
+  if (!scene || !scene.data) {
+    throw new Error('getGestureManager: Invalid scene or scene.data is undefined')
+  }
+
   const key = '__gestureManager__'
   let manager = scene.data.get(key) as GestureManager | undefined
 
