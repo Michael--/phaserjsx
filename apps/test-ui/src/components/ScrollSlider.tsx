@@ -55,13 +55,21 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const dimension = outer - border * 2
 
   // Get actual resolved track size from the container after layout
-  const resolvedTrackSize =
-    trackContainerRef.current &&
-    trackContainerRef.current.width > 0 &&
-    trackContainerRef.current.height > 0
+  // Use __getLayoutSize if available (more reliable than container.width/height)
+  const containerWithLayout = trackContainerRef.current as
+    | (Phaser.GameObjects.Container & {
+        __getLayoutSize?: () => { width: number; height: number }
+      })
+    | null
+
+  const resolvedTrackSize = containerWithLayout?.__getLayoutSize
+    ? isVertical
+      ? containerWithLayout.__getLayoutSize().height
+      : containerWithLayout.__getLayoutSize().width
+    : containerWithLayout && containerWithLayout.width > 0 && containerWithLayout.height > 0
       ? isVertical
-        ? trackContainerRef.current.height
-        : trackContainerRef.current.width
+        ? containerWithLayout.height
+        : containerWithLayout.width
       : typeof trackSize === 'number'
         ? trackSize
         : 800 // fallback
