@@ -117,18 +117,15 @@ function ColorPalette() {
           borderWidth={1}
           borderColor={colors.border.DEFAULT.toNumber()}
         />
-        <Text text={name} style={{ fontSize: '14px' }} />
-        <Text
-          text={colors[shade].DEFAULT.toString()}
-          style={{ fontSize: '12px', fontFamily: 'monospace' }}
-        />
+        <Text text={name} style={tokens.textStyles.small} />
+        <Text text={colors[shade].DEFAULT.toString()} style={tokens.textStyles.caption} />
       </View>
     )
   })
 
   return (
     <View direction="column" gap={5}>
-      <Text text="Color Palette" style={{ fontSize: '16px' }} />
+      <Text text="Color Palette" style={tokens.textStyles.large} />
       {...colorMap}
     </View>
   )
@@ -147,24 +144,18 @@ export function ColorModeExample() {
     <ViewLevel1>
       <ViewLevel2>
         <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
-
-        <Text
-          text={`Current Mode: ${colorMode}`}
-          style={{
-            ...tokens.textStyles.medium,
-            color: tokens.colors.text.medium.toString(),
-          }}
-        />
-
-        <ModeToggle />
-
-        <Text text="Choose Preset:" style={tokens.textStyles.large} />
-
+        <ViewLevel2>
+          <Text text={`Current Mode: ${colorMode}`} style={tokens.textStyles.large} />
+          <ModeToggle />
+        </ViewLevel2>
+        <ViewLevel2>
+          <Text text="Choose Preset:" style={tokens.textStyles.large} />
+        </ViewLevel2>
         <PresetSelector />
-
         <ColoredBox />
-
-        <ColorPalette />
+        <ViewLevel2>
+          <ColorPalette />
+        </ViewLevel2>
       </ViewLevel2>
     </ViewLevel1>
   )

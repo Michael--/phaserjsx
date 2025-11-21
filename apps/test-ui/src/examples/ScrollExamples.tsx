@@ -1,15 +1,29 @@
 import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button, ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
-import { Spacer } from '../components/Spacer'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
-function ListButton(props: { index: number }) {
+function ListButton(props: { index: number; width?: number | string }) {
+  const tokens = useThemeTokens()
   const [count, setCount] = useState(0)
   return (
-    <View key={props.index} justifyContent="center" alignItems="center" direction="row">
-      <Spacer />
+    <View
+      width={props.width}
+      key={props.index}
+      justifyContent="center"
+      alignItems="center"
+      direction="row"
+      padding={8}
+      gap={8}
+      backgroundColor={
+        props.index % 2 === 0
+          ? tokens?.colors.secondary.light.toNumber()
+          : tokens?.colors.secondary.medium.toNumber()
+      }
+    >
       <Button
         size="small"
+        variant="secondary"
         text={`Button ${props.index + 1}`}
         onClick={() => {
           setCount(count + 1)
@@ -24,7 +38,7 @@ function Content(props: { count: number; width: string }) {
   const entry = (index: number) => {
     if (index % 3 === 0) {
       // return a button like view
-      return <ListButton index={index} />
+      return <ListButton index={index} width={props.width} />
     }
     return (
       <View
@@ -33,10 +47,9 @@ function Content(props: { count: number; width: string }) {
         height={50}
         backgroundColor={
           index % 2 === 0
-            ? tokens?.colors.error.dark.toNumber()
-            : tokens?.colors.success.dark.toNumber()
+            ? tokens?.colors.secondary.light.toNumber()
+            : tokens?.colors.secondary.medium.toNumber()
         }
-        backgroundAlpha={1.0}
         justifyContent="center"
         alignItems="center"
       >
@@ -59,17 +72,17 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
   const tokens = useThemeTokens()
 
   return (
-    <View padding={0} alignItems="center">
+    <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
-      <View borderColor={0xffffff} borderWidth={2} padding={2}>
+      <ViewLevel2 borderColor={tokens?.colors.border.medium.toNumber()} borderWidth={2} padding={2}>
         <View width={200} height={400} padding={0}>
           <ScrollView>
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
@@ -104,10 +117,16 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
   }
 
   return (
-    <View padding={0} alignItems="center">
+    <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
-      <View borderColor={0xffffff} borderWidth={2} padding={2} direction="row" gap={0}>
+      <ViewLevel2
+        borderColor={tokens?.colors.border.medium.toNumber()}
+        borderWidth={2}
+        padding={2}
+        direction="row"
+        gap={0}
+      >
         <View width={200} height={400} padding={0}>
           <ScrollView scroll={scroll} onScroll={handleScroll}>
             <Content count={props.count} width={props.width} />
@@ -119,12 +138,14 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
           scrollInfo={scroll}
           onScroll={handleVScroll}
         />
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
 function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
+  const tokens = useThemeTokens()
+
   const [scroll, setScroll] = useState({
     dx: 0,
     dy: 0,
@@ -173,14 +194,14 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
   }
 
   return (
-    <View padding={0} alignItems="center">
-      <Text text={props.title} style={{ fontSize: 16, color: 'orange' }} />
+    <ViewLevel2 alignItems="center">
+      <Text text={props.title} style={tokens?.textStyles.large} />
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
           <View
             height={viewSize + 4}
             width={viewSize + 4}
-            borderColor={0xffffff}
+            borderColor={tokens?.colors.border.medium.toNumber()}
             borderWidth={2}
             padding={2}
             direction="row"
@@ -193,22 +214,28 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
                   width={contentSize}
                   height={contentSize}
                   padding={0}
-                  backgroundColor={0x444400}
+                  backgroundColor={tokens?.colors.secondary.light.toNumber()}
                 >
-                  <View x={0} y={0} width={rect} height={rect} backgroundColor={0xff00000}></View>
+                  <View
+                    x={0}
+                    y={0}
+                    width={rect}
+                    height={rect}
+                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
+                  ></View>
                   <View
                     x={(contentSize - rect) / 2}
                     y={(contentSize - rect) / 2}
                     width={rect}
                     height={rect}
-                    backgroundColor={0xff00000}
+                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
                   ></View>
                   <View
                     x={contentSize - rect}
                     y={contentSize - rect}
                     width={rect}
                     height={rect}
-                    backgroundColor={0xff00000}
+                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
                   ></View>
                 </View>
               </ScrollView>
@@ -228,57 +255,59 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           scrollInfo={scroll}
           onScroll={handleHScroll}
         />
-        <Button
-          variant="primary"
-          text="Scroll to left/top"
-          onClick={() => setScroll({ ...scroll, dx: 0, dy: 0, scrollX: 0, scrollY: 0 })}
-        />
-        <Button
-          variant="primary"
-          text="Scroll to center"
-          onClick={() =>
-            setScroll({
-              ...scroll,
-              dx: (contentSize - viewSize) / 2,
-              dy: (contentSize - viewSize) / 2,
-              scrollX: 50,
-              scrollY: 50,
-            })
-          }
-        />
-        <Button
-          variant="primary"
-          text="Scroll to bottom/right"
-          onClick={() =>
-            setScroll({
-              ...scroll,
-              dx: contentSize - viewSize,
-              dy: contentSize - viewSize,
-              scrollX: 100,
-              scrollY: 100,
-            })
-          }
-        />
+        <ViewLevel2 alignItems="start" padding={{ top: 30 }}>
+          <Button
+            variant="primary"
+            text="Scroll to left/top"
+            onClick={() => setScroll({ ...scroll, dx: 0, dy: 0, scrollX: 0, scrollY: 0 })}
+          />
+          <Button
+            variant="primary"
+            text="Scroll to center"
+            onClick={() =>
+              setScroll({
+                ...scroll,
+                dx: (contentSize - viewSize) / 2,
+                dy: (contentSize - viewSize) / 2,
+                scrollX: 50,
+                scrollY: 50,
+              })
+            }
+          />
+          <Button
+            variant="primary"
+            text="Scroll to bottom/right"
+            onClick={() =>
+              setScroll({
+                ...scroll,
+                dx: contentSize - viewSize,
+                dy: contentSize - viewSize,
+                scrollX: 100,
+                scrollY: 100,
+              })
+            }
+          />
+        </ViewLevel2>
       </View>
-    </View>
+    </ViewLevel2>
   )
 }
 
 export function ScrollExample() {
   return (
     /** inherit all default theme */
-    <View>
+    <ViewLevel1>
       {/** disable padding for only the next */}
-      <View direction="row">
+      <ViewLevel2 direction="row">
         <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
         <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
         <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
-      </View>
+      </ViewLevel2>
       {/** disable padding for only the next */}
-      <View direction="row">
+      <ViewLevel2 direction="row">
         <ScrollExampleSliderLocal title="V-Slider" count={20} width="100%" />
         <ScrollExampleSliderFullLocal title="XY-Slider" width="100%" />
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }

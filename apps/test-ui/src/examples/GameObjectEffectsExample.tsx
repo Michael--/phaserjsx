@@ -174,10 +174,7 @@ export function GameObjectEffectsExample() {
 
           {/* Continuous Effects */}
           <View direction="column" gap={8} alignItems="stretch">
-            <Text
-              text="Continuous (∞)"
-              style={{ fontSize: 14, color: 'orange', fontStyle: 'bold' }}
-            />
+            <Text text="Continuous (∞)" style={tokens?.textStyles.large} />
             <Button
               disabled={activeContinuous.has('float')}
               text="Float"
@@ -213,7 +210,7 @@ export function GameObjectEffectsExample() {
               />
             </View>
             <View margin={{ top: 12 }}>
-              <Text text="Combined" style={{ fontSize: 14, color: 'lime', fontStyle: 'bold' }} />
+              <Text text="Combined" style={tokens?.textStyles.large} />
             </View>
             <Button
               text="Pulse + Shake"
@@ -241,12 +238,8 @@ export function GameObjectEffectsExample() {
 
         <View direction="column" gap={5} alignItems="center">
           <Text
-            text="Note: Entrance/Exit effects show/hide the target box with onComplete callbacks"
-            style={tokens?.textStyles.caption}
-          />
-          <Text
-            text="Continuous effects can be combined. Each can only be activated once. Use 'Stop All' to reset."
-            style={tokens?.textStyles.caption}
+            text={`Note: Entrance/Exit effects show/hide the target box with onComplete callbacks\nContinuous effects can be combined. Each can only be activated once. Use 'Stop All' to reset.`}
+            style={{ ...tokens?.textStyles.caption, align: 'center' }}
           />
         </View>
       </ViewLevel2>

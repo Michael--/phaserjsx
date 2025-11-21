@@ -6,6 +6,7 @@ import type { ColorShade } from '@phaserjsx/ui'
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 import { ScrollView } from '../components/ScrollView'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Section header component
@@ -73,14 +74,7 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
   ]
 
   return (
-    <View
-      backgroundColor={tokens.colors.surface.DEFAULT.toNumber()}
-      cornerRadius={tokens.radius.md}
-      padding={tokens.spacing.md}
-      gap={tokens.spacing.sm}
-      direction="row"
-      alignItems="center"
-    >
+    <ViewLevel3 cornerRadius={tokens.radius.md} direction="row" alignItems="center">
       <View
         gap={tokens.spacing.sm}
         width={250}
@@ -103,7 +97,7 @@ function ColorCategory({ name, shades }: { name: string; shades: ColorShade }) {
           />
         ))}
       </View>
-    </View>
+    </ViewLevel3>
   )
 }
 
@@ -133,10 +127,10 @@ function ColorSection() {
   ]
 
   return (
-    <View gap={16} direction="column" width={800}>
+    <ViewLevel2 gap={16} direction="column" width={1000}>
       <SectionHeader title="Colors" />
       {...categories.map((cat) => <ColorCategory name={cat.name} shades={cat.shades} />)}
-    </View>
+    </ViewLevel2>
   )
 }
 
@@ -150,15 +144,9 @@ function TypographySection() {
   const fontSizes = ['12px', '14px', '16px', '18px', '20px', '24px', '28px', '32px', '36px']
 
   return (
-    <View gap={16} direction="column" width={800}>
+    <ViewLevel2 gap={16} direction="column" width={1000} overflow="hidden" margin={{ bottom: 30 }}>
       <SectionHeader title="Typography" />
-      <View
-        backgroundColor={colors?.surface.lightest.toNumber() || 0x1a1a1a}
-        cornerRadius={8}
-        padding={16}
-        gap={12}
-        direction="column"
-      >
+      <ViewLevel2 cornerRadius={8} padding={16} gap={12} direction="column">
         {...fontSizes.map((size) => (
           <Text
             key={size}
@@ -169,8 +157,8 @@ function TypographySection() {
             }}
           />
         ))}
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
@@ -191,15 +179,9 @@ function SpacingSection() {
   ]
 
   return (
-    <View gap={16} direction="column" width={800}>
+    <ViewLevel2 gap={16} direction="column" width={1000}>
       <SectionHeader title="Spacing" />
-      <View
-        backgroundColor={colors?.surface.lightest.toNumber() || 0x1a1a1a}
-        cornerRadius={8}
-        padding={16}
-        gap={16}
-        direction="row"
-      >
+      <ViewLevel2 padding={16} gap={16} direction="row">
         {...spacings.map((spacing) => (
           <View key={spacing.name} gap={8} direction="row" alignItems="center">
             <View width={80}>
@@ -219,8 +201,8 @@ function SpacingSection() {
             />
           </View>
         ))}
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
@@ -241,15 +223,9 @@ function BorderRadiusSection() {
   ]
 
   return (
-    <View gap={16} direction="column" width={800}>
+    <ViewLevel2 gap={16} direction="column" width={1000}>
       <SectionHeader title="Border Radius" />
-      <View
-        backgroundColor={colors?.surface.lightest.toNumber() || 0x1a1a1a}
-        cornerRadius={8}
-        padding={16}
-        gap={16}
-        direction="row"
-      >
+      <ViewLevel2 cornerRadius={8} padding={16} gap={16} direction="row">
         {...radii.map((radius) => (
           <View key={radius.name} gap={8} direction="column" alignItems="center">
             <View
@@ -267,8 +243,8 @@ function BorderRadiusSection() {
             />
           </View>
         ))}
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
@@ -284,15 +260,9 @@ function ComponentShowcase() {
   }
 
   return (
-    <View gap={16} direction="column" width={800}>
+    <ViewLevel2 gap={16} direction="column" width={1000}>
       <SectionHeader title="Components" />
-      <View
-        backgroundColor={colors.surface.lightest.toNumber()}
-        cornerRadius={8}
-        padding={16}
-        gap={16}
-        direction="column"
-      >
+      <ViewLevel2 padding={16} gap={16} direction="column">
         <View gap={8} direction="column">
           <Text
             text="Buttons"
@@ -414,8 +384,8 @@ function ComponentShowcase() {
             </View>
           </View>
         </View>
-      </View>
-    </View>
+      </ViewLevel2>
+    </ViewLevel2>
   )
 }
 
@@ -424,9 +394,9 @@ function ComponentShowcase() {
  */
 export function ThemePreviewExample() {
   return (
-    <View width={'100%'} height={'100%'}>
+    <ViewLevel1>
       <ScrollView>
-        <View gap={32} direction="column" padding={20}>
+        <View gap={32}>
           <ColorSection />
           <ComponentShowcase />
           <SpacingSection />
@@ -434,6 +404,6 @@ export function ThemePreviewExample() {
           <TypographySection />
         </View>
       </ScrollView>
-    </View>
+    </ViewLevel1>
   )
 }
