@@ -23,6 +23,7 @@ export type Ctx = {
   lastProps?: unknown // Store last props for memoization
   memoized?: boolean // Whether component uses memoization (default: true)
   theme?: PartialTheme | undefined // Theme context for this component
+  disposed?: boolean // Flag to prevent updates after disposal
 }
 
 let CURRENT: Ctx | null = null
@@ -275,6 +276,12 @@ function scheduleUpdate(c: Ctx) {
   if (c.updater) return
   c.updater = () => {
     c.updater = undefined
+
+    // Skip update if context has been disposed
+    if (c.disposed) {
+      return
+    }
+
     // Use component VNode props, merging with children
     const componentProps = c.componentVNode.props ?? {}
     const propsWithChildren = c.componentVNode.children?.length
@@ -298,7 +305,18 @@ function scheduleUpdate(c: Ctx) {
  * @param c - Context to dispose
  */
 export function disposeCtx(c: Ctx) {
+  // Mark as disposed to prevent pending updates
+  c.disposed = true
+
+  // Run all cleanup functions
   for (const cl of c.cleanups) {
     if (typeof cl === 'function') cl()
   }
+
+  // Clear cleanups array to prevent duplicate cleanup calls
+  c.cleanups.length = 0
+
+  // NOTE: We intentionally do NOT clear slots, effects, or updater
+  // because the context might still be referenced by pending updates
+  // The disposed flag will prevent any queued updates from executing
 }

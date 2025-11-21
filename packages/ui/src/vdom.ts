@@ -324,7 +324,11 @@ export function unmount(vnode: VNode | null | undefined | false): void {
 
   if (typeof vnode.type === 'function') {
     const ctx = (vnode as VNode & { __ctx?: Ctx }).__ctx
-    if (ctx) disposeCtx(ctx)
+    if (ctx) {
+      disposeCtx(ctx)
+      // Clear context reference to prevent memory leak
+      delete (vnode as VNode & { __ctx?: Ctx }).__ctx
+    }
     if (ctx?.vnode) unmount(ctx.vnode)
     return
   }
@@ -338,6 +342,11 @@ export function unmount(vnode: VNode | null | undefined | false): void {
   // Then remove from parent/scene
   const parent = vnode.__parent
   if (parent) host.remove(parent as ParentType, vnode.__node as Phaser.GameObjects.GameObject)
+
+  // NOTE: We intentionally do NOT delete __node, __parent, __theme here
+  // because these VNodes might still be referenced elsewhere (e.g., in closures)
+  // The Phaser GameObject is destroyed by host.remove(), so the memory will be freed
+  // The VNode references will be garbage collected when all references are gone
 }
 
 /**
