@@ -2,61 +2,107 @@
  * Graphics component - Phaser Graphics GameObject (custom shapes)
  * Status: DUMMY - Not implemented yet
  *
- * Design Decisions & Questions:
- * =============================
+ * Design Decisions & Answers:
+ * ===========================
  *
- * 1. Headless Default: TRUE
+ * 1. Headless Default: TRUE ✅
  *    Rationale: Graphics are typically decorative (custom shapes, effects).
  *    They should NOT affect layout unless explicitly configured.
- *    Exception: Custom UI shapes (polygons, stars) might need layout participation
+ *    Use Cases:
+ *    - ✅ Headless (default): Debug visualizations, particle trails, decorative effects
+ *    - ❌ Layout-aware: Custom UI shapes (via headless=false + explicit width/height)
  *
- * 2. Difference to View Background:
- *    - View Background: Special role, defines container dimensions, internal to View
- *    - Graphics Component: User-facing, custom shapes, typically decorative
- *    - Both use Phaser.Graphics but completely different purposes
+ * 2. View Background vs. Graphics Component: CLEAR SEPARATION ✅
+ *    View Background (internal):
+ *    - Special role: Defines container dimensions
+ *    - Automatically managed by View component
+ *    - Marked with __isBackground flag
+ *    - Always excluded from layout calculations
+ *    Graphics Component (user-facing):
+ *    - Custom shapes for any purpose
+ *    - User controls drawing via onDraw callback
+ *    - Can be headless OR layout-aware (explicit)
+ *    - Independent GameObject, not tied to View
  *
- * 3. Layout Size Provider:
- *    Problem: Graphics don't have inherent dimensions until drawn
- *    Options:
- *    A) Require explicit width/height props (recommended)
- *    B) Calculate from drawn bounds (expensive, changes dynamically)
- *    C) Default to 0x0 (breaks layout)
- *    Recommendation: A - explicit dimensions required for layout participation
+ * 3. Layout Size Provider: EXPLICIT DIMENSIONS REQUIRED ✅
+ *    Decision: Option A - Require explicit width/height props for layout participation
+ *    Reasoning:
+ *    - Graphics have no inherent dimensions until drawn
+ *    - Calculating bounds dynamically is expensive (getBounds() forces geometry calc)
+ *    - Bounds change with every draw call (unstable for layout)
+ *    - Explicit dimensions = predictable layout behavior
+ *    Implementation:
+ *    - If headless=false: Require width/height props (throw error if missing)
+ *    - __getLayoutSize = () => ({ width: props.width!, height: props.height! })
  *
- * 4. Drawing API:
- *    How to expose Phaser's drawing commands in React-like way?
- *    Option A: Imperative (draw callback)
- *      onDraw={(g) => { g.fillCircle(50, 50, 50) }}
- *    Option B: Declarative (shape props)
- *      shape="circle" radius={50} fillColor={0xff0000}
- *    Option C: Children with shape components
- *      <Graphics><Circle r={50} fill={0xff0000} /></Graphics>
- *    Recommendation: Start with A (simplest), consider C later
+ * 4. Drawing API: IMPERATIVE CALLBACK ✅
+ *    Decision: Option A - onDraw callback (imperative)
+ *    Reasoning:
+ *    - Simplest API, full Phaser Graphics power
+ *    - No abstraction overhead
+ *    - Familiar to Phaser developers
+ *    - Flexible for complex shapes
+ *    Interface:
+ *      onDraw?: (graphics: Phaser.GameObjects.Graphics, props: GraphicsBaseProps) => void
+ *    Example:
+ *      <Graphics onDraw={(g) => {
+ *        g.fillStyle(0xff0000, 1)
+ *        g.fillCircle(50, 50, 50)
+ *      }} />
+ *    Future: Consider declarative shape components if demand is high
  *
- * 5. Performance Concerns:
- *    - Graphics redraw on every prop change?
- *    - Memoization strategy?
- *    - Static vs. dynamic graphics
- *    - generateTexture() for optimization?
+ * 5. Redraw Strategy: DEPENDENCY-BASED ✅
+ *    Decision: Redraw when dependencies array changes (React useEffect style)
+ *    Behavior:
+ *    - autoClear=true (default): Clear graphics before each onDraw call
+ *    - dependencies=[...]: Only redraw when dependencies change (shallow compare)
+ *    - No dependencies: Redraw on every patch (expensive!)
+ *    Implementation:
+ *    - Store previous dependencies on graphics object
+ *    - Compare with current dependencies in patcher
+ *    - Call onDraw only if changed
  *
- * 6. Common Use Cases:
- *    - Custom borders (but View has borderColor/borderWidth)
- *    - Polygons, stars, complex shapes
- *    - Progress bars, health bars (custom shapes)
- *    - Particle trails, effects
- *    - Debug visualizations
+ * 6. Performance Optimization: GENERATETEXTURE PATH 🆕
+ *    Strategy for static graphics:
+ *    - Static graphics (no redraw) → Consider generateTexture() optimization
+ *    - Converts geometry to texture (faster rendering, loses vector quality)
+ *    - Trade-off: Memory (texture) vs. CPU (redraw)
+ *    Props:
+ *    - static?: boolean (if true, generate texture after first draw)
+ *    - textureKey?: string (cache key for generated texture)
+ *    Recommendation: Advanced feature, implement later if needed
  *
- * 7. Props Design:
- *    - onDraw callback receives (graphics, props) for full control
- *    - Redraw on prop changes (deep comparison?)
- *    - Clear before redraw? (yes, usually)
+ * 7. Common Use Cases & Alternatives: DOCUMENTED ✅
+ *    Use Graphics For:
+ *    - ✅ Custom complex shapes (polygons, stars, bezier curves)
+ *    - ✅ Dynamic visualizations (graphs, charts)
+ *    - ✅ Progress bars with custom shapes
+ *    - ✅ Debug overlays (hitboxes, grids)
+ *    Use Alternatives For:
+ *    - ❌ Simple rectangles → Use View with backgroundColor
+ *    - ❌ Borders → Use View with borderColor/borderWidth
+ *    - ❌ Static shapes → Consider Image with pre-rendered texture
+ *    - ❌ Repeated patterns → Use TileSprite
  *
- * TODO Before Implementation:
- * - Define drawing API (declarative vs. imperative)
- * - Test performance with frequent redraws
- * - Decide on bounds calculation strategy
- * - Consider generateTexture optimization path
- * - Define common shape shortcuts (circle, rect, polygon)
+ * 8. Clear Behavior: CONFIGURABLE ✅
+ *    Decision: autoClear=true by default
+ *    Reasoning:
+ *    - Most use cases: Single shape per Graphics object
+ *    - Prevents accumulation of draw calls
+ *    - Override with autoClear=false for additive drawing
+ *    Edge Case: Multiple draw calls in onDraw → All executed, then cleared on next redraw
+ *
+ * Implementation Checklist:
+ * ========================
+ * [ ] Create graphics with scene.add.graphics()
+ * [ ] Apply transform props via applyTransformProps
+ * [ ] Setup onDraw callback invocation
+ * [ ] Implement dependency-based redraw logic
+ * [ ] Handle autoClear flag
+ * [ ] Setup layout size provider (explicit width/height)
+ * [ ] Validate width/height if headless=false
+ * [ ] Test with complex shapes, frequent redraws
+ * [ ] Consider generateTexture optimization path (future)
  */
 import type Phaser from 'phaser'
 import type { TransformProps } from '../core-props'
