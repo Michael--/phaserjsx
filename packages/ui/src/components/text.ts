@@ -158,6 +158,15 @@ export interface TextProps extends TextBaseProps, PropsDefaultExtension<Phaser.G
 export const textCreator: HostCreator<'Text'> = (scene, props) => {
   const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
 
+  // Set origin based on headless flag
+  // Headless: (0.5, 0.5) - centered, works naturally with rotation/scale
+  // Layout-aware: (0, 0) - top-left, aligns with layout flow
+  if (props.headless) {
+    text.setOrigin(0.5, 0.5)
+  } else {
+    text.setOrigin(0, 0)
+  }
+
   // Ignore rotation for layout-aware text (headless=false)
   // Rotation is only supported with headless=true
   const transformProps = { ...props }
@@ -178,6 +187,15 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
  * Text patcher - updates Text properties
  */
 export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
+  // Update origin if headless flag changed
+  if (prev.headless !== next.headless) {
+    if (next.headless) {
+      node.setOrigin(0.5, 0.5) // Headless: centered
+    } else {
+      node.setOrigin(0, 0) // Layout-aware: top-left
+    }
+  }
+
   // Ignore rotation for layout-aware text (headless=false)
   // Rotation is only supported with headless=true
   const transformPrev = { ...prev }

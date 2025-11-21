@@ -21,10 +21,13 @@ export function createTextLayout(
   // Attach layout props for layout calculations
   text.__layoutProps = props as TextBaseProps
 
-  // Attach dynamic size provider using unrotated dimensions
-  // Note: Rotation is only supported for headless text (no layout impact)
-  // For layout-aware text, rotation is ignored to prevent layout issues
+  // Attach dynamic size provider
+  // Headless text returns size 0 (no layout participation)
+  // Layout-aware text returns actual dimensions (rotation ignored for layout)
   text.__getLayoutSize = () => {
+    if (text.__layoutProps?.headless) {
+      return { width: 0, height: 0 }
+    }
     return {
       width: text.width,
       height: text.height,
