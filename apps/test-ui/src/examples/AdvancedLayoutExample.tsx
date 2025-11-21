@@ -2,6 +2,7 @@
  * Advanced Layout Demo - showcasing gap, justifyContent, alignItems
  */
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Demo box component for visual testing
@@ -12,14 +13,14 @@ function Box(props: { color?: number | undefined; text: string; width?: number; 
   const tokens = useThemeTokens()
   return (
     <View
-      width={props.width ?? 60}
-      height={props.height ?? 40}
-      backgroundColor={props.color}
+      width={props.width}
+      height={props.height}
+      backgroundColor={tokens?.colors.secondary.DEFAULT.toNumber()}
       padding={5}
       alignItems="center"
       justifyContent="center"
     >
-      <Text text={props.text} style={tokens?.textStyles.medium} />
+      <Text text={props.text} style={tokens?.textStyles.DEFAULT} />
     </View>
   )
 }
@@ -32,96 +33,46 @@ function JustifyContentColumnExample() {
   const tokens = useThemeTokens()
   const colors = tokens?.colors
   return (
-    <View
-      backgroundColor={colors?.surface.DEFAULT.toNumber()}
-      padding={10}
-      direction="column"
-      gap={10}
-    >
+    <ViewLevel2>
       <Text text="JustifyContent (Column)" style={tokens?.textStyles.large} />
 
       <View direction="row" gap={10}>
         {/* Start */}
-        <View
-          height={150}
-          borderColor={colors?.border.DEFAULT.toNumber()}
-          direction="column"
-          justifyContent="start"
-          padding={5}
-          gap={5}
-        >
-          <Box color={colors?.secondary.light.toNumber()} text="start" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="2" width={100} height={30} />
-        </View>
+        <ViewLevel3 height={150} direction="column" justifyContent="start">
+          <Box text="start" width={100} height={30} />
+          <Box text="1" width={100} height={30} />
+          <Box text="2" width={100} height={30} />
+        </ViewLevel3>
 
         {/* Center */}
-        <View
-          height={150}
-          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
-          direction="column"
-          justifyContent="center"
-          padding={5}
-          gap={5}
-        >
-          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="center" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
-        </View>
+        <ViewLevel3 height={150} justifyContent="center">
+          <Box text="1" width={100} height={30} />
+          <Box text="center" width={100} height={30} />
+          <Box text="3" width={100} height={30} />
+        </ViewLevel3>
 
         {/* End */}
-        <View
-          height={150}
-          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
-          direction="column"
-          justifyContent="end"
-          padding={5}
-          gap={5}
-        >
-          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="2" width={100} height={30} />
-          <Box color={colors?.secondary.light.toNumber()} text="end" width={100} height={30} />
-        </View>
+        <ViewLevel3 height={150} justifyContent="end">
+          <Box text="1" width={100} height={30} />
+          <Box text="2" width={100} height={30} />
+          <Box text="end" width={100} height={30} />
+        </ViewLevel3>
 
         {/* Space Between */}
-        <View
-          height={150}
-          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
-          direction="column"
-          justifyContent="space-between"
-          padding={5}
-          gap={5}
-        >
-          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
-          <Box
-            color={colors?.secondary.light.toNumber()}
-            text="space-btw"
-            width={100}
-            height={30}
-          />
-          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
-        </View>
+        <ViewLevel3 height={150} justifyContent="space-between">
+          <Box text="1" width={100} height={30} />
+          <Box text="space-btw" width={100} height={30} />
+          <Box text="3" width={100} height={30} />
+        </ViewLevel3>
 
         {/* Space Around */}
-        <View
-          height={150}
-          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
-          direction="column"
-          justifyContent="space-around"
-          padding={5}
-          gap={5}
-        >
-          <Box color={colors?.secondary.light.toNumber()} text="1" width={100} height={30} />
-          <Box
-            color={colors?.secondary.light.toNumber()}
-            text="space-ard"
-            width={100}
-            height={30}
-          />
-          <Box color={colors?.secondary.light.toNumber()} text="3" width={100} height={30} />
-        </View>
+        <ViewLevel3 height={150} justifyContent="space-around">
+          <Box color={colors?.secondary.DEFAULT.toNumber()} text="1" width={100} height={30} />
+          <Box text="space-ard" width={100} height={30} />
+          <Box text="3" width={100} height={30} />
+        </ViewLevel3>
       </View>
-    </View>
+    </ViewLevel2>
   )
 }
 
@@ -130,70 +81,43 @@ function JustifyContentColumnExample() {
  * @returns AlignItems demo
  */
 function AlignItemsRowExample() {
+  const tokens = useThemeTokens()
   return (
-    <View backgroundColor={0x2a2a2a} direction="column">
-      <Text text="AlignItems (Row)" style={{ fontSize: 16, color: 'yellow' }} />
+    <ViewLevel2>
+      <Text text="AlignItems (Row)" style={tokens?.textStyles.large} />
 
       {/* Start */}
-      <View
-        height={80}
-        backgroundColor={0x444444}
-        direction="row"
-        alignItems="start"
-        padding={5}
-        gap={5}
-      >
-        <Text text="start:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={80} height={40} />
-        <Box color={0x4ecdc4} text="B" width={80} height={60} />
-        <Box color={0x45b7d1} text="C" width={80} height={20} />
-      </View>
+      <ViewLevel3 height={110} direction="row" alignItems="start">
+        <Text text="start:" style={tokens?.textStyles.caption} />
+        <Box color={0xff6b6b} text="A" width={80} height={50} />
+        <Box color={0x4ecdc4} text="B" width={80} height={70} />
+        <Box color={0x45b7d1} text="C" width={80} height={30} />
+      </ViewLevel3>
 
       {/* Center */}
-      <View
-        height={80}
-        backgroundColor={0x444444}
-        direction="row"
-        alignItems="center"
-        padding={5}
-        gap={5}
-      >
-        <Text text="center:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={80} height={40} />
-        <Box color={0x4ecdc4} text="B" width={80} height={60} />
-        <Box color={0x45b7d1} text="C" width={80} height={20} />
-      </View>
+      <ViewLevel3 height={110} direction="row" alignItems="center">
+        <Text text="center:" style={tokens?.textStyles.caption} />
+        <Box text="A" width={80} height={50} />
+        <Box text="B" width={80} height={70} />
+        <Box text="C" width={80} height={30} />
+      </ViewLevel3>
 
       {/* End */}
-      <View
-        height={80}
-        backgroundColor={0x444444}
-        direction="row"
-        alignItems="end"
-        padding={5}
-        gap={5}
-      >
-        <Text text="end:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={80} height={40} />
-        <Box color={0x4ecdc4} text="B" width={80} height={60} />
-        <Box color={0x45b7d1} text="C" width={80} height={20} />
-      </View>
+      <ViewLevel3 height={110} direction="row" alignItems="end">
+        <Text text="end:" style={tokens?.textStyles.caption} />
+        <Box text="A" width={80} height={50} />
+        <Box text="B" width={80} height={70} />
+        <Box text="C" width={80} height={30} />
+      </ViewLevel3>
 
       {/* Stretch */}
-      <View
-        height={80}
-        backgroundColor={0x444444}
-        direction="row"
-        alignItems="stretch"
-        padding={5}
-        gap={5}
-      >
-        <Text text="stretch:" style={{ fontSize: 10, color: 'cyan' }} />
-        <Box color={0xff6b6b} text="A" width={80} height={40} />
-        <Box color={0x4ecdc4} text="B" width={80} height={60} />
-        <Box color={0x45b7d1} text="C" width={80} height={20} />
-      </View>
-    </View>
+      <ViewLevel3 height={110} direction="row" alignItems="stretch">
+        <Text text="stretch:" style={tokens?.textStyles.caption} />
+        <Box text="A" width={80} height={50} />
+        <Box text="B" width={80} height={70} />
+        <Box text="C" width={80} height={30} />
+      </ViewLevel3>
+    </ViewLevel2>
   )
 }
 
@@ -203,41 +127,23 @@ function AlignItemsRowExample() {
  */
 export function AdvancedLayoutExample() {
   return (
-    <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
+    <ViewLevel1>
       <JustifyContentColumnExample />
       <AlignItemsRowExample />
-      <View direction="row" gap={10}>
-        <View
-          height={200}
-          width={200}
-          backgroundColor={0xffffff}
-          alignItems="start"
-          justifyContent="start"
-        >
-          <Text text="Box 200x200" />
+      <ViewLevel2 direction="row">
+        <ViewLevel3 height={200} width={200} alignItems="start" justifyContent="start">
+          <Text text="Default" />
           <Text text="Headless" rotation={0.5} headless={true} />
-        </View>
-        <View
-          height={200}
-          width={200}
-          backgroundColor={0xffffff}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text text="Box 200x200" />
+        </ViewLevel3>
+        <ViewLevel3 height={200} width={200} alignItems="center" justifyContent="center">
+          <Text text="Default" />
           <Text text="Headless" rotation={0.5} headless={true} />
-        </View>
-        <View
-          height={200}
-          width={200}
-          backgroundColor={0xffffff}
-          alignItems="end"
-          justifyContent="end"
-        >
-          <Text text="Box 201x200" />
+        </ViewLevel3>
+        <ViewLevel3 height={200} width={200} alignItems="end" justifyContent="end">
+          <Text text="Default" />
           <Text text="Headless" rotation={0.5} headless={true} />
-        </View>
-      </View>
-    </View>
+        </ViewLevel3>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }
