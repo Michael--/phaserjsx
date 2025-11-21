@@ -10,7 +10,7 @@ export function ViewLevel2(props: ViewProps) {
   const colors = useThemeTokens()?.colors
   return (
     <View
-      backgroundColor={colors?.surface.DEFAULT.toNumber()}
+      backgroundColor={colors?.surface.medium.toNumber()}
       padding={10}
       direction="column"
       gap={10}
@@ -21,5 +21,13 @@ export function ViewLevel2(props: ViewProps) {
 
 export function ViewLevel3(props: ViewProps) {
   const colors = useThemeTokens()?.colors
-  return <View borderColor={colors?.border.DEFAULT.toNumber()} padding={5} gap={5} {...props} />
+  return (
+    <View
+      //backgroundColor={colors?.surface.medium.toNumber()}
+      borderColor={colors?.border.medium.toNumber()}
+      padding={10}
+      gap={10}
+      {...props}
+    />
+  )
 }

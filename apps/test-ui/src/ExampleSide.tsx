@@ -8,7 +8,6 @@ import { ColorModeExample } from './examples/ColorModeExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
-import { LayoutExample } from './examples/LayoutExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
@@ -28,7 +27,6 @@ declare module '@phaserjsx/ui' {
 }
 
 const examples = {
-  layout: { label: 'Layout System', component: LayoutExample },
   advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
   button: { label: 'Button Variants', component: ButtonExample },
   gesture: { label: 'Gesture System', component: GestureExample },

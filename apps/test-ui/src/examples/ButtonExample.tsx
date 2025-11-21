@@ -3,49 +3,52 @@
  */
 import { View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 export function ButtonExample() {
   return (
-    <View direction="column" gap={20} padding={20}>
-      {/* Basic Buttons */}
-      <View direction="row" gap={10} alignItems="center">
-        <Button text="Default Button" onClick={() => console.log('Default clicked')} />
-        <Button text="Disabled" disabled onClick={() => console.log('Disabled clicked')} />
-      </View>
+    <ViewLevel1>
+      <ViewLevel2>
+        {/* Basic Buttons */}
+        <ViewLevel3 alignItems="center" direction="row">
+          <Button text="Default Button" onClick={() => console.log('Default clicked')} />
+          <Button text="Disabled" disabled onClick={() => console.log('Disabled clicked')} />
+        </ViewLevel3>
 
-      {/* Variants */}
-      <View direction="row" gap={10} alignItems="center">
-        <Button text="Primary" variant="primary" onClick={() => console.log('Primary clicked')} />
-        <Button
-          text="Secondary"
-          variant="secondary"
-          onClick={() => console.log('Secondary clicked')}
-        />
-        <Button text="Outline" variant="outline" onClick={() => console.log('Outline clicked')} />
-      </View>
+        {/* Variants */}
+        <ViewLevel3 alignItems="center" direction="row">
+          <Button text="Primary" variant="primary" onClick={() => console.log('Primary clicked')} />
+          <Button
+            text="Secondary"
+            variant="secondary"
+            onClick={() => console.log('Secondary clicked')}
+          />
+          <Button text="Outline" variant="outline" onClick={() => console.log('Outline clicked')} />
+        </ViewLevel3>
 
-      {/* Disabled Variants */}
-      <View direction="row" gap={10} alignItems="center">
-        <Button text="Primary Disabled" variant="primary" disabled />
-        <Button text="Secondary Disabled" variant="secondary" disabled />
-        <Button text="Outline Disabled" variant="outline" disabled />
-      </View>
+        {/* Disabled Variants */}
+        <ViewLevel3 alignItems="center" direction="row">
+          <Button text="Primary Disabled" variant="primary" disabled />
+          <Button text="Secondary Disabled" variant="secondary" disabled />
+          <Button text="Outline Disabled" variant="outline" disabled />
+        </ViewLevel3>
 
-      {/* Size Variants */}
-      <View direction="row" gap={10} alignItems="center">
-        <Button text="Small" size="small" width={80} height={30} />
-        <Button text="Medium" size="medium" width={120} height={40} />
-        <Button text="Large" size="large" width={160} height={50} />
-      </View>
+        {/* Size Variants */}
+        <ViewLevel3 alignItems="center" direction="row">
+          <Button text="Small" size="small" width={80} height={30} />
+          <Button text="Medium" size="medium" width={120} height={40} />
+          <Button text="Large" size="large" width={160} height={50} />
+        </ViewLevel3>
 
-      {/* With Children */}
-      <View direction="row" gap={10} alignItems="center">
-        <Button width={100} height={40}>
-          <View width={40} height={20} backgroundColor={0xaa33aa} backgroundAlpha={1}>
-            {/* Custom content can be added here */}
-          </View>
-        </Button>
-      </View>
-    </View>
+        {/* With Children */}
+        <ViewLevel3 alignItems="center" direction="row">
+          <Button width={100} height={40}>
+            <View width={40} height={20} backgroundColor={0xaa33aa} backgroundAlpha={1}>
+              {/* Custom content can be added here */}
+            </View>
+          </Button>
+        </ViewLevel3>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }
