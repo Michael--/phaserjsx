@@ -55,6 +55,12 @@ export class GestureManager {
     // Global pointer move - track deltas and notify all relevant containers
     this.scene.input.on('pointermove', this.handlePointerMove, this)
 
+    // Handle pointer up outside canvas (window-level events)
+    // This ensures we catch pointer release even when it happens outside the game canvas
+    this.handleGlobalPointerUp = this.handleGlobalPointerUp.bind(this)
+    window.addEventListener('mouseup', this.handleGlobalPointerUp)
+    window.addEventListener('touchend', this.handleGlobalPointerUp)
+
     // Cleanup on scene shutdown
     this.scene.events.once('shutdown', this.destroy, this)
   }
@@ -403,6 +409,67 @@ export class GestureManager {
   }
 
   /**
+   * Handle pointer up outside canvas (global window events)
+   * Ensures touch move 'end' state is sent even when pointer released outside
+   */
+  private handleGlobalPointerUp(_event: MouseEvent | TouchEvent): void {
+    if (!this.activePointerDown) return
+
+    // Find the active pointer in Phaser
+    const pointer = this.scene.input.activePointer
+    if (!pointer) return
+
+    const state = this.containers.get(this.activePointerDown.container)
+    if (!state) {
+      this.activePointerDown = null
+      return
+    }
+
+    // Clear long press timer if still pending
+    if (state.longPressTimer) {
+      clearTimeout(state.longPressTimer)
+      state.longPressTimer = undefined
+    }
+
+    // Send final move event with 'end' state to all active containers
+    const last = this.lastPointerPositions.get(pointer.id)
+    const dx = last ? pointer.x - last.x : 0
+    const dy = last ? pointer.y - last.y : 0
+    const hitContainers = this.activeContainersForMove.get(pointer.id)
+
+    this.bubbleEvent(
+      pointer,
+      'onTouchMove',
+      (targetState, targetLocalPos) => {
+        const finalMoveData = this.createEventData(
+          pointer,
+          targetLocalPos.x,
+          targetLocalPos.y,
+          targetState.hitArea.width,
+          targetState.hitArea.height,
+          { dx, dy, isInside: false, state: 'end' }
+        )
+        targetState.callbacks.onTouchMove?.(finalMoveData)
+
+        // Reset first move flag for this container
+        targetState.isFirstMove = undefined
+
+        return finalMoveData.isPropagationStopped()
+      },
+      hitContainers
+    )
+
+    // Reset state
+    state.longPressTriggered = false
+    state.pointerDownTime = undefined
+    this.activePointerDown = null
+    state.pointerDownPosition = undefined
+
+    // Clear active containers for this pointer
+    this.activeContainersForMove.delete(pointer.id)
+  }
+
+  /**
    * Handle global pointer move event
    * Only notifies containers that were hit during pointer down
    * Bubbles through them until stopPropagation() is called
@@ -508,6 +575,10 @@ export class GestureManager {
       this.scene.input.off('pointerdown', this.handlePointerDown, this)
       this.scene.input.off('pointerup', this.handlePointerUp, this)
       this.scene.input.off('pointermove', this.handlePointerMove, this)
+
+      // Remove global window event listeners
+      window.removeEventListener('mouseup', this.handleGlobalPointerUp)
+      window.removeEventListener('touchend', this.handleGlobalPointerUp)
     }
 
     this.isInitialized = false
