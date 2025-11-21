@@ -59,29 +59,53 @@ export class RowLayoutStrategy extends BaseLayoutStrategy {
     const margin = this.getMarginValues(child)
     const isHeadless = child.child.__layoutProps?.headless
 
-    // Headless objects: ignore container padding, use full parent size
-    const paddingLeft = isHeadless ? 0 : context.padding.left
-    const paddingTop = isHeadless ? 0 : context.padding.top
-    const crossAxisSize = isHeadless
-      ? (context.parentSize?.height ?? context.contentArea.height)
-      : context.contentArea.height
+    let x: number
+    let y: number
+    let nextMain: number
 
-    // Main axis (horizontal)
-    currentMain += margin.left
-    const x = paddingLeft + currentMain
+    if (isHeadless) {
+      // Headless: calculate position directly using alignItems/justifyContent on full parent size
+      const parentWidth = context.parentSize?.width ?? context.contentArea.width
+      const parentHeight = context.parentSize?.height ?? context.contentArea.height
 
-    // Cross axis (vertical) - alignItems
-    const y =
-      paddingTop +
-      calculateAlignItems(
+      // justifyContent on main axis (horizontal)
+      const justify = context.containerProps.justifyContent ?? 'start'
+      let mainAxisOffset = 0
+      if (justify === 'center') {
+        mainAxisOffset = (parentWidth - child.size.width) / 2
+      } else if (justify === 'end') {
+        mainAxisOffset = parentWidth - child.size.width
+      }
+      x = mainAxisOffset
+
+      // alignItems on cross axis (vertical)
+      const crossAxisOffset = calculateAlignItems(
         context.containerProps.alignItems,
-        crossAxisSize,
+        parentHeight,
+        child.size.height,
+        0,
+        0
+      )
+      y = crossAxisOffset
+
+      // Don't advance currentMain for headless
+      nextMain = currentMain
+    } else {
+      // Normal: use container padding and contentArea
+      currentMain += margin.left
+      x = context.padding.left + currentMain
+
+      const alignOffset = calculateAlignItems(
+        context.containerProps.alignItems,
+        context.contentArea.height,
         child.size.height,
         margin.top,
         margin.bottom
       )
+      y = context.padding.top + alignOffset
 
-    const nextMain = currentMain + child.size.width + margin.right
+      nextMain = currentMain + child.size.width + margin.right
+    }
 
     return {
       position: { x, y },

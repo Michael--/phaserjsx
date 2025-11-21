@@ -132,84 +132,34 @@ export function AdvancedLayoutExample() {
       <AlignItemsRowExample />
       <ViewLevel2 direction="row">
         {/* Test 1: start/start - should match x=0, y=0 */}
-        <View direction="stack">
-          <ViewLevel3 height={200} width={200} alignItems="start" justifyContent="start">
-            <Text
-              text="Layout 12345678"
-              style={{ color: 'red' }}
-              rotation={Math.PI / 2}
-              headless={true}
-            />
-          </ViewLevel3>
+        <ViewLevel3 height={200} width={200} alignItems="start" justifyContent="start">
           <Text
-            x={0}
-            y={0}
             text="Layout 12345678"
-            style={{ color: 'green' }}
+            style={{ color: 'red' }}
             rotation={Math.PI / 2}
             headless={true}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Test 2: center/center - should match x=100, y=100 */}
-        <View direction="stack">
-          <ViewLevel3 height={200} width={200} alignItems="center" justifyContent="center">
-            <Text
-              text="Layout 12345678"
-              style={{ color: 'red' }}
-              rotation={Math.PI / 2}
-              headless={true}
-            />
-          </ViewLevel3>
+        <ViewLevel3 height={200} width={200} alignItems="center" justifyContent="center">
           <Text
-            x={100}
-            y={100}
             text="Layout 12345678"
-            style={{ color: 'green' }}
-            rotation={Math.PI / 2}
+            style={{ color: 'red' }}
+            rotation={Math.PI / 3}
             headless={true}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Test 3: end/end - should match x=200, y=200 */}
-        <View direction="stack">
-          <ViewLevel3
-            height={200}
-            width={200}
-            alignItems="end"
-            justifyContent="end"
-            padding={42}
-            //margin={10}
-            gap={0}
-          >
-            <Text
-              text="Layout 12345678"
-              style={{ color: 'red' }}
-              rotation={Math.PI / 2}
-              headless={true}
-            />
-            <Text
-              text="Layout 12345678"
-              style={{ color: 'red' }}
-              rotation={Math.PI / 2}
-              headless={true}
-            />
-            <Text
-              text="Layout 12345678"
-              style={{ color: 'red' }}
-              rotation={Math.PI / 2}
-              headless={true}
-            />
-          </ViewLevel3>
+        <ViewLevel3 height={200} width={200} alignItems="end" justifyContent="end">
           <Text
-            x={200}
-            y={200}
             text="Layout 12345678"
-            style={{ color: 'green' }}
-            rotation={Math.PI / 2}
+            style={{ color: 'red' }}
+            rotation={Math.PI / 3}
             headless={true}
           />
-        </View>
+        </ViewLevel3>
       </ViewLevel2>
     </ViewLevel1>
   )
