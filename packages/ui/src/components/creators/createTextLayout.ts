@@ -22,7 +22,8 @@ export function createTextLayout(
   text.__layoutProps = props as TextBaseProps
 
   // Attach dynamic size provider
-  // Headless text returns size 0 (no layout participation)
+  // Headless text returns minimal size 1x1 (participates in alignment, not spacing)
+  // Note: 0x0 causes issues with Phaser internals or layout optimizations
   // Layout-aware text returns actual dimensions (rotation ignored for layout)
   text.__getLayoutSize = () => {
     if (text.__layoutProps?.headless) {

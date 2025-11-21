@@ -206,6 +206,38 @@ export function AdvancedLayoutExample() {
     <View width={'100%'} height={'100%'} justifyContent="start" padding={20} gap={10}>
       <JustifyContentColumnExample />
       <AlignItemsRowExample />
+      <View direction="row" gap={10}>
+        <View
+          height={200}
+          width={200}
+          backgroundColor={0xffffff}
+          alignItems="start"
+          justifyContent="start"
+        >
+          <Text text="Box 200x200" />
+          <Text text="Headless" rotation={0.5} headless={true} />
+        </View>
+        <View
+          height={200}
+          width={200}
+          backgroundColor={0xffffff}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text text="Box 200x200" />
+          <Text text="Headless" rotation={0.5} headless={true} />
+        </View>
+        <View
+          height={200}
+          width={200}
+          backgroundColor={0xffffff}
+          alignItems="end"
+          justifyContent="end"
+        >
+          <Text text="Box 201x200" />
+          <Text text="Headless" rotation={0.5} headless={true} />
+        </View>
+      </View>
     </View>
   )
 }
