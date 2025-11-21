@@ -74,8 +74,8 @@ export function ExampleContainer(props: { selectedExample: ExampleKey }) {
   const Component = examples[props.selectedExample].component
 
   return (
-    <View width={'100%'} key="demo-container" theme={nestedTheme} flex={1}>
-      <Component key={props.selectedExample} />
+    <View width={'100%'} key={`container-${props.selectedExample}`} theme={nestedTheme} flex={1}>
+      <Component />
     </View>
   )
 }
