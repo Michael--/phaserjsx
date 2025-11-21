@@ -26,8 +26,8 @@ declare module '@phaserjsx/ui' {
 export interface ScrollSliderProps {
   /** Direction of the slider */
   direction: 'vertical' | 'horizontal'
-  /** Size of the track */
-  trackSize: number
+  /** Size of the track - can be number (pixels) or string ("100vh", "50%", etc.) */
+  trackSize: number | string
   /** Scroll information from ScrollView */
   scrollInfo: { scrollX: number; scrollY: number; width: number; height: number }
   /** Callback when slider is scrolled */
@@ -44,6 +44,7 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
+  const trackContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
 
   const isVertical = direction === 'vertical'
   const scrollPercent = isVertical ? scrollInfo.scrollY : scrollInfo.scrollX
@@ -52,7 +53,20 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const border = themed.borderWidth ?? 1
   const outer = themed.size ?? 24
   const dimension = outer - border * 2
-  const trackSizeInner = trackSize - border * 2
+
+  // Get actual resolved track size from the container after layout
+  const resolvedTrackSize =
+    trackContainerRef.current &&
+    trackContainerRef.current.width > 0 &&
+    trackContainerRef.current.height > 0
+      ? isVertical
+        ? trackContainerRef.current.height
+        : trackContainerRef.current.width
+      : typeof trackSize === 'number'
+        ? trackSize
+        : 800 // fallback
+
+  const trackSizeInner = resolvedTrackSize - border * 2
   const minThumbSize = themed.minThumbSize ?? 20
   const thumbSize = Math.max(minThumbSize, (trackSizeInner * sizePercent) / 100)
   const thumbRange = trackSizeInner - thumbSize
@@ -89,6 +103,7 @@ export function ScrollSlider(props: ScrollSliderProps) {
 
   return (
     <View
+      ref={trackContainerRef}
       width={isVertical ? outer : trackSize}
       height={isVertical ? trackSize : outer}
       backgroundColor={themed.borderColor ?? 0x000000}

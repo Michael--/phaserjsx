@@ -454,7 +454,7 @@ export function ThemePreviewExample() {
       >
         <ScrollSlider
           direction="vertical"
-          trackSize={800}
+          trackSize="100vh"
           scrollInfo={scroll}
           onScroll={handleVScroll}
         />
