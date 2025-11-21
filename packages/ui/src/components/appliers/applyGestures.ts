@@ -21,9 +21,15 @@ export function applyGesturesProps(
   prev: Partial<GestureProps & LayoutProps>,
   next: Partial<GestureProps & LayoutProps>
 ): void {
-  // Safety check: ensure scene and scene.data are valid
-  if (!scene || !scene.data) {
-    console.warn('applyGesturesProps: Invalid scene or scene.data is undefined')
+  // Safety check: ensure scene is valid and booted
+  if (!scene || !scene.sys || !scene.data) {
+    console.warn('applyGesturesProps: Invalid scene or scene not initialized')
+    return
+  }
+
+  // Check if scene is still active (not shutting down/destroyed)
+  if (!scene.sys.isActive() || scene.sys.game === null) {
+    console.warn('applyGesturesProps: Scene is not active or game is null')
     return
   }
 
