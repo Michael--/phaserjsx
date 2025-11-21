@@ -13,6 +13,8 @@ type TextNode = {
   setStyle: (style: object) => void
   setWordWrapWidth: (width: number, useAdvancedWrap: boolean) => void
   updateText?: () => void // Force Phaser to recalculate text metrics immediately
+  active?: boolean // Check if GameObject is still active
+  scene?: Phaser.Scene // Access to scene for texture checks
 }
 
 /**
@@ -28,6 +30,11 @@ export function applyTextProps<T extends TextNode>(
   >,
   next: Partial<TextSpecificProps & { style?: Phaser.Types.GameObjects.Text.TextStyle | undefined }>
 ): void {
+  // Safety check: Ensure node is still active and scene is available
+  if (node.active === false || (node.scene && !node.scene.sys.game)) {
+    return
+  }
+
   let needsUpdate = false
 
   // Text content
@@ -38,8 +45,13 @@ export function applyTextProps<T extends TextNode>(
 
   // Apply style changes if the style object changed
   if (next.style !== undefined && !equal(next.style, prev.style || {})) {
-    node.setStyle(next.style)
-    needsUpdate = true
+    // Guard against Phaser canvas context errors during theme updates
+    try {
+      node.setStyle(next.style)
+      needsUpdate = true
+    } catch (error) {
+      console.warn('Failed to apply text style (scene may be transitioning):', error)
+    }
   }
 
   // Word wrap width
@@ -50,8 +62,12 @@ export function applyTextProps<T extends TextNode>(
 
   // Legacy: Support direct Phaser style object
   if (prev.style !== next.style && next.style !== undefined) {
-    node.setStyle(next.style)
-    needsUpdate = true
+    try {
+      node.setStyle(next.style)
+      needsUpdate = true
+    } catch (error) {
+      console.warn('Failed to apply text style (scene may be transitioning):', error)
+    }
   }
 
   // Force Phaser to recalculate text metrics immediately

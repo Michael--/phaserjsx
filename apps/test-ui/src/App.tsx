@@ -102,6 +102,43 @@ function PresetUpdater() {
   return <View />
 }
 
+/**
+ * JSX Static Debug Box - Captures and outputs VDOM snapshots
+ */
+function JsxStaticBox(props: { keys: string[] }) {
+  const run = async () => {
+    // Dynamically import debug utilities (not bundled in production)
+    const { captureSnapshot, outputToConsole } = await import('./debug/snapshot')
+    const { getRootVNodeFromGame } = await import('./debug/root-registry')
+
+    // Get root VNode from current game instance
+    const game = (window as { game?: Phaser.Game }).game
+    if (!game) {
+      console.warn('No Phaser game instance found')
+      return
+    }
+
+    const rootVNode = getRootVNodeFromGame(game)
+    if (!rootVNode) {
+      console.warn('No root VNode found in scene')
+      return
+    }
+
+    // For function components, the actual rendered VNode is in __ctx.vnode
+    // The root VNode is just the component wrapper
+    const actualVNode = rootVNode.__ctx?.vnode || rootVNode
+
+    // Capture snapshot with key filtering
+    // Use empty array or ['*'] to show all nodes
+    const keyPatterns = props.keys.length === 0 ? ['*'] : props.keys
+    console.log('🔍 Capturing snapshot with key patterns:', keyPatterns)
+    const snapshot = captureSnapshot([actualVNode], keyPatterns)
+    outputToConsole(snapshot)
+  }
+
+  return <Button variant="primary" text="JSX Static" onClick={run} />
+}
+
 export function App(props: AppProps) {
   const width = props.width
   const height = props.height
@@ -114,6 +151,7 @@ export function App(props: AppProps) {
     <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'}>
+        <JsxStaticBox keys={['*']} />
         <LightDarkModeToggle />
         <PresetSelector />
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />

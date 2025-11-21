@@ -79,7 +79,7 @@ class MainScene extends Phaser.Scene {
   }
 }
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   width: '100%',
   height: '100%',
@@ -98,3 +98,6 @@ new Phaser.Game({
   parent: 'app',
   scene: [MainScene],
 })
+
+// Expose game instance for debug access
+;(window as { game?: Phaser.Game }).game = game

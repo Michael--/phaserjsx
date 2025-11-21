@@ -127,7 +127,7 @@ function AlignItemsRowExample() {
  */
 export function AdvancedLayoutExample() {
   return (
-    <ViewLevel1>
+    <ViewLevel1 key="advanced-layout-example">
       <JustifyContentColumnExample />
       <AlignItemsRowExample />
     </ViewLevel1>

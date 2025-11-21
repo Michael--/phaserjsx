@@ -631,5 +631,11 @@ export function mountJSX(
   }
 
   const vnode: VNode = { type, props, children: [] }
+
+  // Store root VNode on the scene for debug access (non-intrusive)
+  if (scene) {
+    ;(scene as unknown as { __rootVNode?: VNode }).__rootVNode = vnode
+  }
+
   return mount(parentOrScene, vnode)
 }
