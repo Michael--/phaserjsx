@@ -1,5 +1,109 @@
 /**
- * View component implementation - native Phaser Container with background and interaction support
+ * View component - Phaser Container with background Graphics and layout system
+ * Status: IMPLEMENTED ✅
+ *
+ * Design Overview:
+ * ================
+ *
+ * 1. Component Role: LAYOUT CONTAINER
+ *    Purpose: Primary layout primitive for UI composition
+ *    Composition: Phaser.Container + Background Graphics (optional)
+ *    Responsibilities:
+ *    - Layout orchestration (flexbox-style positioning of children)
+ *    - Visual styling (background color, borders, corner radius)
+ *    - Gesture handling (touch/mouse interaction)
+ *    - Dimension management (defines its own size + provides context for children)
+ *
+ * 2. Headless Behavior: NEVER HEADLESS ⚠️
+ *    Decision: View cannot be headless (always participates in layout)
+ *    Reasoning:
+ *    - View IS the layout system - it defines layout context for children
+ *    - Background Graphics has special role (__isBackground flag)
+ *    - Graphics is internal to View, excluded from child layout calculations
+ *    - If you need non-layout container, use raw Phaser.Container directly
+ *
+ * 3. Layout System Architecture:
+ *    Two-part system:
+ *    A) Background Graphics (special role):
+ *       - Defines View dimensions (not a layout child!)
+ *       - Marked with __isBackground = true
+ *       - Filtered out in layout calculations (see isLayoutChild helper)
+ *       - Automatically resized to match container dimensions
+ *    B) Layout Engine:
+ *       - Processes children (Views, Text, Images, etc.)
+ *       - Applies flexbox-style layout (row/column/stack)
+ *       - Respects headless flag on children
+ *       - Updates child positions/sizes based on layout props
+ *
+ * 4. Background Graphics vs. Graphics Component:
+ *    Distinction:
+ *    - View Background: Internal, auto-managed, defines dimensions, __isBackground=true
+ *    - Graphics Component: User-facing, custom shapes, typically headless=true
+ *    - Both use Phaser.Graphics but completely different purposes
+ *
+ * 5. Layout Size Provider:
+ *    Implementation: __getLayoutSize returns explicit or calculated dimensions
+ *    Behavior:
+ *    - Explicit width/height: Use those values
+ *    - Auto-size (undefined): Calculate from children + padding
+ *    - Percentage/fill: Resolve from parent context
+ *    - Critical: Background Graphics updates to match final size
+ *
+ * 6. Gesture System Integration:
+ *    Features:
+ *    - enableGestures: true enables touch/mouse interaction
+ *    - Hit area automatically sized to container dimensions
+ *    - Updated after layout recalculation (deferred queue)
+ *    - Supports: onTouch, onTouchMove, onDoubleTap, onLongPress
+ *    - Cross-platform (transparent mouse/touch support)
+ *
+ * 7. Styling Props:
+ *    Background:
+ *    - backgroundColor/backgroundAlpha: Fill color
+ *    - cornerRadius: Rounded corners (number or per-corner object)
+ *    - borderColor/borderWidth/borderAlpha: Stroke
+ *    Auto-defaults:
+ *    - backgroundAlpha defaults to 1 if backgroundColor set
+ *    - borderWidth defaults to 1 if borderColor set
+ *
+ * 8. Common Patterns:
+ *    Layout Container:
+ *      <View direction="row" gap={10} padding={20}>
+ *        <View flex={1}>Left</View>
+ *        <View flex={2}>Right</View>
+ *      </View>
+ *    Styled Box:
+ *      <View backgroundColor={0x3498db} cornerRadius={8} padding={16}>
+ *        <Text text="Card Content" />
+ *      </View>
+ *    Interactive Area:
+ *      <View enableGestures={true} onTouch={() => console.log('clicked')}>
+ *        <Text text="Button" />
+ *      </View>
+ *
+ * 9. Performance Considerations:
+ *    - Background Graphics redrawn only when visual props change
+ *    - Layout calculations batched (LayoutBatchQueue)
+ *    - Gesture hit areas updated in deferred queue (post-layout)
+ *    - Overflow masking (overflow="hidden") adds Phaser mask overhead
+ *
+ * 10. Known Limitations:
+ *     - Background Graphics cannot be independently positioned/rotated
+ *     - Overflow masking doesn't support rounded corners (Phaser limitation)
+ *     - Nested View layout recalculations can be expensive (use sparingly)
+ *     - Gesture system requires scene pointer plugin (auto-enabled)
+ *
+ * Implementation Status:
+ * ======================
+ * [✅] Phaser Container creation
+ * [✅] Background Graphics with styling (color, border, radius)
+ * [✅] Layout system integration (__layoutProps, __getLayoutSize)
+ * [✅] Transform props (position, rotation, scale, alpha)
+ * [✅] Gesture system (enableGestures, interaction callbacks)
+ * [✅] Auto-defaults for background/border alpha
+ * [✅] Overflow masking support
+ * [✅] Theme system integration
+ * [✅] Deferred layout queue for gesture updates
  */
 import Phaser from 'phaser'
 import type { BackgroundProps, GestureProps, LayoutProps, TransformProps } from '../core-props'

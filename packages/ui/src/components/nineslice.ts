@@ -1,6 +1,162 @@
 /**
- * NineSlice component implementation - native Phaser NineSlice GameObject
- * Used for scalable UI elements like buttons, panels, progress bars
+ * NineSlice component - Phaser NineSlice GameObject for scalable UI panels
+ * Status: IMPLEMENTED ✅
+ *
+ * Design Overview:
+ * ================
+ *
+ * 1. Component Role: SCALABLE UI PANELS
+ *    Purpose: Create resizable UI elements that preserve border/corner integrity
+ *    Phaser Type: Phaser.GameObjects.NineSlice (9-slice scaling)
+ *    Use Cases:
+ *    - Buttons with fixed corner radius
+ *    - Dialog boxes with preserved borders
+ *    - Progress bars with capped ends
+ *    - Panels that scale without distorting decorative edges
+ *
+ * 2. Nine-Slice Scaling Concept:
+ *    Texture divided into 9 regions:
+ *      ┌─────┬─────────┬─────┐
+ *      │ TL  │   Top   │ TR  │  (corners + edges)
+ *      ├─────┼─────────┼─────┤
+ *      │Left │ Center  │Right│  (center scales, edges stretch)
+ *      ├─────┼─────────┼─────┤
+ *      │ BL  │ Bottom  │ BR  │  (corners stay fixed)
+ *      └─────┴─────────┴─────┘
+ *    Behavior:
+ *    - Corners: Never scale (preserve pixel-perfect)
+ *    - Edges: Stretch along one axis (top/bottom: horizontal, left/right: vertical)
+ *    - Center: Scales in both directions
+ *    Benefit: UI elements scale to any size without visual distortion
+ *
+ * 3. Three-Slice Mode (Optional):
+ *    Feature: Omit topHeight/bottomHeight for horizontal-only slicing
+ *    Use Case: Horizontal buttons, progress bars
+ *    Layout:
+ *      ┌─────┬─────────────────┬─────┐
+ *      │Left │     Center      │Right│
+ *      └─────┴─────────────────┴─────┘
+ *    Props: Only leftWidth + rightWidth required
+ *
+ * 4. Headless Default: FALSE ✅
+ *    Decision: NineSlice participates in layout by default
+ *    Reasoning:
+ *    - NineSlice is a UI element (buttons, panels, containers)
+ *    - Should affect parent container dimensions
+ *    - Similar to View component (container semantics)
+ *    Use Cases:
+ *    - ✅ Layout-aware (default): Buttons, panels, dialogs, cards
+ *    - ❌ Headless (optional): Background overlays, decorative frames
+ *    Usage:
+ *      <NineSlice texture="panel" leftWidth={16} rightWidth={16} width={200} height={100} />
+ *      <NineSlice texture="frame" headless={true} />  // Decorative
+ *
+ * 5. Layout Size Provider:
+ *    Implementation: Uses explicit width/height (required props)
+ *    Reasoning:
+ *    - NineSlice requires explicit dimensions (Phaser constructor param)
+ *    - No auto-sizing (unlike Text)
+ *    - Dimensions always known and stable
+ *    __getLayoutSize:
+ *      return { width: nineSlice.width, height: nineSlice.height }
+ *    Note: getBounds() not needed (no rotation typically applied)
+ *
+ * 6. Slice Configuration:
+ *    Required Props:
+ *    - texture: string (texture key)
+ *    - leftWidth: number (pixels)
+ *    - rightWidth: number (pixels)
+ *    - width: number (total width)
+ *    - height: number (total height)
+ *    Optional Props:
+ *    - topHeight: number (9-slice mode, default: 0 for 3-slice)
+ *    - bottomHeight: number (9-slice mode, default: 0 for 3-slice)
+ *    - frame: string | number (texture atlas frame)
+ *    Validation:
+ *    - Width must be >= leftWidth + rightWidth
+ *    - Height must be >= topHeight + bottomHeight
+ *    - Slice widths/heights define source texture regions
+ *
+ * 7. Inner Bounds Feature:
+ *    Purpose: Calculate content area excluding slices
+ *    Use Case: Position children inside panel borders
+ *    Calculation:
+ *      innerBounds = {
+ *        x: leftWidth,
+ *        y: topHeight,
+ *        width: totalWidth - leftWidth - rightWidth,
+ *        height: totalHeight - topHeight - bottomHeight
+ *      }
+ *    Access:
+ *      const ref = useRef<NineSliceRef>(null)
+ *      <NineSlice ref={ref} ... />
+ *      console.log(ref.current?.innerBounds)  // { x, y, width, height }
+ *    Pattern: Useful for padding-aware content positioning
+ *
+ * 8. Ref Extension:
+ *    Feature: NineSliceRef provides slice metadata
+ *    Properties:
+ *    - node: Phaser.GameObjects.NineSlice (the GameObject)
+ *    - leftWidth, rightWidth, topHeight, bottomHeight: Slice dimensions
+ *    - innerBounds: Content area calculation
+ *    Usage:
+ *      const panelRef = useRef<NineSliceRef>(null)
+ *      // Access slice info for child positioning
+ *      const { innerBounds } = panelRef.current
+ *
+ * 9. Common Patterns:
+ *    Button:
+ *      <NineSlice
+ *        texture="button"
+ *        leftWidth={16} rightWidth={16}
+ *        topHeight={16} bottomHeight={16}
+ *        width={200} height={60}
+ *      >
+ *        <Text text="Click Me" />
+ *      </NineSlice>
+ *    Dialog Box:
+ *      <NineSlice
+ *        texture="panel"
+ *        leftWidth={32} rightWidth={32}
+ *        topHeight={32} bottomHeight={32}
+ *        width={400} height={300}
+ *      >
+ *        <View padding={32}>  {/* Padding matches slice sizes * }
+ *          <Text text="Dialog Content" />
+ *        </View>
+ *      </NineSlice>
+ *    Progress Bar (3-slice):
+ *      <NineSlice
+ *        texture="progressbar"
+ *        leftWidth={8} rightWidth={8}
+ *        width={progress * 200} height={20}
+ *      />
+ *
+ * 10. Performance Considerations:
+ *     - Efficient rendering (single draw call per NineSlice)
+ *     - Texture atlases recommended (reduce texture switches)
+ *     - Scaling performance: No geometry regeneration needed
+ *     - Slice configuration: Calculated once on creation
+ *     - Dynamic resizing: Efficiently handled by Phaser
+ *
+ * 11. Known Limitations:
+ *     - Requires pre-designed 9-slice texture
+ *     - Slice dimensions must match source texture layout exactly
+ *     - Rotation not recommended (distorts slice alignment)
+ *     - Can't animate slice dimensions (only width/height)
+ *     - No rounded corner support (must be in texture)
+ *
+ * Implementation Status:
+ * ======================
+ * [✅] Phaser NineSlice creation with slice configuration
+ * [✅] Transform props (position, scale, alpha, depth)
+ * [✅] Layout system integration (__layoutProps, __getLayoutSize)
+ * [✅] Width/height as layout props (explicit sizing)
+ * [✅] Three-slice mode support (optional topHeight/bottomHeight)
+ * [✅] NineSliceRef with innerBounds calculation
+ * [✅] Slice dimension validation
+ * [✅] Theme system integration
+ * [✅] Dynamic resizing support (width/height patching)
  */
 import type Phaser from 'phaser'
 import type { LayoutProps, TransformProps } from '../core-props'
