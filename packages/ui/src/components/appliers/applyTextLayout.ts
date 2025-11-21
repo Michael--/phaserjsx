@@ -25,6 +25,7 @@ export function applyTextLayout(
 
   // Update size provider if text content or style changed
   if (prev.text !== next.text || prev.style !== next.style) {
+    // Use unrotated dimensions for layout calculations
     text.__getLayoutSize = () => {
       return {
         width: text.width,

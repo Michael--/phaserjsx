@@ -1,6 +1,6 @@
 /**
  * Text component - Phaser Text GameObject for rendering text
- * Status: IMPLEMENTED ✅ (Rotation fix pending)
+ * Status: IMPLEMENTED ✅
  *
  * Design Overview:
  * ================
@@ -26,18 +26,21 @@
  *      <Text text="Label" />                    // Layout-aware
  *      <Text text="+100" headless={true} />    // Floating (no layout impact)
  *
- * 3. Layout Size Provider: CURRENT IMPLEMENTATION ⚠️
- *    Current: Uses text.width and text.height (NOT rotation-aware)
- *    Issue: Rotation breaks layout calculations
- *    Problem:
- *      <Text text="Hello" rotation={Math.PI / 4} />  // Layout size incorrect!
- *    Solution: Use getBounds() instead of width/height
- *    Correct Implementation:
- *      __getLayoutSize = () => {
- *        const bounds = text.getBounds()
- *        return { width: bounds.width, height: bounds.height }
- *      }
- *    Status: NEEDS FIX 🔧 (Phase 3 implementation)
+ * 3. Layout Size Provider: UNROTATED DIMENSIONS ✅
+ *    Implementation: Uses text.width and text.height (unrotated)
+ *    Behavior:
+ *    - Returns unrotated text dimensions
+ *    - Rotation is IGNORED for layout-aware text (headless=false)
+ *    - Rotation only works with headless=true (no layout impact)
+ *    Reasoning:
+ *    - Flow layout is incompatible with rotation (causes positioning issues)
+ *    - Rotated text would overlap siblings in flow layout
+ *    - getBounds() position compensation is complex and error-prone
+ *    Example:
+ *      <Text text="Hello" />                        // ✅ Layout size: 100x20
+ *      <Text text="World" rotation={Math.PI/4} />   // ⚠️ Rotation IGNORED, size: 100x20
+ *      <Text text="World" rotation={Math.PI/4} headless={true} /> // ✅ Rotated, no layout
+ *    Recommendation: Use rotation only with headless=true or absolute positioning
  *
  * 4. Text Content & Styling:
  *    Props:
@@ -105,7 +108,8 @@
  *    - Text batching: Multiple Text objects don't batch (separate draw calls)
  *
  * 10. Known Limitations:
- *     - Rotation breaks layout size calculation (needs getBounds fix)
+ *     - Rotation only supported with headless=true (ignored for layout-aware text)
+ *       → Flow layout is incompatible with rotation
  *     - No rich text support (HTML tags, colors within text)
  *     - Limited text effects (no shadows, outlines in base component)
  *     - WordWrap with maxWidth: Can't specify ellipsis truncation
@@ -114,12 +118,12 @@
  * Implementation Status:
  * ======================
  * [✅] Phaser Text creation with style support
- * [✅] Transform props (position, rotation, scale, alpha)
+ * [✅] Transform props (position, scale, alpha)
  * [✅] Layout system integration (__layoutProps, __getLayoutSize)
  * [✅] Margin support (unique feature)
  * [✅] Text content and style patching
  * [✅] Theme system integration
- * [❌] Rotation-aware layout size (needs getBounds) - PENDING FIX 🔧
+ * [⚠️] Rotation - Only with headless=true (ignored for layout-aware text)
  * [❌] Rich text support - Future feature
  * [❌] Text effects (shadow, outline) - Future feature
  */
@@ -154,8 +158,15 @@ export interface TextProps extends TextBaseProps, PropsDefaultExtension<Phaser.G
 export const textCreator: HostCreator<'Text'> = (scene, props) => {
   const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
 
-  // Apply transform props (visible, depth, alpha, scale, rotation)
-  createTransform(text, props)
+  // Ignore rotation for layout-aware text (headless=false)
+  // Rotation is only supported with headless=true
+  const transformProps = { ...props }
+  if (!props.headless && props.rotation !== undefined) {
+    delete transformProps.rotation
+  }
+
+  // Apply transform props (visible, depth, alpha, scale, rotation if headless)
+  createTransform(text, transformProps)
 
   // Setup layout system (props and size provider)
   createTextLayout(text, props)
@@ -167,8 +178,19 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
  * Text patcher - updates Text properties
  */
 export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
-  // Apply transform props (position, rotation, scale, alpha, depth, visibility)
-  applyTransformProps(node, prev, next)
+  // Ignore rotation for layout-aware text (headless=false)
+  // Rotation is only supported with headless=true
+  const transformPrev = { ...prev }
+  const transformNext = { ...next }
+  if (!next.headless && next.rotation !== undefined) {
+    delete transformNext.rotation
+  }
+  if (!prev.headless && prev.rotation !== undefined) {
+    delete transformPrev.rotation
+  }
+
+  // Apply transform props (position, rotation only if headless, scale, alpha, depth, visibility)
+  applyTransformProps(node, transformPrev, transformNext)
 
   // Apply text-specific props (text content, color, font, etc.)
   applyTextProps(node, prev, next)
