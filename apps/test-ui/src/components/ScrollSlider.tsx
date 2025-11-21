@@ -108,11 +108,22 @@ export function ScrollSlider(props: ScrollSliderProps) {
     // Stop event propagation to prevent ScrollView from receiving the event
     data.stopPropagation()
 
+    // localY/localX is relative to the background view which has the full trackSizeInner dimensions
     const localPos = isVertical ? (data.localY ?? 0) : (data.localX ?? 0)
-    const effectiveSize = trackSizeInner
-    const normalizedPos = Math.max(0, Math.min(1, localPos / effectiveSize))
-    const targetScrollPercent = normalizedPos * 100
-    onScroll(targetScrollPercent)
+
+    // Calculate the center position of where the thumb should be
+    const targetThumbCenter = Math.max(
+      thumbSize / 2,
+      Math.min(trackSizeInner - thumbSize / 2, localPos)
+    )
+
+    // Convert to thumb position (top-left corner)
+    const targetThumbPos = targetThumbCenter - thumbSize / 2
+
+    // Calculate scroll percent from thumb position
+    const targetScrollPercent = thumbRange > 0 ? (targetThumbPos / thumbRange) * 100 : 0
+
+    onScroll(Math.max(0, Math.min(100, targetScrollPercent)))
   }
 
   return (
@@ -132,15 +143,17 @@ export function ScrollSlider(props: ScrollSliderProps) {
         padding={0}
       >
         <View
-          width={'fill'}
-          height={'fill'}
+          width={isVertical ? dimension : trackSizeInner}
+          height={isVertical ? trackSizeInner : dimension}
+          x={0}
+          y={0}
           backgroundColor={themed.trackColor ?? 0xaaaaaa}
           enableGestures={true}
           onTouch={handleBackgroundTouch}
         />
         <View
-          width={isVertical ? 'fill' : thumbSize}
-          height={isVertical ? thumbSize : 'fill'}
+          width={isVertical ? dimension : thumbSize}
+          height={isVertical ? thumbSize : dimension}
           x={isVertical ? 0 : thumbPosition}
           y={isVertical ? thumbPosition : 0}
           backgroundColor={themed.thumbColor ?? 0xeeeebb}
