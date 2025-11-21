@@ -3,7 +3,8 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import type { ColorShade } from '@phaserjsx/ui'
-import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { Text, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollSlider } from '../components'
 import { Button } from '../components/Button'
 import { ScrollView } from '../components/ScrollView'
 import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
@@ -391,19 +392,81 @@ function ComponentShowcase() {
 
 /**
  * Main theme preview component
+ * TODO: worse idea to fiddle out size of content - find better way
+ * TODO: may missing property fit-content for width/height on View
  */
 export function ThemePreviewExample() {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const [dim, setDim] = useState({ width: 1222, height: 800 })
+  const [scroll, setScroll] = useState({
+    dx: 0,
+    dy: 0,
+    scrollX: 0,
+    scrollY: 0,
+    width: 0,
+    height: 0,
+  })
+  // define the view and content sizes for scroll calculations
+  const viewSize = 1200
+
+  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
+    // Calculate absolute scroll positions from percentages
+    const maxScrollY = Math.max(0, ch - vh)
+    const dy = (y / 100) * maxScrollY
+
+    const maxScrollX = Math.max(0, cw - vw)
+    const dx = (x / 100) * maxScrollX
+
+    setScroll({
+      dx,
+      dy,
+      scrollX: x,
+      scrollY: y,
+      width: (vw / cw) * 100,
+      height: (vh / ch) * 100,
+    })
+  }
+
+  const handleVScroll = (percent: number) => {
+    const vh = viewSize
+    const ch = vh / (scroll.height / 100)
+    const maxScrollY = Math.max(0, ch - vh)
+    const dy = (percent / 100) * maxScrollY
+    setScroll({ ...scroll, dy, scrollY: percent })
+  }
+
+  const handleRef = (container: Phaser.GameObjects.Container | null) => {
+    if (!container || ref.current != null) return
+    if (container.width === 0 || container.height === 0) return
+    ref.current = container
+    setDim({ width: container.width, height: container.height })
+    console.log('Container ref:', container?.width, container?.height)
+  }
+
   return (
-    <ViewLevel1>
-      <ScrollView>
-        <View gap={32}>
-          <ColorSection />
-          <ComponentShowcase />
-          <SpacingSection />
-          <BorderRadiusSection />
-          <TypographySection />
+    <View direction="stack">
+      <View ref={handleRef} width={'100%'} height={'100%'}></View>
+      <View direction="stack">
+        <ViewLevel1 width={dim.width} direction="row" gap={0}>
+          <ScrollView scroll={scroll} onScroll={handleScroll}>
+            <View gap={32}>
+              <ColorSection />
+              <ComponentShowcase />
+              <SpacingSection />
+              <BorderRadiusSection />
+              <TypographySection />
+            </View>
+          </ScrollView>
+        </ViewLevel1>
+        <View width={dim.width} direction="row" gap={0} justifyContent="end" padding={{ right: 1 }}>
+          <ScrollSlider
+            direction="vertical"
+            trackSize={dim.height}
+            scrollInfo={scroll}
+            onScroll={handleVScroll}
+          />
         </View>
-      </ScrollView>
-    </ViewLevel1>
+      </View>
+    </View>
   )
 }
