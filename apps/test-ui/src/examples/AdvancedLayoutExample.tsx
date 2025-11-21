@@ -130,37 +130,6 @@ export function AdvancedLayoutExample() {
     <ViewLevel1>
       <JustifyContentColumnExample />
       <AlignItemsRowExample />
-      <ViewLevel2 direction="row">
-        {/* Test 1: start/start - should match x=0, y=0 */}
-        <ViewLevel3 height={200} width={200} alignItems="start" justifyContent="start">
-          <Text
-            text="Layout 12345678"
-            style={{ color: 'red' }}
-            rotation={Math.PI / 2}
-            headless={true}
-          />
-        </ViewLevel3>
-
-        {/* Test 2: center/center - should match x=100, y=100 */}
-        <ViewLevel3 height={200} width={200} alignItems="center" justifyContent="center">
-          <Text
-            text="Layout 12345678"
-            style={{ color: 'red' }}
-            rotation={Math.PI / 3}
-            headless={true}
-          />
-        </ViewLevel3>
-
-        {/* Test 3: end/end - should match x=200, y=200 */}
-        <ViewLevel3 height={200} width={200} alignItems="end" justifyContent="end">
-          <Text
-            text="Layout 12345678"
-            style={{ color: 'red' }}
-            rotation={Math.PI / 3}
-            headless={true}
-          />
-        </ViewLevel3>
-      </ViewLevel2>
     </ViewLevel1>
   )
 }
