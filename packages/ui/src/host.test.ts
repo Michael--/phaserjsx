@@ -75,6 +75,7 @@ describe('Host', () => {
         setRotation: vi.fn(),
         setText: vi.fn(),
         setStyle: vi.fn(),
+        setOrigin: vi.fn(),
       }
       const mockScene = {
         add: {
