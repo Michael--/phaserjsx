@@ -38,6 +38,38 @@ function shouldSkipChild(child: unknown): boolean {
 }
 
 /**
+ * Builds a component path string by walking up the VNode tree
+ * Stops at the first parent with a key prop for easier debugging
+ * @param vnode - VNode to start from
+ * @returns Path string like "ParentWithKey[myKey] > Child > Grandchild"
+ */
+function buildComponentPath(vnode: VNode): string {
+  const path: string[] = []
+  let current: VNode | undefined = vnode
+
+  while (current) {
+    const typeName =
+      typeof current.type === 'string'
+        ? current.type
+        : (current.type as { name?: string })?.name || 'Component'
+    const key = current.props?.key
+
+    if (key) {
+      // Found a keyed parent - add it with key and stop
+      path.unshift(`${typeName}[key="${key}"]`)
+      break
+    } else {
+      path.unshift(typeName)
+    }
+
+    // Walk up to parent VNode (if stored)
+    current = (current as VNode & { __parentVNode?: VNode }).__parentVNode
+  }
+
+  return path.join(' > ')
+}
+
+/**
  * Updates gesture hit area based on current layout size
  * Called after layout recalculation to sync hit area with actual container size
  * @param container - Container with potential gesture registration
@@ -175,10 +207,13 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     return dummy as Phaser.GameObjects.GameObject
   }
   if (vnode.type === undefined || vnode.type === null) {
+    const componentPath = buildComponentPath(vnode)
     console.error(
-      '❌ VNode with undefined/null type:',
+      '❌ VNode with undefined/null type',
+      `\n📍 Component path: ${componentPath}`,
+      '\n💡 Invalid value:',
       vnode,
-      '\n📍 Check for empty JSX expressions {} or conditional renders returning undefined.',
+      '\nℹ️  Check for empty JSX expressions {} or conditional renders returning undefined.',
       '\n💡 Solution: Use {condition && <Component />} or provide fallback'
     )
     // Return a dummy container to prevent cascade failures
@@ -200,6 +235,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       if (!shouldSkipChild(c)) {
         // Type guard: c is VNode at this point
         const child = c as VNode
+        // Track parent VNode for error messages
+        ;(child as VNode & { __parentVNode?: VNode }).__parentVNode = vnode
         // Propagate theme to children
         if (!child.__theme && vnode.__theme) {
           child.__theme = vnode.__theme
@@ -323,15 +360,19 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
       // Additional validation: check if child is actually a VNode object
       if (!child || typeof child !== 'object' || !child.type) {
+        const componentPath = buildComponentPath(vnode)
         console.warn(
-          `Invalid child at index ${index} in <${typeof nodeType === 'string' ? nodeType : 'Component'}>:`,
+          `❌ Invalid child at index ${index}`,
+          `\n📍 Component path: ${componentPath}`,
+          `\n💡 Invalid value:`,
           child,
-          '\nParent VNode:',
-          vnode,
           '\nℹ️  This child will be skipped. Use {expression} or <Text> for text content.'
         )
         return // Skip this child instead of throwing
       }
+
+      // Track parent VNode for error messages
+      ;(child as VNode & { __parentVNode?: VNode }).__parentVNode = vnode
 
       // Skip theme propagation for primitives (strings, numbers, booleans)
       if (typeof child === 'object') {
@@ -446,16 +487,16 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       const isValidC1 = c1 != null && c1 !== false
       const isValidC2 = c2 != null && c2 !== false
       if (!isValidC1 && isValidC2) {
-        // Propagate theme to new child
-        if (newV.__theme && !c2.__theme) {
+        // Propagate theme to new child (only for objects)
+        if (typeof c2 === 'object' && newV.__theme && !c2.__theme) {
           c2.__theme = newV.__theme
         }
         mount(parent, c2)
       } else if (isValidC1 && !isValidC2) {
         unmount(c1)
       } else if (isValidC1 && isValidC2) {
-        // Propagate theme to both children
-        if (newV.__theme) {
+        // Propagate theme to both children (only for objects)
+        if (typeof c1 === 'object' && typeof c2 === 'object' && newV.__theme) {
           c1.__theme = newV.__theme
           c2.__theme = newV.__theme
         }
@@ -594,11 +635,13 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
     const isValidC1 = c1 != null && c1 !== false
     const isValidC2 = c2 != null && c2 !== false
     if (!isValidC1 && isValidC2) {
-      // Merge parent's nested theme with new child's theme
-      if (Object.keys(newNestedTheme).length > 0) {
-        c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
-      } else if (!c2.__theme && newV.__theme) {
-        c2.__theme = newV.__theme
+      // Merge parent's nested theme for new child (only for objects)
+      if (typeof c2 === 'object') {
+        if (Object.keys(newNestedTheme).length > 0) {
+          c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+        } else if (!c2.__theme && newV.__theme) {
+          c2.__theme = newV.__theme
+        }
       }
       mount(oldV.__node as ParentType, c2)
       childrenChanged = true
@@ -606,17 +649,19 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       unmount(c1)
       childrenChanged = true
     } else if (isValidC1 && isValidC2) {
-      // Merge parent's nested theme with child's theme
+      // Merge parent's nested theme with child's theme (only for objects)
       // IMPORTANT: Update both c1 (for patch comparison) and c2 (for future renders)
-      if (Object.keys(newNestedTheme).length > 0) {
-        const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
-        c1.__theme = mergedTheme
-        c2.__theme = mergedTheme
-      } else if (newV.__theme) {
-        // Fallback: Propagate theme to child (inherit parent's theme)
-        // IMPORTANT: Always propagate, even if child has theme, because parent theme might have changed
-        c1.__theme = newV.__theme
-        c2.__theme = newV.__theme
+      if (typeof c1 === 'object' && typeof c2 === 'object') {
+        if (Object.keys(newNestedTheme).length > 0) {
+          const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+          c1.__theme = mergedTheme
+          c2.__theme = mergedTheme
+        } else if (newV.__theme) {
+          // Fallback: Propagate theme to child (inherit parent's theme)
+          // IMPORTANT: Always propagate, even if child has theme, because parent theme might have changed
+          c1.__theme = newV.__theme
+          c2.__theme = newV.__theme
+        }
       }
 
       // Check if this child has layout-relevant changes

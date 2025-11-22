@@ -21,7 +21,6 @@ function AutoSizeImage() {
         text="No displayWidth/displayHeight - uses texture dimensions"
         style={tokens?.textStyles.small}
       />
-      undefined
       {dimensions && <Text text={`Dimensions: ${dimensions}`} style={tokens?.textStyles.small} />}
       <ViewLevel3 direction="row" gap={10}>
         <Image
