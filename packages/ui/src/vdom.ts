@@ -162,19 +162,29 @@ export function createElement(
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
   // Guard against invalid vnodes
   if (!vnode || typeof vnode !== 'object') {
-    console.error('Invalid VNode (not an object):', vnode)
-    throw new Error(
-      `Invalid VNode: expected object, got ${typeof vnode}. ` +
-        `Raw text nodes like "text", undefined, or null are not valid JSX children. ` +
-        `Use {expression} syntax or <Text> component instead.`
+    // Create a dummy invisible container to prevent crashes
+    console.error(
+      '❌ Invalid VNode (not an object):',
+      vnode,
+      '\n📍 This typically happens with raw text nodes in JSX.',
+      '\n💡 Solution: Wrap in <Text> component or use {expression} syntax'
     )
+    // Return a dummy container to prevent cascade failures
+    const dummy = (parentOrScene as Phaser.Scene).add.container(0, 0)
+    dummy.setVisible(false)
+    return dummy as Phaser.GameObjects.GameObject
   }
   if (vnode.type === undefined || vnode.type === null) {
-    console.error('VNode with undefined/null type:', vnode)
-    throw new Error(
-      `Invalid VNode type: ${vnode.type}. VNode must have a valid type (string or function). ` +
-        `Check for empty JSX expressions {} or conditional renders that return undefined.`
+    console.error(
+      '❌ VNode with undefined/null type:',
+      vnode,
+      '\n📍 Check for empty JSX expressions {} or conditional renders returning undefined.',
+      '\n💡 Solution: Use {condition && <Component />} or provide fallback'
     )
+    // Return a dummy container to prevent cascade failures
+    const dummy = (parentOrScene as Phaser.Scene).add.container(0, 0)
+    dummy.setVisible(false)
+    return dummy as Phaser.GameObjects.GameObject
   }
 
   // Set global scene reference for animation hooks
@@ -306,10 +316,23 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   attachRef(ref, node)
 
   host.append(parentOrScene, node)
-  vnode.children?.forEach((c) => {
+  vnode.children?.forEach((c, index) => {
     if (!shouldSkipChild(c)) {
       // Type guard: c is VNode at this point
       const child = c as VNode
+
+      // Additional validation: check if child is actually a VNode object
+      if (!child || typeof child !== 'object' || !child.type) {
+        console.warn(
+          `Invalid child at index ${index} in <${typeof nodeType === 'string' ? nodeType : 'Component'}>:`,
+          child,
+          '\nParent VNode:',
+          vnode,
+          '\nℹ️  This child will be skipped. Use {expression} or <Text> for text content.'
+        )
+        return // Skip this child instead of throwing
+      }
+
       // Skip theme propagation for primitives (strings, numbers, booleans)
       if (typeof child === 'object') {
         // Merge parent's nested theme with child's existing theme
