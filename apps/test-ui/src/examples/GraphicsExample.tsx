@@ -2,21 +2,32 @@
  * Graphics Component Examples
  * Demonstrates various uses of the Graphics component
  */
-import { Graphics, Text, View, useState } from '@phaserjsx/ui'
+import { Graphics, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
+import { ScrollPage } from '../components/ScrollPage'
+import { SectionHeader } from './Helper'
+import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Simple circle with headless mode (default)
  */
 function HeadlessCircle() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   return (
-    <View direction="column" gap={10} padding={20}>
-      <Text text="Headless Circle (no layout impact)" style={{ fontSize: '16px' }} />
-      <View width={200} height={200} backgroundColor={0x222222} direction="stack">
+    <ViewLevel2>
+      <Text text="Headless Circle (no layout impact)" style={tokens?.textStyles.large} />
+
+      <ViewLevel3
+        width={200}
+        height={200}
+        backgroundColor={colors?.background.darkest.toNumber()}
+        direction="stack"
+      >
         <Graphics
           x={100}
           y={100}
           onDraw={(g) => {
-            g.fillStyle(0xff0000, 1)
+            g.fillStyle(colors?.error.medium.toNumber() ?? 0, 1)
             g.fillCircle(0, 0, 50)
           }}
         />
@@ -24,12 +35,12 @@ function HeadlessCircle() {
           x={125}
           y={125}
           onDraw={(g) => {
-            g.fillStyle(0x00ff00, 1)
+            g.fillStyle(colors?.warning.medium.toNumber() ?? 0, 1)
             g.fillCircle(0, 0, 25)
           }}
         />
-      </View>
-    </View>
+      </ViewLevel3>
+    </ViewLevel2>
   )
 }
 
@@ -37,16 +48,18 @@ function HeadlessCircle() {
  * Rectangle with layout integration
  */
 function LayoutAwareRectangle() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   return (
     <View direction="column" gap={10} padding={20}>
-      <Text text="Layout-Aware Rectangle" style={{ fontSize: '16px' }} />
+      <Text text="Layout-Aware Rectangle" style={tokens?.textStyles.large} />
       <View direction="row" gap={10}>
         <Graphics
           headless={false}
           width={100}
           height={60}
           onDraw={(g) => {
-            g.fillStyle(0x00ff00, 1)
+            g.fillStyle(colors?.success.medium.toNumber() ?? 0, 1)
             g.fillRect(0, 0, 100, 60)
           }}
         />
@@ -55,7 +68,7 @@ function LayoutAwareRectangle() {
           width={100}
           height={60}
           onDraw={(g) => {
-            g.fillStyle(0x0000ff, 1)
+            g.fillStyle(colors?.info.medium.toNumber() ?? 0, 1)
             g.fillRect(0, 0, 100, 60)
           }}
         />
@@ -68,17 +81,19 @@ function LayoutAwareRectangle() {
  * Dependency-based redraw demo
  */
 function DependencyRedraw() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   const [color, setColor] = useState(0xff0000)
   const [radius, setRadius] = useState(40)
 
   return (
     <View direction="column" gap={10} padding={20}>
-      <Text text="Dependency-Based Redraw" style={{ fontSize: '16px' }} />
+      <Text text="Dependency-Based Redraw" style={tokens?.textStyles.large} />
       <View direction="row" gap={10}>
         <View
           width={100}
           height={100}
-          backgroundColor={0x222222}
+          backgroundColor={colors?.background.darkest.toNumber()}
           direction="stack"
           enableGestures={true}
           onTouch={() => {
@@ -99,7 +114,7 @@ function DependencyRedraw() {
         <View
           width={100}
           height={100}
-          backgroundColor={0x222222}
+          backgroundColor={colors?.background.darkest.toNumber()}
           direction="stack"
           enableGestures={true}
           onTouch={() => {
@@ -118,7 +133,7 @@ function DependencyRedraw() {
           />
         </View>
       </View>
-      <Text text="Click squares to change color/radius" style={{ fontSize: '12px' }} />
+      <Text text="Click squares to change color/radius" style={tokens?.textStyles.small} />
     </View>
   )
 }
@@ -127,16 +142,23 @@ function DependencyRedraw() {
  * Complex shape demo
  */
 function ComplexShape() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   return (
     <View direction="column" gap={10} padding={20}>
-      <Text text="Complex Custom Shape" style={{ fontSize: '16px' }} />
-      <View width={200} height={200} backgroundColor={0x222222} direction="stack">
+      <Text text="Complex Custom Shape" style={tokens?.textStyles.large} />
+      <View
+        width={200}
+        height={200}
+        backgroundColor={colors?.background.darkest.toNumber()}
+        direction="stack"
+      >
         <Graphics
           x={100}
           y={100}
           onDraw={(g) => {
             // Draw star
-            g.fillStyle(0xffff00, 1)
+            g.fillStyle(colors?.warning.medium.toNumber() ?? 0, 1)
             g.beginPath()
             for (let i = 0; i < 5; i++) {
               const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2
@@ -152,7 +174,7 @@ function ComplexShape() {
             g.fillPath()
 
             // Add outline
-            g.lineStyle(3, 0xff8800, 1)
+            g.lineStyle(3, colors?.warning.dark.toNumber() ?? 0, 1)
             g.strokePath()
           }}
         />
@@ -165,15 +187,17 @@ function ComplexShape() {
  * No autoClear demo (additive drawing)
  */
 function AdditiveDrawing() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
   const [count, setCount] = useState(1)
 
   return (
     <View direction="column" gap={10} padding={20}>
-      <Text text="Additive Drawing (autoClear=false)" style={{ fontSize: '16px' }} />
+      <Text text="Additive Drawing (autoClear=false)" style={tokens?.textStyles.large} />
       <View
         width={200}
         height={200}
-        backgroundColor={0x222222}
+        backgroundColor={colors?.background.darkest.toNumber()}
         direction="stack"
         enableGestures={true}
         onTouch={() => setCount((c) => (c < 5 ? c + 1 : 1))}
@@ -188,12 +212,12 @@ function AdditiveDrawing() {
             const angle = ((count - 1) * Math.PI * 2) / 5
             const x = Math.cos(angle) * 60
             const y = Math.sin(angle) * 60
-            g.fillStyle(0xff0000 + count * 0x002200, 0.7)
+            g.fillStyle(colors?.error.medium.toNumber() ?? 0, 0.5)
             g.fillCircle(x, y, 20)
           }}
         />
       </View>
-      <Text text={`Click to add circles (${count}/5)`} style={{ fontSize: '12px' }} />
+      <Text text={`Click to add circles (${count}/5)`} style={tokens?.textStyles.small} />
     </View>
   )
 }
@@ -203,14 +227,15 @@ function AdditiveDrawing() {
  */
 export function GraphicsExample() {
   return (
-    <View direction="column" gap={20} padding={20}>
-      <Text text="Graphics Component Examples" style={{ fontSize: '24px' }} />
-
-      <HeadlessCircle />
-      <LayoutAwareRectangle />
-      <DependencyRedraw />
-      <ComplexShape />
-      <AdditiveDrawing />
-    </View>
+    <ScrollPage showVerticalSlider={true}>
+      <ViewLevel2>
+        <SectionHeader title="Graphics Component Examples" />
+        <HeadlessCircle />
+        <LayoutAwareRectangle />
+        <DependencyRedraw />
+        <ComplexShape />
+        <AdditiveDrawing />
+      </ViewLevel2>
+    </ScrollPage>
   )
 }

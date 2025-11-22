@@ -6,18 +6,7 @@ import type { ColorShade } from '@phaserjsx/ui'
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 import { ScrollPage } from '../components/ScrollPage'
-import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
-
-/**
- * Section header component
- */
-function SectionHeader({ title }: { title: string }) {
-  const tokens = useThemeTokens()
-
-  if (!tokens) return null
-
-  return <Text text={title} style={tokens.textStyles.title} />
-}
+import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 /**
  * Display a single color shade with hex value
