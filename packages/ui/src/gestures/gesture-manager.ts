@@ -181,27 +181,33 @@ export class GestureManager {
     handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void,
     filterSet?: Set<Phaser.GameObjects.Container>
   ): void {
-    // Get all containers at pointer position
-    const containersArray = Array.from(this.containers.values())
+    // Get all containers at pointer position with their original indices
+    const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
+      state,
+      originalIndex,
+    }))
 
     // Sort by display list order (higher index = on top)
     // This ensures we respect visual z-order, not just registration order
     containersArray.sort((a, b) => {
-      const containerA = a.container
-      const containerB = b.container
+      const containerA = a.state.container
+      const containerB = b.state.container
 
       // If they share the same parent, compare their indices in the parent's display list
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)
-        return indexB - indexA // Higher index first (topmost)
+        const diff = indexB - indexA // Higher index first (topmost)
+
+        // If display list indices are equal, preserve original registration order
+        if (diff !== 0) return diff
       }
 
-      // If no common parent or no parent, fall back to registration order (reverse)
-      return 0
+      // Fall back to original registration order (reverse for topmost first)
+      return b.originalIndex - a.originalIndex
     })
 
-    for (const state of containersArray) {
+    for (const { state } of containersArray) {
       // Only process containers that have the callback for this event type
       if (!state.callbacks[eventType]) continue
 
@@ -255,23 +261,30 @@ export class GestureManager {
 
     // Find which containers were hit
     // Sort by display list order (higher index = on top) to respect visual z-order
-    const containersArray = Array.from(this.containers.values())
+    const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
+      state,
+      originalIndex,
+    }))
     containersArray.sort((a, b) => {
-      const containerA = a.container
-      const containerB = b.container
+      const containerA = a.state.container
+      const containerB = b.state.container
 
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)
-        return indexB - indexA // Higher index first (topmost)
+        const diff = indexB - indexA // Higher index first (topmost)
+
+        // If display list indices are equal, preserve original registration order
+        if (diff !== 0) return diff
       }
 
-      return 0
+      // Fall back to original registration order (reverse for topmost first)
+      return b.originalIndex - a.originalIndex
     })
 
     let isFirstHit = true
 
-    for (const state of containersArray) {
+    for (const { state } of containersArray) {
       const isHit = this.isPointerInContainer(pointer, state)
       if (isHit) {
         // Add to hit set (for move event filtering)
@@ -523,21 +536,28 @@ export class GestureManager {
 
     // Bubble onTouchMove only to containers that were hit at pointer down
     // Sort by display list order (higher index = on top)
-    const containersArray = Array.from(this.containers.values())
+    const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
+      state,
+      originalIndex,
+    }))
     containersArray.sort((a, b) => {
-      const containerA = a.container
-      const containerB = b.container
+      const containerA = a.state.container
+      const containerB = b.state.container
 
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)
-        return indexB - indexA // Higher index first (topmost)
+        const diff = indexB - indexA // Higher index first (topmost)
+
+        // If display list indices are equal, preserve original registration order
+        if (diff !== 0) return diff
       }
 
-      return 0
+      // Fall back to original registration order (reverse for topmost first)
+      return b.originalIndex - a.originalIndex
     })
 
-    for (const state of containersArray) {
+    for (const { state } of containersArray) {
       // Only process if:
       // 1. Container has onTouchMove callback
       // 2. Container was hit during pointer down
