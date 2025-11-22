@@ -162,12 +162,18 @@ export function createElement(
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
   // Guard against invalid vnodes
   if (!vnode || typeof vnode !== 'object') {
-    throw new Error(`Invalid VNode: expected object, got ${typeof vnode}`)
+    console.error('Invalid VNode (not an object):', vnode)
+    throw new Error(
+      `Invalid VNode: expected object, got ${typeof vnode}. ` +
+        `Raw text nodes like "text", undefined, or null are not valid JSX children. ` +
+        `Use {expression} syntax or <Text> component instead.`
+    )
   }
   if (vnode.type === undefined || vnode.type === null) {
     console.error('VNode with undefined/null type:', vnode)
     throw new Error(
-      `Invalid VNode type: ${vnode.type}. VNode must have a valid type (string or function).`
+      `Invalid VNode type: ${vnode.type}. VNode must have a valid type (string or function). ` +
+        `Check for empty JSX expressions {} or conditional renders that return undefined.`
     )
   }
 
