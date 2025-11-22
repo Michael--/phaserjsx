@@ -106,17 +106,25 @@
  * [✅] Deferred layout queue for gesture updates
  */
 import Phaser from 'phaser'
-import type { BackgroundProps, GestureProps, LayoutProps, TransformProps } from '../core-props'
+import type {
+  BackgroundProps,
+  GestureProps,
+  LayoutProps,
+  PhaserProps,
+  TransformProps,
+} from '../core-props'
 import { DebugLogger } from '../dev-config'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsContainerExtension, PropsDefaultExtension } from '../types'
 import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyGesturesProps } from './appliers/applyGestures'
 import { applyLayoutProps } from './appliers/applyLayout'
+import { applyPhaserProps } from './appliers/applyPhaser'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createBackground } from './creators/createBackground'
 import { createGestures } from './creators/createGestures'
 import { createLayout } from './creators/createLayout'
+import { createPhaser } from './creators/createPhaser'
 import { createTransform } from './creators/createTransform'
 
 /**
@@ -158,7 +166,12 @@ function normalizeBackgroundProps<T>(props: T): T {
 /**
  * Base props for View - composing shared prop groups
  */
-export interface ViewBaseProps extends TransformProps, LayoutProps, BackgroundProps, GestureProps {}
+export interface ViewBaseProps
+  extends TransformProps,
+    PhaserProps,
+    LayoutProps,
+    BackgroundProps,
+    GestureProps {}
 
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
@@ -187,8 +200,11 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
 
   const container = scene.add.container(normalizedProps.x ?? 0, normalizedProps.y ?? 0)
 
-  // Apply transform props (visible, depth, alpha, scale, rotation)
+  // Apply transform props (scale, rotation)
   createTransform(container, normalizedProps)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  createPhaser(container, normalizedProps)
 
   // Add background if backgroundColor is provided
   createBackground(
@@ -222,8 +238,11 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   const normalizedPrev = normalizeBackgroundProps(prev)
   const normalizedNext = normalizeBackgroundProps(next)
 
-  // Apply transform props (position, rotation, scale, alpha, depth, visibility)
+  // Apply transform props (position, rotation, scale)
   applyTransformProps(node, normalizedPrev, normalizedNext)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  applyPhaserProps(node, normalizedPrev, normalizedNext)
 
   // Background updates
   const container = node as Phaser.GameObjects.Container & {

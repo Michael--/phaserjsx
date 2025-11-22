@@ -10,7 +10,7 @@ import type { GestureEventData, TouchMoveState } from './gestures/gesture-types'
 export type { GestureEventData, TouchMoveState }
 
 /**
- * Transform properties - position, rotation, scale, depth, visibility
+ * Transform properties - geometric transformations (position, rotation, scale)
  */
 export interface TransformProps {
   x?: number
@@ -19,24 +19,40 @@ export interface TransformProps {
   scale?: number
   scaleX?: number
   scaleY?: number
+}
+
+/**
+ * Phaser GameObject display properties - rendering and display list API
+ */
+export interface PhaserProps {
+  /**
+   * Alpha transparency of the game object
+   * - 0: Fully transparent
+   * - 1: Fully opaque
+   */
   alpha?: number
-  depth?: number
-  visible?: boolean
 
   /**
-   * If true, object is rendered but excluded from layout calculations
-   * Use for decorative elements, sprites, particles, or absolute-positioned objects
-   * - true: Object is visual-only, doesn't affect parent/sibling layout
-   * - false/undefined: Object participates in layout (default for UI elements)
+   * Depth (Z-index) of the game object in the display list
+   * Higher values are rendered on top of lower values
+   * Allows manual control over rendering order independent of child array order
    *
    * @example
-   * // Decorative sprite that doesn't affect layout
-   * <Sprite texture="particle" headless={true} />
-   *
-   * // Text that participates in layout
-   * <Text text="Label" headless={false} />
+   * // Layer system in stack layout
+   * <View direction="stack">
+   *   <View depth={1}>Background</View>
+   *   <View depth={2}>Content</View>
+   *   <View depth={3}>Overlay</View>
+   * </View>
    */
-  headless?: boolean
+  depth?: number
+
+  /**
+   * Visibility of the game object
+   * - true: Object is rendered (default)
+   * - false: Object is hidden but still exists in scene
+   */
+  visible?: boolean
 }
 
 /**
@@ -92,9 +108,24 @@ export function normalizeCornerRadius(
 }
 
 /**
- * Layout properties - basic sizing and spacing (minimal for now)
+ * Layout properties - sizing, spacing, and layout participation
  */
 export interface LayoutProps {
+  /**
+   * If true, object is rendered but excluded from layout calculations
+   * Use for decorative elements, sprites, particles, or absolute-positioned objects
+   * - true: Object is visual-only, doesn't affect parent/sibling layout
+   * - false/undefined: Object participates in layout (default for UI elements)
+   *
+   * @example
+   * // Decorative sprite that doesn't affect layout
+   * <Sprite texture="particle" headless={true} />
+   *
+   * // Text that participates in layout
+   * <Text text="Label" headless={false} />
+   */
+  headless?: boolean
+
   /**
    * Width of the container
    * - number: Fixed width in pixels (e.g., 200)

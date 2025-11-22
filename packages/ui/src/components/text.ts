@@ -128,12 +128,20 @@
  * [❌] Text effects (shadow, outline) - Future feature
  */
 import type Phaser from 'phaser'
-import type { EdgeInsets, TextSpecificProps, TransformProps } from '../core-props'
+import type {
+  EdgeInsets,
+  LayoutProps,
+  PhaserProps,
+  TextSpecificProps,
+  TransformProps,
+} from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsDefaultExtension } from '../types'
+import { applyPhaserProps } from './appliers/applyPhaser'
 import { applyTextProps } from './appliers/applyText'
 import { applyTextLayout } from './appliers/applyTextLayout'
 import { applyTransformProps } from './appliers/applyTransform'
+import { createPhaser } from './creators/createPhaser'
 import { createTextLayout } from './creators/createTextLayout'
 import { createTransform } from './creators/createTransform'
 
@@ -141,7 +149,11 @@ import { createTransform } from './creators/createTransform'
  * Base props for Text - composing shared prop groups
  * Includes optional margin for layout engine use
  */
-export interface TextBaseProps extends TransformProps, TextSpecificProps {
+export interface TextBaseProps
+  extends TransformProps,
+    PhaserProps,
+    Pick<LayoutProps, 'headless'>,
+    TextSpecificProps {
   margin?: EdgeInsets
   // Legacy: support Phaser's style object directly
   style?: Phaser.Types.GameObjects.Text.TextStyle | undefined
@@ -182,8 +194,11 @@ export const textCreator: HostCreator<'Text'> = (scene, props) => {
     }
   }
 
-  // Apply transform props (visible, depth, alpha, scale, rotation if headless)
+  // Apply transform props (scale, rotation if headless)
   createTransform(text, normalizedProps)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  createPhaser(text, normalizedProps)
 
   // Setup layout system (props and size provider)
   createTextLayout(text, normalizedProps)
@@ -230,8 +245,11 @@ export const textPatcher: HostPatcher<'Text'> = (node, prev, next) => {
     }
   }
 
-  // Apply transform props (position, rotation only if headless, scale, alpha, depth, visibility)
+  // Apply transform props (position, rotation only if headless, scale)
   applyTransformProps(node, normalizedPrev, normalizedNext)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  applyPhaserProps(node, normalizedPrev, normalizedNext)
 
   // Apply text-specific props (text content, color, font, etc.)
   applyTextProps(node, normalizedPrev, normalizedNext)

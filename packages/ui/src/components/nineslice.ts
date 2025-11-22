@@ -159,13 +159,15 @@
  * [✅] Dynamic resizing support (width/height patching)
  */
 import type Phaser from 'phaser'
-import type { LayoutProps, TransformProps } from '../core-props'
+import type { LayoutProps, PhaserProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsDefaultExtension } from '../types'
 import { applyNineSliceProps } from './appliers/applyNineSlice'
 import { applyNineSliceLayout } from './appliers/applyNineSliceLayout'
+import { applyPhaserProps } from './appliers/applyPhaser'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createNineSliceLayout } from './creators/createNineSliceLayout'
+import { createPhaser } from './creators/createPhaser'
 import { createTransform } from './creators/createTransform'
 
 /**
@@ -262,7 +264,11 @@ export interface NineSliceSpecificProps {
  * Base props for NineSlice - composing shared prop groups
  * Note: No InteractionProps - interaction should be handled by parent View container
  */
-export interface NineSliceBaseProps extends TransformProps, LayoutProps, NineSliceSpecificProps {}
+export interface NineSliceBaseProps
+  extends TransformProps,
+    PhaserProps,
+    LayoutProps,
+    NineSliceSpecificProps {}
 
 /**
  * Props for NineSlice component - extends base props with JSX-specific props
@@ -294,8 +300,11 @@ export const nineSliceCreator: HostCreator<'NineSlice'> = (scene, props) => {
   )
   nineSlice.setOrigin(0, 0) // Top-left origin for easier layout handling as it is in UI
 
-  // Apply transform props (visible, depth, alpha, scale, rotation)
+  // Apply transform props (scale, rotation)
   createTransform(nineSlice, props)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  createPhaser(nineSlice, props)
 
   // Setup layout system (props and size provider)
   createNineSliceLayout(nineSlice, props)
@@ -307,8 +316,11 @@ export const nineSliceCreator: HostCreator<'NineSlice'> = (scene, props) => {
  * NineSlice patcher - updates NineSlice properties
  */
 export const nineSlicePatcher: HostPatcher<'NineSlice'> = (node, prev, next) => {
-  // Apply transform props (position, rotation, scale, alpha, depth, visibility)
+  // Apply transform props (position, rotation, scale)
   applyTransformProps(node, prev, next)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  applyPhaserProps(node, prev, next)
 
   // Apply NineSlice-specific props (texture, frame, slice dimensions)
   applyNineSliceProps(node, prev, next)
