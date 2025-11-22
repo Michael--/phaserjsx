@@ -25,7 +25,7 @@ export const TileSprite = 'TileSprite' as const
 /**
  * Registers all built-in components with the host
  * This should be called during library initialization
- * Note: Sprite, Image, Graphics, TileSprite are currently dummies (throw on use)
+ * Note: TileSprite is currently dummy (throws on use)
  */
 export function registerBuiltins() {
   register('View', { create: viewCreator, patch: viewPatcher })
