@@ -169,6 +169,7 @@ export class GestureManager {
   /**
    * Bubble an event through overlapping containers
    * Iterates all containers at pointer position and calls handler until stopPropagation
+   * Sorts containers by their actual display list order (z-index) to respect visual stacking
    * @param pointer - The pointer that triggered the event
    * @param eventType - Type of event for filtering callbacks
    * @param handler - Function to call for each container, returns true if propagation stopped
@@ -180,8 +181,25 @@ export class GestureManager {
     handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void,
     filterSet?: Set<Phaser.GameObjects.Container>
   ): void {
-    // Get all containers at pointer position in reverse order (topmost first)
-    const containersArray = Array.from(this.containers.values()).reverse()
+    // Get all containers at pointer position
+    const containersArray = Array.from(this.containers.values())
+
+    // Sort by display list order (higher index = on top)
+    // This ensures we respect visual z-order, not just registration order
+    containersArray.sort((a, b) => {
+      const containerA = a.container
+      const containerB = b.container
+
+      // If they share the same parent, compare their indices in the parent's display list
+      if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
+        const indexA = containerA.parentContainer.getIndex(containerA)
+        const indexB = containerB.parentContainer.getIndex(containerB)
+        return indexB - indexA // Higher index first (topmost)
+      }
+
+      // If no common parent or no parent, fall back to registration order (reverse)
+      return 0
+    })
 
     for (const state of containersArray) {
       // Only process containers that have the callback for this event type
@@ -236,8 +254,21 @@ export class GestureManager {
     const hitContainers = new Set<Phaser.GameObjects.Container>()
 
     // Find which containers were hit
-    // Check in reverse order so topmost (last added) containers are checked first
-    const containersArray = Array.from(this.containers.values()).reverse()
+    // Sort by display list order (higher index = on top) to respect visual z-order
+    const containersArray = Array.from(this.containers.values())
+    containersArray.sort((a, b) => {
+      const containerA = a.container
+      const containerB = b.container
+
+      if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
+        const indexA = containerA.parentContainer.getIndex(containerA)
+        const indexB = containerB.parentContainer.getIndex(containerB)
+        return indexB - indexA // Higher index first (topmost)
+      }
+
+      return 0
+    })
+
     let isFirstHit = true
 
     for (const state of containersArray) {
@@ -491,8 +522,20 @@ export class GestureManager {
     if (!hitContainers) return
 
     // Bubble onTouchMove only to containers that were hit at pointer down
-    // Check in reverse order (topmost first)
-    const containersArray = Array.from(this.containers.values()).reverse()
+    // Sort by display list order (higher index = on top)
+    const containersArray = Array.from(this.containers.values())
+    containersArray.sort((a, b) => {
+      const containerA = a.container
+      const containerB = b.container
+
+      if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
+        const indexA = containerA.parentContainer.getIndex(containerA)
+        const indexB = containerB.parentContainer.getIndex(containerB)
+        return indexB - indexA // Higher index first (topmost)
+      }
+
+      return 0
+    })
 
     for (const state of containersArray) {
       // Only process if:
