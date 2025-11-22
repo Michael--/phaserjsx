@@ -3,7 +3,13 @@
  * Provides type-safe theming with inheritance and component-specific styles
  */
 import type { ColorTokens } from './colors'
-import type { BackgroundProps, LayoutProps, TextSpecificProps, TransformProps } from './core-props'
+import type {
+  BackgroundProps,
+  LayoutProps,
+  PhaserProps,
+  TextSpecificProps,
+  TransformProps,
+} from './core-props'
 import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 
@@ -21,6 +27,7 @@ export type NestedComponentThemes = {
  */
 export interface ViewTheme
   extends Partial<TransformProps>,
+    Partial<PhaserProps>,
     Partial<LayoutProps>,
     Partial<BackgroundProps>,
     NestedComponentThemes {}
@@ -31,6 +38,7 @@ export interface ViewTheme
  */
 export interface TextTheme
   extends Partial<TransformProps>,
+    Partial<PhaserProps>,
     Partial<TextSpecificProps>,
     NestedComponentThemes {
   // Legacy: support Phaser's style object directly
@@ -40,7 +48,10 @@ export interface TextTheme
 /**
  * Theme definition for NineSlice component
  */
-export interface NineSliceTheme extends Partial<TransformProps>, NestedComponentThemes {
+export interface NineSliceTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {
   texture?: string
   leftWidth?: number
   rightWidth?: number
@@ -51,7 +62,10 @@ export interface NineSliceTheme extends Partial<TransformProps>, NestedComponent
 /**
  * Theme definition for Sprite component (dummy - minimal theme support)
  */
-export interface SpriteTheme extends Partial<TransformProps>, NestedComponentThemes {
+export interface SpriteTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {
   texture?: string
   tint?: number
 }
@@ -59,7 +73,10 @@ export interface SpriteTheme extends Partial<TransformProps>, NestedComponentThe
 /**
  * Theme definition for Image component (dummy - minimal theme support)
  */
-export interface ImageTheme extends Partial<TransformProps>, NestedComponentThemes {
+export interface ImageTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {
   texture?: string
   tint?: number
 }
@@ -67,12 +84,18 @@ export interface ImageTheme extends Partial<TransformProps>, NestedComponentThem
 /**
  * Theme definition for Graphics component (dummy - minimal theme support)
  */
-export interface GraphicsTheme extends Partial<TransformProps>, NestedComponentThemes {}
+export interface GraphicsTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {}
 
 /**
  * Theme definition for TileSprite component (dummy - minimal theme support)
  */
-export interface TileSpriteTheme extends Partial<TransformProps>, NestedComponentThemes {
+export interface TileSpriteTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {
   texture?: string
   tint?: number
 }

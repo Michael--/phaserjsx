@@ -1,6 +1,6 @@
 /**
  * Graphics component - Phaser Graphics GameObject (custom shapes)
- * Status: DUMMY - Not implemented yet
+ * Status: IMPLEMENTED ✅
  *
  * Design Decisions & Answers:
  * ===========================
@@ -92,27 +92,34 @@
  *    - Override with autoClear=false for additive drawing
  *    Edge Case: Multiple draw calls in onDraw → All executed, then cleared on next redraw
  *
- * Implementation Checklist:
- * ========================
- * [ ] Create graphics with scene.add.graphics()
- * [ ] Apply transform props via applyTransformProps
- * [ ] Setup onDraw callback invocation
- * [ ] Implement dependency-based redraw logic
- * [ ] Handle autoClear flag
- * [ ] Setup layout size provider (explicit width/height)
- * [ ] Validate width/height if headless=false
- * [ ] Test with complex shapes, frequent redraws
- * [ ] Consider generateTexture optimization path (future)
+ * Implementation Status:
+ * ======================
+ * [✅] Create graphics with scene.add.graphics()
+ * [✅] Apply transform props via applyTransformProps
+ * [✅] Setup onDraw callback invocation
+ * [✅] Implement dependency-based redraw logic
+ * [✅] Handle autoClear flag
+ * [✅] Setup layout size provider (explicit width/height)
+ * [✅] Validate width/height if headless=false
+ * [✅] Example component with interactive demos
+ * [❌] generateTexture optimization (future enhancement)
  */
 import type Phaser from 'phaser'
-import type { TransformProps } from '../core-props'
+import type { LayoutProps, PhaserProps, TransformProps } from '../core-props'
 import type { HostCreator, HostPatcher } from '../host'
 import type { PropsDefaultExtension } from '../types'
+import { applyGraphicsProps } from './appliers/applyGraphics'
+import { applyGraphicsLayout } from './appliers/applyGraphicsLayout'
+import { applyPhaserProps } from './appliers/applyPhaser'
+import { applyTransformProps } from './appliers/applyTransform'
+import { createGraphicsLayout } from './creators/createGraphicsLayout'
+import { createPhaser } from './creators/createPhaser'
+import { createTransform } from './creators/createTransform'
 
 /**
  * Base props for Graphics component
  */
-export interface GraphicsBaseProps extends TransformProps {
+export interface GraphicsBaseProps extends TransformProps, PhaserProps, LayoutProps {
   /**
    * Drawing callback - receives Graphics instance for custom drawing
    * Called on mount and when dependencies change
@@ -126,16 +133,6 @@ export interface GraphicsBaseProps extends TransformProps {
    * Default: true (usually what you want)
    */
   autoClear?: boolean
-
-  /**
-   * Explicit width for layout calculations (required if headless=false)
-   */
-  width?: number
-
-  /**
-   * Explicit height for layout calculations (required if headless=false)
-   */
-  height?: number
 
   /**
    * Dependencies array - if any value changes, onDraw is re-executed
@@ -152,21 +149,44 @@ export interface GraphicsProps
     PropsDefaultExtension<Phaser.GameObjects.Graphics> {}
 
 /**
- * Graphics creator - NOT IMPLEMENTED YET
- * @throws Error indicating component is not implemented
+ * Graphics creator - creates a Phaser Graphics object
  */
-export const graphicsCreator: HostCreator<'Graphics'> = (_scene, _props) => {
-  throw new Error(
-    'Graphics component not implemented yet. This is a placeholder for architecture planning.'
-  )
+export const graphicsCreator: HostCreator<'Graphics'> = (scene, props) => {
+  // Create graphics (position set via setPosition below)
+  const graphics = scene.add.graphics()
+
+  // Set initial position explicitly (Graphics doesn't take x/y in constructor like Text does)
+  graphics.setPosition(props.x ?? 0, props.y ?? 0)
+
+  // Apply transform props (scale, rotation)
+  createTransform(graphics, props)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  createPhaser(graphics, props)
+
+  // Setup layout system (props and size provider)
+  createGraphicsLayout(graphics, props)
+
+  // Execute initial draw if onDraw callback provided
+  if (props.onDraw) {
+    props.onDraw(graphics, props)
+  }
+  return graphics
 }
 
 /**
- * Graphics patcher - NOT IMPLEMENTED YET
- * @throws Error indicating component is not implemented
+ * Graphics patcher - updates Graphics properties
  */
-export const graphicsPatcher: HostPatcher<'Graphics'> = (_node, _prev, _next) => {
-  throw new Error(
-    'Graphics component not implemented yet. This is a placeholder for architecture planning.'
-  )
+export const graphicsPatcher: HostPatcher<'Graphics'> = (node, prev, next) => {
+  // Apply transform props (position, rotation, scale)
+  applyTransformProps(node, prev, next)
+
+  // Apply Phaser display props (alpha, depth, visible)
+  applyPhaserProps(node, prev, next)
+
+  // Apply Graphics-specific props (onDraw, autoClear, dependencies)
+  applyGraphicsProps(node, prev, next)
+
+  // Apply layout props and update size provider if needed
+  applyGraphicsLayout(node, prev, next)
 }

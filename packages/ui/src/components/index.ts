@@ -59,7 +59,7 @@ export { spriteCreator, spritePatcher, type SpriteBaseProps, type SpriteProps } 
 // Re-export Image component (dummy)
 export { imageCreator, imagePatcher, type ImageBaseProps, type ImageProps } from './image'
 
-// Re-export Graphics component (dummy)
+// Re-export Graphics component
 export {
   graphicsCreator,
   graphicsPatcher,

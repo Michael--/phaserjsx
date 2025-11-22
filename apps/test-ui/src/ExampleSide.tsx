@@ -9,6 +9,7 @@ import { DesignTokensExample } from './examples/DesignTokensExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
+import { GraphicsExample } from './examples/GraphicsExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
@@ -31,6 +32,7 @@ const examples = {
   advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
   button: { label: 'Button Variants', component: ButtonExample },
   gesture: { label: 'Gesture System', component: GestureExample },
+  graphics: { label: 'Graphics Component', component: GraphicsExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
   border: { label: 'Border & Corners', component: BorderExample },
