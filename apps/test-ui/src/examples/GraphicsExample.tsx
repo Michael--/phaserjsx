@@ -15,7 +15,7 @@ function HeadlessCircle() {
   const colors = tokens?.colors
   return (
     <ViewLevel2>
-      <Text text="Headless Circle (no layout impact)" style={tokens?.textStyles.large} />
+      <Text text="Headless Circle" style={tokens?.textStyles.large} />
 
       <ViewLevel3
         width={200}
@@ -193,7 +193,7 @@ function AdditiveDrawing() {
 
   return (
     <View direction="column" gap={10} padding={20}>
-      <Text text="Additive Drawing (autoClear=false)" style={tokens?.textStyles.large} />
+      <Text text="Additive Drawing" style={tokens?.textStyles.large} />
       <View
         width={200}
         height={200}
@@ -223,18 +223,99 @@ function AdditiveDrawing() {
 }
 
 /**
+ * Advanced graphics demo with complex shapes and transformations
+ */
+function AdvancedGraphicsDemo() {
+  const tokens = useThemeTokens()
+  const colors = tokens?.colors
+
+  return (
+    <View direction="column" gap={10} padding={20}>
+      <Text text="Advanced Graphics Demo" style={tokens?.textStyles.large} />
+      <View
+        width={300}
+        height={250}
+        backgroundColor={colors?.background.darkest.toNumber()}
+        direction="stack"
+      >
+        <Graphics
+          x={150}
+          y={125}
+          onDraw={(g) => {
+            // Draw a house
+            // Base
+            g.fillStyle(colors?.surface.medium.toNumber() ?? 0, 1)
+            g.fillRect(-50, 20, 100, 60)
+
+            // Roof
+            g.fillStyle(colors?.warning.medium.toNumber() ?? 0, 1)
+            g.beginPath()
+            g.moveTo(-60, 20)
+            g.lineTo(0, -30)
+            g.lineTo(60, 20)
+            g.closePath()
+            g.fillPath()
+
+            // Door
+            g.fillStyle(colors?.info.dark.toNumber() ?? 0, 1)
+            g.fillRect(-10, 50, 20, 30)
+
+            // Windows
+            g.fillStyle(colors?.success.light.toNumber() ?? 0, 1)
+            g.fillRect(-40, 30, 15, 15)
+            g.fillRect(25, 30, 15, 15)
+
+            // Chimney
+            g.fillStyle(colors?.surface.dark.toNumber() ?? 0, 1)
+            g.fillRect(30, -40, 10, 25)
+
+            // Sun
+            g.fillStyle(colors?.warning.light.toNumber() ?? 0, 1)
+            g.fillCircle(-100, -80, 20)
+            // Rays
+            for (let i = 0; i < 8; i++) {
+              const angle = (i * Math.PI) / 4
+              const rayX = -100 + Math.cos(angle) * 35
+              const rayY = -80 + Math.sin(angle) * 35
+              g.fillRect(rayX - 7.5, rayY - 2, 15, 4)
+            }
+
+            // Tree
+            // Trunk
+            g.fillStyle(colors?.surface.dark.toNumber() ?? 0, 1)
+            g.fillRect(75, 40, 10, 40)
+            // Leaves
+            g.fillStyle(colors?.success.medium.toNumber() ?? 0, 1)
+            g.fillCircle(80, 30, 20)
+
+            // Ground
+            g.fillStyle(colors?.surface.light.toNumber() ?? 0, 1)
+            g.fillRect(-150, 80, 300, 20)
+          }}
+        />
+      </View>
+    </View>
+  )
+}
+
+/**
  * Main Graphics example component
  */
 export function GraphicsExample() {
   return (
-    <ScrollPage showVerticalSlider={true}>
+    <ScrollPage>
       <ViewLevel2>
         <SectionHeader title="Graphics Component Examples" />
-        <HeadlessCircle />
-        <LayoutAwareRectangle />
-        <DependencyRedraw />
-        <ComplexShape />
-        <AdditiveDrawing />
+        <View direction="row">
+          <HeadlessCircle />
+          <ComplexShape />
+          <AdditiveDrawing />
+        </View>
+        <View direction="row">
+          <LayoutAwareRectangle />
+          <DependencyRedraw />
+        </View>
+        <AdvancedGraphicsDemo />
       </ViewLevel2>
     </ScrollPage>
   )
