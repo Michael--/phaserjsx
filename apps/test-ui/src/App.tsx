@@ -143,7 +143,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('themePreview')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('advanced')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
 
@@ -174,7 +174,9 @@ export function App(props: AppProps) {
         backgroundColor={token?.colors.background.DEFAULT.toNumber()}
         backgroundAlpha={0.5}
       >
-        <ExampleContainer selectedExample={selectedDemo} />
+        <View flex={1} width={'100%'}>
+          <ExampleContainer selectedExample={selectedDemo} />
+        </View>
         <View
           width={'100%'}
           padding={0}
