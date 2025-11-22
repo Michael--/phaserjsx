@@ -12,6 +12,8 @@ class MainScene extends Phaser.Scene {
   preload() {
     // Load local assets
     this.load.atlas('ui', 'assets/ui/nine-slice.png', 'assets/ui/nine-slice.json')
+    this.load.image('phaser-logo', 'assets/images/phaser-logo.png')
+    this.load.image('test-image', 'assets/images/test.png')
   }
 
   debugLoadedAssets() {
