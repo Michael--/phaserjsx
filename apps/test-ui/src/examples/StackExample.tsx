@@ -1,4 +1,4 @@
-import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import { Text, useState, useThemeTokens, View, type GestureEventData } from '@phaserjsx/ui'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 interface StackItem {
@@ -43,7 +43,8 @@ export function StackExample() {
     },
   ])
 
-  const handleClick = (id: number) => {
+  const handleClick = (data: GestureEventData, id: number) => {
+    data.stopPropagation()
     setItems((prev) => {
       const item = prev.find((i) => i.id === id)
       if (!item) return prev
@@ -73,7 +74,7 @@ export function StackExample() {
               backgroundColor={item.color}
               backgroundAlpha={1.0}
               enableGestures={true}
-              onTouch={() => handleClick(item.id)}
+              onTouch={(data: GestureEventData) => handleClick(data, item.id)}
               justifyContent="center"
               alignItems="center"
             >
