@@ -5,6 +5,22 @@ import type Phaser from 'phaser'
 import type { SpriteBaseProps } from '../sprite'
 
 /**
+ * Gets original texture dimensions (unscaled)
+ * @param sprite - Phaser Sprite object
+ * @returns Original width and height
+ */
+function getOriginalTextureDimensions(sprite: Phaser.GameObjects.Sprite): {
+  width: number
+  height: number
+} {
+  const frame = sprite.frame
+  return {
+    width: frame.width,
+    height: frame.height,
+  }
+}
+
+/**
  * Calculates scale factors for fit modes
  * @param sprite - Phaser Sprite object
  * @param targetWidth - Desired width
@@ -18,8 +34,7 @@ function calculateFitScale(
   targetHeight: number,
   fit: 'fill' | 'contain' | 'cover' = 'fill'
 ): { scaleX: number; scaleY: number } {
-  const textureWidth = sprite.width
-  const textureHeight = sprite.height
+  const { width: textureWidth, height: textureHeight } = getOriginalTextureDimensions(sprite)
 
   if (textureWidth === 0 || textureHeight === 0) {
     return { scaleX: 1, scaleY: 1 }
@@ -90,19 +105,35 @@ export function applySpriteProps(
 
   if (displayWidthChanged || displayHeightChanged || fitChanged || textureChanged) {
     if (typeof next.displayWidth === 'number' && typeof next.displayHeight === 'number') {
-      const { scaleX, scaleY } = calculateFitScale(
-        sprite,
-        next.displayWidth,
-        next.displayHeight,
-        next.fit
-      )
-      sprite.setScale(scaleX, scaleY)
+      // Both specified - use fit mode
+      const fit = next.fit ?? 'fill'
+
+      if (fit === 'fill') {
+        // Use setDisplaySize for fill mode (non-uniform scaling)
+        sprite.setDisplaySize(next.displayWidth, next.displayHeight)
+      } else {
+        // Use setScale for contain/cover (uniform scaling)
+        const { scaleX, scaleY } = calculateFitScale(
+          sprite,
+          next.displayWidth,
+          next.displayHeight,
+          fit
+        )
+        sprite.setScale(scaleX, scaleY)
+      }
     } else if (typeof next.displayWidth === 'number') {
-      const scale = next.displayWidth / sprite.width
+      // Only width - preserve aspect ratio (use original texture width)
+      const { width: origWidth } = getOriginalTextureDimensions(sprite)
+      const scale = next.displayWidth / origWidth
       sprite.setScale(scale)
     } else if (typeof next.displayHeight === 'number') {
-      const scale = next.displayHeight / sprite.height
+      // Only height - preserve aspect ratio (use original texture height)
+      const { height: origHeight } = getOriginalTextureDimensions(sprite)
+      const scale = next.displayHeight / origHeight
       sprite.setScale(scale, scale)
+    } else {
+      // No display size specified - reset to default scale
+      sprite.setScale(1)
     }
   }
 
