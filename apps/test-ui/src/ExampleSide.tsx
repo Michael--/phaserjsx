@@ -16,6 +16,7 @@ import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { SpringAnimationExample } from './examples/SpringAnimationExample'
+import { SpriteExample } from './examples/SpriteExample'
 import { StackExample } from './examples/StackExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
@@ -35,6 +36,7 @@ const examples = {
   gesture: { label: 'Gesture System', component: GestureExample },
   graphics: { label: 'Graphics Component', component: GraphicsExample },
   image: { label: 'Image Component', component: ImageExample },
+  sprite: { label: 'Sprite Component', component: SpriteExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
   border: { label: 'Border & Corners', component: BorderExample },

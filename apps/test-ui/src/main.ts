@@ -13,7 +13,10 @@ class MainScene extends Phaser.Scene {
     // Load local assets
     this.load.atlas('ui', 'assets/ui/nine-slice.png', 'assets/ui/nine-slice.json')
     this.load.image('phaser-planet', 'assets/images/phaser-planet-small.png')
+    this.load.image('phaser-jsx-logo', 'assets/images/phaser-jsx-logo.png')
     this.load.image('test-image', 'assets/images/test.png')
+    this.load.image('back', 'assets/images/back.png')
+    this.load.image('wideline', 'assets/images/wideline.png')
     this.load.image('eye', 'assets/images/lance-overdose-loader-eye.png')
     this.load.svg('phaser-logo', 'assets/images/test.svg')
   }

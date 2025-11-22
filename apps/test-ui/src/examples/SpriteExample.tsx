@@ -1,0 +1,250 @@
+/**
+ * Example: Sprite component with animations and transforms
+ * Demonstrates static sprites, rotation, scaling, and tinting
+ */
+import { Sprite, Text, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
+import { Button } from '../components'
+import { ScrollPage } from '../components/ScrollPage'
+import { ViewLevel2 } from './Helper/ViewLevel'
+
+/**
+ * Basic sprite example - static image as sprite
+ */
+function BasicSpriteExample() {
+  const tokens = useThemeTokens()
+
+  return (
+    <ViewLevel2 direction="column" gap={20} alignItems="center">
+      <Text text="Basic Sprite (Static)" style={tokens?.textStyles.large} />
+
+      <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
+        {/* Sprites are always headless - positioned absolutely */}
+        <Sprite texture="phaser-planet" x={100} y={100} />
+        <Sprite texture="eye" x={250} y={100} />
+      </View>
+
+      <Text
+        text="Sprites are always headless (don't affect layout)"
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Sprite with transforms (rotation, scale)
+ */
+function TransformSpriteExample() {
+  const tokens = useThemeTokens()
+  const [rotation, setRotation] = useState(0)
+  const [scale, setScale] = useState(1)
+
+  return (
+    <ViewLevel2 direction="column" gap={20} alignItems="center">
+      <Text text="Sprite Transforms" style={tokens?.textStyles.large} />
+
+      <View direction="row" gap={10}>
+        <Button text="Rotate" onClick={() => setRotation((r) => r + Math.PI / 4)} />
+        <Button text="Scale" onClick={() => setScale((s) => (s >= 2 ? 0.5 : s + 0.25))} />
+      </View>
+
+      <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
+        <Sprite texture="phaser-jsx-logo" x={200} y={100} rotation={rotation} scale={scale} />
+      </View>
+
+      <Text
+        text={`Rotation: ${(rotation % (Math.PI * 2)).toFixed(2)} | Scale: ${scale.toFixed(2)}`}
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Sprite with tint colors
+ */
+function TintSpriteExample() {
+  const tokens = useThemeTokens()
+  const [tint, setTint] = useState<number | undefined>(undefined)
+
+  const tints = [
+    { name: 'None', value: undefined },
+    { name: 'Red', value: 0xff0000 },
+    { name: 'Green', value: 0x00ff00 },
+    { name: 'Blue', value: 0x0000ff },
+    { name: 'Purple', value: 0xff00ff },
+  ]
+
+  return (
+    <ViewLevel2 direction="column" gap={20} alignItems="center">
+      <Text text="Sprite Tinting" style={tokens?.textStyles.large} />
+
+      <View direction="row" gap={10}>
+        {tints.map((t) => (
+          <Button text={t.name} onClick={() => setTint(t.value)} />
+        ))}
+      </View>
+
+      <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
+        {tint !== undefined ? (
+          <Sprite texture="phaser-planet" x={200} y={100} tint={tint} scale={1.5} />
+        ) : (
+          <Sprite texture="phaser-planet" x={200} y={100} scale={1.5} />
+        )}
+      </View>
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Sprite with displayWidth/displayHeight and fit modes
+ */
+function SizingSpriteExample() {
+  const tokens = useThemeTokens()
+  const [fit, setFit] = useState<'fill' | 'contain' | 'cover'>('contain')
+
+  return (
+    <ViewLevel2 direction="column" gap={20} alignItems="center">
+      <Text text="Sprite Sizing & Fit Modes" style={tokens?.textStyles.large} />
+
+      <View direction="row" gap={10}>
+        <Button text="Fill" onClick={() => setFit('fill')} />
+        <Button text="Contain" onClick={() => setFit('contain')} />
+        <Button text="Cover" onClick={() => setFit('cover')} />
+      </View>
+
+      <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
+        {/* Target size: 120x80 (wider aspect) */}
+        <View
+          x={70}
+          y={60}
+          width={120}
+          height={80}
+          backgroundColor={0x444444}
+          alpha={0.3}
+          borderColor={0xffff00}
+          borderWidth={2}
+        />
+        <Sprite
+          texture="phaser-planet"
+          x={130}
+          y={100}
+          displayWidth={120}
+          displayHeight={80}
+          fit={fit}
+        />
+
+        {/* Target size: 80x120 (taller aspect) */}
+        <View
+          x={250}
+          y={40}
+          width={80}
+          height={120}
+          backgroundColor={0x444444}
+          alpha={0.3}
+          borderColor={0xffff00}
+          borderWidth={2}
+        />
+        <Sprite
+          texture="phaser-planet"
+          x={290}
+          y={100}
+          displayWidth={80}
+          displayHeight={120}
+          fit={fit}
+        />
+      </View>
+
+      <Text
+        text="Yellow boxes show target size | Fit mode affects scaling"
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Sprite with ref access
+ */
+function RefSpriteExample() {
+  const tokens = useThemeTokens()
+  const spriteRef = useRef<Phaser.GameObjects.Sprite | null>(null)
+  const [info, setInfo] = useState(' ')
+
+  const updateInfo = () => {
+    if (spriteRef.current) {
+      const s = spriteRef.current
+      setInfo(
+        `Pos: (${s.x.toFixed(0)}, ${s.y.toFixed(0)}) | ` +
+          `Scale: ${s.scaleX.toFixed(2)} | ` +
+          `Rotation: ${s.rotation.toFixed(2)} | ` +
+          `Size: ${s.displayWidth.toFixed(0)}x${s.displayHeight.toFixed(0)}`
+      )
+    }
+  }
+
+  return (
+    <ViewLevel2 direction="column" gap={20} alignItems="center">
+      <Text text="Sprite Ref Access" style={tokens?.textStyles.large} />
+
+      <View direction="row" gap={10}>
+        <Button text="Get Info" onClick={updateInfo} />
+        <Button
+          text="Random Position"
+          onClick={() => {
+            if (spriteRef.current) {
+              spriteRef.current.setPosition(100 + Math.random() * 200, 50 + Math.random() * 100)
+            }
+          }}
+        />
+        <Button
+          text="Spin"
+          onClick={() => {
+            if (spriteRef.current?.scene) {
+              spriteRef.current.scene.tweens.add({
+                targets: spriteRef.current,
+                rotation: spriteRef.current.rotation + Math.PI * 2,
+                duration: 1000,
+                ease: 'Cubic.easeInOut',
+              })
+            }
+          }}
+        />
+      </View>
+
+      <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
+        <Sprite ref={spriteRef} texture="eye" x={200} y={100} />
+      </View>
+
+      {info && <Text text={info} style={tokens?.textStyles.small} alpha={0.7} />}
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Main Sprite example component
+ */
+export function SpriteExample() {
+  const tokens = useThemeTokens()
+
+  return (
+    <ScrollPage showVerticalSlider>
+      <View gap={100}>
+        <Text text="Sprite Examples" style={tokens?.textStyles.title} />
+        <View direction="row" gap={100}>
+          <BasicSpriteExample />
+          <TintSpriteExample />
+        </View>
+        <View direction="row" gap={100}>
+          <SizingSpriteExample />
+          <RefSpriteExample />
+        </View>
+        <TransformSpriteExample />
+      </View>
+    </ScrollPage>
+  )
+}
