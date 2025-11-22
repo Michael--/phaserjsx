@@ -136,7 +136,7 @@ function JsxStaticBox(props: { keys: string[] }) {
     outputToConsole(snapshot)
   }
 
-  return <Button variant="primary" text="JSX Static" onClick={run} />
+  return <Button size="small" variant="outline" text="JSX Static" onClick={run} />
 }
 
 export function App(props: AppProps) {
@@ -151,8 +151,10 @@ export function App(props: AppProps) {
     <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'}>
-        <JsxStaticBox keys={['*']} />
-        <LightDarkModeToggle />
+        <View direction="row" gap={10}>
+          <LightDarkModeToggle />
+          <JsxStaticBox keys={['*']} />
+        </View>
         <PresetSelector />
         <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
         <Spacer />

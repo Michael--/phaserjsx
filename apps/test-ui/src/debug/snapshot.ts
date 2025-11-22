@@ -306,6 +306,30 @@ function analyzeDepth(snapshots: VNodeSnapshot[]): { maxDepth: number; avgDepth:
 }
 
 /**
+ * Builds a hierarchy of nodes grouped by their keys
+ * @param snapshots - Array of VNode snapshots
+ * @returns Map of key to array of snapshots with that key
+ */
+function buildKeyHierarchy(snapshots: VNodeSnapshot[]): Map<string | number, VNodeSnapshot[]> {
+  const map = new Map<string | number, VNodeSnapshot[]>()
+
+  const traverse = (snapshot: VNodeSnapshot): void => {
+    if (snapshot.key !== undefined) {
+      const existing = map.get(snapshot.key) || []
+      existing.push(snapshot)
+      map.set(snapshot.key, existing)
+    }
+
+    if (snapshot.children) {
+      snapshot.children.forEach(traverse)
+    }
+  }
+
+  snapshots.forEach(traverse)
+  return map
+}
+
+/**
  * Outputs snapshot to console with structured formatting
  * @param snapshot - Debug snapshot to output
  */
@@ -331,6 +355,12 @@ export function outputToConsole(snapshot: DebugSnapshot): void {
   // Full tree
   console.group('🌳 Full Tree Structure')
   console.log(snapshot.vdom)
+  console.groupEnd()
+
+  // Key hierarchy
+  console.group('🔑 Key Hierarchy')
+  const keyMap = buildKeyHierarchy(snapshot.vdom)
+  console.log(Object.fromEntries(keyMap))
   console.groupEnd()
 
   console.groupEnd()
