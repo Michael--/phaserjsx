@@ -3,11 +3,10 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import type { ColorShade } from '@phaserjsx/ui'
-import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
-import { ScrollSlider } from '../components'
+import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
-import { ScrollView } from '../components/ScrollView'
-import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+import { ScrollPage } from '../components/ScrollPage'
+import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Section header component
@@ -396,77 +395,15 @@ function ComponentShowcase() {
  * TODO: may missing property fit-content for width/height on View
  */
 export function ThemePreviewExample() {
-  const [scroll, setScroll] = useState({
-    dx: 0,
-    dy: 0,
-    scrollX: 0,
-    scrollY: 0,
-    width: 0,
-    height: 0,
-  })
-
-  // Store dimensions for slider calculations
-  const [dimensions, setDimensions] = useState({ vw: 0, vh: 0, cw: 0, ch: 0 })
-
-  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
-    // Store dimensions
-    setDimensions({ vw, vh, cw, ch })
-
-    // Calculate absolute scroll positions from percentages
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (y / 100) * maxScrollY
-
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (x / 100) * maxScrollX
-
-    setScroll({
-      dx,
-      dy,
-      scrollX: x,
-      scrollY: y,
-      width: (vw / cw) * 100,
-      height: (vh / ch) * 100,
-    })
-  }
-
-  const handleVScroll = (percent: number) => {
-    const { vh, ch } = dimensions
-    if (vh === 0 || ch === 0) return
-
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (percent / 100) * maxScrollY
-
-    setScroll({ ...scroll, dy, scrollY: percent })
-  }
-
   return (
-    <View direction="stack" width="100vw" height="100vh">
-      <ViewLevel1 width="100%" direction="row" gap={0}>
-        <ScrollView scroll={scroll} onScroll={handleScroll}>
-          <View gap={32}>
-            <ColorSection />
-            <ComponentShowcase />
-            <SpacingSection />
-            <BorderRadiusSection />
-            <TypographySection />
-          </View>
-        </ScrollView>
-      </ViewLevel1>
-      <View
-        width="100%"
-        direction="row"
-        gap={0}
-        justifyContent="end"
-        padding={{ right: 1 }}
-        height="100vh"
-      >
-        <ScrollSlider
-          direction="vertical"
-          trackSize="100vh"
-          scrollInfo={scroll}
-          onScroll={handleVScroll}
-        />
+    <ScrollPage showVerticalSlider={true}>
+      <View gap={32}>
+        <ColorSection />
+        <ComponentShowcase />
+        <SpacingSection />
+        <BorderRadiusSection />
+        <TypographySection />
       </View>
-    </View>
+    </ScrollPage>
   )
 }
