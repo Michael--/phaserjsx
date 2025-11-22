@@ -53,6 +53,29 @@ export interface PhaserProps {
    * - false: Object is hidden but still exists in scene
    */
   visible?: boolean
+
+  /**
+   * Callback invoked when GameObject is created and fully initialized
+   * Useful for accessing GameObject properties (dimensions, bounds, etc.)
+   * without needing useRef
+   *
+   * @param node - The created Phaser GameObject
+   *
+   * @example
+   * // Display image dimensions
+   * <Image
+   *   texture="icon"
+   *   onReady={(img) => console.log(`${img.width}x${img.height}`)}
+   * />
+   *
+   * // Access View bounds
+   * <View
+   *   width={200}
+   *   height={100}
+   *   onReady={(view) => console.log(view.getBounds())}
+   * />
+   */
+  onReady?: (node: Phaser.GameObjects.GameObject) => void
 }
 
 /**

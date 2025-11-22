@@ -253,6 +253,11 @@ export const imageCreator: HostCreator<'Image'> = (scene, props) => {
   // Setup layout system (props and size provider)
   createImageLayout(image, normalizedProps)
 
+  // Call onReady callback if provided
+  if (props.onReady) {
+    props.onReady(image)
+  }
+
   return image
 }
 

@@ -12,6 +12,8 @@ import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
  */
 function AutoSizeImage() {
   const tokens = useThemeTokens()
+  const [dimensions, setDimensions] = useState<string | undefined>(undefined)
+
   return (
     <ViewLevel2>
       <Text text="Auto-Size Image" style={tokens?.textStyles.large} />
@@ -19,9 +21,15 @@ function AutoSizeImage() {
         text="No displayWidth/displayHeight - uses texture dimensions"
         style={tokens?.textStyles.small}
       />
-
+      {dimensions && <Text text={`Dimensions: ${dimensions}`} style={tokens?.textStyles.small} />}
       <ViewLevel3 direction="row" gap={10}>
-        <Image texture="test-image" />
+        <Image
+          texture="test-image"
+          onReady={(img) => {
+            const image = img as Phaser.GameObjects.Image
+            setDimensions(`${image.width}x${image.height}`)
+          }}
+        />
       </ViewLevel3>
     </ViewLevel2>
   )
@@ -91,6 +99,7 @@ function FitModesDemo() {
             borderColor={colors?.error.medium.toNumber()}
             borderWidth={2}
             direction="stack"
+            overflow="hidden"
           >
             <Image texture="test-image" displayWidth={120} displayHeight={80} fit="cover" />
           </View>

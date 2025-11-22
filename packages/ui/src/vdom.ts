@@ -134,12 +134,23 @@ export function createElement(
 }
 
 /**
- * Mounts a VNode into a Phaser scene or parent container
- * @param parentOrScene - Phaser scene or parent container
- * @param vnode - VNode to mount
+ * Mounts a VNode to the scene or parent container
+ * @param parentOrScene - Scene or parent container
+ * @param vnode - Virtual node to mount
  * @returns Created Phaser GameObject
  */
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
+  // Guard against invalid vnodes
+  if (!vnode || typeof vnode !== 'object') {
+    throw new Error(`Invalid VNode: expected object, got ${typeof vnode}`)
+  }
+  if (vnode.type === undefined || vnode.type === null) {
+    console.error('VNode with undefined/null type:', vnode)
+    throw new Error(
+      `Invalid VNode type: ${vnode.type}. VNode must have a valid type (string or function).`
+    )
+  }
+
   // Set global scene reference for animation hooks
   if (parentOrScene && typeof parentOrScene === 'object' && 'sys' in parentOrScene) {
     ;(window as { __phaserScene?: Phaser.Scene }).__phaserScene = parentOrScene as Phaser.Scene
@@ -269,12 +280,15 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
     if (c != null && c !== false) {
-      // Merge parent's nested theme with child's existing theme
-      if (Object.keys(nestedTheme).length > 0) {
-        c.__theme = c.__theme ? { ...nestedTheme, ...c.__theme } : nestedTheme
-      } else if (!c.__theme && vnode.__theme) {
-        // Fallback: Propagate theme to children (inherit parent's theme if child doesn't have one)
-        c.__theme = vnode.__theme
+      // Skip theme propagation for primitives (strings, numbers, booleans)
+      if (typeof c === 'object') {
+        // Merge parent's nested theme with child's existing theme
+        if (Object.keys(nestedTheme).length > 0) {
+          c.__theme = c.__theme ? { ...nestedTheme, ...c.__theme } : nestedTheme
+        } else if (!c.__theme && vnode.__theme) {
+          // Fallback: Propagate theme to children (inherit parent's theme if child doesn't have one)
+          c.__theme = vnode.__theme
+        }
       }
       mount(node as ParentType, c)
     }
