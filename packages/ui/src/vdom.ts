@@ -18,6 +18,26 @@ import { viewportRegistry } from './viewport-context'
 export type VNodeLike = VNode | VNode[] | null
 
 /**
+ * Checks if a child should be skipped during mounting
+ * Filters out falsy values, empty strings, and whitespace-only strings
+ * @param child - Child to check
+ * @returns true if child should be skipped
+ */
+function shouldSkipChild(child: unknown): boolean {
+  if (child == null || child === false) return true
+  if (typeof child === 'string') {
+    const trimmed = child.trim()
+    if (trimmed === '') {
+      if (child !== '') {
+        console.warn('JSX: Ignoring whitespace-only string in component children')
+      }
+      return true
+    }
+  }
+  return false
+}
+
+/**
  * Updates gesture hit area based on current layout size
  * Called after layout recalculation to sync hit area with actual container size
  * @param container - Container with potential gesture registration
@@ -161,12 +181,14 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     // Mount all children directly to parent
     let firstNode: Phaser.GameObjects.GameObject | undefined
     vnode.children?.forEach((c) => {
-      if (c != null && c !== false) {
+      if (!shouldSkipChild(c)) {
+        // Type guard: c is VNode at this point
+        const child = c as VNode
         // Propagate theme to children
-        if (!c.__theme && vnode.__theme) {
-          c.__theme = vnode.__theme
+        if (!child.__theme && vnode.__theme) {
+          child.__theme = vnode.__theme
         }
-        const childNode = mount(parentOrScene, c)
+        const childNode = mount(parentOrScene, child)
         if (!firstNode) firstNode = childNode
       }
     })
@@ -279,18 +301,20 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
   host.append(parentOrScene, node)
   vnode.children?.forEach((c) => {
-    if (c != null && c !== false) {
+    if (!shouldSkipChild(c)) {
+      // Type guard: c is VNode at this point
+      const child = c as VNode
       // Skip theme propagation for primitives (strings, numbers, booleans)
-      if (typeof c === 'object') {
+      if (typeof child === 'object') {
         // Merge parent's nested theme with child's existing theme
         if (Object.keys(nestedTheme).length > 0) {
-          c.__theme = c.__theme ? { ...nestedTheme, ...c.__theme } : nestedTheme
-        } else if (!c.__theme && vnode.__theme) {
+          child.__theme = child.__theme ? { ...nestedTheme, ...child.__theme } : nestedTheme
+        } else if (!child.__theme && vnode.__theme) {
           // Fallback: Propagate theme to children (inherit parent's theme if child doesn't have one)
-          c.__theme = vnode.__theme
+          child.__theme = vnode.__theme
         }
       }
-      mount(node as ParentType, c)
+      mount(node as ParentType, child)
     }
   })
 
