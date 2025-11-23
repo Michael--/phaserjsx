@@ -716,6 +716,8 @@ function calculateLayoutImmediate(
 
   // 10. Handle wrapping if enabled
   const positions: Position[] = []
+  let adjustedContainerWidth = containerWidth
+  let adjustedContainerHeight = containerHeight
 
   if (shouldWrap && 'wrapChildren' in strategy) {
     // Wrap children into multiple lines
@@ -736,6 +738,22 @@ function calculateLayoutImmediate(
       0
     )
     const totalLineGaps = (lines.length - 1) * gap
+
+    // Adjust container dimensions if auto-sizing and wrapping occurred
+    if (
+      direction === 'row' &&
+      (containerProps.height === undefined || containerProps.height === 'auto')
+    ) {
+      // For row direction with auto-height, calculate height based on wrapped lines
+      adjustedContainerHeight = totalCrossSize + totalLineGaps + padding.top + padding.bottom
+    } else if (
+      direction === 'column' &&
+      (containerProps.width === undefined || containerProps.width === 'auto')
+    ) {
+      // For column direction with auto-width, calculate width based on wrapped lines
+      adjustedContainerWidth = totalCrossSize + totalLineGaps + padding.left + padding.right
+    }
+
     const availableCrossSize = direction === 'row' ? contentArea.height : contentArea.width
     const freeCrossSpace = availableCrossSize - totalCrossSize - totalLineGaps
 
@@ -875,15 +893,15 @@ function calculateLayoutImmediate(
   // 11. Apply positions to children
   applyChildPositions(finalLayoutChildren, positions)
 
-  // 12. Apply container dimensions
-  applyContainerDimensions(container, containerWidth, containerHeight)
+  // 12. Apply container dimensions (use adjusted dimensions if wrapping changed them)
+  applyContainerDimensions(container, adjustedContainerWidth, adjustedContainerHeight)
 
   // 13. Update background and hit area
-  updateBackground(container, containerWidth, containerHeight)
-  updateHitArea(container, containerWidth, containerHeight)
+  updateBackground(container, adjustedContainerWidth, adjustedContainerHeight)
+  updateHitArea(container, adjustedContainerWidth, adjustedContainerHeight)
 
   // 14. Apply overflow mask if needed
-  applyOverflowMask(container, containerProps, containerWidth, containerHeight)
+  applyOverflowMask(container, containerProps, adjustedContainerWidth, adjustedContainerHeight)
 
   // End performance timing
   DebugLogger.timeEnd('performance', 'calculateLayout')
