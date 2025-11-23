@@ -7,6 +7,7 @@ import { ButtonExample } from './examples/ButtonExample'
 import { ColorModeExample } from './examples/ColorModeExample'
 import { ConstraintsExample } from './examples/ConstraintsExample'
 import { DesignTokensExample } from './examples/DesignTokensExample'
+import { FlexAdvancedExample } from './examples/FlexAdvancedExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
@@ -40,6 +41,7 @@ const examples = {
   sprite: { label: 'Sprite Component', component: SpriteExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
+  flexAdvanced: { label: 'Flex Shrink/Basis', component: FlexAdvancedExample },
   constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
   border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },

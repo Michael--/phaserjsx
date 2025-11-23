@@ -143,7 +143,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('constraints')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('flexAdvanced')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
 

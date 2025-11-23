@@ -1,11 +1,27 @@
 /**
- * Flex distribution utilities - handles flex-grow logic for layout children
+ * Flex distribution utilities - handles flexbox logic (grow, shrink, basis) for layout children
  */
 import type { LayoutChild } from '../types'
+import { parseSize, resolveSize } from './size-resolver'
+
+/**
+ * Flex item data structure
+ */
+interface FlexItem {
+  child: LayoutChild
+  index: number
+  flexGrow: number
+  flexShrink: number
+  flexBasis: number
+  minSize: number | undefined
+  maxSize: number | undefined
+  isFrozen: boolean
+  targetSize: number
+}
 
 /**
  * Calculate flex distribution for children
- * Distributes remaining space among flex children proportionally
+ * Implements flexbox algorithm with grow, shrink, and basis support
  * Respects min/max constraints during distribution
  * @param children - Layout children
  * @param availableSpace - Total available space on main axis
@@ -21,131 +37,260 @@ export function distributeFlexSpace(
     return children // Stack doesn't use flex
   }
 
-  // Find all flex children and calculate total flex value
-  const flexChildren: {
-    child: LayoutChild
-    index: number
-    flexValue: number
-    minSize?: number
-    maxSize?: number
-  }[] = []
-  let totalFlex = 0
+  // Phase 1: Identify flex items and non-flex items
+  const flexItems: FlexItem[] = []
   let nonFlexSpace = 0
 
   children.forEach((layoutChild, index) => {
-    const flexValue = layoutChild.child.__layoutProps?.flex
-    if (flexValue !== undefined && flexValue > 0) {
-      const props = layoutChild.child.__layoutProps
-      const minSize = direction === 'row' ? props?.minWidth : props?.minHeight
-      const maxSize = direction === 'row' ? props?.maxWidth : props?.maxHeight
+    const props = layoutChild.child.__layoutProps
+    const hasExplicitFlex = props?.flex !== undefined
+    const hasExplicitShrink = props?.flexShrink !== undefined
+    const hasExplicitBasis = props?.flexBasis !== undefined
 
-      const flexChild: {
-        child: LayoutChild
-        index: number
-        flexValue: number
-        minSize?: number
-        maxSize?: number
-      } = { child: layoutChild, index, flexValue }
+    const flexGrow = props?.flex ?? 0
+    // Only default flexShrink to 1 if element explicitly participates in flex
+    const flexShrink =
+      props?.flexShrink !== undefined
+        ? props.flexShrink
+        : hasExplicitFlex || hasExplicitBasis
+          ? 1
+          : 0
+    const flexBasis = props?.flexBasis
 
-      if (minSize !== undefined) flexChild.minSize = minSize
-      if (maxSize !== undefined) flexChild.maxSize = maxSize
+    const margin = layoutChild.margin
+    const marginSize =
+      direction === 'row'
+        ? (margin.left ?? 0) + (margin.right ?? 0)
+        : (margin.top ?? 0) + (margin.bottom ?? 0)
 
-      flexChildren.push(flexChild)
-      totalFlex += flexValue
+    const minSize = direction === 'row' ? props?.minWidth : props?.minHeight
+    const maxSize = direction === 'row' ? props?.maxWidth : props?.maxHeight
+
+    // Calculate flex-basis
+    let basisSize: number
+    if (flexBasis !== undefined) {
+      // Use explicit flex-basis
+      const parsedBasis = parseSize(flexBasis)
+      const currentSize = direction === 'row' ? layoutChild.size.width : layoutChild.size.height
+      basisSize = resolveSize(parsedBasis, availableSpace, currentSize, undefined)
     } else {
-      // Calculate space used by non-flex children (including margins)
-      const margin = layoutChild.margin
-      if (direction === 'row') {
-        nonFlexSpace += layoutChild.size.width + (margin.left ?? 0) + (margin.right ?? 0)
-      } else {
-        nonFlexSpace += layoutChild.size.height + (margin.top ?? 0) + (margin.bottom ?? 0)
-      }
+      // Use width/height as flex-basis
+      basisSize = direction === 'row' ? layoutChild.size.width : layoutChild.size.height
+    }
+
+    // Determine if this is a flex item
+    // An item is a flex item if it explicitly sets flex, flexShrink, or flexBasis
+    const isFlexItem = hasExplicitFlex || hasExplicitShrink || hasExplicitBasis
+
+    if (isFlexItem) {
+      flexItems.push({
+        child: layoutChild,
+        index,
+        flexGrow,
+        flexShrink,
+        flexBasis: basisSize,
+        minSize,
+        maxSize,
+        isFrozen: false,
+        targetSize: basisSize,
+      })
+
+      nonFlexSpace += marginSize
+    } else {
+      // Non-flex item - uses its current size
+      const size = direction === 'row' ? layoutChild.size.width : layoutChild.size.height
+      nonFlexSpace += size + marginSize
     }
   })
 
-  // No flex children - return as is
-  if (flexChildren.length === 0 || totalFlex === 0) {
+  // No flex items - return as is
+  if (flexItems.length === 0) {
     return children
   }
 
-  // Calculate remaining space for flex distribution
-  let remainingSpace = Math.max(0, availableSpace - nonFlexSpace)
+  // Phase 2: Calculate total flex-basis
+  let totalFlexBasis = flexItems.reduce((sum, item) => sum + item.flexBasis, 0)
+  let freeSpace = availableSpace - nonFlexSpace - totalFlexBasis
 
-  // Distribute space proportionally with constraint handling
+  // Phase 3: Flex distribution (grow or shrink)
   const updatedChildren = [...children]
-  const constrainedChildren = new Set<number>()
 
-  // Multiple passes to handle constraints
-  let hasChanges = true
-  let iterations = 0
-  const MAX_ITERATIONS = 10 // Prevent infinite loops
-
-  while (hasChanges && iterations < MAX_ITERATIONS) {
-    hasChanges = false
-    iterations++
-
-    // Calculate unconstrained flex total
-    let unconstrainedFlex = 0
-    for (const { index, flexValue } of flexChildren) {
-      if (!constrainedChildren.has(index)) {
-        unconstrainedFlex += flexValue
-      }
-    }
-
-    if (unconstrainedFlex === 0) break
-
-    // Distribute remaining space among unconstrained flex children
-    for (const { child, index, flexValue, minSize, maxSize } of flexChildren) {
-      if (constrainedChildren.has(index)) continue
-
-      const flexShare = (remainingSpace * flexValue) / unconstrainedFlex
-      let finalSize = flexShare
-
-      // Apply constraints
-      if (minSize !== undefined && finalSize < minSize) {
-        finalSize = minSize
-        constrainedChildren.add(index)
-        remainingSpace -= finalSize
-        hasChanges = true
-      } else if (maxSize !== undefined && finalSize > maxSize) {
-        finalSize = maxSize
-        constrainedChildren.add(index)
-        remainingSpace -= finalSize
-        hasChanges = true
-      }
-
-      if (direction === 'row') {
-        updatedChildren[index] = {
-          ...child,
-          size: {
-            ...child.size,
-            width: finalSize,
-          },
-        }
-      } else {
-        // column
-        updatedChildren[index] = {
-          ...child,
-          size: {
-            ...child.size,
-            height: finalSize,
-          },
-        }
-      }
-    }
+  if (freeSpace > 0) {
+    // GROW: Distribute positive free space
+    distributeGrow(flexItems, freeSpace)
+  } else if (freeSpace < 0) {
+    // SHRINK: Distribute negative free space
+    distributeShrink(flexItems, freeSpace)
+  } else {
+    // Exact fit - use flex-basis
+    flexItems.forEach((item) => {
+      item.targetSize = item.flexBasis
+    })
   }
+
+  // Phase 4: Apply calculated sizes
+  flexItems.forEach((item) => {
+    if (direction === 'row') {
+      updatedChildren[item.index] = {
+        ...item.child,
+        size: {
+          ...item.child.size,
+          width: item.targetSize,
+        },
+      }
+    } else {
+      updatedChildren[item.index] = {
+        ...item.child,
+        size: {
+          ...item.child.size,
+          height: item.targetSize,
+        },
+      }
+    }
+  })
 
   return updatedChildren
 }
 
 /**
- * Check if any children have flex property
+ * Distribute positive free space using flex-grow
+ * @param flexItems - Flex items to distribute space among
+ * @param freeSpace - Positive free space to distribute
+ */
+function distributeGrow(flexItems: FlexItem[], freeSpace: number): void {
+  let remainingSpace = freeSpace
+  const MAX_ITERATIONS = 10
+
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    // Calculate total flex-grow of unfrozen items
+    const totalFlexGrow = flexItems
+      .filter((item) => !item.isFrozen)
+      .reduce((sum, item) => sum + item.flexGrow, 0)
+
+    if (totalFlexGrow === 0 || remainingSpace <= 0) {
+      break
+    }
+
+    let hasViolations = false
+
+    // Distribute space proportionally
+    for (const item of flexItems) {
+      if (item.isFrozen) continue
+
+      const growShare = (remainingSpace * item.flexGrow) / totalFlexGrow
+      let targetSize = item.flexBasis + growShare
+
+      // Apply min/max constraints
+      if (item.minSize !== undefined && targetSize < item.minSize) {
+        targetSize = item.minSize
+        item.isFrozen = true
+        hasViolations = true
+      } else if (item.maxSize !== undefined && targetSize > item.maxSize) {
+        targetSize = item.maxSize
+        item.isFrozen = true
+        hasViolations = true
+      }
+
+      item.targetSize = targetSize
+    }
+
+    if (!hasViolations) {
+      break // All items distributed without violations
+    }
+
+    // Recalculate remaining space for next iteration
+    remainingSpace = freeSpace
+    for (const item of flexItems) {
+      if (item.isFrozen) {
+        remainingSpace -= item.targetSize - item.flexBasis
+      }
+    }
+  }
+
+  // Set targetSize for any remaining unfrozen items
+  for (const item of flexItems) {
+    if (!item.isFrozen) {
+      // Already set in loop
+    }
+  }
+}
+
+/**
+ * Distribute negative free space using flex-shrink
+ * @param flexItems - Flex items to shrink
+ * @param freeSpace - Negative free space (deficit)
+ */
+function distributeShrink(flexItems: FlexItem[], freeSpace: number): void {
+  let remainingSpace = Math.abs(freeSpace)
+  const MAX_ITERATIONS = 10
+
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    // Calculate scaled flex-shrink (shrink * basis)
+    const totalScaledShrink = flexItems
+      .filter((item) => !item.isFrozen)
+      .reduce((sum, item) => sum + item.flexShrink * item.flexBasis, 0)
+
+    if (totalScaledShrink === 0 || remainingSpace <= 0) {
+      break
+    }
+
+    let hasViolations = false
+
+    // Distribute shrinkage proportionally
+    for (const item of flexItems) {
+      if (item.isFrozen) continue
+
+      const scaledShrink = item.flexShrink * item.flexBasis
+      const shrinkShare = (remainingSpace * scaledShrink) / totalScaledShrink
+      let targetSize = item.flexBasis - shrinkShare
+
+      // Apply min/max constraints
+      if (item.minSize !== undefined && targetSize < item.minSize) {
+        targetSize = item.minSize
+        item.isFrozen = true
+        hasViolations = true
+      } else if (item.maxSize !== undefined && targetSize > item.maxSize) {
+        targetSize = item.maxSize
+        item.isFrozen = true
+        hasViolations = true
+      }
+
+      item.targetSize = targetSize
+    }
+
+    if (!hasViolations) {
+      break // All items shrunk without violations
+    }
+
+    // Recalculate remaining space for next iteration
+    remainingSpace = Math.abs(freeSpace)
+    for (const item of flexItems) {
+      if (item.isFrozen) {
+        remainingSpace -= item.flexBasis - item.targetSize
+      }
+    }
+  }
+
+  // Set targetSize for any remaining unfrozen items
+  for (const item of flexItems) {
+    if (!item.isFrozen) {
+      // Already set in loop
+    }
+  }
+}
+
+/**
+ * Check if any children have flex properties (flex, flexShrink, or flexBasis)
  * @param children - Layout children
- * @returns True if at least one child has flex > 0
+ * @returns True if at least one child participates in flexbox
  */
 export function hasFlexChildren(children: LayoutChild[]): boolean {
   return children.some((child) => {
-    const flex = child.child.__layoutProps?.flex
-    return flex !== undefined && flex > 0
+    const props = child.child.__layoutProps
+    return (
+      (props?.flex !== undefined && props.flex > 0) ||
+      props?.flexShrink !== undefined ||
+      props?.flexBasis !== undefined
+    )
   })
 }

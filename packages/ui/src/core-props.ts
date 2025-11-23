@@ -301,6 +301,50 @@ export interface LayoutProps {
   flex?: number
 
   /**
+   * Flex shrink factor - how much this element should shrink when space is limited
+   * Similar to CSS flexbox flex-shrink
+   * - 0: Don't shrink, maintain size even if container overflows
+   * - 1: Shrink proportionally with other flex items (default)
+   * - 2+: Shrink more than other items proportionally
+   *
+   * @example
+   * // Text that can shrink, icon that stays fixed
+   * <View direction="row" width={150}>
+   *   <View width={50} flexShrink={0}>Icon</View>
+   *   <View flex={1} flexShrink={1}>Long Text...</View>
+   * </View>
+   *
+   * // Two items, second shrinks twice as fast
+   * <View direction="row" width={100}>
+   *   <View width={80} flexShrink={1}>Item 1</View>
+   *   <View width={80} flexShrink={2}>Item 2</View>
+   * </View>
+   */
+  flexShrink?: number
+
+  /**
+   * Flex basis - initial size before flex distribution
+   * Similar to CSS flexbox flex-basis
+   * - number: Fixed initial size in pixels
+   * - string: Relative initial size (e.g., "50%", "auto")
+   * - undefined: Use width/height as basis
+   *
+   * Defines the starting size before flexGrow/flexShrink is applied
+   * Overrides width/height when flex is used
+   *
+   * @example
+   * // Item starts at 200px, then grows with flex
+   * <View flex={1} flexBasis={200}>Content</View>
+   *
+   * // Item starts at 50% of parent, then shrinks if needed
+   * <View flexBasis="50%" flexShrink={1}>Content</View>
+   *
+   * // Auto basis - uses content size
+   * <View flex={1} flexBasis="auto">Content</View>
+   */
+  flexBasis?: number | string | undefined
+
+  /**
    * Controls how content that overflows the container bounds is displayed
    * - 'visible': Content can overflow container bounds (default)
    * - 'hidden': Content is clipped to container bounds using Phaser mask
