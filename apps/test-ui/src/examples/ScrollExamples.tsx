@@ -1,9 +1,9 @@
-import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import { Text, useState, useThemeTokens, View, type SizeValue } from '@phaserjsx/ui'
 import { Button, ScrollView } from '../components'
 import { ScrollSlider } from '../components/ScrollSlider'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
-function ListButton(props: { index: number; width?: number | string }) {
+function ListButton(props: { index: number; width?: SizeValue }) {
   const tokens = useThemeTokens()
   const [count, setCount] = useState(0)
   return (
@@ -33,7 +33,7 @@ function ListButton(props: { index: number; width?: number | string }) {
     </View>
   )
 }
-function Content(props: { count: number; width: string }) {
+function Content(props: { count: number; width: SizeValue }) {
   const tokens = useThemeTokens()
   const entry = (index: number) => {
     if (index % 3 === 0) {
@@ -68,7 +68,7 @@ function Content(props: { count: number; width: string }) {
  *  Example of ScrollView usage, depending on props either vertical, horizontal or both scrolling is available
  * @param props title, count, width
  */
-function ScrollExampleLocal(props: { title: string; count: number; width: string }) {
+function ScrollExampleLocal(props: { title: string; count: number; width: SizeValue }) {
   const tokens = useThemeTokens()
 
   return (
@@ -86,7 +86,7 @@ function ScrollExampleLocal(props: { title: string; count: number; width: string
   )
 }
 
-function ScrollExampleSliderLocal(props: { title: string; count: number; width: string }) {
+function ScrollExampleSliderLocal(props: { title: string; count: number; width: SizeValue }) {
   const tokens = useThemeTokens()
   const [scroll, setScroll] = useState({
     dx: 0,

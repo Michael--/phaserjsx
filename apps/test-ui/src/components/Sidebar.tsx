@@ -3,7 +3,7 @@
  */
 
 import type * as PhaserJSX from '@phaserjsx/ui'
-import type { ViewProps } from '@phaserjsx/ui'
+import type { SizeValue, ViewProps } from '@phaserjsx/ui'
 import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
@@ -30,7 +30,7 @@ declare module '@phaserjsx/ui' {
  */
 export interface SidebarProps {
   /** Height of the sidebar */
-  height?: number | string
+  height?: SizeValue
   /** Children to display in sidebar */
   children?: ViewProps['children']
 }

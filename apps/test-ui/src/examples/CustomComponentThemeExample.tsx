@@ -25,7 +25,7 @@ declare module '@phaserjsx/ui' {
  * Step 2: Register default theme values for your component
  * Do this in your component's initialization code
  */
-import { themeRegistry } from '@phaserjsx/ui'
+import { themeRegistry, type SizeValue } from '@phaserjsx/ui'
 
 themeRegistry.registerCustomComponent('CustomComponentName', {
   backgroundColor: 0x1e1e1e,
@@ -47,8 +47,8 @@ themeRegistry.registerCustomComponent('CustomComponentName', {
 import { View, getThemedProps, type ViewProps } from '@phaserjsx/ui'
 
 export interface CustomComponentProps {
-  width?: number | string
-  height?: number | string
+  width?: SizeValue
+  height?: SizeValue
   backgroundColor?: number
   padding?: number
   gap?: number
