@@ -353,12 +353,7 @@ export function resolveSize(
         // Parent size will be available in next layout pass - use content size for now
         return contentSize
       }
-      // Percentages should be relative to content-area (parent size minus padding)
-      const effectiveParentSize =
-        parentPadding !== undefined && parentPadding > 0
-          ? Math.max(0, parentSize - parentPadding)
-          : parentSize
-      return (effectiveParentSize * (parsed.value ?? 0)) / 100
+      return (parentSize * (parsed.value ?? 0)) / 100
 
     case 'vw': {
       const viewport = viewportSize || viewportRegistry.getViewport()

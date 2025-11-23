@@ -16,6 +16,7 @@ import type { GameObjectWithLayout, LayoutChild, LayoutContext, Position } from 
 import { getChildSize, getMargin, isLayoutChild, processNestedContainer } from './utils/child-utils'
 import { calculateContainerSize, normalizePadding } from './utils/dimension-calculator'
 import { distributeFlexSpace, hasFlexChildren } from './utils/flex-distributor'
+import { clampSize, parseSize, resolveSize } from './utils/size-resolver'
 import { calculateJustifyContent } from './utils/spacing-calculator'
 
 /**
@@ -406,20 +407,50 @@ function calculateLayoutImmediate(
 
   DebugLogger.log('layout', `Direction: ${direction}, Padding:`, padding)
 
-  // 2a. Pre-calculate container size if explicitly set (needed for percentage children)
-  //     This allows percentage-based child sizes to resolve correctly
-  const explicitContainerWidth =
-    typeof containerProps.width === 'number' ? containerProps.width : undefined
-  const explicitContainerHeight =
-    typeof containerProps.height === 'number' ? containerProps.height : undefined
+  // 2a. Pre-calculate container size if possible (needed for percentage children and nested containers)
+  //     This allows percentage-based child sizes to resolve correctly and nested containers
+  //     to receive the correct content-area as their parent size
+  let currentContainerSize: { width: number; height: number } | undefined
 
-  const currentContainerSize =
-    explicitContainerWidth !== undefined || explicitContainerHeight !== undefined
-      ? {
-          width: explicitContainerWidth ?? container.width,
-          height: explicitContainerHeight ?? container.height,
-        }
-      : undefined
+  // Try to calculate width early if we have explicit width or can resolve from parent
+  const parsedWidth = parseSize(containerProps.width)
+  const canCalculateWidth =
+    parsedWidth.type === 'fixed' ||
+    (parentSize?.width !== undefined &&
+      (parsedWidth.type === 'percent' || parsedWidth.type === 'fill'))
+
+  const width = canCalculateWidth
+    ? resolveSize(parsedWidth, parentSize?.width, container.width, parentPadding?.horizontal)
+    : undefined
+
+  // Try to calculate height early if we have explicit height or can resolve from parent
+  const parsedHeight = parseSize(containerProps.height)
+  const canCalculateHeight =
+    parsedHeight.type === 'fixed' ||
+    (parentSize?.height !== undefined &&
+      (parsedHeight.type === 'percent' || parsedHeight.type === 'fill'))
+
+  const height = canCalculateHeight
+    ? resolveSize(parsedHeight, parentSize?.height, container.height, parentPadding?.vertical)
+    : undefined
+
+  // Set currentContainerSize if we could calculate at least one dimension
+  if (width !== undefined || height !== undefined) {
+    // Apply constraints
+    const clampedWidth =
+      width !== undefined
+        ? clampSize(width, containerProps.minWidth, containerProps.maxWidth)
+        : container.width
+    const clampedHeight =
+      height !== undefined
+        ? clampSize(height, containerProps.minHeight, containerProps.maxHeight)
+        : container.height
+
+    currentContainerSize = {
+      width: clampedWidth,
+      height: clampedHeight,
+    }
+  }
 
   // Calculate available content size (container minus padding) for child size resolution
   // This allows 'fill' and percentage sizes to resolve correctly relative to content area
@@ -448,25 +479,43 @@ function calculateLayoutImmediate(
     } // Skip processing nested containers with flex (they need parent size first)
     const hasFlex = (child.__layoutProps?.flex ?? 0) > 0
     if (!hasFlex) {
-      // Process nested containers (pass current container size and padding for resolution)
-      const currentPaddingForChild = currentContainerSize
-        ? { horizontal: padding.left + padding.right, vertical: padding.top + padding.bottom }
-        : undefined
+      // Process nested containers - pass content-area (size minus padding) as parent size
+      // This ensures nested children see the correct available space
+      const parentSizeForNested = currentContainerSize
+        ? {
+            width: currentContainerSize.width - padding.left - padding.right,
+            height: currentContainerSize.height - padding.top - padding.bottom,
+          }
+        : parentSize
+          ? {
+              width: parentSize.width - (parentPadding?.horizontal ?? 0),
+              height: parentSize.height - (parentPadding?.vertical ?? 0),
+            }
+          : undefined
+
       processNestedContainer(
         child,
         calculateLayout,
-        currentContainerSize ?? parentSize,
-        currentPaddingForChild ?? parentPadding
+        parentSizeForNested,
+        undefined // No padding offset needed since we pass content-area
       )
     }
 
-    // Get child size - pass total container size and padding so both % and fill work correctly
-    // Percentages resolve relative to total size, fill resolves relative to content-area
-    const parentPaddingForChild = {
-      horizontal: padding.left + padding.right,
-      vertical: padding.top + padding.bottom,
-    }
-    const size = getChildSize(child, currentContainerSize ?? parentSize, parentPaddingForChild)
+    // Get child size - pass content-area (container size minus padding) for % and fill
+    // This way percentages and fill are relative to available content space
+    const contentAreaForChild = currentContainerSize
+      ? {
+          width: currentContainerSize.width - padding.left - padding.right,
+          height: currentContainerSize.height - padding.top - padding.bottom,
+        }
+      : parentSize
+        ? {
+            width: parentSize.width - (parentPadding?.horizontal ?? 0),
+            height: parentSize.height - (parentPadding?.vertical ?? 0),
+          }
+        : undefined
+
+    const size = getChildSize(child, contentAreaForChild, undefined)
     const margin = getMargin(child)
 
     layoutChildren.push({ child, size, margin })

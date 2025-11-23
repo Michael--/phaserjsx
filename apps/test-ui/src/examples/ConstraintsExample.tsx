@@ -264,14 +264,28 @@ function PercentageWithConstraints() {
         <View
           width="100%"
           minWidth={200}
-          maxWidth={800} // fiddle out that 690 is what should be internally calculated
-          height={80}
+          maxWidth={500}
+          height={40}
           backgroundColor={tokens?.colors.success.DEFAULT.toNumber()}
           alignItems="center"
           justifyContent="center"
         >
           <Text
             text='width="100%" minWidth={200} maxWidth={500}'
+            style={tokens?.textStyles.small}
+          />
+        </View>
+        <View
+          width="100%"
+          minWidth={200}
+          maxWidth={2000} // larger than container to test clamping
+          height={40}
+          backgroundColor={tokens?.colors.accent.DEFAULT.toNumber()}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text
+            text='width="100%" minWidth={200} maxWidth={2000}'
             style={tokens?.textStyles.small}
           />
         </View>
