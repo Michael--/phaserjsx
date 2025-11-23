@@ -1,5 +1,4 @@
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { ScrollPage } from '../components/ScrollPage'
 import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
@@ -42,22 +41,22 @@ export function FlexGridExample() {
   }
 
   function ResponsiveCards() {
+    const cardWidths = [180, 140, 160, 200, 150, 170]
     return (
       <View direction="column" gap={5}>
-        <Text text="2. Responsive Cards - Flex + Wrap" style={tokens?.textStyles.large} />
-        <ViewLevel3 direction="row" flexWrap="wrap" gap={15} width={'fill'}>
+        <Text text="2. Mixed Card Sizes - Variable Width" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="row" flexWrap="wrap" gap={15} width={'fill'} justifyContent="center">
           {Array.from({ length: 6 }).map((_, i) => (
             <View
               key={i}
-              minWidth={150}
-              flex={1}
+              width={cardWidths[i]}
               height={100}
               backgroundColor={colors[i % colors.length]}
               padding={10}
               justifyContent="center"
             >
               <Text text={`Card ${i + 1}`} style={tokens?.textStyles.medium} />
-              <Text text="Responsive width" style={tokens?.textStyles.small} />
+              <Text text={`${cardWidths[i]}px`} style={tokens?.textStyles.small} />
             </View>
           ))}
         </ViewLevel3>
@@ -260,21 +259,29 @@ export function FlexGridExample() {
     )
   }
 
+  const width = 400
+
   return (
-    <ScrollPage showVerticalSlider={true}>
-      <ViewLevel1 height={3000}>
-        <ViewLevel2 width={800} gap={200}>
-          <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
-          <AutoWrapGrid />
-          <ResponsiveCards />
-          <AlignContentSpaceBetween />
-          <AlignContentCenter />
-          <WrapReverse />
-          <ColumnWrap />
-          <ToolbarOverflow />
-          <AlignContentSpaceAround />
+    <ViewLevel1>
+      <ViewLevel2 gap={20}>
+        <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
+        <ViewLevel2 gap={20} direction="row">
+          <ViewLevel2 width={width} gap={20}>
+            <AutoWrapGrid />
+            <ResponsiveCards />
+          </ViewLevel2>
+          <ViewLevel2 width={width} gap={20}>
+            <AlignContentSpaceBetween />
+            <AlignContentCenter />
+            <WrapReverse />
+          </ViewLevel2>
+          <ViewLevel2 width={width} gap={20}>
+            <ColumnWrap />
+            <ToolbarOverflow />
+            <AlignContentSpaceAround />
+          </ViewLevel2>
         </ViewLevel2>
-      </ViewLevel1>
-    </ScrollPage>
+      </ViewLevel2>
+    </ViewLevel1>
   )
 }
