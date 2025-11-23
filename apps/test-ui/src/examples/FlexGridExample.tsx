@@ -1,4 +1,5 @@
-import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { Text, useForceRedraw, useSpring, useThemeTokens, View } from '@phaserjsx/ui'
+import { Button } from '../components'
 import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
@@ -17,7 +18,6 @@ export function FlexGridExample() {
     tokens?.colors.primary.DEFAULT.toNumber() ?? 0x8844ff,
     tokens?.colors.secondary.DEFAULT.toNumber() ?? 0xff44aa,
   ]
-
   function AutoWrapGrid() {
     return (
       <View direction="column" gap={5}>
@@ -166,11 +166,11 @@ export function FlexGridExample() {
     )
   }
 
-  function ToolbarOverflow() {
+  function ToolbarOverflow(props: { width: number }) {
     return (
       <View direction="column" gap={5}>
         <Text text="7. Toolbar with Overflow Wrap" style={tokens?.textStyles.large} />
-        <ViewLevel3 direction="row" flexWrap="wrap" gap={8} width={400}>
+        <ViewLevel3 direction="row" flexWrap="wrap" gap={8} width={props.width}>
           <View
             width={80}
             height={40}
@@ -230,17 +230,16 @@ export function FlexGridExample() {
     )
   }
 
-  function AlignContentSpaceAround() {
+  function JustifyContentSpaceAround() {
     return (
       <View direction="column" gap={5}>
-        <Text text="8. AlignContent: space-around" style={tokens?.textStyles.large} />
+        <Text text="8. Justify Content: space-around" style={tokens?.textStyles.large} />
         <ViewLevel3
           direction="row"
           flexWrap="wrap"
-          alignContent="space-around"
+          justifyContent="space-around"
           gap={10}
           width={'fill'}
-          height={250}
         >
           {Array.from({ length: 8 }).map((_, i) => (
             <View
@@ -259,12 +258,21 @@ export function FlexGridExample() {
     )
   }
 
-  const width = 400
+  const [w42, setW42] = useSpring(400, 'instant')
+  useForceRedraw(20, w42)
+
+  const width = w42.value
 
   return (
     <ViewLevel1>
       <ViewLevel2 gap={20}>
         <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
+        <View gap={10} direction="row">
+          <Button text="300" onClick={() => setW42(300)} />
+          <Button text="400" onClick={() => setW42(400)} />
+          <Button text="600" onClick={() => setW42(600)} />
+          <Button text="800" onClick={() => setW42(800)} />
+        </View>
         <ViewLevel2 gap={20} direction="row">
           <ViewLevel2 width={width} gap={20}>
             <AutoWrapGrid />
@@ -277,8 +285,8 @@ export function FlexGridExample() {
           </ViewLevel2>
           <ViewLevel2 width={width} gap={20}>
             <ColumnWrap />
-            <ToolbarOverflow />
-            <AlignContentSpaceAround />
+            <ToolbarOverflow width={width} />
+            <JustifyContentSpaceAround />
           </ViewLevel2>
         </ViewLevel2>
       </ViewLevel2>
