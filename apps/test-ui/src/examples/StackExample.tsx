@@ -1,5 +1,6 @@
 import type { DesignTokens } from '@phaserjsx/ui'
 import { Text, useRef, useState, useThemeTokens, View, type GestureEventData } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 interface StackItem {
@@ -115,7 +116,7 @@ function StackExampleByRef() {
         {items.map((item) => (
           <View
             key={item.id}
-            ref={(el) => {
+            ref={(el: Phaser.GameObjects.Container | null) => {
               if (el) refs.current[item.id] = el
             }}
             x={item.x}

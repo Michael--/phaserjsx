@@ -3,6 +3,7 @@
  * Demonstrates various uses of the Graphics component
  */
 import { Graphics, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
 import { ScrollPage } from '../components/ScrollPage'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
@@ -26,7 +27,7 @@ function HeadlessCircle() {
         <Graphics
           x={100}
           y={100}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             g.fillStyle(colors?.error.medium.toNumber() ?? 0, 1)
             g.fillCircle(0, 0, 50)
           }}
@@ -34,7 +35,7 @@ function HeadlessCircle() {
         <Graphics
           x={125}
           y={125}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             g.fillStyle(colors?.warning.medium.toNumber() ?? 0, 1)
             g.fillCircle(0, 0, 25)
           }}
@@ -58,7 +59,7 @@ function LayoutAwareRectangle() {
           headless={false}
           width={100}
           height={60}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             g.fillStyle(colors?.success.medium.toNumber() ?? 0, 1)
             g.fillRect(0, 0, 100, 60)
           }}
@@ -67,7 +68,7 @@ function LayoutAwareRectangle() {
           headless={false}
           width={100}
           height={60}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             g.fillStyle(colors?.info.medium.toNumber() ?? 0, 1)
             g.fillRect(0, 0, 100, 60)
           }}
@@ -105,7 +106,7 @@ function DependencyRedraw() {
             x={50}
             y={50}
             dependencies={[color]}
-            onDraw={(g) => {
+            onDraw={(g: Phaser.GameObjects.Graphics) => {
               g.fillStyle(color, 1)
               g.fillCircle(0, 0, radius)
             }}
@@ -126,7 +127,7 @@ function DependencyRedraw() {
             x={50}
             y={50}
             dependencies={[radius]}
-            onDraw={(g) => {
+            onDraw={(g: Phaser.GameObjects.Graphics) => {
               g.fillStyle(0xffff00, 1)
               g.fillCircle(0, 0, radius)
             }}
@@ -156,7 +157,7 @@ function ComplexShape() {
         <Graphics
           x={100}
           y={100}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             // Draw star
             g.fillStyle(colors?.warning.medium.toNumber() ?? 0, 1)
             g.beginPath()
@@ -207,7 +208,7 @@ function AdditiveDrawing() {
           y={100}
           autoClear={false}
           dependencies={[count]}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             // Add a new circle each time
             const angle = ((count - 1) * Math.PI * 2) / 5
             const x = Math.cos(angle) * 60
@@ -241,7 +242,7 @@ function AdvancedGraphicsDemo() {
         <Graphics
           x={150}
           y={125}
-          onDraw={(g) => {
+          onDraw={(g: Phaser.GameObjects.Graphics) => {
             // Draw a house
             // Base
             g.fillStyle(colors?.surface.medium.toNumber() ?? 0, 1)

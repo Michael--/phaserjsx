@@ -3,6 +3,7 @@
  * Demonstrates various uses of the Image component
  */
 import { Image, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
+import type Phaser from 'phaser'
 import { ScrollPage } from '../components/ScrollPage'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
@@ -25,7 +26,7 @@ function AutoSizeImage() {
       <ViewLevel3 direction="row" gap={10}>
         <Image
           texture="test-image"
-          onReady={(img) => {
+          onReady={(img: Phaser.GameObjects.GameObject) => {
             const image = img as Phaser.GameObjects.Image
             setDimensions(`${image.width}x${image.height}`)
           }}

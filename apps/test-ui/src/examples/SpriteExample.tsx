@@ -337,9 +337,11 @@ function PhaserAnimationExample() {
           x={200}
           y={100}
           scale={2}
-          onAnimationStart={(key) => setAnimStatus(`Playing: ${key}`)}
-          onAnimationComplete={(key) => setAnimStatus(`Completed: ${key}`)}
-          onAnimationUpdate={(_key, frame) => setCurrentFrame(frame.index)}
+          onAnimationStart={(key: string) => setAnimStatus(`Playing: ${key}`)}
+          onAnimationComplete={(key: string) => setAnimStatus(`Completed: ${key}`)}
+          onAnimationUpdate={(_key: string, frame: Phaser.Animations.AnimationFrame) =>
+            setCurrentFrame(frame.index)
+          }
         />
       </View>
 
@@ -375,9 +377,9 @@ function AnimationCallbacksExample() {
           scale={2}
           animationKey="button-cycle"
           loop={false}
-          onAnimationStart={(key) => addLog(`Started: ${key}`)}
-          onAnimationComplete={(key) => addLog(`Completed: ${key}`)}
-          onAnimationRepeat={(key) => addLog(`Repeat: ${key}`)}
+          onAnimationStart={(key: string) => addLog(`Started: ${key}`)}
+          onAnimationComplete={(key: string) => addLog(`Completed: ${key}`)}
+          onAnimationRepeat={(key: string) => addLog(`Repeat: ${key}`)}
         />
       </View>
 
