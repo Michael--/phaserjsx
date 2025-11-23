@@ -5,6 +5,7 @@ import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
 import { ColorModeExample } from './examples/ColorModeExample'
+import { ConstraintsExample } from './examples/ConstraintsExample'
 import { DesignTokensExample } from './examples/DesignTokensExample'
 import { FlexExample } from './examples/FlexExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
@@ -39,6 +40,7 @@ const examples = {
   sprite: { label: 'Sprite Component', component: SpriteExample },
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
+  constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
   border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },
   nineslice: { label: 'NineSlice UI', component: NineSliceExample },

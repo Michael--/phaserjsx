@@ -5,7 +5,7 @@ import type Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from '../../core-props'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout, LayoutChild, LayoutSize } from '../types'
-import { parseSize, resolveSize } from './size-resolver'
+import { clampSize, parseSize, resolveSize } from './size-resolver'
 
 /**
  * Check if a child should participate in layout calculations
@@ -65,7 +65,7 @@ export function getChildSize(
 
     // Resolve width
     const parsedWidth = parseSize(layoutWidth)
-    const width = resolveSize(
+    let width = resolveSize(
       parsedWidth,
       parentSize?.width,
       child.width ?? 100,
@@ -74,26 +74,49 @@ export function getChildSize(
 
     // Resolve height
     const parsedHeight = parseSize(layoutHeight)
-    const height = resolveSize(
+    let height = resolveSize(
       parsedHeight,
       parentSize?.height,
       child.height ?? 20,
       parentPadding?.vertical
     )
 
+    // Apply min/max constraints
+    const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
+    width = clampSize(width, minWidth, maxWidth)
+    height = clampSize(height, minHeight, maxHeight)
+
     return { width, height }
   }
 
   // Use dynamic size provider if available
   if (child.__getLayoutSize) {
-    return child.__getLayoutSize()
+    let size = child.__getLayoutSize()
+
+    // Apply constraints if layoutProps exist (even without explicit width/height)
+    if (child.__layoutProps) {
+      const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
+      size = {
+        width: clampSize(size.width, minWidth, maxWidth),
+        height: clampSize(size.height, minHeight, maxHeight),
+      }
+    }
+
+    return size
   }
 
   // Fallback to current dimensions or default
-  return {
-    width: child.width ?? 100,
-    height: child.height ?? 20,
+  let width = child.width ?? 100
+  let height = child.height ?? 20
+
+  // Apply constraints if layoutProps exist
+  if (child.__layoutProps) {
+    const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
+    width = clampSize(width, minWidth, maxWidth)
+    height = clampSize(height, minHeight, maxHeight)
   }
+
+  return { width, height }
 }
 
 /**

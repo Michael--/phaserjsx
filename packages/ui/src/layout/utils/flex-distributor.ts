@@ -6,6 +6,7 @@ import type { LayoutChild } from '../types'
 /**
  * Calculate flex distribution for children
  * Distributes remaining space among flex children proportionally
+ * Respects min/max constraints during distribution
  * @param children - Layout children
  * @param availableSpace - Total available space on main axis
  * @param direction - Layout direction ('row' or 'column')
@@ -21,14 +22,35 @@ export function distributeFlexSpace(
   }
 
   // Find all flex children and calculate total flex value
-  const flexChildren: { child: LayoutChild; index: number; flexValue: number }[] = []
+  const flexChildren: {
+    child: LayoutChild
+    index: number
+    flexValue: number
+    minSize?: number
+    maxSize?: number
+  }[] = []
   let totalFlex = 0
   let nonFlexSpace = 0
 
   children.forEach((layoutChild, index) => {
     const flexValue = layoutChild.child.__layoutProps?.flex
     if (flexValue !== undefined && flexValue > 0) {
-      flexChildren.push({ child: layoutChild, index, flexValue })
+      const props = layoutChild.child.__layoutProps
+      const minSize = direction === 'row' ? props?.minWidth : props?.minHeight
+      const maxSize = direction === 'row' ? props?.maxWidth : props?.maxHeight
+
+      const flexChild: {
+        child: LayoutChild
+        index: number
+        flexValue: number
+        minSize?: number
+        maxSize?: number
+      } = { child: layoutChild, index, flexValue }
+
+      if (minSize !== undefined) flexChild.minSize = minSize
+      if (maxSize !== undefined) flexChild.maxSize = maxSize
+
+      flexChildren.push(flexChild)
       totalFlex += flexValue
     } else {
       // Calculate space used by non-flex children (including margins)
@@ -47,30 +69,68 @@ export function distributeFlexSpace(
   }
 
   // Calculate remaining space for flex distribution
-  const remainingSpace = Math.max(0, availableSpace - nonFlexSpace)
+  let remainingSpace = Math.max(0, availableSpace - nonFlexSpace)
 
-  // Distribute space proportionally
+  // Distribute space proportionally with constraint handling
   const updatedChildren = [...children]
+  const constrainedChildren = new Set<number>()
 
-  for (const { child, index, flexValue } of flexChildren) {
-    const flexShare = (remainingSpace * flexValue) / totalFlex
+  // Multiple passes to handle constraints
+  let hasChanges = true
+  let iterations = 0
+  const MAX_ITERATIONS = 10 // Prevent infinite loops
 
-    if (direction === 'row') {
-      updatedChildren[index] = {
-        ...child,
-        size: {
-          ...child.size,
-          width: flexShare,
-        },
+  while (hasChanges && iterations < MAX_ITERATIONS) {
+    hasChanges = false
+    iterations++
+
+    // Calculate unconstrained flex total
+    let unconstrainedFlex = 0
+    for (const { index, flexValue } of flexChildren) {
+      if (!constrainedChildren.has(index)) {
+        unconstrainedFlex += flexValue
       }
-    } else {
-      // column
-      updatedChildren[index] = {
-        ...child,
-        size: {
-          ...child.size,
-          height: flexShare,
-        },
+    }
+
+    if (unconstrainedFlex === 0) break
+
+    // Distribute remaining space among unconstrained flex children
+    for (const { child, index, flexValue, minSize, maxSize } of flexChildren) {
+      if (constrainedChildren.has(index)) continue
+
+      const flexShare = (remainingSpace * flexValue) / unconstrainedFlex
+      let finalSize = flexShare
+
+      // Apply constraints
+      if (minSize !== undefined && finalSize < minSize) {
+        finalSize = minSize
+        constrainedChildren.add(index)
+        remainingSpace -= finalSize
+        hasChanges = true
+      } else if (maxSize !== undefined && finalSize > maxSize) {
+        finalSize = maxSize
+        constrainedChildren.add(index)
+        remainingSpace -= finalSize
+        hasChanges = true
+      }
+
+      if (direction === 'row') {
+        updatedChildren[index] = {
+          ...child,
+          size: {
+            ...child.size,
+            width: finalSize,
+          },
+        }
+      } else {
+        // column
+        updatedChildren[index] = {
+          ...child,
+          size: {
+            ...child.size,
+            height: finalSize,
+          },
+        }
       }
     }
   }

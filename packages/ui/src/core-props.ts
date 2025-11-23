@@ -176,6 +176,59 @@ export interface LayoutProps {
   height?: number | string | undefined
 
   /**
+   * Minimum width constraint in pixels
+   * Prevents element from shrinking below this size
+   * Works with flex, percentages, and auto sizing
+   *
+   * @example
+   * // Flexible sidebar with minimum width
+   * <View flex={1} minWidth={200}>Sidebar</View>
+   *
+   * // Button with responsive but readable minimum
+   * <View width="100%" minWidth={80} maxWidth={200}>
+   *   <Text text="OK" />
+   * </View>
+   */
+  minWidth?: number | undefined
+
+  /**
+   * Minimum height constraint in pixels
+   * Prevents element from shrinking below this size
+   * Works with flex, percentages, and auto sizing
+   *
+   * @example
+   * // Card with minimum height
+   * <View height="auto" minHeight={100}>
+   *   <Text text={dynamicContent} />
+   * </View>
+   */
+  minHeight?: number | undefined
+
+  /**
+   * Maximum width constraint in pixels
+   * Prevents element from growing beyond this size
+   * Works with flex, percentages, and auto sizing
+   *
+   * @example
+   * // Flexible content with maximum width for readability
+   * <View flex={1} maxWidth={800}>
+   *   <Text text="Long content..." />
+   * </View>
+   */
+  maxWidth?: number | undefined
+
+  /**
+   * Maximum height constraint in pixels
+   * Prevents element from growing beyond this size
+   * Works with flex, percentages, and auto sizing
+   *
+   * @example
+   * // Image with constrained height
+   * <Image texture="photo" width="100%" maxHeight={400} />
+   */
+  maxHeight?: number | undefined
+
+  /**
    * * Margin outside the container
    * - number: Uniform margin on all sides
    * - EdgeInsets: Individual margin per side

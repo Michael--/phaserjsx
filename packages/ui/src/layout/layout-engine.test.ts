@@ -794,3 +794,306 @@ describe('edge cases', () => {
     expect(child.height).toBeCloseTo(666.7, 1)
   })
 })
+
+describe('min/max constraint layouts', () => {
+  it('respects minWidth constraint', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { width: 50, minWidth: 100 } })
+
+    calculateLayout(container, props)
+
+    expect(child.width).toBe(100) // Clamped to minWidth
+  })
+
+  it('respects maxWidth constraint', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { width: 300, maxWidth: 200 } })
+
+    calculateLayout(container, props)
+
+    expect(child.width).toBe(200) // Clamped to maxWidth
+  })
+
+  it('respects minHeight constraint', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { height: 20, minHeight: 50 } })
+
+    calculateLayout(container, props)
+
+    expect(child.height).toBe(50) // Clamped to minHeight
+  })
+
+  it('respects maxHeight constraint', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { height: 200, maxHeight: 100 } })
+
+    calculateLayout(container, props)
+
+    expect(child.height).toBe(100) // Clamped to maxHeight
+  })
+
+  it('respects both min and max constraints', () => {
+    const container = mockContainer()
+    const child1 = mockContainer(0, 0)
+    const child2 = mockContainer(0, 0)
+    const child3 = mockContainer(0, 0)
+    container.add(child1)
+    container.add(child2)
+    container.add(child3)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    Object.assign(child1, { __layoutProps: { width: 50, minWidth: 100, maxWidth: 200 } })
+    Object.assign(child2, { __layoutProps: { width: 150, minWidth: 100, maxWidth: 200 } })
+    Object.assign(child3, { __layoutProps: { width: 300, minWidth: 100, maxWidth: 200 } })
+
+    calculateLayout(container, props)
+
+    expect(child1.width).toBe(100) // Clamped to min
+    expect(child2.width).toBe(150) // Within bounds
+    expect(child3.width).toBe(200) // Clamped to max
+  })
+
+  it('applies constraints to percentage sizes', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 1000,
+      height: 300,
+      gap: 0,
+    }
+
+    // 80% of 1000 = 800, but clamped to maxWidth 500
+    Object.assign(child, { __layoutProps: { width: '80%', maxWidth: 500 } })
+
+    calculateLayout(container, props)
+
+    expect(child.width).toBe(500) // Percentage calculated (800) then clamped to max
+  })
+
+  it('applies constraints to auto-sized content', () => {
+    const container = mockContainer()
+    const child = mockContainer(30, 40) // Small content size
+    child.__getLayoutSize = () => ({ width: 30, height: 40 })
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    // Auto size would be 30, but minWidth forces it larger
+    Object.assign(child, { __layoutProps: { width: undefined, minWidth: 100 } })
+
+    calculateLayout(container, props)
+
+    expect(child.width).toBe(100) // Auto size (30) clamped to minWidth
+  })
+})
+
+describe('flex with min/max constraints', () => {
+  it('respects minWidth on flex child', () => {
+    const container = mockContainer()
+    const fixed = mockContainer(100, 50)
+    const flexible = mockContainer(0, 50)
+    container.add(fixed)
+    container.add(flexible)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 400,
+      height: 100,
+      gap: 0,
+    }
+
+    Object.assign(fixed, { __layoutProps: { width: 100 } })
+    Object.assign(flexible, { __layoutProps: { flex: 1, minWidth: 200 } })
+
+    calculateLayout(container, props)
+
+    // Remaining space: 400 - 100 = 300
+    // Flex would normally take 300, but minWidth is 200
+    expect(flexible.width).toBeGreaterThanOrEqual(200)
+  })
+
+  it('respects maxWidth on flex child', () => {
+    const container = mockContainer()
+    const fixed = mockContainer(100, 50)
+    const flexible = mockContainer(0, 50)
+    container.add(fixed)
+    container.add(flexible)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 800,
+      height: 100,
+      gap: 0,
+    }
+
+    Object.assign(fixed, { __layoutProps: { width: 100 } })
+    Object.assign(flexible, { __layoutProps: { flex: 1, maxWidth: 500 } })
+
+    calculateLayout(container, props)
+
+    // Remaining space: 800 - 100 = 700
+    // Flex would normally take 700, but maxWidth is 500
+    expect(flexible.width).toBeLessThanOrEqual(500)
+  })
+
+  it('distributes remaining flex space when one child hits maxWidth', () => {
+    const container = mockContainer()
+    const flex1 = mockContainer(0, 50)
+    const flex2 = mockContainer(0, 50)
+    container.add(flex1)
+    container.add(flex2)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 800,
+      height: 100,
+      gap: 0,
+    }
+
+    // Both flex=1, but flex1 has maxWidth
+    Object.assign(flex1, { __layoutProps: { flex: 1, maxWidth: 200 } })
+    Object.assign(flex2, { __layoutProps: { flex: 1 } })
+
+    calculateLayout(container, props)
+
+    // flex1 hits maxWidth of 200
+    // flex2 should get more space
+    expect(flex1.width).toBe(200)
+    expect(flex2.width).toBeGreaterThan(200)
+  })
+
+  it('handles multiple constrained flex children', () => {
+    const container = mockContainer()
+    const flex1 = mockContainer(0, 50)
+    const flex2 = mockContainer(0, 50)
+    const flex3 = mockContainer(0, 50)
+    container.add(flex1)
+    container.add(flex2)
+    container.add(flex3)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 900,
+      height: 100,
+      gap: 0,
+    }
+
+    Object.assign(flex1, { __layoutProps: { flex: 1, minWidth: 100, maxWidth: 200 } })
+    Object.assign(flex2, { __layoutProps: { flex: 2, minWidth: 150, maxWidth: 400 } })
+    Object.assign(flex3, { __layoutProps: { flex: 1, minWidth: 100, maxWidth: 250 } })
+
+    calculateLayout(container, props)
+
+    // All flex children should respect their constraints
+    expect(flex1.width).toBeGreaterThanOrEqual(100)
+    expect(flex1.width).toBeLessThanOrEqual(200)
+    expect(flex2.width).toBeGreaterThanOrEqual(150)
+    expect(flex2.width).toBeLessThanOrEqual(400)
+    expect(flex3.width).toBeGreaterThanOrEqual(100)
+    expect(flex3.width).toBeLessThanOrEqual(250)
+  })
+
+  it('handles flex in column with height constraints', () => {
+    const container = mockContainer()
+    const fixed = mockContainer(200, 50)
+    const flexible = mockContainer(200, 0)
+    container.add(fixed)
+    container.add(flexible)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 400,
+      height: 500,
+      gap: 0,
+    }
+
+    Object.assign(fixed, { __layoutProps: { height: 50 } })
+    Object.assign(flexible, { __layoutProps: { flex: 1, minHeight: 100, maxHeight: 300 } })
+
+    calculateLayout(container, props)
+
+    // Remaining space: 500 - 50 = 450
+    // Flex would take 450, but maxHeight is 300
+    expect(flexible.height).toBeLessThanOrEqual(300)
+    expect(flexible.height).toBeGreaterThanOrEqual(100)
+  })
+
+  it('prevents flex shrinking below minWidth', () => {
+    const container = mockContainer()
+    const flex1 = mockContainer(0, 50)
+    const flex2 = mockContainer(0, 50)
+    container.add(flex1)
+    container.add(flex2)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 300, // Very small container
+      height: 100,
+      gap: 0,
+    }
+
+    // Both want minimum 200px, but only 300px available
+    Object.assign(flex1, { __layoutProps: { flex: 1, minWidth: 200 } })
+    Object.assign(flex2, { __layoutProps: { flex: 1, minWidth: 200 } })
+
+    calculateLayout(container, props)
+
+    // Both should get at least minWidth
+    expect(flex1.width).toBeGreaterThanOrEqual(200)
+    expect(flex2.width).toBeGreaterThanOrEqual(200)
+  })
+})

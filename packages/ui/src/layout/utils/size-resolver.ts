@@ -472,3 +472,32 @@ export function isExplicit(parsed: ParsedSize): boolean {
     parsed.type === 'fill'
   )
 }
+
+/**
+ * Clamp a size value to min/max constraints
+ * @param size - Resolved size in pixels
+ * @param minSize - Minimum size constraint (undefined = no constraint)
+ * @param maxSize - Maximum size constraint (undefined = no constraint)
+ * @returns Clamped size in pixels
+ *
+ * @example
+ * clampSize(150, 100, 200)  // 150 (within bounds)
+ * clampSize(50, 100, 200)   // 100 (clamped to min)
+ * clampSize(300, 100, 200)  // 200 (clamped to max)
+ * clampSize(150, undefined, 200)  // 150 (no min constraint)
+ */
+export function clampSize(size: number, minSize?: number, maxSize?: number): number {
+  let clamped = size
+
+  // Apply minimum constraint
+  if (minSize !== undefined && clamped < minSize) {
+    clamped = minSize
+  }
+
+  // Apply maximum constraint
+  if (maxSize !== undefined && clamped > maxSize) {
+    clamped = maxSize
+  }
+
+  return clamped
+}
