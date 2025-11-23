@@ -174,12 +174,14 @@ export class GestureManager {
    * @param eventType - Type of event for filtering callbacks
    * @param handler - Function to call for each container, returns true if propagation stopped
    * @param filterSet - Optional set of containers to limit bubbling to (for move events)
+   * @param skipContainerCheck - Skip the isPointerInContainer check (for final move events)
    */
   private bubbleEvent(
     pointer: Phaser.Input.Pointer,
     eventType: keyof GestureCallbacks,
     handler: (state: GestureContainerState, localPos: { x: number; y: number }) => boolean | void,
-    filterSet?: Set<Phaser.GameObjects.Container>
+    filterSet?: Set<Phaser.GameObjects.Container>,
+    skipContainerCheck = false
   ): void {
     // Get all containers at pointer position with their original indices
     const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
@@ -214,8 +216,8 @@ export class GestureManager {
       // If filterSet provided, only process containers in the set
       if (filterSet && !filterSet.has(state.container)) continue
 
-      // Check if pointer is within this container
-      if (!this.isPointerInContainer(pointer, state)) continue
+      // Check if pointer is within this container (unless skipContainerCheck is true)
+      if (!skipContainerCheck && !this.isPointerInContainer(pointer, state)) continue
 
       // Calculate local position
       const localPos = this.getLocalPosition(pointer, state.container)
@@ -391,7 +393,8 @@ export class GestureManager {
 
         return finalMoveData.isPropagationStopped()
       },
-      hitContainers
+      hitContainers,
+      true // Skip container check for final move event
     )
 
     // Check if pointer is still within the container (basic tap/click detection)
@@ -457,60 +460,68 @@ export class GestureManager {
    * Ensures touch move 'end' state is sent even when pointer released outside
    */
   private handleGlobalPointerUp(_event: MouseEvent | TouchEvent): void {
-    if (!this.activePointerDown) return
+    // Use setTimeout to let Phaser's handlePointerUp run first (if inside canvas)
+    setTimeout(() => {
+      console.log('handleGlobalPointerUp setTimeout - activePointerDown:', this.activePointerDown)
+      // If activePointerDown was cleared, handlePointerUp already handled it
+      if (!this.activePointerDown) return
 
-    // Find the active pointer in Phaser
-    const pointer = this.scene.input.activePointer
-    if (!pointer) return
+      console.log('handleGlobalPointerUp processing - pointer released outside canvas')
 
-    const state = this.containers.get(this.activePointerDown.container)
-    if (!state) {
+      // Find the active pointer in Phaser
+      const pointer = this.scene.input.activePointer
+      if (!pointer) return
+
+      const state = this.containers.get(this.activePointerDown.container)
+      if (!state) {
+        this.activePointerDown = null
+        return
+      }
+
+      // Clear long press timer if still pending
+      if (state.longPressTimer) {
+        clearTimeout(state.longPressTimer)
+        state.longPressTimer = undefined
+      }
+
+      // Send final move event with 'end' state to all active containers
+      const last = this.lastPointerPositions.get(pointer.id)
+      const dx = last ? pointer.x - last.x : 0
+      const dy = last ? pointer.y - last.y : 0
+      const hitContainers = this.activeContainersForMove.get(pointer.id)
+
+      this.bubbleEvent(
+        pointer,
+        'onTouchMove',
+        (targetState, targetLocalPos) => {
+          const finalMoveData = this.createEventData(
+            pointer,
+            targetLocalPos.x,
+            targetLocalPos.y,
+            targetState.hitArea.width,
+            targetState.hitArea.height,
+            { dx, dy, isInside: false, state: 'end' }
+          )
+          targetState.callbacks.onTouchMove?.(finalMoveData)
+
+          // Reset first move flag for this container
+          targetState.isFirstMove = undefined
+
+          return finalMoveData.isPropagationStopped()
+        },
+        hitContainers,
+        true // Skip container check for final move event
+      )
+
+      // Reset state
+      state.longPressTriggered = false
+      state.pointerDownTime = undefined
       this.activePointerDown = null
-      return
-    }
+      state.pointerDownPosition = undefined
 
-    // Clear long press timer if still pending
-    if (state.longPressTimer) {
-      clearTimeout(state.longPressTimer)
-      state.longPressTimer = undefined
-    }
-
-    // Send final move event with 'end' state to all active containers
-    const last = this.lastPointerPositions.get(pointer.id)
-    const dx = last ? pointer.x - last.x : 0
-    const dy = last ? pointer.y - last.y : 0
-    const hitContainers = this.activeContainersForMove.get(pointer.id)
-
-    this.bubbleEvent(
-      pointer,
-      'onTouchMove',
-      (targetState, targetLocalPos) => {
-        const finalMoveData = this.createEventData(
-          pointer,
-          targetLocalPos.x,
-          targetLocalPos.y,
-          targetState.hitArea.width,
-          targetState.hitArea.height,
-          { dx, dy, isInside: false, state: 'end' }
-        )
-        targetState.callbacks.onTouchMove?.(finalMoveData)
-
-        // Reset first move flag for this container
-        targetState.isFirstMove = undefined
-
-        return finalMoveData.isPropagationStopped()
-      },
-      hitContainers
-    )
-
-    // Reset state
-    state.longPressTriggered = false
-    state.pointerDownTime = undefined
-    this.activePointerDown = null
-    state.pointerDownPosition = undefined
-
-    // Clear active containers for this pointer
-    this.activeContainersForMove.delete(pointer.id)
+      // Clear active containers for this pointer
+      this.activeContainersForMove.delete(pointer.id)
+    }, 0)
   }
 
   /**
