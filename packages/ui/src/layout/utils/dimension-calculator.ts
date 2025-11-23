@@ -4,7 +4,7 @@
  */
 import type { EdgeInsets, LayoutProps } from '../../core-props'
 import type { LayoutChild } from '../types'
-import { parseSize, resolveSize } from './size-resolver'
+import { clampSize, parseSize, resolveSize } from './size-resolver'
 
 /**
  * Content dimension metrics
@@ -113,16 +113,15 @@ export function calculateContainerSize(
 
   // Resolve width
   const parsedWidth = parseSize(props.width)
-  const width = resolveSize(parsedWidth, parentSize?.width, contentWidth, parentPadding?.horizontal)
+  let width = resolveSize(parsedWidth, parentSize?.width, contentWidth, parentPadding?.horizontal)
 
   // Resolve height
   const parsedHeight = parseSize(props.height)
-  const height = resolveSize(
-    parsedHeight,
-    parentSize?.height,
-    contentHeight,
-    parentPadding?.vertical
-  )
+  let height = resolveSize(parsedHeight, parentSize?.height, contentHeight, parentPadding?.vertical)
+
+  // Apply min/max constraints to container size
+  width = clampSize(width, props.minWidth, props.maxWidth)
+  height = clampSize(height, props.minHeight, props.maxHeight)
 
   return { width, height }
 }

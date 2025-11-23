@@ -82,12 +82,14 @@ function ReadableContent() {
     <ViewLevel2>
       <Text text="Readable Content with maxWidth" style={tokens?.textStyles.large} />
 
-      <ViewLevel3 direction="row" justifyContent="center" width="fill">
+      <ViewLevel3 alignItems="center" width="fill">
         <View
           width="fill"
-          maxWidth={600}
+          maxWidth={500}
           backgroundColor={tokens?.colors.surface.dark.toNumber()}
-          padding={20}
+          justifyContent="center"
+          alignItems="center"
+          padding={10}
         >
           <Text
             text="This content area fills available space..."
@@ -262,8 +264,8 @@ function PercentageWithConstraints() {
         <View
           width="100%"
           minWidth={200}
-          maxWidth={500}
-          height={40}
+          maxWidth={800} // fiddle out that 690 is what should be internally calculated
+          height={80}
           backgroundColor={tokens?.colors.success.DEFAULT.toNumber()}
           alignItems="center"
           justifyContent="center"
