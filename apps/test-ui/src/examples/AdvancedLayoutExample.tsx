@@ -38,37 +38,44 @@ function JustifyContentColumnExample() {
 
       <View direction="row" gap={10}>
         {/* Start */}
-        <ViewLevel3 height={150} direction="column" justifyContent="start">
+        <ViewLevel3 height={200} direction="column" justifyContent="start">
           <Box text="start" width={100} height={30} />
           <Box text="1" width={100} height={30} />
           <Box text="2" width={100} height={30} />
         </ViewLevel3>
 
         {/* Center */}
-        <ViewLevel3 height={150} justifyContent="center">
+        <ViewLevel3 height={200} justifyContent="center">
           <Box text="1" width={100} height={30} />
           <Box text="center" width={100} height={30} />
           <Box text="3" width={100} height={30} />
         </ViewLevel3>
 
         {/* End */}
-        <ViewLevel3 height={150} justifyContent="end">
+        <ViewLevel3 height={200} justifyContent="end">
           <Box text="1" width={100} height={30} />
           <Box text="2" width={100} height={30} />
           <Box text="end" width={100} height={30} />
         </ViewLevel3>
 
         {/* Space Between */}
-        <ViewLevel3 height={150} justifyContent="space-between">
+        <ViewLevel3 height={200} justifyContent="space-between">
           <Box text="1" width={100} height={30} />
           <Box text="space-btw" width={100} height={30} />
           <Box text="3" width={100} height={30} />
         </ViewLevel3>
 
         {/* Space Around */}
-        <ViewLevel3 height={150} justifyContent="space-around">
+        <ViewLevel3 height={200} justifyContent="space-around">
           <Box color={colors?.secondary.DEFAULT.toNumber()} text="1" width={100} height={30} />
           <Box text="space-ard" width={100} height={30} />
+          <Box text="3" width={100} height={30} />
+        </ViewLevel3>
+
+        {/* Space Evenly */}
+        <ViewLevel3 height={200} justifyContent="space-evenly">
+          <Box color={colors?.secondary.DEFAULT.toNumber()} text="1" width={100} height={30} />
+          <Box text="space-ely" width={100} height={30} />
           <Box text="3" width={100} height={30} />
         </ViewLevel3>
       </View>
