@@ -1,0 +1,280 @@
+import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollPage } from '../components/ScrollPage'
+import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+
+/**
+ * Flex Grid Examples demonstrating flexWrap and alignContent
+ * Shows how multi-line flex layouts enable responsive grid patterns
+ * @returns Flex grid demo JSX
+ */
+export function FlexGridExample() {
+  const tokens = useThemeTokens()
+
+  const colors = [
+    tokens?.colors.error.dark.toNumber() ?? 0xff4444,
+    tokens?.colors.success.dark.toNumber() ?? 0x44ff44,
+    tokens?.colors.info.dark.toNumber() ?? 0x4444ff,
+    tokens?.colors.warning.dark.toNumber() ?? 0xffaa44,
+    tokens?.colors.primary.DEFAULT.toNumber() ?? 0x8844ff,
+    tokens?.colors.secondary.DEFAULT.toNumber() ?? 0xff44aa,
+  ]
+
+  function AutoWrapGrid() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="1. Auto-Wrap Grid - Fixed Items" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="row" flexWrap="wrap" gap={10} width={'fill'}>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <View
+              key={i}
+              width={90}
+              height={90}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.large} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function ResponsiveCards() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="2. Responsive Cards - Flex + Wrap" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="row" flexWrap="wrap" gap={15} width={'fill'}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <View
+              key={i}
+              minWidth={150}
+              flex={1}
+              height={100}
+              backgroundColor={colors[i % colors.length]}
+              padding={10}
+              justifyContent="center"
+            >
+              <Text text={`Card ${i + 1}`} style={tokens?.textStyles.medium} />
+              <Text text="Responsive width" style={tokens?.textStyles.small} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function AlignContentSpaceBetween() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="3. AlignContent: space-between" style={tokens?.textStyles.large} />
+        <ViewLevel3
+          direction="row"
+          flexWrap="wrap"
+          alignContent="space-between"
+          gap={10}
+          width={'fill'}
+          height={250}
+        >
+          {Array.from({ length: 9 }).map((_, i) => (
+            <View
+              key={i}
+              width={80}
+              height={60}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.medium} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function AlignContentCenter() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="4. AlignContent: center" style={tokens?.textStyles.large} />
+        <ViewLevel3
+          direction="row"
+          flexWrap="wrap"
+          alignContent="center"
+          gap={10}
+          width={'fill'}
+          height={250}
+        >
+          {Array.from({ length: 6 }).map((_, i) => (
+            <View
+              key={i}
+              width={90}
+              height={70}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.medium} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function WrapReverse() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="5. Wrap-Reverse - Lines in Reverse Order" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="row" flexWrap="wrap-reverse" gap={10} width={'fill'}>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <View
+              key={i}
+              width={70}
+              height={70}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.small} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function ColumnWrap() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="6. Column Direction Wrap" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="column" flexWrap="wrap" gap={10} width={'fill'} height={200}>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <View
+              key={i}
+              width={100}
+              height={45}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.small} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function ToolbarOverflow() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="7. Toolbar with Overflow Wrap" style={tokens?.textStyles.large} />
+        <ViewLevel3 direction="row" flexWrap="wrap" gap={8} width={400}>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="New" style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="Open" style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="Save" style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="Export" style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="Share" style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={80}
+            height={40}
+            backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text="Help" style={tokens?.textStyles.small} />
+          </View>
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  function AlignContentSpaceAround() {
+    return (
+      <View direction="column" gap={5}>
+        <Text text="8. AlignContent: space-around" style={tokens?.textStyles.large} />
+        <ViewLevel3
+          direction="row"
+          flexWrap="wrap"
+          alignContent="space-around"
+          gap={10}
+          width={'fill'}
+          height={250}
+        >
+          {Array.from({ length: 8 }).map((_, i) => (
+            <View
+              key={i}
+              width={85}
+              height={65}
+              backgroundColor={colors[i % colors.length]}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text text={`${i + 1}`} style={tokens?.textStyles.medium} />
+            </View>
+          ))}
+        </ViewLevel3>
+      </View>
+    )
+  }
+
+  return (
+    <ScrollPage showVerticalSlider={true}>
+      <ViewLevel1 height={3000}>
+        <ViewLevel2 width={800} gap={200}>
+          <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
+          <AutoWrapGrid />
+          <ResponsiveCards />
+          <AlignContentSpaceBetween />
+          <AlignContentCenter />
+          <WrapReverse />
+          <ColumnWrap />
+          <ToolbarOverflow />
+          <AlignContentSpaceAround />
+        </ViewLevel2>
+      </ViewLevel1>
+    </ScrollPage>
+  )
+}

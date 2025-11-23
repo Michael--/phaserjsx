@@ -2,7 +2,7 @@
  * Column layout strategy (vertical stacking)
  * Like SwiftUI's VStack
  */
-import type { LayoutChild, LayoutContext, Position } from '../types'
+import type { LayoutChild, LayoutContext, LayoutLine, Position } from '../types'
 import type { ContentMetrics } from '../utils/dimension-calculator'
 import { calculateAlignItems } from '../utils/spacing-calculator'
 import { BaseLayoutStrategy } from './base-strategy'
@@ -116,5 +116,80 @@ export class ColumnLayoutStrategy extends BaseLayoutStrategy {
       position: { x, y },
       nextMain,
     }
+  }
+
+  /**
+   * Wrap children into lines based on available height
+   * Used when flexWrap is 'wrap' or 'wrap-reverse'
+   * @param children - Layout children to wrap
+   * @param availableHeight - Available height for each line
+   * @param gap - Gap between children
+   * @returns Array of layout lines
+   */
+  wrapChildren(children: LayoutChild[], availableHeight: number, gap: number): LayoutLine[] {
+    const lines: LayoutLine[] = []
+    let currentLine: LayoutChild[] = []
+    let currentLineHeight = 0
+    let currentLineWidth = 0
+
+    for (const child of children) {
+      // Skip headless children in wrapping calculation
+      if (child.child.__layoutProps?.headless) {
+        continue
+      }
+
+      const margin = this.getMarginValues(child)
+      const props = child.child.__layoutProps
+
+      // For flex items with no size, use flexBasis or minHeight as hint for wrapping
+      let effectiveHeight = child.size.height
+      if (effectiveHeight <= 0 && props) {
+        if (props.flexBasis !== undefined && typeof props.flexBasis === 'number') {
+          effectiveHeight = props.flexBasis
+        } else if (props.minHeight !== undefined) {
+          effectiveHeight = props.minHeight
+        } else if (props.flex && props.flex > 0) {
+          // Use a reasonable default for flex items with no size hint
+          effectiveHeight = 100
+        }
+      }
+
+      const childHeight = effectiveHeight + margin.top + margin.bottom
+      const childWidth = child.size.width + margin.left + margin.right
+
+      const gapSpace = currentLine.length > 0 ? gap : 0
+      const requiredSpace = currentLineHeight + childHeight + gapSpace
+
+      // Check if we need to wrap to a new line (column)
+      if (requiredSpace > availableHeight && currentLine.length > 0) {
+        // Save current line
+        lines.push({
+          children: currentLine,
+          mainAxisSize: currentLineHeight,
+          crossAxisSize: currentLineWidth,
+        })
+
+        // Start new line
+        currentLine = [child]
+        currentLineHeight = childHeight
+        currentLineWidth = childWidth
+      } else {
+        // Add to current line
+        currentLine.push(child)
+        currentLineHeight = requiredSpace
+        currentLineWidth = Math.max(currentLineWidth, childWidth)
+      }
+    }
+
+    // Add remaining line
+    if (currentLine.length > 0) {
+      lines.push({
+        children: currentLine,
+        mainAxisSize: currentLineHeight,
+        crossAxisSize: currentLineWidth,
+      })
+    }
+
+    return lines
   }
 }

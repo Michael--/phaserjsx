@@ -12,12 +12,18 @@ import type { LayoutStrategy } from './strategies/base-strategy'
 import { ColumnLayoutStrategy } from './strategies/column-layout'
 import { RowLayoutStrategy } from './strategies/row-layout'
 import { StackLayoutStrategy } from './strategies/stack-layout'
-import type { GameObjectWithLayout, LayoutChild, LayoutContext, Position } from './types'
+import type {
+  GameObjectWithLayout,
+  LayoutChild,
+  LayoutContext,
+  LayoutLine,
+  Position,
+} from './types'
 import { getChildSize, getMargin, isLayoutChild, processNestedContainer } from './utils/child-utils'
 import { calculateContainerSize, normalizePadding } from './utils/dimension-calculator'
 import { distributeFlexSpace, hasFlexChildren } from './utils/flex-distributor'
 import { clampSize, parseSize, resolveSize } from './utils/size-resolver'
-import { calculateJustifyContent } from './utils/spacing-calculator'
+import { calculateAlignItems, calculateJustifyContent } from './utils/spacing-calculator'
 
 /**
  * Callback function for deferred layout updates
@@ -539,6 +545,10 @@ function calculateLayoutImmediate(
   // 5. Calculate metrics using strategy
   const metrics = strategy.calculateMetrics(layoutChildren, contextPartial as LayoutContext)
 
+  // 5a. Check if wrapping is enabled
+  const flexWrap = containerProps.flexWrap ?? 'nowrap'
+  const shouldWrap = flexWrap !== 'nowrap' && direction !== 'stack'
+
   // 6. Calculate container dimensions (with parent size and padding for resolution)
   const { width: containerWidth, height: containerHeight } = calculateContainerSize(
     containerProps,
@@ -551,9 +561,9 @@ function calculateLayoutImmediate(
     parentPadding
   )
 
-  // 6a. Distribute flex space if there are flex children
+  // 6a. Distribute flex space if there are flex children (skip if wrapping - will be done per line)
   let finalLayoutChildren = layoutChildren
-  if (hasFlexChildren(layoutChildren)) {
+  if (hasFlexChildren(layoutChildren) && !shouldWrap) {
     const contentSize =
       direction === 'row'
         ? containerWidth - padding.left - padding.right
@@ -704,22 +714,161 @@ function calculateLayoutImmediate(
     }
   }
 
-  // 10. Position all children using strategy
+  // 10. Handle wrapping if enabled
   const positions: Position[] = []
-  let currentMain = mainStart
 
-  for (let i = 0; i < finalLayoutChildren.length; i++) {
-    const child = finalLayoutChildren[i]
-    if (!child) continue
+  if (shouldWrap && 'wrapChildren' in strategy) {
+    // Wrap children into multiple lines
+    const availableMainSize = direction === 'row' ? contentArea.width : contentArea.height
+    const lines = (strategy as RowLayoutStrategy | ColumnLayoutStrategy).wrapChildren(
+      finalLayoutChildren,
+      availableMainSize,
+      gap
+    )
 
-    const result = strategy.positionChild(child, i, context, currentMain)
+    if (flexWrap === 'wrap-reverse') {
+      lines.reverse()
+    }
 
-    positions.push(result.position)
-    currentMain = result.nextMain
+    // Calculate total cross size needed for all lines
+    const totalCrossSize = lines.reduce(
+      (sum: number, line: LayoutLine) => sum + line.crossAxisSize,
+      0
+    )
+    const totalLineGaps = (lines.length - 1) * gap
+    const availableCrossSize = direction === 'row' ? contentArea.height : contentArea.width
+    const freeCrossSpace = availableCrossSize - totalCrossSize - totalLineGaps
 
-    // Add gap and space-between spacing (not for stack)
-    if (direction !== 'stack' && i < finalLayoutChildren.length - 1) {
-      currentMain += gap + spaceBetween
+    // Apply alignContent to distribute lines
+    const alignContent = containerProps.alignContent ?? 'stretch'
+    let crossOffset = 0
+    let lineCrossSpacing = 0
+
+    if (alignContent === 'center') {
+      crossOffset = freeCrossSpace / 2
+    } else if (alignContent === 'end') {
+      crossOffset = freeCrossSpace
+    } else if (alignContent === 'space-between' && lines.length > 1) {
+      lineCrossSpacing = freeCrossSpace / (lines.length - 1)
+    } else if (alignContent === 'space-around') {
+      lineCrossSpacing = freeCrossSpace / lines.length
+      crossOffset = lineCrossSpacing / 2
+    }
+
+    // Position children line by line
+    for (const line of lines) {
+      // Apply flex distribution per line if line has flex children
+      let lineChildren = line.children
+      if (hasFlexChildren(line.children)) {
+        const lineGapSpace = (line.children.length - 1) * gap
+        const lineAvailableSpace = availableMainSize - lineGapSpace
+        lineChildren = distributeFlexSpace(line.children, lineAvailableSpace, direction)
+
+        // Update line main size after flex distribution
+        line.mainAxisSize = lineChildren.reduce((sum: number, child: LayoutChild) => {
+          const size = direction === 'row' ? child.size.width : child.size.height
+          const margin = getMargin(child.child)
+          const marginSize =
+            direction === 'row'
+              ? (margin.left ?? 0) + (margin.right ?? 0)
+              : (margin.top ?? 0) + (margin.bottom ?? 0)
+          return sum + size + marginSize
+        }, 0)
+      }
+
+      // Calculate line-specific justifyContent
+      const lineMainSize = line.mainAxisSize
+      const lineAvailableMain = availableMainSize
+      const lineRemainingSpace = lineAvailableMain - lineMainSize
+      const lineGapSpace = (line.children.length - 1) * gap
+      const lineFreeSpace = lineRemainingSpace - lineGapSpace
+
+      const lineJustifyResult = calculateJustifyContent(
+        justifyContent,
+        lineFreeSpace,
+        line.children.length
+      )
+
+      let lineMainOffset = lineJustifyResult.mainStart
+      const lineSpaceBetween = lineJustifyResult.spaceBetween
+
+      // Position each child in the line
+      for (let i = 0; i < lineChildren.length; i++) {
+        const child = lineChildren[i]
+        if (!child) continue
+
+        const margin = getMargin(child.child)
+
+        let x: number
+        let y: number
+
+        if (direction === 'row') {
+          // Main axis: horizontal
+          lineMainOffset += margin.left ?? 0
+          x = padding.left + lineMainOffset
+
+          // Cross axis: vertical
+          const childCrossOffset = calculateAlignItems(
+            alignItems,
+            line.crossAxisSize,
+            child.size.height,
+            margin.top ?? 0,
+            margin.bottom ?? 0
+          )
+          y = padding.top + crossOffset + childCrossOffset
+
+          lineMainOffset += child.size.width + (margin.right ?? 0)
+          if (i < lineChildren.length - 1) {
+            lineMainOffset += gap + lineSpaceBetween
+          }
+        } else {
+          // Main axis: vertical
+          lineMainOffset += margin.top ?? 0
+          y = padding.top + lineMainOffset
+
+          // Cross axis: horizontal
+          const childCrossOffset = calculateAlignItems(
+            alignItems,
+            line.crossAxisSize,
+            child.size.width,
+            margin.left ?? 0,
+            margin.right ?? 0
+          )
+          x = padding.left + crossOffset + childCrossOffset
+
+          lineMainOffset += child.size.height + (margin.bottom ?? 0)
+          if (i < lineChildren.length - 1) {
+            lineMainOffset += gap + lineSpaceBetween
+          }
+        }
+
+        // Find child index in original array for correct position assignment
+        const childIndex = finalLayoutChildren.indexOf(child)
+        if (childIndex !== -1) {
+          positions[childIndex] = { x, y }
+        }
+      }
+
+      // Move to next line
+      crossOffset += line.crossAxisSize + gap + lineCrossSpacing
+    }
+  } else {
+    // No wrapping - use original single-line positioning
+    let currentMain = mainStart
+
+    for (let i = 0; i < finalLayoutChildren.length; i++) {
+      const child = finalLayoutChildren[i]
+      if (!child) continue
+
+      const result = strategy.positionChild(child, i, context, currentMain)
+
+      positions.push(result.position)
+      currentMain = result.nextMain
+
+      // Add gap and space-between spacing (not for stack)
+      if (direction !== 'stack' && i < finalLayoutChildren.length - 1) {
+        currentMain += gap + spaceBetween
+      }
     }
   }
 

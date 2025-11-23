@@ -9,6 +9,7 @@ import { ConstraintsExample } from './examples/ConstraintsExample'
 import { DesignTokensExample } from './examples/DesignTokensExample'
 import { FlexAdvancedExample } from './examples/FlexAdvancedExample'
 import { FlexExample } from './examples/FlexExample'
+import { FlexGridExample } from './examples/FlexGridExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
 import { GraphicsExample } from './examples/GraphicsExample'
@@ -42,6 +43,7 @@ const examples = {
   stack: { label: 'Stack', component: StackExample },
   flex: { label: 'Flex vs Spacer', component: FlexExample },
   flexAdvanced: { label: 'Flex Shrink/Basis', component: FlexAdvancedExample },
+  flexGrid: { label: 'Flex Grid (Wrap)', component: FlexGridExample },
   constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
   border: { label: 'Border & Corners', component: BorderExample },
   ref: { label: 'Ref Example', component: RefExample },

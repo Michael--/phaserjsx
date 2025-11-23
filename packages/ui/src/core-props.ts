@@ -408,6 +408,59 @@ export interface LayoutProps {
    * </View>
    */
   overflow?: 'visible' | 'hidden'
+
+  /**
+   * Controls wrapping behavior for flex layouts
+   * - 'nowrap': All items in single line (default, current behavior)
+   * - 'wrap': Items wrap to new line/column when space exhausted
+   * - 'wrap-reverse': Items wrap in reverse order
+   *
+   * Only applies to 'row' and 'column' directions, ignored for 'stack'
+   * When wrapping, flex distribution is calculated per line
+   *
+   * @example
+   * // Auto-wrap grid with 100px items
+   * <View direction="row" flexWrap="wrap" gap={10} width={400}>
+   *   {items.map(item => <Card width={100} />)}
+   * </View>
+   *
+   * // Responsive card grid
+   * <View direction="row" flexWrap="wrap" gap={15}>
+   *   {cards.map(card => <View minWidth={180} flex={1}>{card}</View>)}
+   * </View>
+   */
+  flexWrap?: 'nowrap' | 'wrap' | 'wrap-reverse'
+
+  /**
+   * Alignment of wrapped lines in multi-line flex container
+   * Only applies when flexWrap !== 'nowrap' and there are multiple lines
+   * Controls distribution of lines along cross axis (perpendicular to direction)
+   *
+   * - 'start': Pack lines to start (top for row, left for column)
+   * - 'center': Center lines in container
+   * - 'end': Pack lines to end (bottom for row, right for column)
+   * - 'space-between': First line at start, last at end, equal space between
+   * - 'space-around': Equal space around each line
+   * - 'stretch': Lines stretch to fill cross axis (default)
+   *
+   * Difference from alignItems:
+   * - alignItems: Aligns items within each line
+   * - alignContent: Aligns the lines themselves within container
+   *
+   * @example
+   * ```tsx
+   * // Grid with lines distributed vertically
+   * <View
+   *   direction="row"
+   *   flexWrap="wrap"
+   *   alignContent="space-between"
+   *   height={400}
+   * >
+   *   {items}
+   * </View>
+   * ```
+   */
+  alignContent?: 'start' | 'center' | 'end' | 'space-between' | 'space-around' | 'stretch'
 }
 
 /**

@@ -50,6 +50,15 @@ export interface LayoutChild {
 }
 
 /**
+ * A line of children in a wrapped flex layout
+ */
+export interface LayoutLine {
+  children: LayoutChild[]
+  mainAxisSize: number
+  crossAxisSize: number
+}
+
+/**
  * Computed padding values
  */
 export interface PaddingValues {

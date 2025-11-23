@@ -2,7 +2,7 @@
  * Row layout strategy (horizontal stacking)
  * Like SwiftUI's HStack
  */
-import type { LayoutChild, LayoutContext, Position } from '../types'
+import type { LayoutChild, LayoutContext, LayoutLine, Position } from '../types'
 import type { ContentMetrics } from '../utils/dimension-calculator'
 import { calculateAlignItems } from '../utils/spacing-calculator'
 import { BaseLayoutStrategy } from './base-strategy'
@@ -115,5 +115,80 @@ export class RowLayoutStrategy extends BaseLayoutStrategy {
       position: { x, y },
       nextMain,
     }
+  }
+
+  /**
+   * Wrap children into lines based on available width
+   * Used when flexWrap is 'wrap' or 'wrap-reverse'
+   * @param children - Layout children to wrap
+   * @param availableWidth - Available width for each line
+   * @param gap - Gap between children
+   * @returns Array of layout lines
+   */
+  wrapChildren(children: LayoutChild[], availableWidth: number, gap: number): LayoutLine[] {
+    const lines: LayoutLine[] = []
+    let currentLine: LayoutChild[] = []
+    let currentLineWidth = 0
+    let currentLineHeight = 0
+
+    for (const child of children) {
+      // Skip headless children in wrapping calculation
+      if (child.child.__layoutProps?.headless) {
+        continue
+      }
+
+      const margin = this.getMarginValues(child)
+      const props = child.child.__layoutProps
+
+      // For flex items with no size, use flexBasis or minWidth as hint for wrapping
+      let effectiveWidth = child.size.width
+      if (effectiveWidth <= 0 && props) {
+        if (props.flexBasis !== undefined && typeof props.flexBasis === 'number') {
+          effectiveWidth = props.flexBasis
+        } else if (props.minWidth !== undefined) {
+          effectiveWidth = props.minWidth
+        } else if (props.flex && props.flex > 0) {
+          // Use a reasonable default for flex items with no size hint
+          effectiveWidth = 100
+        }
+      }
+
+      const childWidth = effectiveWidth + margin.left + margin.right
+      const childHeight = child.size.height + margin.top + margin.bottom
+
+      const gapSpace = currentLine.length > 0 ? gap : 0
+      const requiredSpace = currentLineWidth + childWidth + gapSpace
+
+      // Check if we need to wrap to a new line
+      if (requiredSpace > availableWidth && currentLine.length > 0) {
+        // Save current line
+        lines.push({
+          children: currentLine,
+          mainAxisSize: currentLineWidth,
+          crossAxisSize: currentLineHeight,
+        })
+
+        // Start new line
+        currentLine = [child]
+        currentLineWidth = childWidth
+        currentLineHeight = childHeight
+      } else {
+        // Add to current line
+        currentLine.push(child)
+        currentLineWidth = requiredSpace
+        currentLineHeight = Math.max(currentLineHeight, childHeight)
+      }
+    }
+
+    // Add remaining line
+    if (currentLine.length > 0) {
+      lines.push({
+        children: currentLine,
+        mainAxisSize: currentLineWidth,
+        crossAxisSize: currentLineHeight,
+      })
+    }
+
+    return lines
   }
 }
