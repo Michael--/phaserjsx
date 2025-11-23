@@ -10,6 +10,41 @@ import type { GestureEventData, TouchMoveState } from './gestures/gesture-types'
 export type { GestureEventData, TouchMoveState }
 
 /**
+ * Valid CSS-like size values with type safety
+ * - Fixed pixels: number or "20px"
+ * - Percentage: "50%", "100%"
+ * - Viewport units: "100vw", "50vh"
+ * - Keywords: "auto", "fill"
+ * - Calc expressions: "calc(100% - 20px)"
+ */
+export type SizeValue =
+  | number
+  | 'auto'
+  | 'fill'
+  | `${number}%`
+  | `${number}px`
+  | `${number}vw`
+  | `${number}vh`
+  | `calc(${string})`
+
+/**
+ * Flex basis size values (subset of SizeValue, no "fill" keyword)
+ * - Fixed pixels: number or "20px"
+ * - Percentage: "50%", "100%"
+ * - Viewport units: "100vw", "50vh"
+ * - Keyword: "auto"
+ * - Calc expressions: "calc(50% + 10px)"
+ */
+export type FlexBasisValue =
+  | number
+  | 'auto'
+  | `${number}%`
+  | `${number}px`
+  | `${number}vw`
+  | `${number}vh`
+  | `calc(${string})`
+
+/**
  * Transform properties - geometric transformations (position, rotation, scale)
  */
 export interface TransformProps {
@@ -152,28 +187,40 @@ export interface LayoutProps {
   /**
    * Width of the container
    * - number: Fixed width in pixels (e.g., 200)
-   * - string: Relative width (e.g., "50%", "100%")
+   * - Percentage: "50%", "100%"
+   * - Viewport: "100vw"
+   * - Keywords: "auto", "fill"
+   * - Calc: "calc(100% - 20px)"
    * - undefined: Auto - size to content
    *
    * @example
-   * width={200}      // 200px fixed width
-   * width="75%"      // 75% of parent width
-   * width={undefined} // Auto-size to content
+   * width={200}           // 200px fixed width
+   * width="75%"           // 75% of parent width
+   * width="100vw"         // 100% of viewport width
+   * width="fill"          // Fill available space
+   * width="calc(50% + 10px)" // Calculated width
+   * width={undefined}     // Auto-size to content
    */
-  width?: number | string | undefined
+  width?: SizeValue | undefined
 
   /**
    * Height of the container
    * - number: Fixed height in pixels (e.g., 100)
-   * - string: Relative height (e.g., "50%", "100%")
+   * - Percentage: "50%", "100%"
+   * - Viewport: "100vh"
+   * - Keywords: "auto", "fill"
+   * - Calc: "calc(100vh - 50px)"
    * - undefined: Auto - size to content
    *
    * @example
-   * height={100}      // 100px fixed height
-   * height="50%"      // 50% of parent height
-   * height={undefined} // Auto-size to content
+   * height={100}          // 100px fixed height
+   * height="50%"          // 50% of parent height
+   * height="100vh"        // 100% of viewport height
+   * height="fill"         // Fill available space
+   * height="calc(100% - 20px)" // Calculated height
+   * height={undefined}    // Auto-size to content
    */
-  height?: number | string | undefined
+  height?: SizeValue | undefined
 
   /**
    * Minimum width constraint in pixels
@@ -326,7 +373,10 @@ export interface LayoutProps {
    * Flex basis - initial size before flex distribution
    * Similar to CSS flexbox flex-basis
    * - number: Fixed initial size in pixels
-   * - string: Relative initial size (e.g., "50%", "auto")
+   * - Percentage: "50%", "100%"
+   * - Viewport: "100vw", "50vh"
+   * - Keyword: "auto"
+   * - Calc: "calc(50% + 10px)"
    * - undefined: Use width/height as basis
    *
    * Defines the starting size before flexGrow/flexShrink is applied
@@ -341,8 +391,11 @@ export interface LayoutProps {
    *
    * // Auto basis - uses content size
    * <View flex={1} flexBasis="auto">Content</View>
+   *
+   * // Calc basis
+   * <View flex={1} flexBasis="calc(100% / 3)">Content</View>
    */
-  flexBasis?: number | string | undefined
+  flexBasis?: FlexBasisValue | undefined
 
   /**
    * Controls how content that overflows the container bounds is displayed

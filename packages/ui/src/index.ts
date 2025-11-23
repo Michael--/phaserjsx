@@ -25,7 +25,13 @@ export {
 } from './core-props'
 
 // Export gesture types explicitly for better IDE support
-export type { GestureEventData, GestureProps, TouchMoveState } from './core-props'
+export type {
+  FlexBasisValue,
+  GestureEventData,
+  GestureProps,
+  SizeValue,
+  TouchMoveState,
+} from './core-props'
 
 // Explicit export for convenience functions
 export { mountJSX as mountComponent } from './vdom'
