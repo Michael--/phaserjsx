@@ -27,10 +27,14 @@ export class ColumnLayoutStrategy extends BaseLayoutStrategy {
       const total = this.getTotalChildSize(child)
       maxWidth = Math.max(maxWidth, total.width)
 
-      // Check if this child has flex property
-      const hasFlex = (child.child.__layoutProps?.flex ?? 0) > 0
+      // Check if this child participates in flexbox (flex, flexShrink, or flexBasis)
+      const props = child.child.__layoutProps
+      const isFlexItem =
+        (props?.flex !== undefined && props.flex > 0) ||
+        props?.flexShrink !== undefined ||
+        props?.flexBasis !== undefined
       // If flex child already has a resolved size (> 10), use it; otherwise use minimum
-      const childHeight = hasFlex && child.size.height <= 10 ? FLEX_CHILD_MIN_SIZE : total.height
+      const childHeight = isFlexItem && child.size.height <= 10 ? FLEX_CHILD_MIN_SIZE : total.height
 
       totalMainSize += childHeight
     }

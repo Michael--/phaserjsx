@@ -567,8 +567,12 @@ function calculateLayoutImmediate(
 
     // Process nested flex containers now that they have their size
     for (const layoutChild of finalLayoutChildren) {
-      const hasFlex = (layoutChild.child.__layoutProps?.flex ?? 0) > 0
-      if (hasFlex) {
+      const props = layoutChild.child.__layoutProps
+      const isFlexItem =
+        (props?.flex !== undefined && props.flex > 0) ||
+        props?.flexShrink !== undefined ||
+        props?.flexBasis !== undefined
+      if (isFlexItem) {
         // Temporarily set explicit size based on flex calculation
         const originalProps = { ...layoutChild.child.__layoutProps }
         if (direction === 'row') {

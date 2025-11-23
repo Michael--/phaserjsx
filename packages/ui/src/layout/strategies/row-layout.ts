@@ -27,10 +27,14 @@ export class RowLayoutStrategy extends BaseLayoutStrategy {
       const total = this.getTotalChildSize(child)
       maxHeight = Math.max(maxHeight, total.height)
 
-      // Check if this child has flex property
-      const hasFlex = (child.child.__layoutProps?.flex ?? 0) > 0
+      // Check if this child participates in flexbox (flex, flexShrink, or flexBasis)
+      const props = child.child.__layoutProps
+      const isFlexItem =
+        (props?.flex !== undefined && props.flex > 0) ||
+        props?.flexShrink !== undefined ||
+        props?.flexBasis !== undefined
       // If flex child already has a resolved size (> 10), use it; otherwise use minimum
-      const childWidth = hasFlex && child.size.width <= 10 ? FLEX_CHILD_MIN_SIZE : total.width
+      const childWidth = isFlexItem && child.size.width <= 10 ? FLEX_CHILD_MIN_SIZE : total.width
 
       totalMainSize += childWidth
     }
