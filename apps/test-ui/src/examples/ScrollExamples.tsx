@@ -1,6 +1,6 @@
 import { Text, useState, useThemeTokens, View, type SizeValue } from '@phaserjsx/ui'
 import { Button } from '../components'
-import { ScrollPage } from '../components/ScrollPage'
+import { ScrollPage, type ScrollInfo } from '../components/ScrollPage'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 function ListButton(props: { index: number; width?: SizeValue }) {
@@ -111,6 +111,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
     dx: 0,
     dy: 0,
   })
+  const [scrollInfo, setScrollInfo] = useState<ScrollInfo | null>(null)
   // define the view and content sizes for scroll calculations
   const viewSize = 200
   const contentSize = 300
@@ -122,7 +123,12 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
           <View width={viewSize} height={viewSize} padding={0}>
-            <ScrollPage scroll={scroll} showVerticalSlider={true} showHorizontalSlider={true}>
+            <ScrollPage
+              scroll={scroll}
+              showVerticalSlider={true}
+              showHorizontalSlider={true}
+              onScrollInfoChange={setScrollInfo}
+            >
               <View
                 direction="stack"
                 width={contentSize}
@@ -164,22 +170,26 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           <Button
             variant="primary"
             text="Scroll to center"
-            onClick={() =>
-              setScroll({
-                dx: (contentSize - viewSize) / 2,
-                dy: (contentSize - viewSize) / 2,
-              })
-            }
+            onClick={() => {
+              if (scrollInfo) {
+                setScroll({
+                  dx: scrollInfo.maxScrollX / 2,
+                  dy: scrollInfo.maxScrollY / 2,
+                })
+              }
+            }}
           />
           <Button
             variant="primary"
             text="Scroll to bottom/right"
-            onClick={() =>
-              setScroll({
-                dx: contentSize - viewSize,
-                dy: contentSize - viewSize,
-              })
-            }
+            onClick={() => {
+              if (scrollInfo) {
+                setScroll({
+                  dx: scrollInfo.maxScrollX,
+                  dy: scrollInfo.maxScrollY,
+                })
+              }
+            }}
           />
         </ViewLevel2>
       </View>

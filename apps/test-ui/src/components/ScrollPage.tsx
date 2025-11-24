@@ -11,6 +11,28 @@ import {
 import { ScrollSlider } from './ScrollSlider'
 
 /**
+ * Scroll information data
+ */
+export interface ScrollInfo {
+  /** Current horizontal scroll position */
+  dx: number
+  /** Current vertical scroll position */
+  dy: number
+  /** Viewport width */
+  viewportWidth: number
+  /** Viewport height */
+  viewportHeight: number
+  /** Content width */
+  contentWidth: number
+  /** Content height */
+  contentHeight: number
+  /** Maximum horizontal scroll */
+  maxScrollX: number
+  /** Maximum vertical scroll */
+  maxScrollY: number
+}
+
+/**
  * Props for ScrollPage component
  * @extends Omit<ViewProps, 'children'> - All View props except children
  */
@@ -21,6 +43,8 @@ export interface ScrollPageProps extends Omit<ViewProps, 'children'> {
   showHorizontalSlider?: boolean | 'auto' | undefined
   /** Initial scroll position */
   scroll?: { dx: number; dy: number }
+  /** Callback when scroll information changes */
+  onScrollInfoChange?: (info: ScrollInfo) => void
   /** Children to render inside scrollable content, allow only one child */
   children?: VNode
 }
@@ -36,6 +60,7 @@ export function ScrollPage(props: ScrollPageProps) {
     showVerticalSlider = 'auto',
     showHorizontalSlider = 'auto',
     scroll: initialScroll,
+    onScrollInfoChange,
   } = props
 
   const [scroll, setScroll] = useState(initialScroll ?? { dx: 0, dy: 0 })
@@ -70,6 +95,22 @@ export function ScrollPage(props: ScrollPageProps) {
       setScroll(initialScroll)
     }
   }, [initialScroll])
+
+  // Notify parent of scroll info changes
+  useEffect(() => {
+    if (onScrollInfoChange && viewportWidth > 0 && viewportHeight > 0) {
+      onScrollInfoChange({
+        dx: scroll.dx,
+        dy: scroll.dy,
+        viewportWidth,
+        viewportHeight,
+        contentWidth,
+        contentHeight,
+        maxScrollX,
+        maxScrollY,
+      })
+    }
+  }, [scroll, viewportWidth, viewportHeight, contentWidth, contentHeight, maxScrollX, maxScrollY])
 
   const calc = (deltaX: number, deltaY: number) => {
     if (!contentRef.current || !viewportRef.current) return
