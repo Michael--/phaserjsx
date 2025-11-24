@@ -97,8 +97,9 @@ describe('VDOM', () => {
       const mockComponent = vi.fn(() => createElement('div', {}))
       const vnode = createElement(mockComponent, {})
       const renderedVNode = createElement('div', {})
+      const cleanupSpy = vi.fn()
       vnode.__ctx = {
-        cleanups: [vi.fn()],
+        cleanups: [cleanupSpy],
         vnode: renderedVNode,
         componentVNode: vnode,
         isFactory: false,
@@ -113,7 +114,7 @@ describe('VDOM', () => {
       unmount(vnode)
 
       // Cleanup should be called
-      expect(vnode.__ctx?.cleanups[0]).toHaveBeenCalled()
+      expect(cleanupSpy).toHaveBeenCalled()
     })
   })
 
