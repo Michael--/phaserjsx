@@ -108,14 +108,6 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
     setScroll({ dx, dy, scrollX: x, scrollY: y, width: (vw / cw) * 100, height: (vh / ch) * 100 })
   }
 
-  const handleVScroll = (percent: number) => {
-    const vh = 400
-    const ch = vh / (scroll.height / 100)
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (percent / 100) * maxScrollY
-    setScroll({ ...scroll, dy, scrollY: percent })
-  }
-
   return (
     <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
@@ -163,22 +155,6 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       width: (vw / cw) * 100,
       height: (vh / ch) * 100,
     })
-  }
-
-  const handleVScroll = (percent: number) => {
-    const vh = viewSize
-    const ch = vh / (scroll.height / 100)
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (percent / 100) * maxScrollY
-    setScroll({ ...scroll, dy, scrollY: percent })
-  }
-
-  const handleHScroll = (percent: number) => {
-    const vw = viewSize
-    const cw = vw / (scroll.width / 100)
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (percent / 100) * maxScrollX
-    setScroll({ ...scroll, dx, scrollX: percent })
   }
 
   return (

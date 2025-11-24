@@ -35,8 +35,6 @@ export function TestExample() {
   return (
     <View width={'100%'} height={'100%'} padding={100}>
       <ScrollPage
-        showVerticalSlider={true}
-        showHorizontalSlider={true}
         borderColor={0xff0000}
         borderWidth={2}
         minWidth={'100%'}

@@ -6,9 +6,35 @@ import {
   View,
   type GestureEventData,
   type ViewProps,
+  type VNode,
 } from '@phaserjsx/ui'
 import { ScrollSlider } from './ScrollSlider'
-import { type ScrollViewProps } from './ScrollView'
+
+/**
+ * Props for ScrollView component
+ */
+export interface ScrollViewProps {
+  /** Children to render inside scrollable content, allow only one child */
+  children?: VNode
+  /** Initial scroll position */
+  scroll?: { dx: number; dy: number }
+  /** Called when scroll position changes
+   * @param scrollXPercent - Horizontal scroll position in percent (0 = left, 100 = right)
+   * @param scrollYPercent - Vertical scroll position in percent (0 = top, 100 = bottom)
+   * @param viewportWidth - Width of the viewport in pixels
+   * @param viewportHeight - Height of the viewport in pixels
+   * @param contentWidth - Width of the content in pixels
+   * @param contentHeight - Height of the content in pixels
+   */
+  onScroll?: (
+    scrollXPercent: number,
+    scrollYPercent: number,
+    viewportWidth: number,
+    viewportHeight: number,
+    contentWidth: number,
+    contentHeight: number
+  ) => void
+}
 
 /**
  * Props for ScrollPage component
@@ -16,10 +42,10 @@ import { type ScrollViewProps } from './ScrollView'
  * @extends ScrollViewProps - Scroll-specific props
  */
 export interface ScrollPageProps extends Omit<ViewProps, 'children'>, ScrollViewProps {
-  /** Whether to show the vertical scroll slider (default: false) */
-  showVerticalSlider?: boolean
-  /** Whether to show the vertical scroll slider (default: false) */
-  showHorizontalSlider?: boolean
+  /** Whether to show the vertical scroll slider (default: auto) */
+  showVerticalSlider?: boolean | 'auto' | undefined
+  /** Whether to show the vertical scroll slider (default: auto) */
+  showHorizontalSlider?: boolean | 'auto' | undefined
 }
 
 /**
@@ -30,8 +56,8 @@ export interface ScrollPageProps extends Omit<ViewProps, 'children'>, ScrollView
 export function ScrollPage(props: ScrollPageProps) {
   const {
     children,
-    showVerticalSlider = false,
-    showHorizontalSlider = false,
+    showVerticalSlider = 'auto',
+    showHorizontalSlider = 'auto',
     // exclude some props not relevant for ScrollPage
   } = props
 
@@ -54,8 +80,10 @@ export function ScrollPage(props: ScrollPageProps) {
   const needsVerticalScroll = contentHeight > viewportHeight
   const needsHorizontalScroll = contentWidth > viewportWidth
 
-  const showVerticalSliderActual = showVerticalSlider || needsVerticalScroll
-  const showHorizontalSliderActual = showHorizontalSlider || needsHorizontalScroll
+  const showVerticalSliderActual =
+    showVerticalSlider === true || (needsVerticalScroll && showVerticalSlider === 'auto')
+  const showHorizontalSliderActual =
+    showHorizontalSlider === true || (needsHorizontalScroll && showHorizontalSlider === 'auto')
 
   const maxScrollY = Math.max(0, contentHeight - viewportHeight)
   const maxScrollX = Math.max(0, contentWidth - viewportWidth)
