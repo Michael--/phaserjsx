@@ -400,10 +400,27 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     if (parentOrScene instanceof Phaser.GameObjects.Container) {
       const parentContainer = parentOrScene as Phaser.GameObjects.Container & {
         __layoutProps?: Record<string, unknown>
+        __getLayoutSize?: () => { width: number; height: number }
       }
-      // Get parent's resolved size if available
-      if (parentContainer.width > 0 && parentContainer.height > 0) {
-        parentSize = { width: parentContainer.width, height: parentContainer.height }
+      // Get parent's content-area (size minus padding) for percentage resolution
+      if (parentContainer.__getLayoutSize) {
+        const parentTotalSize = parentContainer.__getLayoutSize()
+        const padding = (parentContainer.__layoutProps?.padding ?? 0) as
+          | number
+          | { left?: number; right?: number; top?: number; bottom?: number }
+        const normPadding =
+          typeof padding === 'number'
+            ? { left: padding, right: padding, top: padding, bottom: padding }
+            : {
+                left: padding.left ?? 0,
+                right: padding.right ?? 0,
+                top: padding.top ?? 0,
+                bottom: padding.bottom ?? 0,
+              }
+        parentSize = {
+          width: parentTotalSize.width - normPadding.left - normPadding.right,
+          height: parentTotalSize.height - normPadding.top - normPadding.bottom,
+        }
       }
     }
 
@@ -697,14 +714,32 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       __layoutProps?: Record<string, unknown>
     }
     if (container.__layoutProps) {
-      // Get parent size for percentage/fill resolution
+      // Get parent content-area (size minus padding) for percentage/fill resolution
       let parentSize: { width: number; height: number } | undefined
       if (parent instanceof Phaser.GameObjects.Container) {
         const parentContainer = parent as Phaser.GameObjects.Container & {
           __layoutProps?: Record<string, unknown>
+          __getLayoutSize?: () => { width: number; height: number }
         }
-        if (parentContainer.width > 0 && parentContainer.height > 0) {
-          parentSize = { width: parentContainer.width, height: parentContainer.height }
+        // Use parent's layout size minus padding (content-area)
+        if (parentContainer.__getLayoutSize) {
+          const parentTotalSize = parentContainer.__getLayoutSize()
+          const padding = (parentContainer.__layoutProps?.padding ?? 0) as
+            | number
+            | { left?: number; right?: number; top?: number; bottom?: number }
+          const normPadding =
+            typeof padding === 'number'
+              ? { left: padding, right: padding, top: padding, bottom: padding }
+              : {
+                  left: padding.left ?? 0,
+                  right: padding.right ?? 0,
+                  top: padding.top ?? 0,
+                  bottom: padding.bottom ?? 0,
+                }
+          parentSize = {
+            width: parentTotalSize.width - normPadding.left - normPadding.right,
+            height: parentTotalSize.height - normPadding.top - normPadding.bottom,
+          }
         }
       }
 

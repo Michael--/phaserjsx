@@ -18,6 +18,7 @@ export function applyContainerDimensions(
 ): void {
   const gameObject = container as GameObjectWithLayout & {
     __cachedLayoutSize?: LayoutSize
+    __originalGetLayoutSize?: () => LayoutSize
   }
   gameObject.width = width
   gameObject.height = height
@@ -27,10 +28,11 @@ export function applyContainerDimensions(
   gameObject.__cachedLayoutSize = { width, height }
 
   // Override __getLayoutSize to return cached value if available
-  // This ensures children always see the most recent calculated dimensions
-  const originalGetLayoutSize = gameObject.__getLayoutSize
-  if (originalGetLayoutSize && !originalGetLayoutSize.toString().includes('__cachedLayoutSize')) {
-    gameObject.__getLayoutSize = () => gameObject.__cachedLayoutSize ?? originalGetLayoutSize()
+  // Store original implementation on first call, then always use cache
+  if (gameObject.__getLayoutSize && !gameObject.__originalGetLayoutSize) {
+    gameObject.__originalGetLayoutSize = gameObject.__getLayoutSize
+    gameObject.__getLayoutSize = () =>
+      gameObject.__cachedLayoutSize ?? gameObject.__originalGetLayoutSize!()
   }
 
   DebugLogger.log('layout', 'Container dimensions set to:', { width, height })
