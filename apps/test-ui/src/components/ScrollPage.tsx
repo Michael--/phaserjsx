@@ -11,41 +11,18 @@ import {
 import { ScrollSlider } from './ScrollSlider'
 
 /**
- * Props for ScrollView component
- */
-export interface ScrollViewProps {
-  /** Children to render inside scrollable content, allow only one child */
-  children?: VNode
-  /** Initial scroll position */
-  scroll?: { dx: number; dy: number }
-  /** Called when scroll position changes
-   * @param scrollXPercent - Horizontal scroll position in percent (0 = left, 100 = right)
-   * @param scrollYPercent - Vertical scroll position in percent (0 = top, 100 = bottom)
-   * @param viewportWidth - Width of the viewport in pixels
-   * @param viewportHeight - Height of the viewport in pixels
-   * @param contentWidth - Width of the content in pixels
-   * @param contentHeight - Height of the content in pixels
-   */
-  onScroll?: (
-    scrollXPercent: number,
-    scrollYPercent: number,
-    viewportWidth: number,
-    viewportHeight: number,
-    contentWidth: number,
-    contentHeight: number
-  ) => void
-}
-
-/**
  * Props for ScrollPage component
  * @extends Omit<ViewProps, 'children'> - All View props except children
- * @extends ScrollViewProps - Scroll-specific props
  */
-export interface ScrollPageProps extends Omit<ViewProps, 'children'>, ScrollViewProps {
+export interface ScrollPageProps extends Omit<ViewProps, 'children'> {
   /** Whether to show the vertical scroll slider (default: auto) */
   showVerticalSlider?: boolean | 'auto' | undefined
   /** Whether to show the vertical scroll slider (default: auto) */
   showHorizontalSlider?: boolean | 'auto' | undefined
+  /** Initial scroll position */
+  scroll?: { dx: number; dy: number }
+  /** Children to render inside scrollable content, allow only one child */
+  children?: VNode
 }
 
 /**
@@ -58,11 +35,10 @@ export function ScrollPage(props: ScrollPageProps) {
     children,
     showVerticalSlider = 'auto',
     showHorizontalSlider = 'auto',
-    // exclude some props not relevant for ScrollPage
+    scroll: initialScroll,
   } = props
 
-  // const [scroll, setScroll] = useState(initialState)
-  const [scroll, setScroll] = useState({ dx: 0, dy: 0 })
+  const [scroll, setScroll] = useState(initialScroll ?? { dx: 0, dy: 0 })
 
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -87,6 +63,13 @@ export function ScrollPage(props: ScrollPageProps) {
 
   const maxScrollY = Math.max(0, contentHeight - viewportHeight)
   const maxScrollX = Math.max(0, contentWidth - viewportWidth)
+
+  // Update scroll when props.scroll changes
+  useEffect(() => {
+    if (initialScroll) {
+      setScroll(initialScroll)
+    }
+  }, [initialScroll])
 
   const calc = (deltaX: number, deltaY: number) => {
     if (!contentRef.current || !viewportRef.current) return

@@ -88,25 +88,6 @@ function ScrollExampleLocal(props: { title: string; count: number; width: SizeVa
 
 function ScrollExampleSliderLocal(props: { title: string; count: number; width: SizeValue }) {
   const tokens = useThemeTokens()
-  const [scroll, setScroll] = useState({
-    dx: 0,
-    dy: 0,
-    scrollX: 0,
-    scrollY: 0,
-    width: 0,
-    height: 0,
-  })
-
-  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
-    // Calculate absolute scroll positions from percentages
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (y / 100) * maxScrollY
-
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (x / 100) * maxScrollX
-
-    setScroll({ dx, dy, scrollX: x, scrollY: y, width: (vw / cw) * 100, height: (vh / ch) * 100 })
-  }
 
   return (
     <ViewLevel2 alignItems="center">
@@ -114,7 +95,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
       {/** Border around ScrollView to visualize its bounds */}
       <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollPage scroll={scroll} onScroll={handleScroll} showVerticalSlider={true}>
+          <ScrollPage showVerticalSlider={true}>
             <Content count={props.count} width={props.width} />
           </ScrollPage>
         </View>
@@ -129,33 +110,11 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
   const [scroll, setScroll] = useState({
     dx: 0,
     dy: 0,
-    scrollX: 0,
-    scrollY: 0,
-    width: 0,
-    height: 0,
   })
   // define the view and content sizes for scroll calculations
   const viewSize = 200
   const contentSize = 300
   const rect = 50
-
-  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
-    // Calculate absolute scroll positions from percentages
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (y / 100) * maxScrollY
-
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (x / 100) * maxScrollX
-
-    setScroll({
-      dx,
-      dy,
-      scrollX: x,
-      scrollY: y,
-      width: (vw / cw) * 100,
-      height: (vh / ch) * 100,
-    })
-  }
 
   return (
     <ViewLevel2 alignItems="center">
@@ -163,12 +122,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
           <View width={viewSize} height={viewSize} padding={0}>
-            <ScrollPage
-              scroll={scroll}
-              onScroll={handleScroll}
-              showVerticalSlider={true}
-              showHorizontalSlider={true}
-            >
+            <ScrollPage scroll={scroll} showVerticalSlider={true} showHorizontalSlider={true}>
               <View
                 direction="stack"
                 width={contentSize}
@@ -205,18 +159,15 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
           <Button
             variant="primary"
             text="Scroll to left/top"
-            onClick={() => setScroll({ ...scroll, dx: 0, dy: 0, scrollX: 0, scrollY: 0 })}
+            onClick={() => setScroll({ dx: 0, dy: 0 })}
           />
           <Button
             variant="primary"
             text="Scroll to center"
             onClick={() =>
               setScroll({
-                ...scroll,
                 dx: (contentSize - viewSize) / 2,
                 dy: (contentSize - viewSize) / 2,
-                scrollX: 50,
-                scrollY: 50,
               })
             }
           />
@@ -225,11 +176,8 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
             text="Scroll to bottom/right"
             onClick={() =>
               setScroll({
-                ...scroll,
                 dx: contentSize - viewSize,
                 dy: contentSize - viewSize,
-                scrollX: 100,
-                scrollY: 100,
               })
             }
           />
