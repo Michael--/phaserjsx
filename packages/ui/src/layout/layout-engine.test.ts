@@ -11,13 +11,17 @@ beforeAll(() => {
   LayoutBatchQueue.synchronous = true
 })
 
+interface MockContainer extends Phaser.GameObjects.Container {
+  __getLayoutSize: () => { width: number; height: number }
+}
+
 /**
  * Mock container helper
  * @param width - Initial width
  * @param height - Initial height
  * @param isContainer - Whether this should act as a container (with children list)
  */
-function mockContainer(width = 0, height = 0, isContainer = true): Phaser.GameObjects.Container {
+function mockContainer(width = 0, height = 0, isContainer = true): MockContainer {
   const children: Phaser.GameObjects.Container[] = []
   const mock = {
     width,
@@ -54,7 +58,7 @@ function mockContainer(width = 0, height = 0, isContainer = true): Phaser.GameOb
     Object.assign(mock, { list: children })
   }
 
-  return mock as unknown as Phaser.GameObjects.Container
+  return mock as unknown as MockContainer
 }
 
 describe('percentage layouts - column direction', () => {
