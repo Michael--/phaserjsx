@@ -168,8 +168,8 @@ export function ScrollView(props: ScrollViewProps) {
             ref={viewportRef}
             flex={1}
             width="100%"
-            backgroundColor={0x0000ff}
-            backgroundAlpha={0.3}
+            //backgroundColor={0x0000ff}
+            //backgroundAlpha={0.3}
             onTouchMove={handleTouchMove}
             overflow="hidden"
             direction="stack"
