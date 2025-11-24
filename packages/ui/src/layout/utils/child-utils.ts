@@ -83,8 +83,22 @@ export function getChildSize(
 
     // Apply min/max constraints
     const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
-    width = clampSize(width, minWidth, maxWidth)
-    height = clampSize(height, minHeight, maxHeight)
+    width = clampSize(
+      width,
+      minWidth,
+      maxWidth,
+      parentSize?.width,
+      child.width,
+      parentPadding?.horizontal
+    )
+    height = clampSize(
+      height,
+      minHeight,
+      maxHeight,
+      parentSize?.height,
+      child.height,
+      parentPadding?.vertical
+    )
 
     return { width, height }
   }
@@ -97,8 +111,22 @@ export function getChildSize(
     if (child.__layoutProps) {
       const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
       size = {
-        width: clampSize(size.width, minWidth, maxWidth),
-        height: clampSize(size.height, minHeight, maxHeight),
+        width: clampSize(
+          size.width,
+          minWidth,
+          maxWidth,
+          parentSize?.width,
+          child.width,
+          parentPadding?.horizontal
+        ),
+        height: clampSize(
+          size.height,
+          minHeight,
+          maxHeight,
+          parentSize?.height,
+          child.height,
+          parentPadding?.vertical
+        ),
       }
     }
 
@@ -112,8 +140,22 @@ export function getChildSize(
   // Apply constraints if layoutProps exist
   if (child.__layoutProps) {
     const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
-    width = clampSize(width, minWidth, maxWidth)
-    height = clampSize(height, minHeight, maxHeight)
+    width = clampSize(
+      width,
+      minWidth,
+      maxWidth,
+      parentSize?.width,
+      child.width,
+      parentPadding?.horizontal
+    )
+    height = clampSize(
+      height,
+      minHeight,
+      maxHeight,
+      parentSize?.height,
+      child.height,
+      parentPadding?.vertical
+    )
   }
 
   return { width, height }

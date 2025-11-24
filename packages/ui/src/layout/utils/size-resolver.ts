@@ -475,28 +475,50 @@ export function isExplicit(parsed: ParsedSize): boolean {
 
 /**
  * Clamp a size value to min/max constraints
+ * Min/max constraints can be SizeValue (pixels, percentage, viewport units, calc)
+ * They are resolved relative to the same parent/viewport context as the size itself
+ *
  * @param size - Resolved size in pixels
- * @param minSize - Minimum size constraint (undefined = no constraint)
- * @param maxSize - Maximum size constraint (undefined = no constraint)
+ * @param minSize - Minimum size constraint (SizeValue or undefined = no constraint)
+ * @param maxSize - Maximum size constraint (SizeValue or undefined = no constraint)
+ * @param parentSize - Parent dimension for percentage resolution in constraints
+ * @param fallbackSize - Fallback size for auto constraints (not typically used for min/max)
+ * @param parentPadding - Parent padding for fill constraints (not typically used for min/max)
  * @returns Clamped size in pixels
  *
  * @example
  * clampSize(150, 100, 200)  // 150 (within bounds)
  * clampSize(50, 100, 200)   // 100 (clamped to min)
  * clampSize(300, 100, 200)  // 200 (clamped to max)
- * clampSize(150, undefined, 200)  // 150 (no min constraint)
+ * clampSize(150, undefined, "80%", 1000)  // 150 (max = 800px)
+ * clampSize(1000, undefined, "80%", 1000) // 800 (clamped to 80% of parent)
  */
-export function clampSize(size: number, minSize?: number, maxSize?: number): number {
+export function clampSize(
+  size: number,
+  minSize?: number | string,
+  maxSize?: number | string,
+  parentSize?: number,
+  fallbackSize?: number,
+  parentPadding?: number
+): number {
   let clamped = size
 
-  // Apply minimum constraint
-  if (minSize !== undefined && clamped < minSize) {
-    clamped = minSize
+  // Resolve and apply minimum constraint
+  if (minSize !== undefined) {
+    const parsedMin = parseSize(minSize)
+    const resolvedMin = resolveSize(parsedMin, parentSize, fallbackSize, parentPadding)
+    if (clamped < resolvedMin) {
+      clamped = resolvedMin
+    }
   }
 
-  // Apply maximum constraint
-  if (maxSize !== undefined && clamped > maxSize) {
-    clamped = maxSize
+  // Resolve and apply maximum constraint
+  if (maxSize !== undefined) {
+    const parsedMax = parseSize(maxSize)
+    const resolvedMax = resolveSize(parsedMax, parentSize, fallbackSize, parentPadding)
+    if (clamped > resolvedMax) {
+      clamped = resolvedMax
+    }
   }
 
   return clamped

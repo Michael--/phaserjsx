@@ -33,6 +33,7 @@ export type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __isBackground?: boolean
   __background?: Phaser.GameObjects.Graphics
   __getLayoutSize?: () => LayoutSize
+  __cachedLayoutSize?: LayoutSize
   x?: number
   y?: number
   width?: number
@@ -121,6 +122,7 @@ export interface CalcOperand {
 
 /**
  * Computed metrics from children analysis
+ * Note: maxWidth/maxHeight here are resolved pixel values, not SizeValue types
  */
 export interface ContentMetrics {
   maxWidth: number

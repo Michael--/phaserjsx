@@ -63,8 +63,19 @@ export function distributeFlexSpace(
         ? (margin.left ?? 0) + (margin.right ?? 0)
         : (margin.top ?? 0) + (margin.bottom ?? 0)
 
-    const minSize = direction === 'row' ? props?.minWidth : props?.minHeight
-    const maxSize = direction === 'row' ? props?.maxWidth : props?.maxHeight
+    // Resolve min/max constraints from SizeValue to pixels
+    const minSizeValue = direction === 'row' ? props?.minWidth : props?.minHeight
+    const maxSizeValue = direction === 'row' ? props?.maxWidth : props?.maxHeight
+    const currentSize = direction === 'row' ? layoutChild.size.width : layoutChild.size.height
+
+    const minSize =
+      minSizeValue !== undefined
+        ? resolveSize(parseSize(minSizeValue), availableSpace, currentSize, undefined)
+        : undefined
+    const maxSize =
+      maxSizeValue !== undefined
+        ? resolveSize(parseSize(maxSizeValue), availableSpace, currentSize, undefined)
+        : undefined
 
     // Calculate flex-basis
     let basisSize: number

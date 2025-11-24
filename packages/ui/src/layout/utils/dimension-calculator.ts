@@ -120,8 +120,24 @@ export function calculateContainerSize(
   let height = resolveSize(parsedHeight, parentSize?.height, contentHeight, parentPadding?.vertical)
 
   // Apply min/max constraints to container size
-  width = clampSize(width, props.minWidth, props.maxWidth)
-  height = clampSize(height, props.minHeight, props.maxHeight)
+  // Note: parentSize is already the content-area of the parent container (after padding),
+  // so we should NOT apply parentPadding again for percentage-based constraints
+  width = clampSize(
+    width,
+    props.minWidth,
+    props.maxWidth,
+    parentSize?.width,
+    contentWidth,
+    undefined // Don't use parentPadding - parentSize is already content-area
+  )
+  height = clampSize(
+    height,
+    props.minHeight,
+    props.maxHeight,
+    parentSize?.height,
+    contentHeight,
+    undefined // Don't use parentPadding - parentSize is already content-area
+  )
 
   return { width, height }
 }

@@ -4,6 +4,7 @@
  */
 import type { LayoutChild, LayoutContext, LayoutLine, Position } from '../types'
 import type { ContentMetrics } from '../utils/dimension-calculator'
+import { parseSize, resolveSize } from '../utils/size-resolver'
 import { calculateAlignItems } from '../utils/spacing-calculator'
 import { BaseLayoutStrategy } from './base-strategy'
 
@@ -146,7 +147,9 @@ export class RowLayoutStrategy extends BaseLayoutStrategy {
         if (props.flexBasis !== undefined && typeof props.flexBasis === 'number') {
           effectiveWidth = props.flexBasis
         } else if (props.minWidth !== undefined) {
-          effectiveWidth = props.minWidth
+          // Resolve minWidth SizeValue to number
+          const parsed = parseSize(props.minWidth)
+          effectiveWidth = resolveSize(parsed, availableWidth, 100, undefined)
         } else if (props.flex && props.flex > 0) {
           // Use a reasonable default for flex items with no size hint
           effectiveWidth = 100

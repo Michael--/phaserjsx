@@ -1955,3 +1955,239 @@ describe('Flexbox - flexWrap', () => {
     expect(child2.width).toBe(150)
   })
 })
+
+describe('SizeValue constraints (min/max with percentage, viewport, calc)', () => {
+  it('respects minWidth with percentage value', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    // Child tries to be 50px but minWidth is 20% of parent (100px)
+    Object.assign(child, { __layoutProps: { width: 50, minWidth: '20%' } })
+
+    calculateLayout(container, props, { width: 500, height: 300 })
+
+    expect(child.width).toBe(100) // 20% of 500 = 100px
+  })
+
+  it('respects maxWidth with percentage value', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    // Child tries to be 300px but maxWidth is 40% of parent (200px)
+    Object.assign(child, { __layoutProps: { width: 300, maxWidth: '40%' } })
+
+    calculateLayout(container, props, { width: 500, height: 300 })
+
+    expect(child.width).toBe(200) // 40% of 500 = 200px
+  })
+
+  it('respects minHeight with percentage value', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 500,
+      height: 400,
+      gap: 0,
+    }
+
+    // Child tries to be 50px but minHeight is 25% of parent (100px)
+    Object.assign(child, { __layoutProps: { height: 50, minHeight: '25%' } })
+
+    calculateLayout(container, props, { width: 500, height: 400 })
+
+    expect(child.height).toBe(100) // 25% of 400 = 100px
+  })
+
+  it('respects maxHeight with percentage value', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 500,
+      height: 400,
+      gap: 0,
+    }
+
+    // Child tries to be 300px but maxHeight is 50% of parent (200px)
+    Object.assign(child, { __layoutProps: { height: 300, maxHeight: '50%' } })
+
+    calculateLayout(container, props, { width: 500, height: 400 })
+
+    expect(child.height).toBe(200) // 50% of 400 = 200px
+  })
+
+  it('respects minWidth with calc expression', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    // Child tries to be 50px but minWidth is calc(20% + 50px) = 150px
+    Object.assign(child, { __layoutProps: { width: 50, minWidth: 'calc(20% + 50px)' } })
+
+    calculateLayout(container, props, { width: 500, height: 300 })
+
+    expect(child.width).toBe(150) // 20% of 500 + 50 = 150px
+  })
+
+  it('respects maxWidth with calc expression', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 500,
+      height: 300,
+      gap: 0,
+    }
+
+    // Child tries to be 400px but maxWidth is calc(100% - 100px) = 400px
+    Object.assign(child, { __layoutProps: { width: 600, maxWidth: 'calc(100% - 100px)' } })
+
+    calculateLayout(container, props, { width: 500, height: 300 })
+
+    expect(child.width).toBe(400) // 100% of 500 - 100 = 400px
+  })
+
+  it('respects combined min/max constraints with SizeValue', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 1000,
+      height: 600,
+      gap: 0,
+    }
+
+    // Child with flexible sizing but bounded by percentage constraints
+    Object.assign(child, {
+      __layoutProps: {
+        width: '100%',
+        minWidth: '20%', // 200px
+        maxWidth: '60%', // 600px
+      },
+    })
+
+    calculateLayout(container, props, { width: 1000, height: 600 })
+
+    expect(child.width).toBe(600) // 100% clamped to maxWidth of 60% = 600px
+  })
+
+  it('respects percentage maxWidth/maxHeight relative to parent content-area (with padding)', () => {
+    const outerContainer = mockContainer()
+    const innerContainer = mockContainer(0, 0)
+    outerContainer.add(innerContainer)
+
+    // Outer container: explicit size with padding
+    const outerProps: LayoutProps = {
+      direction: 'column',
+      width: 1000,
+      height: 800,
+      padding: 50, // 50px all sides
+      gap: 0,
+    }
+
+    // Inner container: auto-size with maxWidth/maxHeight = 100%
+    // Should be limited to content-area of parent (1000 - 100 = 900px, 800 - 100 = 700px)
+    Object.assign(innerContainer, {
+      __layoutProps: {
+        width: undefined, // auto
+        height: undefined, // auto
+        maxWidth: '100%',
+        maxHeight: '100%',
+      },
+    })
+
+    calculateLayout(outerContainer, outerProps)
+
+    // Expected: maxWidth/Height should be 100% of parent's CONTENT-AREA (after padding)
+    // Content-area = 1000 - 50*2 = 900px width, 800 - 50*2 = 700px height
+    expect(innerContainer.width).toBeLessThanOrEqual(900)
+    expect(innerContainer.height).toBeLessThanOrEqual(700)
+
+    // It should NOT be the full outer container size
+    expect(innerContainer.width).not.toBe(1000)
+    expect(innerContainer.height).not.toBe(800)
+  })
+
+  it('nested containers with percentage constraints respect content-area boundaries', () => {
+    const root = mockContainer()
+    const parent = mockContainer(2000, 1500) // Large content
+    const child = mockContainer(2000, 1500) // Large content
+    root.add(parent)
+    parent.add(child)
+
+    // Root: viewport-based size
+    const rootProps: LayoutProps = {
+      direction: 'column',
+      width: 1000,
+      height: 800,
+      padding: 50,
+      gap: 0,
+    }
+
+    calculateLayout(root, rootProps)
+
+    // Parent should be in root's content-area (900x700)
+    const parentContentArea = {
+      width: 900, // 1000 - 50*2
+      height: 700, // 800 - 50*2
+    }
+
+    // Now calculate child with maxWidth='100%' inside parent
+    Object.assign(child, {
+      __layoutProps: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+      },
+    })
+
+    // Calculate parent's layout with child
+    const parentProps: LayoutProps = {
+      direction: 'column',
+      width: parent.width,
+      height: parent.height,
+      padding: 25,
+      gap: 0,
+    }
+
+    calculateLayout(parent, parentProps, parentContentArea)
+
+    // Child should respect parent's content-area (parent.width - 50, parent.height - 50)
+    const expectedMaxWidth = parent.width - 25 * 2
+    const expectedMaxHeight = parent.height - 25 * 2
+
+    expect(child.width).toBeLessThanOrEqual(expectedMaxWidth)
+    expect(child.height).toBeLessThanOrEqual(expectedMaxHeight)
+  })
+})

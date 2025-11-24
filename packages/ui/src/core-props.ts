@@ -223,57 +223,83 @@ export interface LayoutProps {
   height?: SizeValue | undefined
 
   /**
-   * Minimum width constraint in pixels
+   * Minimum width constraint
    * Prevents element from shrinking below this size
    * Works with flex, percentages, and auto sizing
+   * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
    *
    * @example
-   * // Flexible sidebar with minimum width
+   * // Fixed minimum
    * <View flex={1} minWidth={200}>Sidebar</View>
    *
-   * // Button with responsive but readable minimum
-   * <View width="100%" minWidth={80} maxWidth={200}>
-   *   <Text text="OK" />
-   * </View>
+   * // Percentage of parent
+   * <View width="100%" minWidth="20%" maxWidth="80%">Flexible</View>
+   *
+   * // Viewport-based
+   * <View flex={1} minWidth="200px">Responsive sidebar</View>
+   *
+   * // Calc expression
+   * <View width="100%" minWidth="calc(50% - 20px)">Dynamic</View>
    */
-  minWidth?: number | undefined
+  minWidth?: SizeValue | undefined
 
   /**
-   * Minimum height constraint in pixels
+   * Minimum height constraint
    * Prevents element from shrinking below this size
    * Works with flex, percentages, and auto sizing
+   * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
    *
    * @example
-   * // Card with minimum height
+   * // Fixed minimum
    * <View height="auto" minHeight={100}>
    *   <Text text={dynamicContent} />
    * </View>
+   *
+   * // Percentage of parent
+   * <View height="100%" minHeight="30%">Flexible height</View>
+   *
+   * // Viewport-based
+   * <View flex={1} minHeight="50vh">Half viewport min</View>
    */
-  minHeight?: number | undefined
+  minHeight?: SizeValue | undefined
 
   /**
-   * Maximum width constraint in pixels
+   * Maximum width constraint
    * Prevents element from growing beyond this size
    * Works with flex, percentages, and auto sizing
+   * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
    *
    * @example
-   * // Flexible content with maximum width for readability
+   * // Fixed maximum
    * <View flex={1} maxWidth={800}>
    *   <Text text="Long content..." />
    * </View>
+   *
+   * // Percentage of parent
+   * <View width="100%" maxWidth="80%">Responsive</View>
+   *
+   * // Viewport-based
+   * <View flex={1} maxWidth="90vw">Full width modal</View>
    */
-  maxWidth?: number | undefined
+  maxWidth?: SizeValue | undefined
 
   /**
-   * Maximum height constraint in pixels
+   * Maximum height constraint
    * Prevents element from growing beyond this size
    * Works with flex, percentages, and auto sizing
+   * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
    *
    * @example
-   * // Image with constrained height
+   * // Fixed maximum
    * <Image texture="photo" width="100%" maxHeight={400} />
+   *
+   * // Percentage of parent
+   * <View height="100%" maxHeight="80%">Constrained</View>
+   *
+   * // Viewport-based
+   * <View flex={1} maxHeight="80vh">Scrollable content</View>
    */
-  maxHeight?: number | undefined
+  maxHeight?: SizeValue | undefined
 
   /**
    * * Margin outside the container
@@ -482,7 +508,11 @@ export interface TextSpecificProps {
   text: string
   fontStyle?: string
   align?: 'left' | 'center' | 'right'
-  maxWidth?: number
+  /**
+   * Maximum width for text wrapping
+   * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
+   */
+  maxWidth?: SizeValue
 }
 
 /**

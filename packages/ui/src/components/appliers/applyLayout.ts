@@ -82,6 +82,60 @@ function hasLayoutPropsChanged(
 }
 
 /**
+ * Calculates parent size and padding from parent container's layout
+ * Falls back to viewport size for root containers without a parent
+ * @param node - Container node to get parent info for
+ * @returns Parent size and padding if parent is a layout container
+ */
+function getParentLayoutContext(node: Phaser.GameObjects.Container): {
+  parentSize?: { width: number; height: number }
+  parentPadding?: { horizontal: number; vertical: number }
+} {
+  const parent = node.parentContainer as
+    | (Phaser.GameObjects.Container & {
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => LayoutSize
+      })
+    | undefined
+
+  // If has layout parent, use its content-area
+  if (parent && parent.__layoutProps && parent.__getLayoutSize) {
+    const parentSize = parent.__getLayoutSize()
+    const padding = parent.__layoutProps.padding ?? 0
+    const normPadding =
+      typeof padding === 'number'
+        ? { left: padding, right: padding, top: padding, bottom: padding }
+        : {
+            left: padding.left ?? 0,
+            right: padding.right ?? 0,
+            top: padding.top ?? 0,
+            bottom: padding.bottom ?? 0,
+          }
+
+    return {
+      parentSize: {
+        width: parentSize.width - normPadding.left - normPadding.right,
+        height: parentSize.height - normPadding.top - normPadding.bottom,
+      },
+      // Parent already provides content-area, no padding offset needed
+    }
+  }
+
+  // Fallback: Root container without layout parent - use viewport as parent size
+  // This allows percentage-based sizing/constraints to work on root containers
+  if (node.scene) {
+    return {
+      parentSize: {
+        width: node.scene.scale.width,
+        height: node.scene.scale.height,
+      },
+    }
+  }
+
+  return {}
+}
+
+/**
  * Applies layout property changes to a container
  * Handles width, height, direction, padding, margin updates
  * Triggers layout recalculation when:
@@ -103,7 +157,9 @@ export function applyLayoutProps(
   // Children changes are handled by VDOM patchVNode() which has smarter detection
   // This prevents double-calculation while still catching container prop changes
   if (hasLayoutPropsChanged(prev, next)) {
-    calculateLayout(node, next)
+    // Get parent layout context for percentage/fill resolution
+    const { parentSize, parentPadding } = getParentLayoutContext(node)
+    calculateLayout(node, next, parentSize, parentPadding)
     // Update gesture hit area after layout recalculation
     // This ensures hit area matches actual container size (important for auto-sized containers)
     updateGestureHitAreaIfNeeded(node)

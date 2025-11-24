@@ -4,6 +4,8 @@
  */
 import equal from 'fast-deep-equal'
 import type { TextSpecificProps } from '../../core-props'
+import { parseSize, resolveSize } from '../../layout/utils/size-resolver'
+import { viewportRegistry } from '../../viewport-context'
 
 /**
  * Generic node type with text capabilities
@@ -54,9 +56,12 @@ export function applyTextProps<T extends TextNode>(
     }
   }
 
-  // Word wrap width
-  if (next.maxWidth !== prev.maxWidth && typeof next.maxWidth === 'number') {
-    node.setWordWrapWidth(next.maxWidth, true)
+  // Word wrap width - resolve SizeValue to pixels
+  if (next.maxWidth !== prev.maxWidth && next.maxWidth !== undefined) {
+    const viewport = viewportRegistry.getViewport()
+    const parsedMaxWidth = parseSize(next.maxWidth)
+    const resolvedMaxWidth = resolveSize(parsedMaxWidth, viewport?.width, undefined, undefined)
+    node.setWordWrapWidth(resolvedMaxWidth, true)
     needsUpdate = true
   }
 

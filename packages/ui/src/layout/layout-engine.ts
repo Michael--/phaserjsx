@@ -423,7 +423,9 @@ function calculateLayoutImmediate(
   const canCalculateWidth =
     parsedWidth.type === 'fixed' ||
     (parentSize?.width !== undefined &&
-      (parsedWidth.type === 'percent' || parsedWidth.type === 'fill'))
+      (parsedWidth.type === 'percent' ||
+        parsedWidth.type === 'fill' ||
+        parsedWidth.type === 'calc'))
 
   const width = canCalculateWidth
     ? resolveSize(parsedWidth, parentSize?.width, container.width, parentPadding?.horizontal)
@@ -434,7 +436,9 @@ function calculateLayoutImmediate(
   const canCalculateHeight =
     parsedHeight.type === 'fixed' ||
     (parentSize?.height !== undefined &&
-      (parsedHeight.type === 'percent' || parsedHeight.type === 'fill'))
+      (parsedHeight.type === 'percent' ||
+        parsedHeight.type === 'fill' ||
+        parsedHeight.type === 'calc'))
 
   const height = canCalculateHeight
     ? resolveSize(parsedHeight, parentSize?.height, container.height, parentPadding?.vertical)
@@ -445,11 +449,25 @@ function calculateLayoutImmediate(
     // Apply constraints
     const clampedWidth =
       width !== undefined
-        ? clampSize(width, containerProps.minWidth, containerProps.maxWidth)
+        ? clampSize(
+            width,
+            containerProps.minWidth,
+            containerProps.maxWidth,
+            parentSize?.width,
+            container.width,
+            parentPadding?.horizontal
+          )
         : container.width
     const clampedHeight =
       height !== undefined
-        ? clampSize(height, containerProps.minHeight, containerProps.maxHeight)
+        ? clampSize(
+            height,
+            containerProps.minHeight,
+            containerProps.maxHeight,
+            parentSize?.height,
+            container.height,
+            parentPadding?.vertical
+          )
         : container.height
 
     currentContainerSize = {

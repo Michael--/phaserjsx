@@ -4,6 +4,7 @@
  */
 import type { LayoutChild, LayoutContext, LayoutLine, Position } from '../types'
 import type { ContentMetrics } from '../utils/dimension-calculator'
+import { parseSize, resolveSize } from '../utils/size-resolver'
 import { calculateAlignItems } from '../utils/spacing-calculator'
 import { BaseLayoutStrategy } from './base-strategy'
 
@@ -147,7 +148,9 @@ export class ColumnLayoutStrategy extends BaseLayoutStrategy {
         if (props.flexBasis !== undefined && typeof props.flexBasis === 'number') {
           effectiveHeight = props.flexBasis
         } else if (props.minHeight !== undefined) {
-          effectiveHeight = props.minHeight
+          // Resolve minHeight SizeValue to number
+          const parsed = parseSize(props.minHeight)
+          effectiveHeight = resolveSize(parsed, availableHeight, 100, undefined)
         } else if (props.flex && props.flex > 0) {
           // Use a reasonable default for flex items with no size hint
           effectiveHeight = 100
