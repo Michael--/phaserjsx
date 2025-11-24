@@ -1,6 +1,6 @@
 import { Text, useState, useThemeTokens, View, type SizeValue } from '@phaserjsx/ui'
-import { Button, ScrollView } from '../components'
-import { ScrollSlider } from '../components/ScrollSlider'
+import { Button } from '../components'
+import { ScrollPage } from '../components/ScrollPage'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 function ListButton(props: { index: number; width?: SizeValue }) {
@@ -75,11 +75,11 @@ function ScrollExampleLocal(props: { title: string; count: number; width: SizeVa
     <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
-      <ViewLevel2 borderColor={tokens?.colors.border.medium.toNumber()} borderWidth={2} padding={2}>
+      <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollView>
+          <ScrollPage>
             <Content count={props.count} width={props.width} />
-          </ScrollView>
+          </ScrollPage>
         </View>
       </ViewLevel2>
     </ViewLevel2>
@@ -120,24 +120,12 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
     <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
-      <ViewLevel2
-        borderColor={tokens?.colors.border.medium.toNumber()}
-        borderWidth={2}
-        padding={2}
-        direction="row"
-        gap={0}
-      >
+      <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollView scroll={scroll} onScroll={handleScroll}>
+          <ScrollPage scroll={scroll} onScroll={handleScroll} showVerticalSlider={true}>
             <Content count={props.count} width={props.width} />
-          </ScrollView>
+          </ScrollPage>
         </View>
-        <ScrollSlider
-          direction="vertical"
-          trackSize={400}
-          scrollInfo={scroll}
-          onScroll={handleVScroll}
-        />
       </ViewLevel2>
     </ViewLevel2>
   )
@@ -198,63 +186,45 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       <Text text={props.title} style={tokens?.textStyles.large} />
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
-          <View
-            height={viewSize + 4}
-            width={viewSize + 4}
-            borderColor={tokens?.colors.border.medium.toNumber()}
-            borderWidth={2}
-            padding={2}
-            direction="row"
-            gap={0}
-          >
-            <View width={viewSize} height={viewSize} padding={0}>
-              <ScrollView scroll={scroll} onScroll={handleScroll}>
+          <View width={viewSize} height={viewSize} padding={0}>
+            <ScrollPage
+              scroll={scroll}
+              onScroll={handleScroll}
+              showVerticalSlider={true}
+              showHorizontalSlider={true}
+            >
+              <View
+                direction="stack"
+                width={contentSize}
+                height={contentSize}
+                padding={0}
+                backgroundColor={tokens?.colors.secondary.light.toNumber()}
+              >
                 <View
-                  direction="stack"
-                  width={contentSize}
-                  height={contentSize}
-                  padding={0}
-                  backgroundColor={tokens?.colors.secondary.light.toNumber()}
-                >
-                  <View
-                    x={0}
-                    y={0}
-                    width={rect}
-                    height={rect}
-                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
-                  ></View>
-                  <View
-                    x={(contentSize - rect) / 2}
-                    y={(contentSize - rect) / 2}
-                    width={rect}
-                    height={rect}
-                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
-                  ></View>
-                  <View
-                    x={contentSize - rect}
-                    y={contentSize - rect}
-                    width={rect}
-                    height={rect}
-                    backgroundColor={tokens?.colors.secondary.dark.toNumber()}
-                  ></View>
-                </View>
-              </ScrollView>
-            </View>
+                  x={0}
+                  y={0}
+                  width={rect}
+                  height={rect}
+                  backgroundColor={tokens?.colors.secondary.dark.toNumber()}
+                ></View>
+                <View
+                  x={(contentSize - rect) / 2}
+                  y={(contentSize - rect) / 2}
+                  width={rect}
+                  height={rect}
+                  backgroundColor={tokens?.colors.secondary.dark.toNumber()}
+                ></View>
+                <View
+                  x={contentSize - rect}
+                  y={contentSize - rect}
+                  width={rect}
+                  height={rect}
+                  backgroundColor={tokens?.colors.secondary.dark.toNumber()}
+                ></View>
+              </View>
+            </ScrollPage>
           </View>
-          <ScrollSlider
-            direction="vertical"
-            trackSize={viewSize}
-            scrollInfo={scroll}
-            onScroll={handleVScroll}
-          />
         </View>
-        {/** Horizontal slider */}
-        <ScrollSlider
-          direction="horizontal"
-          trackSize={viewSize}
-          scrollInfo={scroll}
-          onScroll={handleHScroll}
-        />
         <ViewLevel2 alignItems="start" padding={{ top: 30 }}>
           <Button
             variant="primary"

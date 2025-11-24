@@ -21,6 +21,7 @@ import { ScrollExample } from './examples/ScrollExamples'
 import { SpringAnimationExample } from './examples/SpringAnimationExample'
 import { SpriteExample } from './examples/SpriteExample'
 import { StackExample } from './examples/StackExample'
+import { TestExample } from './examples/TestExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
 
@@ -56,6 +57,7 @@ const examples = {
   effects: { label: 'Object Effects', component: GameObjectEffectsExample },
   origin: { label: 'Origin View', component: OriginExample },
   designToken: { label: 'Design Tokens', component: DesignTokensExample },
+  test: { label: 'Test', component: TestExample },
 } as const
 
 export type ExampleKey = keyof typeof examples

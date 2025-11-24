@@ -2,7 +2,7 @@
  * ScrollSlider component for scrollable content areas
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
-import type { GestureEventData, LayoutSize, SizeValue } from '@phaserjsx/ui'
+import type { GestureEventData, LayoutSize } from '@phaserjsx/ui'
 import { getThemedProps, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
@@ -26,12 +26,14 @@ declare module '@phaserjsx/ui' {
 export interface ScrollSliderProps {
   /** Direction of the slider */
   direction: 'vertical' | 'horizontal'
-  /** Size of the track - can be number (pixels) or string ("100vh", "50%", etc.) */
-  trackSize: SizeValue
-  /** Scroll information from ScrollView */
-  scrollInfo: { scrollX: number; scrollY: number; width: number; height: number }
-  /** Callback when slider is scrolled */
-  onScroll: (percent: number) => void
+  /** Current scroll position in pixels */
+  scrollPosition: number
+  /** Viewport size in pixels */
+  viewportSize: number
+  /** Content size in pixels */
+  contentSize: number
+  /** Callback when slider is scrolled, returns new scroll position in pixels */
+  onScroll: (scrollPosition: number) => void
 }
 
 /**
@@ -40,22 +42,19 @@ export interface ScrollSliderProps {
  * @returns JSX element
  */
 export function ScrollSlider(props: ScrollSliderProps) {
-  const { direction, trackSize, scrollInfo, onScroll } = props
+  const { direction, scrollPosition, viewportSize, contentSize, onScroll } = props
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
   const trackContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
 
   const isVertical = direction === 'vertical'
-  const scrollPercent = isVertical ? scrollInfo.scrollY : scrollInfo.scrollX
-  const sizePercent = isVertical ? scrollInfo.height : scrollInfo.width
 
   const border = themed.borderWidth ?? 1
   const outer = themed.size ?? 24
   const dimension = outer - border * 2
 
   // Get actual resolved track size from the container after layout
-  // Use __getLayoutSize if available (more reliable than container.width/height)
   const containerWithLayout = trackContainerRef.current as
     | (Phaser.GameObjects.Container & {
         __getLayoutSize?: () => LayoutSize
@@ -70,15 +69,19 @@ export function ScrollSlider(props: ScrollSliderProps) {
       ? isVertical
         ? containerWithLayout.height
         : containerWithLayout.width
-      : typeof trackSize === 'number'
-        ? trackSize
-        : 800 // fallback
+      : 800 // fallback
 
   const trackSizeInner = resolvedTrackSize - border * 2
   const minThumbSize = themed.minThumbSize ?? 20
-  const thumbSize = Math.max(minThumbSize, (trackSizeInner * sizePercent) / 100)
+
+  // Calculate thumb size based on viewport to content ratio
+  const maxScroll = Math.max(0, contentSize - viewportSize)
+  const visibleRatio = contentSize > 0 ? viewportSize / contentSize : 1
+  const thumbSize = Math.max(minThumbSize, trackSizeInner * visibleRatio)
   const thumbRange = trackSizeInner - thumbSize
-  const thumbPosition = (scrollPercent / 100) * thumbRange
+
+  // Calculate thumb position from scroll position
+  const thumbPosition = maxScroll > 0 ? (scrollPosition / maxScroll) * thumbRange : 0
 
   const handleThumbTouchMove = (data: GestureEventData) => {
     // Stop event propagation to prevent ScrollView from receiving the event
@@ -97,11 +100,10 @@ export function ScrollSlider(props: ScrollSliderProps) {
     if (!isDraggingRef.current) return
 
     const delta = isVertical ? (data.dy ?? 0) : (data.dx ?? 0)
-    const currentThumbPos = (scrollPercent / 100) * thumbRange
-    const newThumbPos = Math.max(0, Math.min(thumbRange, currentThumbPos + delta))
-    const newScrollPercent = thumbRange > 0 ? (newThumbPos / thumbRange) * 100 : 0
+    const newThumbPos = Math.max(0, Math.min(thumbRange, thumbPosition + delta))
+    const newScrollPos = thumbRange > 0 ? (newThumbPos / thumbRange) * maxScroll : 0
 
-    onScroll(newScrollPercent)
+    onScroll(newScrollPos)
   }
 
   const handleBackgroundTouch = (data: GestureEventData) => {
@@ -120,31 +122,31 @@ export function ScrollSlider(props: ScrollSliderProps) {
     // Convert to thumb position (top-left corner)
     const targetThumbPos = targetThumbCenter - thumbSize / 2
 
-    // Calculate scroll percent from thumb position
-    const targetScrollPercent = thumbRange > 0 ? (targetThumbPos / thumbRange) * 100 : 0
+    // Calculate scroll position in pixels from thumb position
+    const targetScrollPos = thumbRange > 0 ? (targetThumbPos / thumbRange) * maxScroll : 0
 
-    onScroll(Math.max(0, Math.min(100, targetScrollPercent)))
+    onScroll(Math.max(0, Math.min(maxScroll, targetScrollPos)))
   }
 
   return (
     <View
       ref={trackContainerRef}
-      width={isVertical ? outer : trackSize}
-      height={isVertical ? trackSize : outer}
+      width={isVertical ? outer : '100%'}
+      height={isVertical ? '100%' : outer}
       backgroundColor={themed.borderColor ?? 0x000000}
       padding={border}
     >
       <View
         ref={sliderRef}
-        width={isVertical ? dimension : trackSizeInner}
-        height={isVertical ? trackSizeInner : dimension}
+        width={isVertical ? dimension : '100%'}
+        height={isVertical ? '100%' : dimension}
         backgroundColor={themed.trackColor ?? 0xdddddd}
         direction="stack"
         padding={0}
       >
         <View
-          width={isVertical ? dimension : trackSizeInner}
-          height={isVertical ? trackSizeInner : dimension}
+          width={isVertical ? dimension : '100%'}
+          height={isVertical ? '100%' : dimension}
           x={0}
           y={0}
           backgroundColor={themed.trackColor ?? 0xaaaaaa}

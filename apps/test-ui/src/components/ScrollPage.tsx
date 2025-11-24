@@ -1,7 +1,14 @@
-import { useState, View, type ViewProps } from '@phaserjsx/ui'
-import { ViewLevel1 } from '../examples/Helper/ViewLevel'
+import {
+  getThemedProps,
+  useEffect,
+  useRef,
+  useState,
+  View,
+  type GestureEventData,
+  type ViewProps,
+} from '@phaserjsx/ui'
 import { ScrollSlider } from './ScrollSlider'
-import { ScrollView, type ScrollViewProps } from './ScrollView'
+import { type ScrollViewProps } from './ScrollView'
 
 /**
  * Props for ScrollPage component
@@ -11,9 +18,7 @@ import { ScrollView, type ScrollViewProps } from './ScrollView'
 export interface ScrollPageProps extends Omit<ViewProps, 'children'>, ScrollViewProps {
   /** Whether to show the vertical scroll slider (default: false) */
   showVerticalSlider?: boolean
-  /** Whether to show the vertical scroll slider (default: false)
-   * @deprecated Not yet correctly implemented
-   */
+  /** Whether to show the vertical scroll slider (default: false) */
   showHorizontalSlider?: boolean
 }
 
@@ -25,109 +30,146 @@ export interface ScrollPageProps extends Omit<ViewProps, 'children'>, ScrollView
 export function ScrollPage(props: ScrollPageProps) {
   const {
     children,
-    scroll: initialScroll,
-    width: viewWidth = '100vw',
-    height: viewHeight = '100vh',
     showVerticalSlider = false,
     showHorizontalSlider = false,
     // exclude some props not relevant for ScrollPage
-    onScroll: _onScroll,
-    x: _x,
-    y: _y,
-    direction: _direction,
-    // the rest
-    ...viewProps
   } = props
 
-  const initialState = initialScroll
-    ? { ...initialScroll, scrollX: 0, scrollY: 0, width: 0, height: 0 }
-    : { dx: 0, dy: 0, scrollX: 0, scrollY: 0, width: 0, height: 0 }
+  // const [scroll, setScroll] = useState(initialState)
+  const [scroll, setScroll] = useState({ dx: 0, dy: 0 })
 
-  const [scroll, setScroll] = useState(initialState)
+  const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
 
-  // Store dimensions for slider calculations
-  const [dimensions, setDimensions] = useState({ vw: 0, vh: 0, cw: 0, ch: 0 })
+  // Get slider size from theme
+  const { props: sliderTheme } = getThemedProps('ScrollSlider', undefined, {})
+  const sliderSize = sliderTheme.size ?? 30
 
-  const handleScroll = (x: number, y: number, vw: number, vh: number, cw: number, ch: number) => {
-    // Store dimensions
-    setDimensions({ vw, vh, cw, ch })
+  // Calculate if scrolling is needed
+  const viewportHeight = viewportRef.current?.height ?? 0
+  const viewportWidth = viewportRef.current?.width ?? 0
+  const contentHeight = Math.max(contentRef.current?.height ?? 0, viewportHeight)
+  const contentWidth = Math.max(contentRef.current?.width ?? 0, viewportWidth)
 
-    // Calculate absolute scroll positions from percentages
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (y / 100) * maxScrollY
+  const needsVerticalScroll = contentHeight > viewportHeight
+  const needsHorizontalScroll = contentWidth > viewportWidth
 
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (x / 100) * maxScrollX
+  const showVerticalSliderActual = showVerticalSlider || needsVerticalScroll
+  const showHorizontalSliderActual = showHorizontalSlider || needsHorizontalScroll
 
-    setScroll({
-      dx,
-      dy,
-      scrollX: x,
-      scrollY: y,
-      width: (vw / cw) * 100,
-      height: (vh / ch) * 100,
-    })
+  const maxScrollY = Math.max(0, contentHeight - viewportHeight)
+  const maxScrollX = Math.max(0, contentWidth - viewportWidth)
+
+  const calc = (deltaX: number, deltaY: number) => {
+    if (!contentRef.current || !viewportRef.current) return
+
+    // Get viewport and content dimensions
+    const viewportHeight = viewportRef.current.height
+    const viewportWidth = viewportRef.current.width
+    const contentHeight = contentRef.current.height
+    const contentWidth = contentRef.current.width
+    // Calculate new scroll position
+    const maxScrollY = Math.max(0, contentHeight - viewportHeight)
+    const maxScrollX = Math.max(0, contentWidth - viewportWidth)
+    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
+    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
+
+    setScroll({ dx: newScrollX, dy: newScrollY })
   }
 
-  const handleVScroll = (percent: number) => {
-    const { vh, ch } = dimensions
-    if (vh === 0 || ch === 0) return
-
-    const maxScrollY = Math.max(0, ch - vh)
-    const dy = (percent / 100) * maxScrollY
-
-    setScroll({ ...scroll, dy, scrollY: percent })
+  const handleVerticalScroll = (scrollPos: number) => {
+    const clampedScrollPos = Math.max(0, Math.min(maxScrollY, scrollPos))
+    setScroll((prev) => ({ ...prev, dy: clampedScrollPos }))
   }
 
-  const handleHScroll = (percent: number) => {
-    const { vw, cw } = dimensions
-    if (vw === 0 || cw === 0) return
-
-    const maxScrollX = Math.max(0, cw - vw)
-    const dx = (percent / 100) * maxScrollX
-
-    setScroll({ ...scroll, dx, scrollX: percent })
+  const handleHorizontalScroll = (scrollPos: number) => {
+    const clampedScrollPos = Math.max(0, Math.min(maxScrollX, scrollPos))
+    setScroll((prev) => ({ ...prev, dx: clampedScrollPos }))
   }
+
+  const handleTouchMove = (data: GestureEventData) => {
+    // Process start and move events, ignore end
+    if (data.state === 'end') return
+
+    const deltaX = data.dx ?? 0
+    const deltaY = data.dy ?? 0
+
+    calc(deltaX, deltaY)
+  }
+  const [_, setRedraw] = useState(0)
+
+  useEffect(() => {
+    // Force multiple redraws to ensure container dimensions are properly calculated
+    // First redraw after initial mount
+    const timer1 = setTimeout(() => setRedraw((r) => r + 1), 0)
+    // Second redraw to catch any layout adjustments and slider dimensions
+    const timer2 = setTimeout(() => setRedraw((r) => r + 1), 2)
+
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+    }
+  }, [])
 
   return (
-    <View direction="stack" width={viewWidth} height={viewHeight} {...viewProps}>
-      <ViewLevel1 width="100%" direction="row" gap={0}>
-        <ScrollView scroll={scroll} onScroll={handleScroll} {...(children ? { children } : {})} />
-      </ViewLevel1>
-      {showVerticalSlider && (
-        <View
-          width="100%"
-          direction="row"
-          gap={0}
-          justifyContent="end"
-          padding={{ right: 1 }}
-          height={viewHeight}
-        >
-          <ScrollSlider
-            direction="vertical"
-            trackSize={viewHeight}
-            scrollInfo={scroll}
-            onScroll={handleVScroll}
-          />
+    <View>
+      <View direction="row" width="100%" height="100%" gap={0} padding={0}>
+        {/* ScrollView takes remaining space */}
+        <View flex={1} height={'100%'}>
+          <View
+            ref={viewportRef}
+            flex={0}
+            flexBasis={'100%'}
+            width="100%"
+            backgroundColor={0x0000ff}
+            backgroundAlpha={0.3}
+            onTouchMove={handleTouchMove}
+            overflow="hidden"
+            direction="stack"
+          >
+            {/* main scroll view area, can be greater than parent */}
+            <View ref={contentRef} x={-scroll.dx} y={-scroll.dy}>
+              {children}
+            </View>
+          </View>
+          {/* Horizontal slider at the bottom */}
+          {showHorizontalSliderActual && (
+            <View maxHeight={viewportHeight}>
+              <ScrollSlider
+                direction="horizontal"
+                scrollPosition={scroll.dx}
+                viewportSize={viewportWidth}
+                contentSize={contentWidth}
+                onScroll={handleHorizontalScroll}
+              />
+            </View>
+          )}
         </View>
-      )}
-      {showHorizontalSlider && (
-        <View
-          height="100%"
-          direction="column"
-          gap={0}
-          justifyContent="end"
-          padding={{ bottom: -1 }}
-          width={'100%'}
-        >
-          <ScrollSlider
-            direction="horizontal"
-            trackSize={viewWidth}
-            scrollInfo={scroll}
-            onScroll={handleHScroll}
-          />
-        </View>
-      )}
+
+        {/* Vertical slider on the right */}
+        {showVerticalSliderActual && (
+          <View maxHeight={'100%'}>
+            <View flex={1} flexBasis={'100%'} height={'100%'} maxHeight={viewportHeight}>
+              <ScrollSlider
+                direction="vertical"
+                scrollPosition={scroll.dy}
+                viewportSize={viewportHeight}
+                contentSize={contentHeight}
+                onScroll={handleVerticalScroll}
+              />
+            </View>
+            {showHorizontalSliderActual && (
+              // Placeholder corner for potential icon - matches slider dimensions
+              <View
+                width={sliderSize}
+                height={sliderSize}
+                //backgroundAlpha={0.3}
+                //backgroundColor={0xff0000}
+              />
+            )}
+          </View>
+        )}
+      </View>
     </View>
   )
 }
