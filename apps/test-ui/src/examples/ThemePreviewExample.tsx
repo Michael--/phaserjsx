@@ -385,14 +385,12 @@ function ComponentShowcase() {
  */
 export function ThemePreviewExample() {
   return (
-    <ScrollView showVerticalSlider={true}>
-      <View gap={32}>
-        <ColorSection />
-        <ComponentShowcase />
-        <SpacingSection />
-        <BorderRadiusSection />
-        <TypographySection />
-      </View>
+    <ScrollView gap={32}>
+      <ColorSection />
+      <ComponentShowcase />
+      <SpacingSection />
+      <BorderRadiusSection />
+      <TypographySection />
     </ScrollView>
   )
 }

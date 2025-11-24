@@ -6,7 +6,6 @@ import {
   View,
   type GestureEventData,
   type ViewProps,
-  type VNode,
 } from '@phaserjsx/ui'
 import { ScrollSlider } from './ScrollSlider'
 
@@ -34,9 +33,8 @@ export interface ScrollInfo {
 
 /**
  * Props for ScrollView component
- * @extends Omit<ViewProps, 'children'> - All View props except children
  */
-export interface ScrollViewProps extends Omit<ViewProps, 'children'> {
+export interface ScrollViewProps extends ViewProps {
   /** Whether to show the vertical scroll slider (default: auto) */
   showVerticalSlider?: boolean | 'auto' | undefined
   /** Whether to show the vertical scroll slider (default: auto) */
@@ -45,8 +43,6 @@ export interface ScrollViewProps extends Omit<ViewProps, 'children'> {
   scroll?: { dx: number; dy: number }
   /** Callback when scroll information changes */
   onScrollInfoChange?: (info: ScrollInfo) => void
-  /** Children to render inside scrollable content, allow only one child */
-  children?: VNode
 }
 
 /**
