@@ -4,8 +4,8 @@
  */
 import type { ColorShade } from '@phaserjsx/ui'
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollView } from '../components'
 import { Button } from '../components/Button'
-import { ScrollPage } from '../components/ScrollPage'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 /**
@@ -385,7 +385,7 @@ function ComponentShowcase() {
  */
 export function ThemePreviewExample() {
   return (
-    <ScrollPage showVerticalSlider={true}>
+    <ScrollView showVerticalSlider={true}>
       <View gap={32}>
         <ColorSection />
         <ComponentShowcase />
@@ -393,6 +393,6 @@ export function ThemePreviewExample() {
         <BorderRadiusSection />
         <TypographySection />
       </View>
-    </ScrollPage>
+    </ScrollView>
   )
 }

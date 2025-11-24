@@ -33,10 +33,10 @@ export interface ScrollInfo {
 }
 
 /**
- * Props for ScrollPage component
+ * Props for ScrollView component
  * @extends Omit<ViewProps, 'children'> - All View props except children
  */
-export interface ScrollPageProps extends Omit<ViewProps, 'children'> {
+export interface ScrollViewProps extends Omit<ViewProps, 'children'> {
   /** Whether to show the vertical scroll slider (default: auto) */
   showVerticalSlider?: boolean | 'auto' | undefined
   /** Whether to show the vertical scroll slider (default: auto) */
@@ -50,11 +50,11 @@ export interface ScrollPageProps extends Omit<ViewProps, 'children'> {
 }
 
 /**
- * ScrollPage component providing a scrollable area with an optional vertical slider
- * @param props - ScrollPage properties
+ * ScrollView component providing a scrollable area with an optional vertical slider
+ * @param props - ScrollView properties
  * @returns JSX element
  */
-export function ScrollPage(props: ScrollPageProps) {
+export function ScrollView(props: ScrollViewProps) {
   const {
     children,
     showVerticalSlider = 'auto',

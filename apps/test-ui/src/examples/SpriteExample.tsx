@@ -4,8 +4,7 @@
  */
 import { Sprite, Text, useEffect, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { Button } from '../components'
-import { ScrollPage } from '../components/ScrollPage'
+import { Button, ScrollView } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**
@@ -509,7 +508,7 @@ export function SpriteExample() {
   const tokens = useThemeTokens()
 
   return (
-    <ScrollPage showVerticalSlider>
+    <ScrollView showVerticalSlider>
       <View gap={100}>
         <Text text="Sprite Examples" style={tokens?.textStyles.title} />
 
@@ -534,6 +533,6 @@ export function SpriteExample() {
           <MultipleAnimationsExample />
         </View>
       </View>
-    </ScrollPage>
+    </ScrollView>
   )
 }

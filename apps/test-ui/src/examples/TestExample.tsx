@@ -3,7 +3,7 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import { Text, View } from '@phaserjsx/ui'
-import { ScrollPage } from '../components/ScrollPage'
+import { ScrollView } from '../components'
 import { SectionHeader, ViewLevel2 } from './Helper'
 
 /**
@@ -34,7 +34,7 @@ function BigPage() {
 export function TestExample() {
   return (
     <View width={'100%'} height={'100%'} padding={100}>
-      <ScrollPage
+      <ScrollView
         borderColor={0xff0000}
         borderWidth={2}
         minWidth={'100%'}
@@ -43,7 +43,7 @@ export function TestExample() {
         maxHeight={'100%'}
       >
         <BigPage />
-      </ScrollPage>
+      </ScrollView>
     </View>
   )
 }

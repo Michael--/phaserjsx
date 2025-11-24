@@ -4,7 +4,7 @@
  */
 import { Image, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ScrollPage } from '../components/ScrollPage'
+import { ScrollView } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
@@ -235,7 +235,7 @@ function LayoutIntegration() {
  */
 export function ImageExample() {
   return (
-    <ScrollPage>
+    <ScrollView>
       <ViewLevel2>
         <SectionHeader title="Image Component Examples" />
         <View direction="row">
@@ -251,6 +251,6 @@ export function ImageExample() {
         </View>
         <LayoutIntegration />
       </ViewLevel2>
-    </ScrollPage>
+    </ScrollView>
   )
 }

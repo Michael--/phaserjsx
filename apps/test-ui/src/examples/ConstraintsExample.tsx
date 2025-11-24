@@ -2,7 +2,7 @@
  * Min/Max Constraints Demo - showcasing minWidth, maxWidth, minHeight, maxHeight
  */
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { ScrollPage } from '../components/ScrollPage'
+import { ScrollView } from '../components'
 import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
@@ -494,7 +494,7 @@ function TextConstraints() {
 export function ConstraintsExample() {
   const tokens = useThemeTokens()
   return (
-    <ScrollPage key="constraints-example" showVerticalSlider>
+    <ScrollView key="constraints-example" showVerticalSlider>
       <ViewLevel1 width={750} height={3000}>
         <Text text="Min/Max Constraints Examples" style={tokens?.textStyles.title} />
 
@@ -540,6 +540,6 @@ export function ConstraintsExample() {
           />
         </ViewLevel2>
       </ViewLevel1>
-    </ScrollPage>
+    </ScrollView>
   )
 }

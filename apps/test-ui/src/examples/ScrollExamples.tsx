@@ -1,6 +1,5 @@
 import { Text, useState, useThemeTokens, View, type SizeValue } from '@phaserjsx/ui'
-import { Button } from '../components'
-import { ScrollPage, type ScrollInfo } from '../components/ScrollPage'
+import { Button, ScrollView, type ScrollInfo } from '../components'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 function ListButton(props: { index: number; width?: SizeValue }) {
@@ -77,9 +76,9 @@ function ScrollExampleLocal(props: { title: string; count: number; width: SizeVa
       {/** Border around ScrollView to visualize its bounds */}
       <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollPage>
+          <ScrollView>
             <Content count={props.count} width={props.width} />
-          </ScrollPage>
+          </ScrollView>
         </View>
       </ViewLevel2>
     </ViewLevel2>
@@ -95,9 +94,9 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
       {/** Border around ScrollView to visualize its bounds */}
       <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollPage showVerticalSlider={true}>
+          <ScrollView showVerticalSlider={true}>
             <Content count={props.count} width={props.width} />
-          </ScrollPage>
+          </ScrollView>
         </View>
       </ViewLevel2>
     </ViewLevel2>
@@ -123,7 +122,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
       <View direction="column" gap={2} padding={0} margin={0}>
         <View direction="row" gap={2} padding={0} margin={0}>
           <View width={viewSize} height={viewSize} padding={0}>
-            <ScrollPage
+            <ScrollView
               scroll={scroll}
               showVerticalSlider={true}
               showHorizontalSlider={true}
@@ -158,7 +157,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
                   backgroundColor={tokens?.colors.secondary.dark.toNumber()}
                 ></View>
               </View>
-            </ScrollPage>
+            </ScrollView>
           </View>
         </View>
         <ViewLevel2 alignItems="start" padding={{ top: 30 }}>

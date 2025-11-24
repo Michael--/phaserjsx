@@ -4,7 +4,7 @@
  */
 import { Graphics, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ScrollPage } from '../components/ScrollPage'
+import { ScrollView } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
@@ -304,7 +304,7 @@ function AdvancedGraphicsDemo() {
  */
 export function GraphicsExample() {
   return (
-    <ScrollPage>
+    <ScrollView>
       <ViewLevel2>
         <SectionHeader title="Graphics Component Examples" />
         <View direction="row">
@@ -318,6 +318,6 @@ export function GraphicsExample() {
         </View>
         <AdvancedGraphicsDemo />
       </ViewLevel2>
-    </ScrollPage>
+    </ScrollView>
   )
 }
