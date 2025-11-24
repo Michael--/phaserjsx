@@ -15,7 +15,7 @@ import {
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
-import { Button, Sidebar } from './components'
+import { Button, ScrollView, Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 
 // Set global theme ONCE (safe in function body for SPA)
@@ -150,15 +150,19 @@ export function App(props: AppProps) {
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
-      <Sidebar height={'100%'}>
-        <View direction="row" gap={10}>
-          <LightDarkModeToggle />
-          <JsxStaticBox keys={['*']} />
-        </View>
-        <PresetSelector />
-        <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
-        <Spacer />
-        <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
+      <Sidebar height={'100%'} width={400}>
+        <ScrollView showVerticalSlider={false} showHorizontalSlider={false}>
+          <>
+            <View direction="row" gap={10}>
+              <LightDarkModeToggle />
+              <JsxStaticBox keys={['*']} />
+            </View>
+            <PresetSelector />
+            <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
+            <Spacer />
+            <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
+          </>
+        </ScrollView>
       </Sidebar>
       <View
         height={'100%'}

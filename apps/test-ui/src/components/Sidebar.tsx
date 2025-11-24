@@ -31,6 +31,8 @@ declare module '@phaserjsx/ui' {
 export interface SidebarProps {
   /** Height of the sidebar */
   height?: SizeValue
+  /** Width of the sidebar */
+  width?: SizeValue
   /** Children to display in sidebar */
   children?: ViewProps['children']
 }
@@ -47,6 +49,8 @@ export function Sidebar(props: SidebarProps) {
   return (
     <View
       height={props.height}
+      width={props.width}
+      minWidth={props.width}
       theme={nestedTheme}
       backgroundColor={themed.backgroundColor}
       backgroundAlpha={themed.backgroundAlpha}

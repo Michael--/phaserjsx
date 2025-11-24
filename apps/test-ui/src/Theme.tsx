@@ -44,7 +44,7 @@ export function createAppTheme(
         Text: {
           style: {
             color: colors.text.light.toString(),
-            fontSize: '30px',
+            fontSize: '20px',
           },
         },
       },
