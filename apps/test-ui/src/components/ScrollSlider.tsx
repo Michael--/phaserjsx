@@ -2,7 +2,7 @@
  * ScrollSlider component for scrollable content areas
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
-import type { GestureEventData } from '@phaserjsx/ui'
+import type { GestureEventData, LayoutSize, SizeValue } from '@phaserjsx/ui'
 import { getThemedProps, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 
@@ -27,7 +27,7 @@ export interface ScrollSliderProps {
   /** Direction of the slider */
   direction: 'vertical' | 'horizontal'
   /** Size of the track - can be number (pixels) or string ("100vh", "50%", etc.) */
-  trackSize: number | string
+  trackSize: SizeValue
   /** Scroll information from ScrollView */
   scrollInfo: { scrollX: number; scrollY: number; width: number; height: number }
   /** Callback when slider is scrolled */
@@ -58,7 +58,7 @@ export function ScrollSlider(props: ScrollSliderProps) {
   // Use __getLayoutSize if available (more reliable than container.width/height)
   const containerWithLayout = trackContainerRef.current as
     | (Phaser.GameObjects.Container & {
-        __getLayoutSize?: () => { width: number; height: number }
+        __getLayoutSize?: () => LayoutSize
       })
     | null
 

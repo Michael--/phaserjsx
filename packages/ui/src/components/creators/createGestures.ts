@@ -2,6 +2,7 @@
  * Gesture setup for component initialization
  * Registers containers with the GestureManager for high-level gesture detection
  */
+import type { LayoutSize } from '@phaserjsx/ui/layout/types'
 import Phaser from 'phaser'
 import type { GestureProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
@@ -40,7 +41,7 @@ export function createGestures(
   // Get actual calculated container size from layout system
   // Use __getLayoutSize if available (set by createLayout), otherwise fallback to getBounds
   const containerWithLayout = container as typeof container & {
-    __getLayoutSize?: () => { width: number; height: number }
+    __getLayoutSize?: () => LayoutSize
   }
 
   let width = 100

@@ -37,6 +37,9 @@ export function registerBuiltins() {
   register('TileSprite', { create: tileSpriteCreator, patch: tileSpritePatcher })
 }
 
+// Re-export layout types
+export { type LayoutSize } from './../layout/types'
+
 // Re-export View component
 export { viewCreator, viewPatcher, type ViewBaseProps, type ViewProps } from './view'
 

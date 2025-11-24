@@ -3,40 +3,7 @@
  */
 import { setColorPreset, Text, useColorMode, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
-import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
-
-/**
- * Component demonstrating useThemeTokens hook
- */
-function ColoredBox() {
-  const tokens = useThemeTokens()
-
-  if (!tokens) {
-    return <Text text="No tokens available" />
-  }
-
-  return (
-    <ViewLevel3
-      width={300}
-      height={150}
-      backgroundColor={tokens.colors.primary.DEFAULT.toNumber()}
-      borderColor={tokens.colors.primary.dark.toNumber()}
-      borderWidth={2}
-      cornerRadius={tokens.radius.md}
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Text text="Primary Color Box" style={tokens.textStyles.large} />
-      <Text
-        text={`Background: ${tokens.colors.primary.DEFAULT.toString()}`}
-        style={{
-          ...tokens.textStyles.small,
-          color: tokens.colors.primary.lightest.toString(),
-        }}
-      />
-    </ViewLevel3>
-  )
-}
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Color mode toggle button

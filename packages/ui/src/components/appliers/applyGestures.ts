@@ -2,6 +2,7 @@
  * Gesture property appliers for component patching
  * Updates gesture registration when props change
  */
+import type { LayoutSize } from '@phaserjsx/ui/layout'
 import Phaser from 'phaser'
 import type { GestureProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
@@ -47,7 +48,7 @@ export function applyGesturesProps(
     // Register for the first time
     // Use __getLayoutSize for actual calculated dimensions
     const containerWithLayout = container as typeof container & {
-      __getLayoutSize?: () => { width: number; height: number }
+      __getLayoutSize?: () => LayoutSize
     }
 
     let width = 100
@@ -108,7 +109,7 @@ export function applyGesturesProps(
     if (prev.width !== next.width || prev.height !== next.height) {
       // Use __getLayoutSize for actual calculated dimensions
       const containerWithLayout = container as typeof container & {
-        __getLayoutSize?: () => { width: number; height: number }
+        __getLayoutSize?: () => LayoutSize
       }
 
       let width = 100

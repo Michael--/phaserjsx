@@ -10,7 +10,7 @@ import { getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
-import { DeferredLayoutQueue, calculateLayout } from './layout/index'
+import { DeferredLayoutQueue, calculateLayout, type LayoutSize } from './layout/index'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
 import { viewportRegistry } from './viewport-context'
@@ -76,7 +76,7 @@ function buildComponentPath(vnode: VNode): string {
  */
 function updateGestureHitAreaAfterLayout(container: Phaser.GameObjects.Container): void {
   const containerWithLayout = container as typeof container & {
-    __getLayoutSize?: () => { width: number; height: number }
+    __getLayoutSize?: () => LayoutSize
   }
 
   // Only update if container has gesture system enabled and layout size available

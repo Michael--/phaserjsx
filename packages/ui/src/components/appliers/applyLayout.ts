@@ -4,7 +4,7 @@
 import equal from 'fast-deep-equal'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
-import { calculateLayout } from '../../layout/index'
+import { calculateLayout, type LayoutSize } from '../../layout/index'
 
 /**
  * Updates gesture hit area based on current layout size
@@ -13,7 +13,7 @@ import { calculateLayout } from '../../layout/index'
  */
 function updateGestureHitAreaIfNeeded(node: Phaser.GameObjects.Container): void {
   const containerWithLayout = node as typeof node & {
-    __getLayoutSize?: () => { width: number; height: number }
+    __getLayoutSize?: () => LayoutSize
     scene: Phaser.Scene
   }
 
