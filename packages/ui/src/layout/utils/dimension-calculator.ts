@@ -78,7 +78,7 @@ export function calculateContentDimensions(
  * @param metrics - Content metrics from calculateContentDimensions
  * @param padding - Normalized padding values
  * @param direction - Layout direction
- * @param gap - Gap between children
+ * @param gap - Gap between children (horizontal and vertical)
  * @param childCount - Number of children
  * @param parentSize - Parent dimensions for percentage resolution
  * @param parentPadding - Parent padding for 'fill' resolution
@@ -89,7 +89,7 @@ export function calculateContainerSize(
   metrics: ContentMetrics,
   padding: PaddingValues,
   direction: 'row' | 'column' | 'stack',
-  gap: number,
+  gap: { horizontal: number; vertical: number },
   childCount: number,
   parentSize?: { width: number; height: number },
   parentPadding?: { horizontal: number; vertical: number }
@@ -97,7 +97,8 @@ export function calculateContainerSize(
   // Add gaps to total main size (not applicable for stack)
   let totalMainSizeWithGaps = metrics.totalMainSize
   if (direction !== 'stack' && childCount > 1) {
-    totalMainSizeWithGaps += gap * (childCount - 1)
+    const gapValue = direction === 'row' ? gap.horizontal : gap.vertical
+    totalMainSizeWithGaps += gapValue * (childCount - 1)
   }
 
   // Calculate content-based default sizes

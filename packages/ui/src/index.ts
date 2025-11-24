@@ -20,8 +20,10 @@ export * from './vdom'
 export {
   normalizeCornerRadius,
   normalizeEdgeInsets,
+  normalizeGap,
   type CornerRadiusInsets,
   type EdgeInsets,
+  type GapInsets,
 } from './core-props'
 
 // Export gesture types explicitly for better IDE support

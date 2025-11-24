@@ -138,7 +138,10 @@ export interface LayoutContext {
   containerProps: LayoutProps
   padding: PaddingValues
   contentArea: ContentArea
-  gap: number
+  gap: {
+    horizontal: number
+    vertical: number
+  }
   children: LayoutChild[]
   /** Parent dimensions for percentage resolution */
   parentSize?: {

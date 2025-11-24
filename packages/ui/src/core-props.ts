@@ -124,6 +124,14 @@ export interface EdgeInsets {
 }
 
 /**
+ * Gap insets for horizontal and vertical gaps
+ */
+export interface GapInsets {
+  horizontal?: number
+  vertical?: number
+}
+
+/**
  * Corner radius specification
  */
 export interface CornerRadiusInsets {
@@ -163,6 +171,27 @@ export function normalizeCornerRadius(
     return value
   }
   return value
+}
+
+/**
+ * Normalize gap values - converts number to GapInsets object
+ * @param value - Number (uniform gap) or gap insets object
+ * @returns Normalized GapInsets object with horizontal and vertical values
+ */
+export function normalizeGap(value: number | GapInsets | undefined): {
+  horizontal: number
+  vertical: number
+} {
+  if (value === undefined) {
+    return { horizontal: 0, vertical: 0 }
+  }
+  if (typeof value === 'number') {
+    return { horizontal: value, vertical: value }
+  }
+  return {
+    horizontal: value.horizontal ?? 0,
+    vertical: value.vertical ?? 0,
+  }
 }
 
 /**
@@ -326,10 +355,12 @@ export interface LayoutProps {
   direction?: 'row' | 'column' | 'stack'
 
   /**
-   * Gap between children (uniform spacing)
-   * Applied between each child along the main axis
+   * Gap between children
+   * - number: Uniform gap between all children
+   * - GapInsets: Separate horizontal and vertical gaps
+   * Applied between each child along the main axis (or both axes for GapInsets)
    */
-  gap?: number | undefined
+  gap?: number | GapInsets | undefined
 
   /**
    * Main axis alignment (along direction)

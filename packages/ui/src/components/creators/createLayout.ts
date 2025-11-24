@@ -2,6 +2,7 @@
  * Layout creator for initializing container layout system
  */
 import type { BackgroundProps, LayoutProps, TransformProps } from '../../core-props'
+import { normalizeGap } from '../../core-props'
 import {
   getChildSize,
   parseSize,
@@ -43,7 +44,7 @@ export function createLayout(
     const paddingTop = padding.top ?? 0
     const paddingRight = padding.right ?? 0
     const paddingBottom = padding.bottom ?? 0
-    const gap = props.gap ?? 0
+    const gapNormalized = normalizeGap(props.gap)
 
     let maxWidth = 0
     let maxHeight = 0
@@ -86,7 +87,8 @@ export function createLayout(
 
     // Add gaps to total main size
     if (childCount > 1) {
-      totalMainSize += gap * (childCount - 1)
+      const gapValue = direction === 'row' ? gapNormalized.horizontal : gapNormalized.vertical
+      totalMainSize += gapValue * (childCount - 1)
     }
 
     const defaultWidth =

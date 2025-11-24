@@ -4,6 +4,7 @@
  */
 import Phaser from 'phaser'
 import type { LayoutProps } from '../core-props'
+import { normalizeGap } from '../core-props'
 import { DebugLogger, DevConfig } from '../dev-config'
 import { updateBackground, updateHitArea } from './appliers/background-applier'
 import { applyContainerDimensions } from './appliers/container-applier'
@@ -408,7 +409,7 @@ function calculateLayoutImmediate(
   // 1. Extract layout parameters
   const direction = containerProps.direction ?? 'column'
   const padding = normalizePadding(containerProps.padding)
-  const gap = containerProps.gap ?? 0
+  const gap = normalizeGap(containerProps.gap)
   const justifyContent = containerProps.justifyContent ?? 'start'
 
   DebugLogger.log('layout', `Direction: ${direction}, Padding:`, padding)
@@ -588,7 +589,8 @@ function calculateLayoutImmediate(
         : containerHeight - padding.top - padding.bottom
 
     // Subtract gap space (gap appears between children, so n-1 gaps for n children)
-    const totalGapSpace = layoutChildren.length > 1 ? gap * (layoutChildren.length - 1) : 0
+    const gapValue = direction === 'row' ? gap.horizontal : gap.vertical
+    const totalGapSpace = layoutChildren.length > 1 ? gapValue * (layoutChildren.length - 1) : 0
     const availableMainSpace = contentSize - totalGapSpace
 
     finalLayoutChildren = distributeFlexSpace(layoutChildren, availableMainSpace, direction)
@@ -666,7 +668,9 @@ function calculateLayoutImmediate(
   // 9. Calculate spacing for justifyContent
   const availableMainSpace = direction === 'row' ? contentArea.width : contentArea.height
   // Calculate total gap space (gaps between children, not before first or after last)
-  const totalGapSpace = finalLayoutChildren.length > 1 ? gap * (finalLayoutChildren.length - 1) : 0
+  const gapValue = direction === 'row' ? gap.horizontal : gap.vertical
+  const totalGapSpace =
+    finalLayoutChildren.length > 1 ? gapValue * (finalLayoutChildren.length - 1) : 0
   const remainingSpace = availableMainSpace - metrics.totalMainSize - totalGapSpace
 
   let mainStart = 0
@@ -740,10 +744,11 @@ function calculateLayoutImmediate(
   if (shouldWrap && 'wrapChildren' in strategy) {
     // Wrap children into multiple lines
     const availableMainSize = direction === 'row' ? contentArea.width : contentArea.height
+    const mainGapValue = direction === 'row' ? gap.horizontal : gap.vertical
     const lines = (strategy as RowLayoutStrategy | ColumnLayoutStrategy).wrapChildren(
       finalLayoutChildren,
       availableMainSize,
-      gap
+      mainGapValue
     )
 
     if (flexWrap === 'wrap-reverse') {
@@ -755,7 +760,8 @@ function calculateLayoutImmediate(
       (sum: number, line: LayoutLine) => sum + line.crossAxisSize,
       0
     )
-    const totalLineGaps = (lines.length - 1) * gap
+    const crossGapValue = direction === 'row' ? gap.vertical : gap.horizontal
+    const totalLineGaps = (lines.length - 1) * crossGapValue
 
     // Adjust container dimensions if auto-sizing and wrapping occurred
     if (
@@ -796,7 +802,7 @@ function calculateLayoutImmediate(
       // Apply flex distribution per line if line has flex children
       let lineChildren = line.children
       if (hasFlexChildren(line.children)) {
-        const lineGapSpace = (line.children.length - 1) * gap
+        const lineGapSpace = (line.children.length - 1) * mainGapValue
         const lineAvailableSpace = availableMainSize - lineGapSpace
         lineChildren = distributeFlexSpace(line.children, lineAvailableSpace, direction)
 
@@ -816,7 +822,7 @@ function calculateLayoutImmediate(
       const lineMainSize = line.mainAxisSize
       const lineAvailableMain = availableMainSize
       const lineRemainingSpace = lineAvailableMain - lineMainSize
-      const lineGapSpace = (line.children.length - 1) * gap
+      const lineGapSpace = (line.children.length - 1) * mainGapValue
       const lineFreeSpace = lineRemainingSpace - lineGapSpace
 
       const lineJustifyResult = calculateJustifyContent(
@@ -855,7 +861,7 @@ function calculateLayoutImmediate(
 
           lineMainOffset += child.size.width + (margin.right ?? 0)
           if (i < lineChildren.length - 1) {
-            lineMainOffset += gap + lineSpaceBetween
+            lineMainOffset += mainGapValue + lineSpaceBetween
           }
         } else {
           // Main axis: vertical
@@ -874,7 +880,7 @@ function calculateLayoutImmediate(
 
           lineMainOffset += child.size.height + (margin.bottom ?? 0)
           if (i < lineChildren.length - 1) {
-            lineMainOffset += gap + lineSpaceBetween
+            lineMainOffset += mainGapValue + lineSpaceBetween
           }
         }
 
@@ -886,7 +892,7 @@ function calculateLayoutImmediate(
       }
 
       // Move to next line
-      crossOffset += line.crossAxisSize + gap + lineCrossSpacing
+      crossOffset += line.crossAxisSize + crossGapValue + lineCrossSpacing
     }
   } else {
     // No wrapping - use original single-line positioning
@@ -903,7 +909,7 @@ function calculateLayoutImmediate(
 
       // Add gap and space-between spacing (not for stack)
       if (direction !== 'stack' && i < finalLayoutChildren.length - 1) {
-        currentMain += gap + spaceBetween
+        currentMain += gapValue + spaceBetween
       }
     }
   }
