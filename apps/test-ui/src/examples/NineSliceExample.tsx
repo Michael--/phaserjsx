@@ -11,7 +11,6 @@ import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 export function NineSliceExample() {
   const tokens = useThemeTokens()
   const [score, setScore] = useState(0)
-  const [buttonWidth, setButtonWidth] = useState(200)
 
   return (
     <ViewLevel1>
@@ -22,6 +21,9 @@ export function NineSliceExample() {
         <NineSliceButton
           texture="ui"
           frame="ButtonRoundGreen"
+          effect="jello"
+          effectConfig={{ time: 700 }}
+          onClick={() => undefined}
           width={250}
           height={102}
           leftWidth={20}
@@ -62,15 +64,17 @@ export function NineSliceExample() {
         <NineSliceButton
           texture="ui"
           frame="ButtonWhite"
-          onClick={() => setButtonWidth(buttonWidth === 300 ? 200 : 300)}
-          width={buttonWidth}
+          effect="fade"
+          effectConfig={{ time: 500 }}
+          onClick={() => setScore(0)}
+          width={200}
           height={70}
           leftWidth={14}
           rightWidth={14}
           topHeight={14}
           bottomHeight={14}
         >
-          <Text text="Toggle Size" style={tokens?.textStyles.large} />
+          <Text text="Clear Score" style={tokens?.textStyles.large} />
         </NineSliceButton>
       </ViewLevel2>
     </ViewLevel1>

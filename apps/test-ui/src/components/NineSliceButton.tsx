@@ -4,8 +4,25 @@
  * This component simplifies the creation of scalable buttons by automatically handling
  * the stack layout pattern and inner content positioning.
  */
+import type * as PhaserJSX from '@phaserjsx/ui'
 import type { ChildrenType, ViewProps } from '@phaserjsx/ui'
-import { NineSlice, View } from '@phaserjsx/ui'
+import { getThemedProps, NineSlice, useRef, View } from '@phaserjsx/ui'
+import {
+  applyEffectByName,
+  resolveEffect,
+  useGameObjectEffect,
+  type EffectDefinition,
+} from '../hooks'
+
+// Module augmentation to add Button theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    NineSliceButton: {
+      // default is empty, no extra props
+    } & PhaserJSX.ViewTheme &
+      EffectDefinition
+  }
+}
 
 /**
  * Props for NineSliceButton component
@@ -61,7 +78,7 @@ import { NineSlice, View } from '@phaserjsx/ui'
  * </NineSliceButton>
  * ```
  */
-export interface NineSliceButtonProps {
+export interface NineSliceButtonProps extends EffectDefinition {
   /**
    * Texture key from the loaded texture atlas
    * Must be loaded before use (e.g., in a preload scene)
@@ -135,6 +152,9 @@ export interface NineSliceButtonProps {
    * Optional visibility toggle
    */
   visible?: boolean
+
+  //* Optional disabled state - if true, button will not respond to clicks */
+  disabled?: boolean
 
   /**
    * Optional scale transformation
@@ -225,19 +245,34 @@ export interface NineSliceButtonProps {
  */
 
 export function NineSliceButton(props: NineSliceButtonProps) {
+  const { props: themed } = getThemedProps('NineSliceButton', undefined, {})
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyEffect } = useGameObjectEffect(ref)
+
   const innerWidth = props.width - props.leftWidth - props.rightWidth
   const innerHeight = props.height - (props.topHeight ?? 0) - (props.bottomHeight ?? 0)
 
+  const handleTouch =
+    !props.disabled && props.onClick
+      ? () => {
+          props.onClick?.()
+
+          // Apply effect: props override theme, theme overrides default
+          const resolved = resolveEffect(props, themed)
+          applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
+        }
+      : undefined
+
   return (
     <View
+      ref={ref}
       direction="stack"
       backgroundAlpha={0.0}
       width={props.width}
       height={props.height}
-      {...(props.onClick !== undefined && {
-        enableGestures: true,
-        onTouch: props.onClick,
-      })}
+      enableGestures={!props.disabled}
+      {...themed}
+      {...(handleTouch && { onTouch: handleTouch })}
       {...(props.depth !== undefined && { depth: props.depth })}
       {...(props.alpha !== undefined && { alpha: props.alpha })}
       {...(props.visible !== undefined && { visible: props.visible })}

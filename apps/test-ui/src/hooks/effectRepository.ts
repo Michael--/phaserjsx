@@ -17,7 +17,9 @@
  */
 import {
   createBounceEffect,
+  createFadeEffect,
   createFlashEffect,
+  createJelloEffect,
   createPressEffect,
   createPulseEffect,
   createShakeEffect,
@@ -28,7 +30,15 @@ import {
 /**
  * Available effect names
  */
-export type EffectName = 'pulse' | 'shake' | 'bounce' | 'press' | 'flash' | 'none'
+export type EffectName =
+  | 'pulse'
+  | 'shake'
+  | 'bounce'
+  | 'press'
+  | 'flash'
+  | 'jello'
+  | 'fade'
+  | 'none'
 
 /**
  * Effect configuration with name and config
@@ -47,6 +57,8 @@ export const EFFECT_REGISTRY: Record<EffectName, EffectFn | null> = {
   bounce: createBounceEffect,
   press: createPressEffect,
   flash: createFlashEffect,
+  jello: createJelloEffect,
+  fade: createFadeEffect,
   none: null,
 }
 
