@@ -462,11 +462,8 @@ export class GestureManager {
   private handleGlobalPointerUp(_event: MouseEvent | TouchEvent): void {
     // Use setTimeout to let Phaser's handlePointerUp run first (if inside canvas)
     setTimeout(() => {
-      console.log('handleGlobalPointerUp setTimeout - activePointerDown:', this.activePointerDown)
       // If activePointerDown was cleared, handlePointerUp already handled it
       if (!this.activePointerDown) return
-
-      console.log('handleGlobalPointerUp processing - pointer released outside canvas')
 
       // Find the active pointer in Phaser
       const pointer = this.scene.input.activePointer
