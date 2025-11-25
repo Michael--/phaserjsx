@@ -269,6 +269,17 @@ export function shouldComponentUpdate(ctx: Ctx, newProps: unknown): boolean {
 }
 
 /**
+ * Hook to manually trigger a component redraw
+ * @returns Function to trigger redraw
+ */
+export function useRedraw(): () => void {
+  const c = CURRENT
+  return () => {
+    if (c != null) scheduleUpdate(c)
+  }
+}
+
+/**
  * Schedules a component update on next microtask
  * @param c - Component context to update
  */

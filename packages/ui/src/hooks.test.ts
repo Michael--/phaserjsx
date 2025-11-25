@@ -20,7 +20,7 @@ vi.mock('phaser', () => ({
   Scene: vi.fn(),
 }))
 
-import { useEffect, useRef, useState, withHooks, type Ctx } from './hooks'
+import { useEffect, useRedraw, useRef, useState, withHooks, type Ctx } from './hooks'
 import type { ParentType } from './types'
 import { createElement } from './vdom'
 
@@ -158,6 +158,18 @@ describe('Hooks', () => {
       })
 
       expect(mockCtx.index).toBe(initialIndex + 1)
+    })
+  })
+
+  describe('useRedraw', () => {
+    it('should return a function', () => {
+      const mockCtx = makeMockCtx()
+
+      const result = withHooks(mockCtx, () => {
+        return useRedraw()
+      })
+
+      expect(typeof result).toBe('function')
     })
   })
 })
