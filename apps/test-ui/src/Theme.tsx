@@ -65,7 +65,7 @@ export function createAppTheme(
         thumbColor: colors.primary.light.toNumber(),
         borderWidth: 2,
         minThumbSize: 30,
-        size: 30,
+        size: 24,
       },
 
       Button: {
