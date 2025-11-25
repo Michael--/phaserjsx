@@ -151,16 +151,23 @@ export function App(props: AppProps) {
     <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'} width={400}>
-        <ScrollView showVerticalSlider={false} showHorizontalSlider={false}>
-          <View direction="row" gap={10}>
-            <LightDarkModeToggle />
-            <JsxStaticBox keys={['*']} />
-          </View>
-          <PresetSelector />
-          <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
-          <Spacer />
-          <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
-        </ScrollView>
+        <View direction="row" gap={10}>
+          <LightDarkModeToggle />
+          <JsxStaticBox keys={['*']} />
+        </View>
+        <PresetSelector />
+        <View flex={1} width={'fill'}>
+          <ScrollView
+            flex={1}
+            width={'fill'}
+            showVerticalSlider={'auto'}
+            showHorizontalSlider={false}
+            sliderSize={'tiny'}
+          >
+            <ExampleSide selectedExample={selectedDemo} onChange={setSelectedDemo} />
+          </ScrollView>
+        </View>
+        <DebugSide selectedDebug={selectedExample} onChange={setSelectedExample} />
       </Sidebar>
       <View
         height={'100%'}
