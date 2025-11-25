@@ -5,7 +5,8 @@
 import { Sprite, Text, useEffect, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { Button, ScrollView } from '../components'
-import { ViewLevel2 } from './Helper/ViewLevel'
+import { SectionHeader } from './Helper'
+import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Basic sprite example - static image as sprite
@@ -19,7 +20,7 @@ function BasicSpriteExample() {
 
       <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
         {/* Sprites are always headless - positioned absolutely */}
-        <Sprite texture="phaser-planet" x={100} y={100} />
+        <Sprite texture="eye" x={100} y={100} />
         <Sprite texture="eye" x={250} y={100} />
       </View>
 
@@ -50,7 +51,7 @@ function TransformSpriteExample() {
       </View>
 
       <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
-        <Sprite texture="phaser-jsx-logo" x={200} y={100} rotation={rotation} scale={scale} />
+        <Sprite texture="eye" x={200} y={100} rotation={rotation} scale={scale} />
       </View>
 
       <Text
@@ -89,9 +90,9 @@ function TintSpriteExample() {
 
       <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
         {tint !== undefined ? (
-          <Sprite texture="phaser-planet" x={200} y={100} tint={tint} scale={1.5} />
+          <Sprite texture="eye" x={200} y={100} tint={tint} scale={1.5} />
         ) : (
-          <Sprite texture="phaser-planet" x={200} y={100} scale={1.5} />
+          <Sprite texture="eye" x={200} y={100} scale={1.5} />
         )}
       </View>
     </ViewLevel2>
@@ -127,14 +128,7 @@ function SizingSpriteExample() {
           borderColor={0xffff00}
           borderWidth={2}
         />
-        <Sprite
-          texture="phaser-planet"
-          x={130}
-          y={100}
-          displayWidth={120}
-          displayHeight={80}
-          fit={fit}
-        />
+        <Sprite texture="eye" x={130} y={100} displayWidth={120} displayHeight={80} fit={fit} />
 
         {/* Target size: 80x120 (taller aspect) */}
         <View
@@ -147,14 +141,7 @@ function SizingSpriteExample() {
           borderColor={0xffff00}
           borderWidth={2}
         />
-        <Sprite
-          texture="phaser-planet"
-          x={290}
-          y={100}
-          displayWidth={80}
-          displayHeight={120}
-          fit={fit}
-        />
+        <Sprite texture="eye" x={290} y={100} displayWidth={80} displayHeight={120} fit={fit} />
       </View>
 
       <Text
@@ -230,7 +217,7 @@ function RefSpriteExample() {
 function ManualAnimationExample() {
   const tokens = useThemeTokens()
   const [frame, setFrame] = useState(0)
-  const frames = ['button-blue', 'button-green', 'button-red', 'button-yellow']
+  const frames = ['Player', 'Player_1', 'Player_2', 'Player_3']
 
   return (
     <ViewLevel2 direction="column" gap={20} alignItems="center">
@@ -278,10 +265,10 @@ function PhaserAnimationExample() {
       scene.anims.create({
         key: animKey,
         frames: [
-          { key: 'ui', frame: 'button-blue' },
-          { key: 'ui', frame: 'button-green' },
-          { key: 'ui', frame: 'button-red' },
-          { key: 'ui', frame: 'button-yellow' },
+          { key: 'ui', frame: 'Player' },
+          { key: 'ui', frame: 'Player_1' },
+          { key: 'ui', frame: 'Player_2' },
+          { key: 'ui', frame: 'Player_3' },
         ],
         frameRate: 4,
         repeat: -1, // Infinite loop
@@ -332,7 +319,7 @@ function PhaserAnimationExample() {
         <Sprite
           ref={spriteRef}
           texture="ui"
-          frame="button-blue"
+          frame="Player"
           x={200}
           y={100}
           scale={2}
@@ -358,10 +345,14 @@ function PhaserAnimationExample() {
 function AnimationCallbacksExample() {
   const tokens = useThemeTokens()
   const [log, setLog] = useState<string[]>([])
+  const spriteRef = useRef<Phaser.GameObjects.Sprite | null>(null)
 
   const addLog = (message: string) => {
     setLog((prev) => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${message}`])
   }
+  useEffect(() => {
+    spriteRef.current?.anims.play('button-cycle')
+  }, [])
 
   return (
     <ViewLevel2 direction="column" gap={20} alignItems="center">
@@ -369,8 +360,9 @@ function AnimationCallbacksExample() {
 
       <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
         <Sprite
+          ref={spriteRef}
           texture="ui"
-          frame="button-blue"
+          frame="Player"
           x={200}
           y={100}
           scale={2}
@@ -390,11 +382,10 @@ function AnimationCallbacksExample() {
         backgroundColor={0x111111}
         cornerRadius={4}
       >
-        <Text text="Event Log:" style={tokens?.textStyles.small} />
         {log.length === 0 ? (
-          <Text text="No events yet..." style={tokens?.textStyles.small} alpha={0.5} />
+          <Text text="No events yet..." style={tokens?.textStyles.small} />
         ) : (
-          log.map((entry, i) => <Text key={i} text={entry} style={{ fontSize: 10 }} alpha={0.8} />)
+          log.map((entry, i) => <Text key={i} text={entry} style={{ fontSize: 12 }} />)
         )}
       </View>
     </ViewLevel2>
@@ -419,10 +410,10 @@ function MultipleAnimationsExample() {
       scene.anims.create({
         key: 'button-fast',
         frames: [
-          { key: 'ui', frame: 'button-blue' },
-          { key: 'ui', frame: 'button-green' },
-          { key: 'ui', frame: 'button-red' },
-          { key: 'ui', frame: 'button-yellow' },
+          { key: 'ui', frame: 'Player' },
+          { key: 'ui', frame: 'Player_1' },
+          { key: 'ui', frame: 'Player_2' },
+          { key: 'ui', frame: 'Player_3' },
         ],
         frameRate: 8,
         repeat: -1,
@@ -433,28 +424,33 @@ function MultipleAnimationsExample() {
       scene.anims.create({
         key: 'button-medium',
         frames: [
-          { key: 'ui', frame: 'button-blue' },
-          { key: 'ui', frame: 'button-green' },
-          { key: 'ui', frame: 'button-red' },
-          { key: 'ui', frame: 'button-yellow' },
+          { key: 'ui', frame: 'Player' },
+          { key: 'ui', frame: 'Player_1' },
+          { key: 'ui', frame: 'Player_2' },
+          { key: 'ui', frame: 'Player_3' },
         ],
         frameRate: 4,
         repeat: -1,
       })
     }
-
     if (!scene.anims.exists('button-slow')) {
       scene.anims.create({
         key: 'button-slow',
         frames: [
-          { key: 'ui', frame: 'button-blue' },
-          { key: 'ui', frame: 'button-green' },
-          { key: 'ui', frame: 'button-red' },
-          { key: 'ui', frame: 'button-yellow' },
+          { key: 'ui', frame: 'Player' },
+          { key: 'ui', frame: 'Player_1' },
+          { key: 'ui', frame: 'Player_2' },
+          { key: 'ui', frame: 'Player_3' },
         ],
         frameRate: 2,
         repeat: -1,
       })
+
+      setTimeout(() => {
+        sprite1Ref.current?.anims.play('button-fast')
+        sprite2Ref.current?.anims.play('button-medium')
+        sprite3Ref.current?.anims.play('button-slow')
+      }, 500)
     }
   }, [])
 
@@ -466,29 +462,29 @@ function MultipleAnimationsExample() {
         <Sprite
           ref={sprite1Ref}
           texture="ui"
-          frame="button-blue"
+          frame="Player"
           x={100}
           y={100}
           scale={1.5}
-          animationKey="button-fast"
+          // animationKey="button-fast"
         />
         <Sprite
           ref={sprite2Ref}
           texture="ui"
-          frame="button-green"
+          frame="Player"
           x={200}
           y={100}
           scale={1.5}
-          animationKey="button-medium"
+          // animationKey="button-medium"
         />
         <Sprite
           ref={sprite3Ref}
           texture="ui"
-          frame="button-red"
+          frame="Player"
           x={300}
           y={100}
           scale={1.5}
-          animationKey="button-slow"
+          // animationKey="button-slow"
         />
       </View>
 
@@ -508,31 +504,31 @@ export function SpriteExample() {
   const tokens = useThemeTokens()
 
   return (
-    <ScrollView showVerticalSlider>
-      <View gap={100}>
-        <Text text="Sprite Examples" style={tokens?.textStyles.title} />
+    <ViewLevel1>
+      <ScrollView showVerticalSlider>
+        <ViewLevel2 gap={{ vertical: 40 }}>
+          <SectionHeader title="Basic Features" />
+          <View direction="row" gap={100}>
+            <BasicSpriteExample />
+            <TintSpriteExample />
+          </View>
+          <View direction="row" gap={100}>
+            <SizingSpriteExample />
+            <RefSpriteExample />
+          </View>
+          <TransformSpriteExample />
 
-        <Text text="Basic Features" style={tokens?.textStyles.large} />
-        <View direction="row" gap={100}>
-          <BasicSpriteExample />
-          <TintSpriteExample />
-        </View>
-        <View direction="row" gap={100}>
-          <SizingSpriteExample />
-          <RefSpriteExample />
-        </View>
-        <TransformSpriteExample />
-
-        <Text text="Animation System" style={tokens?.textStyles.large} />
-        <View direction="row" gap={100}>
-          <ManualAnimationExample />
-          <PhaserAnimationExample />
-        </View>
-        <View direction="row" gap={100}>
-          <AnimationCallbacksExample />
-          <MultipleAnimationsExample />
-        </View>
-      </View>
-    </ScrollView>
+          <SectionHeader title="Animation System" />
+          <View direction="row" gap={100}>
+            <ManualAnimationExample />
+            <PhaserAnimationExample />
+          </View>
+          <View direction="row" gap={100}>
+            <AnimationCallbacksExample />
+            <MultipleAnimationsExample />
+          </View>
+        </ViewLevel2>
+      </ScrollView>
+    </ViewLevel1>
   )
 }

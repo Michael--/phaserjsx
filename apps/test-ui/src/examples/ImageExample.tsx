@@ -25,7 +25,7 @@ function AutoSizeImage() {
       {dimensions && <Text text={`Dimensions: ${dimensions}`} style={tokens?.textStyles.small} />}
       <ViewLevel3 direction="row" gap={10}>
         <Image
-          texture="test-image"
+          texture="phaser-jsx-logo"
           onReady={(img: Phaser.GameObjects.GameObject) => {
             const image = img as Phaser.GameObjects.Image
             setDimensions(`${image.width}x${image.height}`)
@@ -47,9 +47,9 @@ function ExplicitSizeImage() {
       <Text text="displayWidth and displayHeight set" style={tokens?.textStyles.small} />
 
       <ViewLevel3 direction="row" gap={10}>
-        <Image texture="test-image" displayWidth={64} displayHeight={64} />
-        <Image texture="test-image" displayWidth={128} displayHeight={128} />
-        <Image texture="test-image" displayWidth={96} displayHeight={64} />
+        <Image texture="phaser-jsx-logo" displayWidth={64} displayHeight={64} />
+        <Image texture="phaser-jsx-logo" displayWidth={128} displayHeight={128} />
+        <Image texture="phaser-jsx-logo" displayWidth={96} displayHeight={64} />
       </ViewLevel3>
     </ViewLevel2>
   )
@@ -75,7 +75,7 @@ function FitModesDemo() {
             borderWidth={2}
             direction="stack"
           >
-            <Image texture="test-image" displayWidth={120} displayHeight={80} fit="fill" />
+            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="fill" />
           </View>
         </View>
 
@@ -88,7 +88,7 @@ function FitModesDemo() {
             borderWidth={2}
             direction="stack"
           >
-            <Image texture="test-image" displayWidth={120} displayHeight={80} fit="contain" />
+            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="contain" />
           </View>
         </View>
 
@@ -102,7 +102,7 @@ function FitModesDemo() {
             direction="stack"
             overflow="hidden"
           >
-            <Image texture="test-image" displayWidth={120} displayHeight={80} fit="cover" />
+            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="cover" />
           </View>
         </View>
       </ViewLevel3>
@@ -130,13 +130,13 @@ function HeadlessImage() {
         backgroundColor={colors?.background.darkest.toNumber()}
         direction="stack"
       >
-        <Image texture="test-image" headless={true} x={150} y={100} displayWidth={100} />
+        <Image texture="test-image" headless={true} x={150} y={100} displayWidth={200} />
         <Image
           texture="test-image"
           headless={true}
           x={150}
           y={100}
-          displayWidth={100}
+          displayWidth={200}
           rotation={Math.PI / 4}
           alpha={0.7}
         />
@@ -165,8 +165,8 @@ function TintDemo() {
       <Text text="Tint Colors" style={tokens?.textStyles.large} />
       <Text text="Click to change tint" style={tokens?.textStyles.small} />
 
-      <ViewLevel3 direction="column" gap={10}>
-        <Image texture="test-image" displayWidth={128} displayHeight={128} tint={tintColor} />
+      <ViewLevel3 direction="column" gap={10} alignItems="center">
+        <Image texture="test-image" displayWidth={200} tint={tintColor} />
 
         <View direction="row" gap={10}>
           {colors.map((color) => (
@@ -196,41 +196,6 @@ function TintDemo() {
 }
 
 /**
- * Layout integration demo
- */
-function LayoutIntegration() {
-  const tokens = useThemeTokens()
-  return (
-    <ViewLevel2>
-      <Text text="Layout Integration" style={tokens?.textStyles.large} />
-      <Text text="Images participate in flow layout" style={tokens?.textStyles.small} />
-
-      <ViewLevel3 direction="column" gap={10}>
-        <View direction="row" gap={10} alignItems="center">
-          <Image texture="test-image" displayWidth={32} displayHeight={32} />
-          <Text text="Icon with text" style={tokens?.textStyles.medium} />
-        </View>
-
-        <View direction="row" gap={10} alignItems="center">
-          <Image texture="test-image" displayWidth={48} displayHeight={48} />
-          <View direction="column">
-            <Text text="User Profile" style={tokens?.textStyles.large} />
-            <Text text="With avatar image" style={tokens?.textStyles.small} />
-          </View>
-        </View>
-
-        <View direction="row" gap={5}>
-          <Image texture="test-image" displayWidth={40} displayHeight={40} />
-          <Image texture="test-image" displayWidth={40} displayHeight={40} />
-          <Image texture="test-image" displayWidth={40} displayHeight={40} />
-          <Image texture="test-image" displayWidth={40} displayHeight={40} />
-        </View>
-      </ViewLevel3>
-    </ViewLevel2>
-  )
-}
-
-/**
  * Main Image example component
  */
 export function ImageExample() {
@@ -249,7 +214,6 @@ export function ImageExample() {
           <HeadlessImage />
           <TintDemo />
         </View>
-        <LayoutIntegration />
       </ViewLevel2>
     </ScrollView>
   )

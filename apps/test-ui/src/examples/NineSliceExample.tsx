@@ -21,7 +21,7 @@ export function NineSliceExample() {
         {/* Example 1: Button with NineSlice background */}
         <NineSliceButton
           texture="ui"
-          frame="GreenButtonSml"
+          frame="ButtonRoundGreen"
           width={250}
           height={102}
           leftWidth={20}
@@ -43,7 +43,7 @@ export function NineSliceExample() {
         {/* Example 2: Clickable button */}
         <NineSliceButton
           texture="ui"
-          frame="RedButtonSml"
+          frame="ButtonRoundRed"
           onClick={() => setScore(score + 500)}
           width={300}
           height={98}
@@ -61,7 +61,7 @@ export function NineSliceExample() {
         {/* Example 3: Resize button with max width */}
         <NineSliceButton
           texture="ui"
-          frame="ButtonOrange"
+          frame="ButtonWhite"
           onClick={() => setButtonWidth(buttonWidth === 300 ? 200 : 300)}
           width={buttonWidth}
           height={70}
