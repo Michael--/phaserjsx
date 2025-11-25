@@ -1,6 +1,7 @@
 import {
   getThemedProps,
   useEffect,
+  useRedraw,
   useRef,
   useState,
   View,
@@ -144,15 +145,14 @@ export function ScrollView(props: ScrollViewProps) {
 
     calc(deltaX, deltaY)
   }
-  const [_, setRedraw] = useState(0)
+  const redraw = useRedraw()
 
   useEffect(() => {
     // Force multiple redraws to ensure container dimensions are properly calculated
     // First redraw after initial mount
-    const timer1 = setTimeout(() => setRedraw((r) => r + 1), 0)
+    const timer1 = setTimeout(() => redraw(), 0)
     // Second redraw to catch any layout adjustments and slider dimensions
-    const timer2 = setTimeout(() => setRedraw((r) => r + 1), 2)
-
+    const timer2 = setTimeout(() => redraw(), 2)
     return () => {
       clearTimeout(timer1)
       clearTimeout(timer2)
