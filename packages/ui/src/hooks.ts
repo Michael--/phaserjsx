@@ -6,7 +6,7 @@ import type { Signal } from '@preact/signals-core'
 import type Phaser from 'phaser'
 import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
-import { svgToTexture } from './utils/svg-texture'
+import { textureRegistry } from './utils/texture-registry'
 import { patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
@@ -389,11 +389,14 @@ export function useSVGTexture(
   useEffect(() => {
     if (!scene) return
 
+    textureRegistry.setScene(scene)
+
     let cancelled = false
     setReady(false)
 
-    // Load texture
-    svgToTexture(scene, key, svg, width, height)
+    // Request texture (with reference counting)
+    textureRegistry
+      .requestTexture({ key, svg, width, height })
       .then(() => {
         if (!cancelled) {
           setReady(true)
@@ -417,12 +420,10 @@ export function useSVGTexture(
         if (!cancelled) console.error(`Failed to load SVG texture '${key}':`, err)
       })
 
-    // Cleanup: remove texture on unmount
+    // Cleanup: release texture reference
     return () => {
       cancelled = true
-      if (scene.textures.exists(key)) {
-        scene.textures.remove(key)
-      }
+      textureRegistry.releaseTexture(key)
     }
   }, [scene, key, svg, width, height])
 
@@ -476,14 +477,21 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
   useEffect(() => {
     if (!scene || configs.length === 0) return
 
+    textureRegistry.setScene(scene)
+
     let cancelled = false
     setReady(false)
 
-    // Load all textures sequentially to avoid race conditions
+    // Request all textures (with reference counting)
     const loadSequentially = async () => {
       for (const config of configs) {
         if (cancelled) break
-        await svgToTexture(scene, config.key, config.svg, config.width ?? 32, config.height ?? 32)
+        await textureRegistry.requestTexture({
+          key: config.key,
+          svg: config.svg,
+          width: config.width ?? 32,
+          height: config.height ?? 32,
+        })
       }
     }
 
@@ -512,13 +520,11 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
         if (!cancelled) console.error('Failed to load SVG textures:', err)
       })
 
-    // Cleanup: remove all textures on unmount
+    // Cleanup: release all texture references
     return () => {
       cancelled = true
       for (const config of configs) {
-        if (scene.textures.exists(config.key)) {
-          scene.textures.remove(config.key)
-        }
+        textureRegistry.releaseTexture(config.key)
       }
     }
   }, [scene, configKey])

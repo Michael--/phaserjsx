@@ -28,6 +28,16 @@ vi.mock('./utils/svg-texture', () => ({
   svgToTexture: vi.fn(() => Promise.resolve()),
 }))
 
+// Mock texture registry
+vi.mock('./utils/texture-registry', () => ({
+  textureRegistry: {
+    setScene: vi.fn(),
+    requestTexture: vi.fn(() => Promise.resolve()),
+    releaseTexture: vi.fn(),
+    isTextureLoaded: vi.fn(() => true),
+  },
+}))
+
 // Mock Phaser scene and texture manager
 const mockRemove = vi.fn()
 const mockAddCanvas = vi.fn()

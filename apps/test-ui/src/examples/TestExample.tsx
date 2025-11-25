@@ -92,6 +92,7 @@ export function TestExample() {
     <View width={'100%'} height={'100%'}>
       <ScrollView>
         <SVGPageSingle />
+        <SVGPageSingle />
         <SVGPageMultiple />
         <BigPage />
       </ScrollView>
