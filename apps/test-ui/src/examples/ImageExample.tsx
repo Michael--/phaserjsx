@@ -12,7 +12,7 @@ import {
   useThemeTokens,
 } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ScrollView } from '../components'
+import { Icon, ScrollView } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
@@ -251,6 +251,35 @@ function SVGPageMultiple() {
 }
 
 /**
+ * Display component showcase with real buttons
+ */
+function IconPage() {
+  const tokens = useThemeTokens()
+  return (
+    <ViewLevel2 direction="column" padding={10}>
+      <ViewLevel3 gap={20} direction="column" padding={10}>
+        <Text text="Icon System with Lazy Loading" style={tokens?.textStyles.large} />
+        <View direction="row" gap={10}>
+          <Icon type="bell" />
+          <Icon type="boxes" />
+          <Icon type="bricks" />
+          <Icon type="check" />
+          <Icon type="square" />
+          <View direction="stack">
+            <Icon type="square" />
+            <Icon type="check" />
+          </View>
+        </View>
+        <Text
+          text={`Icons are loaded lazily when first used, with strong typing!\n(It cares an Icon Registry)`}
+          style={tokens?.textStyles.small}
+        />
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
+
+/**
  * Main Image example component
  */
 export function ImageExample() {
@@ -270,6 +299,7 @@ export function ImageExample() {
           <HeadlessImage />
           <SVGPageSingle />
           <SVGPageMultiple />
+          <IconPage />
         </View>
       </ViewLevel2>
     </ScrollView>

@@ -3,7 +3,7 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import { Image, Text, useSVGTexture, useSVGTextures, View } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import { Icon, ScrollView } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 import bell from 'bootstrap-icons/icons/bell-fill.svg'
@@ -63,6 +63,27 @@ function SVGPageMultiple() {
 /**
  * Display component showcase with real buttons
  */
+function IconPage() {
+  return (
+    <ViewLevel2 direction="column" padding={10} width={1500}>
+      <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
+        <SectionHeader title="Icon System with Lazy Loading" />
+        <View direction="row" gap={10}>
+          <Icon type="bell" />
+          <Icon type="boxes" />
+          <Icon type="bricks" />
+          <Icon type="check" />
+          <Icon type="square" />
+        </View>
+        <Text text="Icons are loaded lazily when first used, with strong typing! (iconRegistry)" />
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Display component showcase with real buttons
+ */
 function BigPage() {
   // const tokens = useThemeTokens()
 
@@ -91,6 +112,7 @@ export function TestExample() {
       <ScrollView>
         <SVGPageSingle />
         <SVGPageMultiple />
+        <IconPage />
         <BigPage />
       </ScrollView>
     </View>

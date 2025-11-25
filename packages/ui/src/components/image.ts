@@ -137,10 +137,10 @@ export interface ImageBaseProps extends TransformProps, PhaserProps, LayoutProps
   tint?: number
 
   /** Display width (scales image to fit) */
-  displayWidth?: number
+  displayWidth?: number | undefined
 
   /** Display height (scales image to fit) */
-  displayHeight?: number
+  displayHeight?: number | undefined
 
   /**
    * How image should fit within bounds (if displayWidth/displayHeight set)

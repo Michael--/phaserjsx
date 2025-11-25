@@ -3,6 +3,7 @@
  * These demonstrate how to build composite components using the base View and Text primitives
  */
 export { Button, type ButtonProps } from './Button'
+export { Icon, useIcon, type IconType } from './Icon'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './RadioGroup'
