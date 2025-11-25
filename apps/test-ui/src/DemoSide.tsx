@@ -1,5 +1,6 @@
 import { DevPresets, Text } from '@phaserjsx/ui'
 import { RadioGroup, type RadioGroupOption } from './components'
+import { ViewLevel2 } from './examples/Helper'
 
 const debugPresets = {
   production: { label: 'Production', preset: DevPresets.production },
@@ -23,7 +24,7 @@ export function DebugSide(props: {
   }))
 
   return (
-    <>
+    <ViewLevel2 width={'100%'}>
       <Text text="Debug Options" />
       <RadioGroup
         options={presetOptions}
@@ -34,6 +35,6 @@ export function DebugSide(props: {
           props.onChange(key)
         }}
       />
-    </>
+    </ViewLevel2>
   )
 }
