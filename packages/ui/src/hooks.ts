@@ -321,9 +321,21 @@ export function disposeCtx(c: Ctx) {
   // Mark as disposed to prevent pending updates
   c.disposed = true
 
-  // Run all cleanup functions
+  // Run all cleanup functions from cleanups array
   for (const cl of c.cleanups) {
     if (typeof cl === 'function') cl()
+  }
+
+  // Run all cleanup functions from slots (effects)
+  for (const slot of c.slots) {
+    if (
+      slot &&
+      typeof slot === 'object' &&
+      'cleanup' in slot &&
+      typeof slot.cleanup === 'function'
+    ) {
+      slot.cleanup()
+    }
   }
 
   // Clear cleanups array to prevent duplicate cleanup calls

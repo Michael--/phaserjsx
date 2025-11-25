@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useSVGTexture, useSVGTextures, withHooks, type Ctx } from './hooks'
+import { disposeCtx, useSVGTexture, useSVGTextures, withHooks, type Ctx } from './hooks'
 import type { ParentType } from './types'
 import { createElement } from './vdom'
 
@@ -105,6 +105,12 @@ describe('useSVGTexture', () => {
 
     // Effect should register cleanup
     expect(mockCtx.effects.length).toBeGreaterThan(0)
+
+    // Run effects to set cleanup
+    mockCtx.effects.forEach((effect) => effect())
+
+    // Dispose context should call cleanup (which calls releaseTexture)
+    disposeCtx(mockCtx)
   })
 })
 
