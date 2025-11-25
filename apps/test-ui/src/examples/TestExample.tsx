@@ -9,6 +9,7 @@ import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 import bell from 'bootstrap-icons/icons/bell-fill.svg'
 import boxes from 'bootstrap-icons/icons/boxes.svg'
 import bricks from 'bootstrap-icons/icons/bricks.svg'
+import { Checkbox } from '../components/Checkbox'
 
 /**
  * Display component showcase with real buttons
@@ -76,6 +77,18 @@ function IconPage() {
           <Icon type="square" />
         </View>
         <Text text="Icons are loaded lazily when first used, with strong typing! (iconRegistry)" />
+        <View gap={4}>
+          <Checkbox
+            label="Check me!"
+            checked={true}
+            onChange={(checked) => console.log('Checkbox changed:', checked)}
+          />
+          <Checkbox
+            label="Another checkbox"
+            checked={false}
+            onChange={(checked) => console.log('Checkbox changed:', checked)}
+          />
+        </View>
       </ViewLevel3>
     </ViewLevel2>
   )

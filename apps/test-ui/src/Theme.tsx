@@ -61,6 +61,16 @@ export function createAppTheme(
         },
       },
 
+      Checkbox: {
+        color: colors.border.medium.toNumber(),
+        labelStyle: { color: colors.text.DEFAULT.toString(), fontSize: 14 },
+        gap: 10,
+        size: 24,
+        View: {
+          padding: 0,
+        },
+      },
+
       ScrollSlider: {
         borderColor: colors.border.dark.toNumber(),
         trackColor: colors.surface.dark.toNumber(),
