@@ -232,7 +232,7 @@ function ManualAnimationExample() {
       </View>
 
       <View width={400} height={200} backgroundColor={0x222222} cornerRadius={8} direction="stack">
-        <Sprite texture="ui" frame={frames[frame]!} x={200} y={100} scale={2} />
+        <Sprite texture="ui" frame={frames[frame] ?? 'unknown frame'} x={200} y={100} scale={2} />
       </View>
 
       <Text
@@ -501,7 +501,7 @@ function MultipleAnimationsExample() {
  * Main Sprite example component
  */
 export function SpriteExample() {
-  const tokens = useThemeTokens()
+  // const tokens = useThemeTokens()
 
   return (
     <ViewLevel1>
