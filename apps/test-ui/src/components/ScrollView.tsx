@@ -145,14 +145,18 @@ export function ScrollView(props: ScrollViewProps) {
 
     calc(deltaX, deltaY)
   }
+
+  // Force redraw after mount to ensure dimensions are calculated
+  // and show content after that to avoid visual glitches
   const redraw = useRedraw()
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     // Force multiple redraws to ensure container dimensions are properly calculated
     // First redraw after initial mount
     const timer1 = setTimeout(() => redraw(), 0)
     // Second redraw to catch any layout adjustments and slider dimensions
-    const timer2 = setTimeout(() => redraw(), 2)
+    const timer2 = setTimeout(() => setVisible(true), 2)
     return () => {
       clearTimeout(timer1)
       clearTimeout(timer2)
@@ -160,7 +164,7 @@ export function ScrollView(props: ScrollViewProps) {
   }, [])
 
   return (
-    <View>
+    <View visible={visible}>
       <View direction="row" width="100%" height="100%" gap={0} padding={0}>
         {/* ScrollView takes remaining space */}
         <View flex={1} height={'100%'} direction="column">
