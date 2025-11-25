@@ -2,7 +2,7 @@
  * Theme Preview - comprehensive visualization of all theme values
  * Shows colors, typography, spacing, shadows, and component examples
  */
-import { Image as PImage, Text, useSVGTexture, useSVGTextures, View } from '@phaserjsx/ui'
+import { Image, Text, useSVGTexture, useSVGTextures, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
@@ -20,7 +20,7 @@ function SVGPageSingle() {
     <ViewLevel2 direction="column" padding={10} width={1500}>
       <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
         <SectionHeader title="SVG load single" />
-        <PImage texture={ready ? 'icon-bricks' : ''} />
+        <Image texture={ready ? 'icon-bricks' : ''} />
       </ViewLevel3>
     </ViewLevel2>
   )
@@ -36,8 +36,6 @@ function SVGPageMultiple() {
     { key: 'icon-bell', svg: bell, width: 128, height: 128 },
   ])
 
-  console.log('SVGPageMultiple ready=', ready)
-
   return (
     <ViewLevel2 direction="column" padding={10} width={1500}>
       {/** Use a rerender workaround because of too simple VDOM patch logic, evaluate only position and count, not content */}
@@ -52,9 +50,9 @@ function SVGPageMultiple() {
         {!ready && <Text text={`Loading textures...${ready}`} />}
         {ready && (
           <View direction="row" gap={10}>
-            <PImage texture="icon-bell-32" />
-            <PImage texture="icon-bell" />
-            <PImage texture="icon-boxes" />
+            <Image texture="icon-bell-32" />
+            <Image texture="icon-bell" />
+            <Image texture="icon-boxes" />
           </View>
         )}
       </ViewLevel3>
@@ -91,7 +89,6 @@ export function TestExample() {
   return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
-        <SVGPageSingle />
         <SVGPageSingle />
         <SVGPageMultiple />
         <BigPage />

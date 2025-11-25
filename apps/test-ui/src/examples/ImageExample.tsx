@@ -2,11 +2,23 @@
  * Image Component Examples
  * Demonstrates various uses of the Image component
  */
-import { Image, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
+import {
+  Image,
+  Text,
+  View,
+  useSVGTexture,
+  useSVGTextures,
+  useState,
+  useThemeTokens,
+} from '@phaserjsx/ui'
 import type Phaser from 'phaser'
 import { ScrollView } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+
+import bell from 'bootstrap-icons/icons/bell-fill.svg'
+import boxes from 'bootstrap-icons/icons/boxes.svg'
+import bricks from 'bootstrap-icons/icons/bricks.svg'
 
 /**
  * Basic image with auto-sizing
@@ -163,11 +175,9 @@ function TintDemo() {
   return (
     <ViewLevel2>
       <Text text="Tint Colors" style={tokens?.textStyles.large} />
-      <Text text="Click to change tint" style={tokens?.textStyles.small} />
 
       <ViewLevel3 direction="column" gap={10} alignItems="center">
         <Image texture="test-image" displayWidth={200} tint={tintColor} />
-
         <View direction="row" gap={10}>
           {colors.map((color) => (
             <View
@@ -191,6 +201,51 @@ function TintDemo() {
           ))}
         </View>
       </ViewLevel3>
+      <Text text="Click to change tint" style={tokens?.textStyles.small} />
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Display component
+ */
+function SVGPageSingle() {
+  const tokens = useThemeTokens()
+  const ready = useSVGTexture('icon-bricks', bricks)
+
+  return (
+    <ViewLevel2 direction="column" padding={10}>
+      <Text text="SVG using single load" style={tokens?.textStyles.large} />
+      <ViewLevel3 gap={20} direction="row" padding={10}>
+        <Image texture={ready ? 'icon-bricks' : ''} />
+        <Image texture={ready ? 'icon-bricks' : ''} displayWidth={64} />
+        <Image texture={ready ? 'icon-bricks' : ''} displayWidth={96} />
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Display component
+ */
+function SVGPageMultiple() {
+  const tokens = useThemeTokens()
+  const ready = useSVGTextures([
+    { key: 'icon-boxes', svg: boxes },
+    { key: 'icon-bell-32', svg: bell, width: 8, height: 8 },
+    { key: 'icon-bell', svg: bell },
+  ])
+
+  return (
+    <ViewLevel2 direction="column" padding={10}>
+      <Text text="SVG using multiple load" style={tokens?.textStyles.large} />
+      <ViewLevel3 gap={20} direction="row" padding={10}>
+        <Image texture={ready ? 'icon-bell-32' : ''} />
+        <Image texture={ready ? 'icon-bell' : ''} />
+        <Image texture={ready ? 'icon-boxes' : ''} />
+        {/** show also any loaded at other place but, phase textures are always globally  */}
+        <Image texture={ready ? 'icon-bricks' : ''} />
+      </ViewLevel3>
     </ViewLevel2>
   )
 }
@@ -209,10 +264,12 @@ export function ImageExample() {
         </View>
         <View direction="row">
           <FitModesDemo />
+          <TintDemo />
         </View>
         <View direction="row">
           <HeadlessImage />
-          <TintDemo />
+          <SVGPageSingle />
+          <SVGPageMultiple />
         </View>
       </ViewLevel2>
     </ScrollView>
