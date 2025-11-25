@@ -32,7 +32,8 @@ export function applyContainerDimensions(
   if (gameObject.__getLayoutSize && !gameObject.__originalGetLayoutSize) {
     gameObject.__originalGetLayoutSize = gameObject.__getLayoutSize
     gameObject.__getLayoutSize = () =>
-      gameObject.__cachedLayoutSize ?? gameObject.__originalGetLayoutSize!()
+      gameObject.__cachedLayoutSize ??
+      (gameObject.__originalGetLayoutSize?.() || { width: 0, height: 0 })
   }
 
   DebugLogger.log('layout', 'Container dimensions set to:', { width, height })
