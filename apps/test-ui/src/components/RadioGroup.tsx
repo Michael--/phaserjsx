@@ -46,9 +46,11 @@ export function RadioGroup(props: RadioGroupProps) {
     <View direction={props.direction ?? 'column'} theme={nestedTheme} gap={themed.gap}>
       {props.options.map((option) => {
         const isSelected = selected === option.value
+
         const size = themed.size ?? 16
         const innerSize = themed.innerSize ?? size * 0.75
         const innerRadius = innerSize * 0.5
+        const outerRadius = size * 0.5
 
         return (
           <View
@@ -67,6 +69,7 @@ export function RadioGroup(props: RadioGroupProps) {
               justifyContent="center"
               backgroundAlpha={1.0}
               padding={0}
+              cornerRadius={outerRadius}
             >
               <View
                 width={innerSize}
