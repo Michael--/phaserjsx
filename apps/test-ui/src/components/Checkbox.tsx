@@ -3,7 +3,7 @@
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
-import { Icon } from './Icon'
+import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add RadioGroup theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -11,6 +11,9 @@ declare module '@phaserjsx/ui' {
     Checkbox: {
       color?: number
       labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      bodyIcon?: IconType
+      checkedIcon?: IconType
+      intermediateIcon?: IconType
       gap?: number
       size?: number
     } & PhaserJSX.NestedComponentThemes
@@ -43,6 +46,9 @@ export function Checkbox(props: CheckboxProps) {
   const size = themed.size ?? 32
   const initialChecked = props.checked !== undefined ? props.checked : false
   const [checked, setChecked] = useState<CheckedState>(initialChecked)
+  const bodyIcon = themed.bodyIcon ?? 'square'
+  const checkedIcon = themed.checkedIcon ?? 'check'
+  const indeterminateIcon = themed.intermediateIcon ?? 'minus'
 
   const onClick = () => {
     let newChecked: CheckedState
@@ -68,9 +74,9 @@ export function Checkbox(props: CheckboxProps) {
       gap={themed.gap}
     >
       <View direction="stack" minHeight={size} minWidth={size}>
-        <Icon type={'square'} size={size} />
-        <Icon type={'check'} size={size} visible={checked === true} />
-        <Icon type={'minus'} size={size} visible={checked === 'indeterminate'} />
+        <Icon type={bodyIcon} size={size} />
+        <Icon type={checkedIcon} size={size} visible={checked === true} />
+        <Icon type={indeterminateIcon} size={size} visible={checked === 'indeterminate'} />
       </View>
       <Text text={props.label} style={themed.labelStyle} />
     </View>
