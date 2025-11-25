@@ -1,5 +1,5 @@
 /**
- * RadioButton component - Selectable option with circle indicator and label
+ * Checkbox component - Selectable option with square indicator and label
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
@@ -17,30 +17,42 @@ declare module '@phaserjsx/ui' {
   }
 }
 
+type CheckedState = boolean | 'indeterminate'
+
 /**
- * Props for RadioButton component
+ * Props for Checkbox component
  */
 export interface CheckboxProps {
   /** Label text for the checkbox */
   label: string
-  /** Whether its checked */
-  checked?: boolean
+  /** Whether its checked (true), unchecked (false), or 'indeterminate' */
+  checked?: CheckedState
+  /** Whether to enable tristate mode (unchecked, checked, indeterminate) */
+  tristate?: boolean
   /** Callback when checked state changed */
-  onChange?: (checked: boolean) => void
+  onChange?: (checked: CheckedState) => void
 }
 
 /**
- * RadioButton component - displays a selectable circle with label
- * @param props - RadioButton properties
- * @returns RadioButton JSX element
+ * Checkbox component - displays a selectable square with label
+ * @param props - Checkbox properties
+ * @returns Checkbox JSX element
  */
 export function Checkbox(props: CheckboxProps) {
   const { props: themed, nestedTheme } = getThemedProps('Checkbox', undefined, {})
   const size = themed.size ?? 32
-  const [checked, setChecked] = useState<boolean>(props.checked ?? false)
+  const initialChecked = props.checked !== undefined ? props.checked : false
+  const [checked, setChecked] = useState<CheckedState>(initialChecked)
 
   const onClick = () => {
-    const newChecked = !checked
+    let newChecked: CheckedState
+    if (!props.tristate) {
+      newChecked = checked ? false : true
+    } else {
+      if (checked === false) newChecked = true
+      else if (checked === true) newChecked = 'indeterminate'
+      else newChecked = false
+    }
     setChecked(newChecked)
     props.onChange?.(newChecked)
   }
@@ -57,7 +69,8 @@ export function Checkbox(props: CheckboxProps) {
     >
       <View direction="stack" minHeight={size} minWidth={size}>
         <Icon type={'square'} size={size} />
-        <Icon type={'check'} size={size} visible={checked} />
+        <Icon type={'check'} size={size} visible={checked === true} />
+        <Icon type={'minus'} size={size} visible={checked === 'indeterminate'} />
       </View>
       <Text text={props.label} style={themed.labelStyle} />
     </View>

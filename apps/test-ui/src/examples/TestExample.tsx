@@ -88,6 +88,12 @@ function IconPage() {
             checked={false}
             onChange={(checked) => console.log('Checkbox changed:', checked)}
           />
+          <Checkbox
+            label="Tristate checkbox"
+            checked={'indeterminate'}
+            tristate={true}
+            onChange={(checked) => console.log('Checkbox changed:', checked)}
+          />
         </View>
       </ViewLevel3>
     </ViewLevel2>

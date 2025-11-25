@@ -8,12 +8,13 @@ import bell from 'bootstrap-icons/icons/bell-fill.svg'
 import boxes from 'bootstrap-icons/icons/boxes.svg'
 import bricks from 'bootstrap-icons/icons/bricks.svg'
 import check from 'bootstrap-icons/icons/check.svg'
+import minus from 'bootstrap-icons/icons/dash.svg'
 import square from 'bootstrap-icons/icons/square.svg'
 
 /**
  * Available icon types with strong typing
  */
-export type IconType = 'bell' | 'boxes' | 'bricks' | 'check' | 'square'
+export type IconType = 'bell' | 'boxes' | 'bricks' | 'check' | 'square' | 'minus'
 
 /**
  * Icon registry mapping types to SVG strings
@@ -24,6 +25,7 @@ const iconRegistry: Record<IconType, string> = {
   bricks,
   check,
   square,
+  minus,
 }
 
 /**
