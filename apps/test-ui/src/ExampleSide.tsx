@@ -1,6 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, View, type VNode } from '@phaserjsx/ui'
-import { RadioGroup } from './components'
+import { RadioButton } from './components'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
@@ -127,14 +127,13 @@ export function ExampleSide(props: {
       {...Object.entries(groupedExamples).map(([groupKey, groupExamples]) => (
         <ViewLevel2 key={groupKey} width={'100%'}>
           <Text text={groupLabels[groupKey as keyof typeof groupLabels]} />
-          <RadioGroup
-            options={Object.entries(groupExamples).map(([value, config]) => ({
-              value: value as ExampleKey,
-              label: config.label,
-            }))}
-            value={props.selectedExample}
-            onChange={(value: string) => props.onChange(value as ExampleKey)}
-          />
+          {...Object.entries(groupExamples).map(([value, config]) => (
+            <RadioButton
+              label={config.label}
+              selected={props.selectedExample === value}
+              onClick={() => props.onChange(value as ExampleKey)}
+            />
+          ))}
         </ViewLevel2>
       ))}
     </>

@@ -1,20 +1,7 @@
 /**
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
 import { Text, View, getThemedProps, useState } from '@phaserjsx/ui'
-
-// Module augmentation to add Sidebar theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    RadioGroup: {
-      selectedColor?: number
-      unselectedColor?: number
-      labelColor?: number
-      gap?: number
-    } & PhaserJSX.NestedComponentThemes
-  }
-}
 
 /**
  * Option item for RadioGroup
@@ -46,7 +33,7 @@ export interface RadioGroupProps {
  * @returns RadioGroup JSX element
  */
 export function RadioGroup(props: RadioGroupProps) {
-  const { props: themed, nestedTheme } = getThemedProps('RadioGroup', undefined, {})
+  const { props: themed, nestedTheme } = getThemedProps('RadioButton', undefined, {})
 
   const [selected, setSelected] = useState<string>(props.value ?? '')
 
@@ -59,41 +46,37 @@ export function RadioGroup(props: RadioGroupProps) {
     <View direction={props.direction ?? 'column'} theme={nestedTheme} gap={themed.gap}>
       {props.options.map((option) => {
         const isSelected = selected === option.value
-        const size = 16
-        const innerSize = size * 0.5
-        const selectedColor = isSelected
-          ? (themed.selectedColor ?? 0x4ecdc4)
-          : (themed.unselectedColor ?? 0x666666)
+        const size = themed.size ?? 16
+        const innerSize = themed.innerSize ?? size * 0.75
+        const innerRadius = innerSize * 0.5
 
         return (
           <View
             key={option.value}
             direction="row"
-            gap={8}
+            gap={themed.gap}
             alignItems="center"
-            padding={{ left: 4, top: 4, right: 4, bottom: 4 }}
             enableGestures={true}
             onTouch={() => handleSelect(option.value)}
           >
             <View
               width={size}
               height={size}
-              backgroundColor={selectedColor}
+              backgroundColor={themed.color}
               alignItems="center"
               justifyContent="center"
               backgroundAlpha={1.0}
+              padding={0}
             >
               <View
                 width={innerSize}
                 height={innerSize}
-                //backgroundColor={0xffffff}
+                backgroundColor={themed.selectedColor}
                 visible={isSelected}
+                cornerRadius={innerRadius}
               />
             </View>
-            <Text
-              text={option.label}
-              style={{ fontSize: 14, color: `#${themed.labelColor?.toString(16)}` }}
-            />
+            <Text text={option.label} style={themed.labelStyle} />
           </View>
         )
       })}

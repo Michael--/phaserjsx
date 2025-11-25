@@ -1,7 +1,22 @@
 /**
  * RadioButton component - Selectable option with circle indicator and label
  */
-import { Text, View } from '@phaserjsx/ui'
+import type * as PhaserJSX from '@phaserjsx/ui'
+import { getThemedProps, Text, View } from '@phaserjsx/ui'
+
+// Module augmentation to add RadioGroup theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    RadioButton: {
+      selectedColor?: number
+      color?: number
+      labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      gap?: number
+      size?: number
+      innerSize?: number
+    } & PhaserJSX.NestedComponentThemes
+  }
+}
 
 /**
  * Props for RadioButton component
@@ -13,14 +28,6 @@ export interface RadioButtonProps {
   selected?: boolean
   /** Callback when radio button is clicked */
   onClick?: () => void
-  /** Color when selected (default: 0x4ecdc4) */
-  selectedColor?: number
-  /** Color when unselected (default: 0x666666) */
-  unselectedColor?: number
-  /** Label text color (default: white) */
-  labelColor?: string
-  /** Size of the radio circle (default: 16) */
-  size?: number
 }
 
 /**
@@ -29,39 +36,41 @@ export interface RadioButtonProps {
  * @returns RadioButton JSX element
  */
 export function RadioButton(props: RadioButtonProps) {
-  const size = props.size ?? 16
-  const selectedColor = props.selected
-    ? (props.selectedColor ?? 0x4ecdc4)
-    : (props.unselectedColor ?? 0x666666)
-  const innerSize = size * 0.5
+  const { props: themed, nestedTheme } = getThemedProps('RadioButton', undefined, {})
+  const size = themed.size ?? 16
+  const innerSize = themed.innerSize ?? size * 0.75
+  const innerRadius = innerSize * 0.5
+  const outerRadius = size * 0.5
 
   return (
     <View
       direction="row"
-      gap={8}
       alignItems="center"
-      padding={{ left: 4, top: 4, right: 4, bottom: 4 }}
       enableGestures={true}
       onTouch={() => props.onClick?.()}
-      backgroundAlpha={1.0}
-      backgroundColor={0xffff00}
+      theme={nestedTheme}
+      gap={themed.gap}
     >
       <View
         width={size}
         height={size}
-        backgroundColor={selectedColor}
+        backgroundColor={themed.color}
         alignItems="center"
         justifyContent="center"
+        backgroundAlpha={1.0}
+        padding={0}
+        cornerRadius={outerRadius}
       >
         <View
           width={innerSize}
           height={innerSize}
-          backgroundColor={0xffffff}
+          backgroundColor={themed.selectedColor}
           visible={props.selected ?? false}
+          cornerRadius={innerRadius}
         />
       </View>
 
-      <Text text={props.label} style={{ fontSize: 14, color: props.labelColor ?? 'white' }} />
+      <Text text={props.label} style={themed.labelStyle} />
     </View>
   )
 }

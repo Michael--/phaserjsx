@@ -49,13 +49,15 @@ export function createAppTheme(
         },
       },
 
-      RadioGroup: {
-        labelColor: colors.text.DEFAULT.toNumber(),
-        selectedColor: colors.accent.DEFAULT.toNumber(),
-        unselectedColor: colors.border.medium.toNumber(),
+      RadioButton: {
+        color: colors.border.medium.toNumber(),
+        selectedColor: colors.accent.darkest.toNumber(),
+        labelStyle: { color: colors.text.DEFAULT.toString(), fontSize: 14 },
         gap: 10,
+        size: 16,
+        innerSize: 16,
         View: {
-          cornerRadius: 8, // rounded radio buttons
+          padding: 2,
         },
       },
 
