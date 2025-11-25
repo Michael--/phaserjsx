@@ -34,5 +34,7 @@
     "**/out": true,
     "**/build": true,
     "pnpm-lock.yaml": true
-  }
+  },
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single"
 }
