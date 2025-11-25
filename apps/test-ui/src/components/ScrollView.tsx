@@ -1,5 +1,4 @@
 import {
-  getThemedProps,
   useEffect,
   useRedraw,
   useRef,
@@ -8,7 +7,7 @@ import {
   type GestureEventData,
   type ViewProps,
 } from '@phaserjsx/ui'
-import { ScrollSlider } from './ScrollSlider'
+import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
 /**
  * Scroll information data
@@ -40,6 +39,8 @@ export interface ScrollViewProps extends ViewProps {
   showVerticalSlider?: boolean | 'auto' | undefined
   /** Whether to show the vertical scroll slider (default: auto) */
   showHorizontalSlider?: boolean | 'auto' | undefined
+  /** Size variant for the scroll sliders */
+  sliderSize?: SliderSize
   /** Initial scroll position */
   scroll?: { dx: number; dy: number }
   /** Callback when scroll information changes */
@@ -65,9 +66,8 @@ export function ScrollView(props: ScrollViewProps) {
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
 
-  // Get slider size from theme
-  const { props: sliderTheme } = getThemedProps('ScrollSlider', undefined, {})
-  const sliderSize = sliderTheme.size ?? 30
+  // Get slider size, considering size variant and theme
+  const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
 
   // Calculate if scrolling is needed
   const viewportHeight = viewportRef.current?.height ?? 0
@@ -183,6 +183,7 @@ export function ScrollView(props: ScrollViewProps) {
           {showHorizontalSliderActual && (
             <ScrollSlider
               direction="horizontal"
+              size={props.sliderSize}
               scrollPosition={scroll.dx}
               viewportSize={viewportWidth}
               contentSize={contentWidth}
@@ -197,6 +198,7 @@ export function ScrollView(props: ScrollViewProps) {
             <View flex={1}>
               <ScrollSlider
                 direction="vertical"
+                size={props.sliderSize}
                 scrollPosition={scroll.dy}
                 viewportSize={viewportHeight}
                 contentSize={contentHeight}

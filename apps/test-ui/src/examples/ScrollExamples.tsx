@@ -75,7 +75,12 @@ function ScrollExampleLocal(props: { title: string; count: number; width: SizeVa
       <Text text={props.title} style={tokens?.textStyles.large} />
       {/** Border around ScrollView to visualize its bounds */}
       <ViewLevel2>
-        <View width={200} height={400} padding={0}>
+        <View
+          width={200}
+          height={400}
+          padding={0}
+          backgroundColor={tokens?.colors.background.medium.toNumber()}
+        >
           <ScrollView>
             <Content count={props.count} width={props.width} />
           </ScrollView>
@@ -94,7 +99,7 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
       {/** Border around ScrollView to visualize its bounds */}
       <ViewLevel2>
         <View width={200} height={400} padding={0}>
-          <ScrollView showVerticalSlider={true}>
+          <ScrollView showVerticalSlider={true} sliderSize="small">
             <Content count={props.count} width={props.width} />
           </ScrollView>
         </View>
@@ -123,6 +128,7 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
         <View direction="row" gap={2} padding={0} margin={0}>
           <View width={viewSize} height={viewSize} padding={0}>
             <ScrollView
+              sliderSize="tiny"
               scroll={scroll}
               showVerticalSlider={true}
               showHorizontalSlider={true}

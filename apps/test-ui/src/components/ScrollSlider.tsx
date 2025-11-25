@@ -20,12 +20,32 @@ declare module '@phaserjsx/ui' {
   }
 }
 
+/** Size variants for the scroll slider */
+export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | undefined
+
+/**
+ * Calculate slider dimensions based on size variant and theme
+ * @param size
+ * @returns
+ */
+export function calculateSliderSize(size: SliderSize) {
+  const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
+  const sizeFactor = size === 'large' ? 1.25 : size === 'small' ? 0.75 : size === 'tiny' ? 0.5 : 1 // medium or undefined
+  const border = (themed.borderWidth ?? 1) * sizeFactor
+  const outer = (themed.size ?? 24) * sizeFactor
+  const dimension = outer - border * 2
+
+  return { border, outer, dimension }
+}
+
 /**
  * Props for ScrollSlider component
  */
 export interface ScrollSliderProps {
   /** Direction of the slider */
   direction: 'vertical' | 'horizontal'
+  /** Whether to a size variant, default is medium */
+  size?: SliderSize
   /** Current scroll position in pixels */
   scrollPosition: number
   /** Viewport size in pixels */
@@ -49,10 +69,7 @@ export function ScrollSlider(props: ScrollSliderProps) {
   const trackContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
 
   const isVertical = direction === 'vertical'
-
-  const border = themed.borderWidth ?? 1
-  const outer = themed.size ?? 24
-  const dimension = outer - border * 2
+  const { border, outer, dimension } = calculateSliderSize(props.size)
 
   // Get actual resolved track size from the container after layout
   const containerWithLayout = trackContainerRef.current as
