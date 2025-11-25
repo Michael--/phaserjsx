@@ -225,12 +225,19 @@ export const spriteCreator: HostCreator<'Sprite'> = (scene, props) => {
   }
 
   // Setup animation system
+  // Only play if the animation is already registered in the AnimationManager.
+  // Calling `sprite.anims.play` with a missing key causes Phaser to log
+  // "Missing animation: <key>". Many examples register animations in a
+  // separate effect that may run after the Sprite is created, so avoid
+  // attempting to play until the animation actually exists.
   if (props.animationKey) {
-    sprite.anims.play({
-      key: props.animationKey,
-      repeat: props.loop ? -1 : 0,
-      repeatDelay: props.repeatDelay ?? 0,
-    })
+    if (sprite.scene && sprite.scene.anims.exists(props.animationKey)) {
+      sprite.anims.play({
+        key: props.animationKey,
+        repeat: props.loop ? -1 : 0,
+        repeatDelay: props.repeatDelay ?? 0,
+      })
+    }
   }
 
   // Setup animation callbacks
