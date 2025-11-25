@@ -4,9 +4,11 @@
 import {
   SPRING_PRESETS,
   Text,
+  useEffect,
   useForceRedraw,
   useSpring,
   useSprings,
+  useState,
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
@@ -32,6 +34,8 @@ export function SpringAnimationExample() {
   // Scale with default preset - start small so it's visible
   const [scale, setScale] = useSpring(1.0, SPRING_PRESETS.default)
 
+  const [animate, setAnimate] = useState(0)
+
   // Force redraw when signals change (throttled to 20ms ~50fps)
   useForceRedraw(20, width, pos.x, pos.y, rotation, scale)
 
@@ -48,6 +52,7 @@ export function SpringAnimationExample() {
             setPos({ x: newX, y: newY })
             setRotation((prev) => prev + Math.PI / 2)
             setScale(scale.value === 0.5 ? 1 : 0.5)
+            setAnimate((prev) => prev + 1)
           }}
         />
 
@@ -129,9 +134,9 @@ export function SpringAnimationExample() {
         <View direction="column" gap={10} alignItems="center">
           <Text text="5. Preset Comparison" style={tokens?.textStyles.large} />
           <View direction="row" gap={10}>
-            <PresetDemo preset="gentle" label="Gentle" />
-            <PresetDemo preset="wobbly" label="Wobbly" />
-            <PresetDemo preset="stiff" label="Stiff" />
+            <PresetDemo preset="gentle" label="Gentle" animate={animate} />
+            <PresetDemo preset="wobbly" label="Wobbly" animate={animate} />
+            <PresetDemo preset="stiff" label="Stiff" animate={animate} />
           </View>
         </View>
       </ViewLevel2>
@@ -142,10 +147,26 @@ export function SpringAnimationExample() {
 /**
  * Component demonstrating a specific spring preset
  */
-function PresetDemo({ preset, label }: { preset: keyof typeof SPRING_PRESETS; label: string }) {
+function PresetDemo({
+  preset,
+  label,
+  animate,
+}: {
+  preset: keyof typeof SPRING_PRESETS
+  label: string
+  animate: number
+}) {
   const tokens = useThemeTokens()
   const [size, setSize] = useSpring(40, preset)
   useForceRedraw(20, size)
+
+  const onTouch = () => {
+    setSize(size.value === 40 ? 60 : 40)
+  }
+
+  useEffect(() => {
+    if (animate > 0) onTouch()
+  }, [animate])
 
   return (
     <View direction="column" gap={5} alignItems="center" width={80} height={80}>
@@ -156,7 +177,7 @@ function PresetDemo({ preset, label }: { preset: keyof typeof SPRING_PRESETS; la
         backgroundColor={0xff5500}
         cornerRadius={8}
         enableGestures
-        onTouch={() => setSize(size.value === 40 ? 60 : 40)}
+        onTouch={onTouch}
       />
     </View>
   )
