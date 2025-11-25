@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@phaserjsx/ui": "workspace:*",
+    "bootstrap-icons": "^1.13.1",
     "phaser": "^3.90.0",
     "phaser3-rex-plugins": "^1.80.17"
   },

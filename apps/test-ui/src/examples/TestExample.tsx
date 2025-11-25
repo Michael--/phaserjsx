@@ -2,9 +2,65 @@
  * Theme Preview - comprehensive visualization of all theme values
  * Shows colors, typography, spacing, shadows, and component examples
  */
-import { Text, View } from '@phaserjsx/ui'
+import { Image as PImage, Text, useSVGTexture, useSVGTextures, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
-import { SectionHeader, ViewLevel2 } from './Helper'
+import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
+
+import bell from 'bootstrap-icons/icons/bell-fill.svg'
+import boxes from 'bootstrap-icons/icons/boxes.svg'
+import bricks from 'bootstrap-icons/icons/bricks.svg'
+
+/**
+ * Display component showcase with real buttons
+ */
+function SVGPageSingle() {
+  const ready = useSVGTexture('icon-bricks', bricks)
+
+  return (
+    <ViewLevel2 direction="column" padding={10} width={1500}>
+      <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
+        <SectionHeader title="SVG load single" />
+        <PImage texture={ready ? 'icon-bricks' : ''} />
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
+
+/**
+ * Display component showcase with real buttons
+ */
+function SVGPageMultiple() {
+  const ready = useSVGTextures([
+    { key: 'icon-boxes', svg: boxes, width: 128, height: 128 },
+    { key: 'icon-bell-32', svg: bell, width: 32, height: 32 },
+    { key: 'icon-bell', svg: bell, width: 128, height: 128 },
+  ])
+
+  console.log('SVGPageMultiple ready=', ready)
+
+  return (
+    <ViewLevel2 direction="column" padding={10} width={1500}>
+      {/** Use a rerender workaround because of too simple VDOM patch logic, evaluate only position and count, not content */}
+      <ViewLevel3
+        key={`workaround${ready}`}
+        gap={20}
+        direction="column"
+        padding={10}
+        width={'fill'}
+      >
+        <SectionHeader title="SVG load multiple" />
+        {!ready && <Text text={`Loading textures...${ready}`} />}
+        {ready && (
+          <View direction="row" gap={10}>
+            <PImage texture="icon-bell-32" />
+            <PImage texture="icon-bell" />
+            <PImage texture="icon-boxes" />
+          </View>
+        )}
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
 
 /**
  * Display component showcase with real buttons
@@ -12,16 +68,16 @@ import { SectionHeader, ViewLevel2 } from './Helper'
 function BigPage() {
   // const tokens = useThemeTokens()
 
-  const hundredItems = Array.from({ length: 100 }).map((_, i) => {
+  const hundredItems = Array.from({ length: 10 }).map((_, i) => {
     return <Text key={i} text={`Label ${i + 1}`} />
   })
 
   return (
-    <ViewLevel2 direction="column" padding={0} width={2000}>
-      <SectionHeader title="This is a test example to verify the Test UI setup." />
-      <ViewLevel2 gap={20} direction="column" padding={0}>
+    <ViewLevel2 direction="column" padding={10} width={2000}>
+      <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
+        <SectionHeader title="Very Big Area need to scroll" />
         {...hundredItems}
-      </ViewLevel2>
+      </ViewLevel3>
     </ViewLevel2>
   )
 }
@@ -33,15 +89,10 @@ function BigPage() {
  */
 export function TestExample() {
   return (
-    <View width={'100%'} height={'100%'} padding={100}>
-      <ScrollView
-        borderColor={0xff0000}
-        borderWidth={2}
-        minWidth={'100%'}
-        maxWidth={'100%'}
-        minHeight={'100%'}
-        maxHeight={'100%'}
-      >
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <SVGPageSingle />
+        <SVGPageMultiple />
         <BigPage />
       </ScrollView>
     </View>

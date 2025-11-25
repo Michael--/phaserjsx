@@ -65,6 +65,9 @@ importers:
       '@phaserjsx/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      bootstrap-icons:
+        specifier: ^1.13.1
+        version: 1.13.1
       phaser:
         specifier: ^3.90.0
         version: 3.90.0
@@ -1330,6 +1333,9 @@ packages:
 
   bl@4.1.0:
     resolution: {integrity: sha512-1W07cM9gS6DcLperZfFSj+bWLtaPGSOHWhPiGzXmvVJbRLdG82sH/Kn8EtW1VqWVA54AKf2h5k5BbnIbwF3h6w==}
+
+  bootstrap-icons@1.13.1:
+    resolution: {integrity: sha512-ijombt4v6bv5CLeXvRWKy7CuM3TRTuPEuGaGKvTV5cz65rQSY8RQ2JcHt6b90cBBAC7s8fsf2EkQDldzCoXUjw==}
 
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
@@ -4587,6 +4593,8 @@ snapshots:
       inherits: 2.0.4
       readable-stream: 3.6.2
     optional: true
+
+  bootstrap-icons@1.13.1: {}
 
   brace-expansion@1.1.12:
     dependencies:

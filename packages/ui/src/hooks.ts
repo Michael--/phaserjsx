@@ -3,8 +3,10 @@
  * It is independent from React/Preact renderers.
  */
 import type { Signal } from '@preact/signals-core'
+import type Phaser from 'phaser'
 import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
+import { svgToTexture } from './utils/svg-texture'
 import { patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
@@ -330,4 +332,196 @@ export function disposeCtx(c: Ctx) {
   // NOTE: We intentionally do NOT clear slots, effects, or updater
   // because the context might still be referenced by pending updates
   // The disposed flag will prevent any queued updates from executing
+}
+
+/**
+ * SVG texture configuration for loading
+ */
+export interface SVGTextureConfig {
+  /** Unique texture key for Phaser texture manager */
+  key: string
+  /** SVG string or URL */
+  svg: string
+  /** Texture width in pixels (default: 32) */
+  width?: number
+  /** Texture height in pixels (default: 32) */
+  height?: number
+}
+
+/**
+ * Hook to load a single SVG as a Phaser texture
+ *
+ * Automatically handles:
+ * - Scene detection from component context
+ * - Texture loading and registration
+ * - Cleanup on unmount (removes texture from Phaser)
+ *
+ * @param key - Unique texture key
+ * @param svg - SVG string or URL
+ * @param width - Texture width in pixels (default: 32)
+ * @param height - Texture height in pixels (default: 32)
+ * @returns true when texture is loaded and ready to use
+ * @example
+ * ```tsx
+ * function MyIcon() {
+ *   const ready = useSVGTexture('icon-bell', bellIconSvg, 32, 32)
+ *   return <Image texture={ready ? 'icon-bell' : ''} />
+ * }
+ * ```
+ */
+export function useSVGTexture(
+  key: string,
+  svg: string,
+  width: number = 32,
+  height: number = 32
+): boolean {
+  const [ready, setReady] = useState(false)
+
+  // Capture scene during render phase (while CURRENT is set)
+  const ctx = CURRENT
+  const parent = ctx?.parent
+  const scene = parent
+    ? (parent as { sys?: unknown }).sys
+      ? (parent as Phaser.Scene)
+      : ((parent as { scene?: unknown }).scene as Phaser.Scene)
+    : null
+
+  useEffect(() => {
+    if (!scene) return
+
+    let cancelled = false
+    setReady(false)
+
+    // Load texture
+    svgToTexture(scene, key, svg, width, height)
+      .then(() => {
+        if (!cancelled) {
+          setReady(true)
+          // Force parent layout recalculation after texture loads
+          queueMicrotask(() => {
+            if (parent && 'type' in parent && parent.type === 'Container') {
+              const container = parent as Phaser.GameObjects.Container & {
+                __layoutProps?: Record<string, unknown>
+              }
+              if (container.__layoutProps) {
+                // Import calculateLayout dynamically to avoid circular dependency
+                import('./layout/layout-engine').then(({ calculateLayout }) => {
+                  calculateLayout(container, container.__layoutProps ?? {})
+                })
+              }
+            }
+          })
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) console.error(`Failed to load SVG texture '${key}':`, err)
+      })
+
+    // Cleanup: remove texture on unmount
+    return () => {
+      cancelled = true
+      if (scene.textures.exists(key)) {
+        scene.textures.remove(key)
+      }
+    }
+  }, [scene, key, svg, width, height])
+
+  return ready
+}
+
+/**
+ * Hook to load multiple SVG textures
+ *
+ * Automatically handles:
+ * - Scene detection from component context
+ * - Parallel texture loading
+ * - Cleanup on unmount (removes all textures from Phaser)
+ *
+ * @param configs - Array of SVG texture configurations
+ * @returns true when all textures are loaded and ready to use
+ * @example
+ * ```tsx
+ * function MyIcons() {
+ *   const ready = useSVGTextures([
+ *     { key: 'icon-bell', svg: bellSvg, width: 32, height: 32 },
+ *     { key: 'icon-settings', svg: settingsSvg, width: 24 },
+ *   ])
+ *   return ready ? (
+ *     <>
+ *       <Image texture="icon-bell" />
+ *       <Image texture="icon-settings" />
+ *     </>
+ *   ) : null
+ * }
+ * ```
+ */
+export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
+  const [ready, setReady] = useState(false)
+
+  // Capture scene during render phase (while CURRENT is set)
+  const ctx = CURRENT
+  const parent = ctx?.parent
+  const scene = parent
+    ? (parent as { sys?: unknown }).sys
+      ? (parent as Phaser.Scene)
+      : ((parent as { scene?: unknown }).scene as Phaser.Scene)
+    : null
+
+  // Create stable key from configs to detect changes
+  const configKey = useMemo(
+    () => configs.map((c) => `${c.key}:${c.width ?? 32}:${c.height ?? 32}`).join('|'),
+    [configs]
+  )
+
+  useEffect(() => {
+    if (!scene || configs.length === 0) return
+
+    let cancelled = false
+    setReady(false)
+
+    // Load all textures sequentially to avoid race conditions
+    const loadSequentially = async () => {
+      for (const config of configs) {
+        if (cancelled) break
+        await svgToTexture(scene, config.key, config.svg, config.width ?? 32, config.height ?? 32)
+      }
+    }
+
+    loadSequentially()
+      .then(() => {
+        if (!cancelled) {
+          setReady(true)
+          // Force parent layout recalculation after textures load
+          // This ensures containers resize properly when images appear
+          queueMicrotask(() => {
+            if (parent && 'type' in parent && parent.type === 'Container') {
+              const container = parent as Phaser.GameObjects.Container & {
+                __layoutProps?: Record<string, unknown>
+              }
+              if (container.__layoutProps) {
+                // Import calculateLayout dynamically to avoid circular dependency
+                import('./layout/layout-engine').then(({ calculateLayout }) => {
+                  calculateLayout(container, container.__layoutProps ?? {})
+                })
+              }
+            }
+          })
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) console.error('Failed to load SVG textures:', err)
+      })
+
+    // Cleanup: remove all textures on unmount
+    return () => {
+      cancelled = true
+      for (const config of configs) {
+        if (scene.textures.exists(config.key)) {
+          scene.textures.remove(config.key)
+        }
+      }
+    }
+  }, [scene, configKey])
+
+  return ready
 }

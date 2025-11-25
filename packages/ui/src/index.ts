@@ -61,3 +61,7 @@ export { Fragment, jsx, jsxs } from './jsx-runtime'
 
 // Development configuration and debugging utilities
 export { DebugLogger, DevConfig, DevPresets } from './dev-config'
+
+// SVG to texture utilities
+export type { SVGTextureConfig } from './hooks'
+export { svgToTexture } from './utils/svg-texture'
