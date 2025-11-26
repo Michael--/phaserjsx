@@ -44,6 +44,9 @@ export * from './components'
 // Animation utilities for spring-based transitions
 export * from './animation'
 
+// Explicitly export AnimationConfig for component themes
+export type { AnimationConfig } from './animation/spring-physics'
+
 // Color system utilities and presets
 export * from './colors'
 
