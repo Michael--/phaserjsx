@@ -9,6 +9,76 @@ import type Phaser from 'phaser'
 export type TouchMoveState = 'start' | 'move' | 'end'
 
 /**
+ * Data passed to keyboard event handlers
+ */
+export interface KeyboardEventData {
+  /** The original DOM keyboard event */
+  event: KeyboardEvent
+  /** The key value of the key represented by the event */
+  key: string
+  /** The code value of the physical key */
+  code: string
+  /** Whether the Alt key was pressed */
+  altKey: boolean
+  /** Whether the Ctrl key was pressed */
+  ctrlKey: boolean
+  /** Whether the Shift key was pressed */
+  shiftKey: boolean
+  /** Whether the Meta key (Cmd/Win) was pressed */
+  metaKey: boolean
+  /** Whether this is a repeat event (key held down) */
+  repeat: boolean
+
+  /**
+   * Prevent default browser behavior
+   */
+  preventDefault(): void
+
+  /**
+   * Stop event propagation
+   */
+  stopPropagation(): void
+}
+
+/**
+ * Data passed to input event handlers
+ */
+export interface InputEventData {
+  /** The current value of the input */
+  value: string
+  /** The original DOM input event */
+  event: Event
+
+  /**
+   * Prevent default browser behavior
+   */
+  preventDefault(): void
+
+  /**
+   * Stop event propagation
+   */
+  stopPropagation(): void
+}
+
+/**
+ * Data passed to focus/blur event handlers
+ */
+export interface FocusEventData {
+  /** The original DOM focus event */
+  event: FocusEvent
+
+  /**
+   * Prevent default browser behavior
+   */
+  preventDefault(): void
+
+  /**
+   * Stop event propagation
+   */
+  stopPropagation(): void
+}
+
+/**
  * Data passed to gesture event handlers
  * Supports DOM-style event propagation control
  */
@@ -58,6 +128,16 @@ export interface GestureCallbacks {
   onDoubleTap?: (data: GestureEventData) => void
   /** Called when pointer is held down for configured duration */
   onLongPress?: (data: GestureEventData) => void
+  /** Called when a key is pressed down */
+  onKeyDown?: (data: KeyboardEventData) => void
+  /** Called when a key is released */
+  onKeyUp?: (data: KeyboardEventData) => void
+  /** Called when input value changes */
+  onInput?: (data: InputEventData) => void
+  /** Called when element receives focus */
+  onFocus?: (data: FocusEventData) => void
+  /** Called when element loses focus */
+  onBlur?: (data: FocusEventData) => void
 }
 
 /**

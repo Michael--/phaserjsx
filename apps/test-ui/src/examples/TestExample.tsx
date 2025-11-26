@@ -1,16 +1,61 @@
-import { Text, View } from '@phaserjsx/ui'
-import { Icon, ScrollView } from '../components'
+import { Text, useState, View } from '@phaserjsx/ui'
+import { Icon, ScrollView, TextInput } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage1() {
+  const [inputValue, setInputValue] = useState('')
+  const [password, setPassword] = useState('')
+  const [submittedValue, setSubmittedValue] = useState('')
+
   return (
     <ViewLevel2 direction="column" padding={10}>
       <View gap={10} direction="row" alignContent="center">
         <Icon type="bricks" />
-        <SectionHeader title="The Title" />
+        <SectionHeader title="TextInput Component" />
       </View>
       <ViewLevel3 gap={20} direction="column" padding={10}>
-        <Text text="Place to add new features here..." />
+        <View direction="column" gap={10}>
+          <Text text="Basic TextInput:" />
+          <TextInput
+            placeholder="Type something..."
+            value={inputValue}
+            onChange={(event) => setInputValue(event.value)}
+            width={300}
+            height={40}
+          />
+          <Text text={`Value: ${inputValue}`} />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Password Input:" />
+          <TextInput
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(event) => setPassword(event.value)}
+            width={300}
+            height={40}
+          />
+          <Text text={`Length: ${password.length} characters`} />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Input with Submit (press Enter):" />
+          <TextInput
+            placeholder="Press Enter to submit"
+            onSubmit={(value) => {
+              setSubmittedValue(value)
+            }}
+            width={300}
+            height={40}
+          />
+          {submittedValue && <Text text={`Submitted: ${submittedValue}`} />}
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Disabled Input:" />
+          <TextInput placeholder="This is disabled" disabled={true} width={300} height={40} />
+        </View>
       </ViewLevel3>
     </ViewLevel2>
   )

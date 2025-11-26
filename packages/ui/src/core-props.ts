@@ -4,10 +4,16 @@
  */
 
 // Import gesture types first so they can be used in GestureProps
-import type { GestureEventData, TouchMoveState } from './gestures/gesture-types'
+import type {
+  FocusEventData,
+  GestureEventData,
+  InputEventData,
+  KeyboardEventData,
+  TouchMoveState,
+} from './gestures/gesture-types'
 
 // Re-export for public API
-export type { GestureEventData, TouchMoveState }
+export type { FocusEventData, GestureEventData, InputEventData, KeyboardEventData, TouchMoveState }
 
 /**
  * Valid CSS-like size values with type safety
@@ -602,4 +608,34 @@ export interface GestureProps {
    * Default: 500ms
    */
   maxTouchDuration?: number
+
+  /**
+   * Called when a key is pressed down
+   * Requires enableGestures: true
+   */
+  onKeyDown?: (data: KeyboardEventData) => void
+
+  /**
+   * Called when a key is released
+   * Requires enableGestures: true
+   */
+  onKeyUp?: (data: KeyboardEventData) => void
+
+  /**
+   * Called when input value changes
+   * Requires enableGestures: true
+   */
+  onInput?: (data: InputEventData) => void
+
+  /**
+   * Called when element receives focus
+   * Requires enableGestures: true
+   */
+  onFocus?: (data: FocusEventData) => void
+
+  /**
+   * Called when element loses focus
+   * Requires enableGestures: true
+   */
+  onBlur?: (data: FocusEventData) => void
 }

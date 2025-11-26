@@ -29,11 +29,17 @@ export {
 // Export gesture types explicitly for better IDE support
 export type {
   FlexBasisValue,
+  FocusEventData,
   GestureEventData,
   GestureProps,
+  InputEventData,
+  KeyboardEventData,
   SizeValue,
   TouchMoveState,
 } from './core-props'
+
+// Export DOM input manager utility
+export { DOMInputElement, type DOMInputConfig } from './utils/dom-input-manager'
 
 // Explicit export for convenience functions
 export { mountJSX as mountComponent } from './vdom'
