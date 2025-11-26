@@ -30,6 +30,7 @@ declare module '@phaserjsx/ui' {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
       iconSize?: number
       iconColor?: number
+      animated?: boolean
       animationConfig?: AnimationConfig
     } & PhaserJSX.ViewTheme &
       EffectDefinition
@@ -78,9 +79,9 @@ export function Accordion(props: AccordionProps) {
   const measurementRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
-  const animated = props.animated ?? false
-  const autoHeight = props.autoHeight ?? false
+  const autoHeight = props.autoHeight ?? themed.animated ?? false
   const maxHeight = props.maxHeight ?? 200
+  const animated = props.animated ?? themed.animated ?? false
   const animationConfig = props.animationConfig ?? themed.animationConfig ?? 'gentle'
 
   const [measuredHeight, setMeasuredHeight] = useState<number>(maxHeight)

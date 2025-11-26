@@ -47,6 +47,13 @@ export function createAppTheme(
             fontSize: '20px',
           },
         },
+        View: {
+          gap: 5,
+        },
+        Accordion: {
+          animated: true,
+          animationConfig: 'default',
+        },
       },
 
       RadioButton: {
