@@ -143,8 +143,15 @@ export class DOMInputElement {
     const worldX = worldTransform.tx
     const worldY = worldTransform.ty
 
-    // Get container bounds for width/height
-    const bounds = this.container.getBounds()
+    // Get fixed container dimensions from layout props instead of bounds
+    // This prevents size from changing based on content
+    const layoutProps = (
+      this.container as typeof this.container & {
+        __layoutProps?: { width?: number; height?: number }
+      }
+    ).__layoutProps
+    const containerWidth = layoutProps?.width ?? 200
+    const containerHeight = layoutProps?.height ?? 40
 
     // Calculate position relative to canvas
     const scale = this.scene.game.scale
@@ -153,8 +160,8 @@ export class DOMInputElement {
     // Calculate position and size with proper scaling
     const left = canvasRect.left + worldX * zoom * scale.displayScale.x
     const top = canvasRect.top + worldY * zoom * scale.displayScale.y
-    const width = bounds.width * zoom * scale.displayScale.x
-    const height = bounds.height * zoom * scale.displayScale.y
+    const width = containerWidth * zoom * scale.displayScale.x
+    const height = containerHeight * zoom * scale.displayScale.y
 
     // Apply position and size
     this.input.style.left = `${left}px`

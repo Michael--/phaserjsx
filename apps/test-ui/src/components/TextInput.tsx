@@ -82,7 +82,7 @@ export function TextInput(props: TextInputProps) {
 
     const config: DOMInputConfig = {
       type: props.type ?? 'text',
-      ...(props.placeholder !== undefined && { placeholder: props.placeholder }),
+      // ...(props.placeholder !== undefined && { placeholder: props.placeholder }),
       value: props.value ?? '',
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
@@ -150,8 +150,17 @@ export function TextInput(props: TextInputProps) {
         fontSize: themed.textStyle?.fontSize ?? '16px',
         paddingLeft: '12px',
         paddingRight: '12px',
+        border: '2px solid #ff0000',
       } as Partial<CSSStyleDeclaration>,
     }
+
+    console.log(
+      'Container position:',
+      containerRef.current.x,
+      containerRef.current.y,
+      containerRef.current.width,
+      containerRef.current.height
+    )
 
     inputRef.current = new DOMInputElement(containerRef.current, config)
 
