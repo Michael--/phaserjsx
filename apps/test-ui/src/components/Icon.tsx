@@ -4,7 +4,7 @@
 import { Image, useSVGTexture, type ImageProps } from '@phaserjsx/ui'
 
 // Import SVG strings (these could be from any icon library)
-import bell from 'bootstrap-icons/icons/bell-fill.svg'
+import bell_fill from 'bootstrap-icons/icons/bell-fill.svg'
 import boxes from 'bootstrap-icons/icons/boxes.svg'
 import bricks from 'bootstrap-icons/icons/bricks.svg'
 import check from 'bootstrap-icons/icons/check.svg'
@@ -14,18 +14,18 @@ import square from 'bootstrap-icons/icons/square.svg'
 /**
  * Available icon types with strong typing
  */
-export type IconType = 'bell' | 'boxes' | 'bricks' | 'check' | 'square' | 'minus'
+export type IconType = 'bell-fill' | 'boxes' | 'bricks' | 'check' | 'square' | 'minus'
 
 /**
  * Icon registry mapping types to SVG strings
  */
 const iconRegistry: Record<IconType, string> = {
-  bell,
-  boxes,
-  bricks,
-  check,
-  square,
-  minus,
+  'bell-fill': bell_fill,
+  boxes: boxes,
+  bricks: bricks,
+  check: check,
+  square: square,
+  minus: minus,
 }
 
 /**

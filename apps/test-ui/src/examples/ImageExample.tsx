@@ -260,7 +260,7 @@ function IconPage() {
       <ViewLevel3 gap={20} direction="column" padding={10}>
         <Text text="Icon System with Lazy Loading" style={tokens?.textStyles.large} />
         <View direction="row" gap={10}>
-          <Icon type="bell" />
+          <Icon type="bell-fill" />
           <Icon type="boxes" />
           <Icon type="bricks" />
           <Icon type="check" />

@@ -19,7 +19,7 @@ function AccordionShowcase() {
         </Accordion>
 
         {/* Accordion with icon */}
-        <Accordion title="Accordion with Icon" icon="bell" defaultOpen={true}>
+        <Accordion title="Accordion with Icon" icon="bell-fill" defaultOpen={true}>
           <Text text="This accordion has an icon and is open by default." />
           <View direction="column" gap={10}>
             <Text text="• Feature 1" />
