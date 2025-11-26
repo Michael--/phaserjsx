@@ -3,7 +3,7 @@
  */
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { ScrollView } from '../components'
-import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Responsive button with min/max constraints
@@ -494,52 +494,54 @@ function TextConstraints() {
 export function ConstraintsExample() {
   const tokens = useThemeTokens()
   return (
-    <ScrollView key="constraints-example" showVerticalSlider>
-      <ViewLevel1 width={750} height={3000}>
-        <Text text="Min/Max Constraints Examples" style={tokens?.textStyles.title} />
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2 width={'fill'}>
+          <Text text="Min/Max Constraints Examples" style={tokens?.textStyles.title} />
 
-        <ViewLevel2>
-          <Text text="🎯 Fixed Number Constraints" style={tokens?.textStyles.large} />
+          <ViewLevel2>
+            <Text text="🎯 Fixed Number Constraints" style={tokens?.textStyles.large} />
+          </ViewLevel2>
+
+          <ResponsiveButton />
+          <FlexibleSidebar />
+          <ReadableContent />
+          <ConstrainedGallery />
+          <ComplexFlexConstraints />
+          <PercentageWithConstraints />
+
+          <ViewLevel2>
+            <Text text="✨ SizeValue Constraints (NEW)" style={tokens?.textStyles.large} />
+            <Text
+              text="All min/max constraints now support: percentage, viewport units (vw/vh), and calc() expressions"
+              style={tokens?.textStyles.caption}
+            />
+          </ViewLevel2>
+
+          <PercentageConstraints />
+          <ViewportConstraints />
+          <CalcConstraints />
+          <TextConstraints />
+
+          <ViewLevel2>
+            <Text text="💡 Key Benefits:" style={tokens?.textStyles.medium} />
+            <Text
+              text="• Responsive layouts that adapt gracefully"
+              style={tokens?.textStyles.small}
+            />
+            <Text
+              text="• Prevent content from becoming too small or too large"
+              style={tokens?.textStyles.small}
+            />
+            <Text text="• Better control over flex distribution" style={tokens?.textStyles.small} />
+            <Text text="• Maintain readability and usability" style={tokens?.textStyles.small} />
+            <Text
+              text="• NEW: Percentage, viewport, and calc() support for all constraints"
+              style={tokens?.textStyles.small}
+            />
+          </ViewLevel2>
         </ViewLevel2>
-
-        <ResponsiveButton />
-        <FlexibleSidebar />
-        <ReadableContent />
-        <ConstrainedGallery />
-        <ComplexFlexConstraints />
-        <PercentageWithConstraints />
-
-        <ViewLevel2>
-          <Text text="✨ SizeValue Constraints (NEW)" style={tokens?.textStyles.large} />
-          <Text
-            text="All min/max constraints now support: percentage, viewport units (vw/vh), and calc() expressions"
-            style={tokens?.textStyles.caption}
-          />
-        </ViewLevel2>
-
-        <PercentageConstraints />
-        <ViewportConstraints />
-        <CalcConstraints />
-        <TextConstraints />
-
-        <ViewLevel2>
-          <Text text="💡 Key Benefits:" style={tokens?.textStyles.medium} />
-          <Text
-            text="• Responsive layouts that adapt gracefully"
-            style={tokens?.textStyles.small}
-          />
-          <Text
-            text="• Prevent content from becoming too small or too large"
-            style={tokens?.textStyles.small}
-          />
-          <Text text="• Better control over flex distribution" style={tokens?.textStyles.small} />
-          <Text text="• Maintain readability and usability" style={tokens?.textStyles.small} />
-          <Text
-            text="• NEW: Percentage, viewport, and calc() support for all constraints"
-            style={tokens?.textStyles.small}
-          />
-        </ViewLevel2>
-      </ViewLevel1>
-    </ScrollView>
+      </ScrollView>
+    </View>
   )
 }

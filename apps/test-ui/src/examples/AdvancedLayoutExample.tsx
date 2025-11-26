@@ -2,7 +2,8 @@
  * Advanced Layout Demo - showcasing gap, justifyContent, alignItems
  */
 import { Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+import { ScrollView } from '../components'
+import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Demo box component for visual testing
@@ -134,9 +135,13 @@ function AlignItemsRowExample() {
  */
 export function AdvancedLayoutExample() {
   return (
-    <ViewLevel1 key="advanced-layout-example">
-      <JustifyContentColumnExample />
-      <AlignItemsRowExample />
-    </ViewLevel1>
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2>
+          <JustifyContentColumnExample />
+          <AlignItemsRowExample />
+        </ViewLevel2>
+      </ScrollView>
+    </View>
   )
 }

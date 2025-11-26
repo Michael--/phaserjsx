@@ -1,6 +1,6 @@
 import { Text, useForceRedraw, useSpring, useThemeTokens, View } from '@phaserjsx/ui'
-import { Button } from '../components'
-import { ViewLevel1, ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
+import { Button, ScrollView } from '../components'
+import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
  * Flex Grid Examples demonstrating flexWrap and alignContent
@@ -264,32 +264,34 @@ export function FlexGridExample() {
   const width = w42.value
 
   return (
-    <ViewLevel1>
-      <ViewLevel2 gap={20}>
-        <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
-        <View gap={10} direction="row">
-          <Button text="300" onClick={() => setW42(300)} />
-          <Button text="400" onClick={() => setW42(400)} />
-          <Button text="600" onClick={() => setW42(600)} />
-          <Button text="800" onClick={() => setW42(800)} />
-        </View>
-        <ViewLevel2 gap={20} direction="row">
-          <ViewLevel2 width={width} gap={20}>
-            <AutoWrapGrid />
-            <ResponsiveCards />
-          </ViewLevel2>
-          <ViewLevel2 width={width} gap={20}>
-            <AlignContentSpaceBetween />
-            <AlignContentCenter />
-            <WrapReverse />
-          </ViewLevel2>
-          <ViewLevel2 width={width} gap={20}>
-            <ColumnWrap />
-            <ToolbarOverflow width={width} />
-            <JustifyContentSpaceAround />
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2 gap={20}>
+          <Text text="Flex Grid Examples" style={tokens?.textStyles.title} />
+          <View gap={10} direction="row">
+            <Button text="300" onClick={() => setW42(300)} />
+            <Button text="400" onClick={() => setW42(400)} />
+            <Button text="600" onClick={() => setW42(600)} />
+            <Button text="800" onClick={() => setW42(800)} />
+          </View>
+          <ViewLevel2 gap={20} direction="row">
+            <ViewLevel2 width={width} gap={20}>
+              <AutoWrapGrid />
+              <ResponsiveCards />
+            </ViewLevel2>
+            <ViewLevel2 width={width} gap={20}>
+              <AlignContentSpaceBetween />
+              <AlignContentCenter />
+              <WrapReverse />
+            </ViewLevel2>
+            <ViewLevel2 width={width} gap={20}>
+              <ColumnWrap />
+              <ToolbarOverflow width={width} />
+              <JustifyContentSpaceAround />
+            </ViewLevel2>
           </ViewLevel2>
         </ViewLevel2>
-      </ViewLevel2>
-    </ViewLevel1>
+      </ScrollView>
+    </View>
   )
 }

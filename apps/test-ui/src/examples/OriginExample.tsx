@@ -3,8 +3,9 @@
  */
 import { Text, useEffect, useRef, useThemeTokens, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
+import { ScrollView } from '../components'
 import { RefOriginView } from '../components/RefOriginView'
-import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
+import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Example showing rotation around different origin points
@@ -272,11 +273,15 @@ export function OriginScaleExample() {
  */
 export function OriginExample() {
   return (
-    <ViewLevel1>
-      <View direction="row" gap={50}>
-        <OriginRotationExample />
-        <OriginScaleExample />
-      </View>
-    </ViewLevel1>
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2>
+          <View direction="row" gap={50}>
+            <OriginRotationExample />
+            <OriginScaleExample />
+          </View>
+        </ViewLevel2>
+      </ScrollView>
+    </View>
   )
 }

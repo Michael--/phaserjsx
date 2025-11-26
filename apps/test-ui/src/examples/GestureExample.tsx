@@ -3,7 +3,8 @@
  * Shows all gesture types: onTouch, onTouchMove, onDoubleTap, onLongPress
  */
 import { Text, View, useState, useThemeTokens, type GestureEventData } from '@phaserjsx/ui'
-import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
+import { ScrollView } from '../components'
+import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Simple gesture button demonstrating onTouch with maxTouchDuration
@@ -174,45 +175,50 @@ export function GestureExample() {
   const tokens = useThemeTokens()
 
   return (
-    <ViewLevel1>
-      <ViewLevel2>
-        <Text text="Gesture System Demo" style={tokens?.textStyles.title} />
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2>
+          <Text text="Gesture System Demo" style={tokens?.textStyles.title} />
 
-        <Text text="New high-level gesture API (mouse + touch)" style={tokens?.textStyles.large} />
+          <Text
+            text="New high-level gesture API (mouse + touch)"
+            style={tokens?.textStyles.large}
+          />
 
-        <View gap={20} direction="column">
-          <View>
-            <Text text="Touch/Click (max 500ms duration):" style={tokens?.textStyles.medium} />
-            <TouchButton />
+          <View gap={20} direction="column">
+            <View>
+              <Text text="Touch/Click (max 500ms duration):" style={tokens?.textStyles.medium} />
+              <TouchButton />
+            </View>
+
+            <View>
+              <Text text="Double Tap/Click:" style={tokens?.textStyles.medium} />
+              <DoubleTapButton />
+            </View>
+
+            <View>
+              <Text
+                text="Long Press vs Touch (hold 800ms, no Touch after LongPress):"
+                style={tokens?.textStyles.medium}
+              />
+              <LongPressButton />
+            </View>
+
+            <View>
+              <Text
+                text="Drag (state: 'start' | 'move' | 'end' + isInside):"
+                style={tokens?.textStyles.medium}
+              />
+              <DragBox />
+            </View>
           </View>
 
-          <View>
-            <Text text="Double Tap/Click:" style={tokens?.textStyles.medium} />
-            <DoubleTapButton />
-          </View>
-
-          <View>
-            <Text
-              text="Long Press vs Touch (hold 800ms, no Touch after LongPress):"
-              style={tokens?.textStyles.medium}
-            />
-            <LongPressButton />
-          </View>
-
-          <View>
-            <Text
-              text="Drag (state: 'start' | 'move' | 'end' + isInside):"
-              style={tokens?.textStyles.medium}
-            />
-            <DragBox />
-          </View>
-        </View>
-
-        <Text
-          text="💡 All gestures work with both mouse and touch"
-          style={tokens?.textStyles.small}
-        />
-      </ViewLevel2>
-    </ViewLevel1>
+          <Text
+            text="💡 All gestures work with both mouse and touch"
+            style={tokens?.textStyles.small}
+          />
+        </ViewLevel2>
+      </ScrollView>
+    </View>
   )
 }

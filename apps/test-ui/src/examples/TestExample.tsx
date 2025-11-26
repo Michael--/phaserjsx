@@ -4,12 +4,12 @@ import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage1() {
   return (
-    <ViewLevel2 direction="column" padding={10} width={1500}>
+    <ViewLevel2 direction="column" padding={10}>
       <View gap={10} direction="row" alignContent="center">
         <Icon type="bricks" />
         <SectionHeader title="The Title" />
       </View>
-      <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
+      <ViewLevel3 gap={20} direction="column" padding={10}>
         <Text text="Place to add new features here..." />
       </ViewLevel3>
     </ViewLevel2>
@@ -25,7 +25,9 @@ export function TestExample() {
   return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
-        <DevelopPage1 />
+        <ViewLevel2>
+          <DevelopPage1 />
+        </ViewLevel2>
       </ScrollView>
     </View>
   )

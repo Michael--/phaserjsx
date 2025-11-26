@@ -1,7 +1,8 @@
 import type { DesignTokens } from '@phaserjsx/ui'
 import { Text, useRef, useState, useThemeTokens, View, type GestureEventData } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
+import { ScrollView } from '../components'
+import { ViewLevel2 } from './Helper/ViewLevel'
 
 interface StackItem {
   id: number
@@ -140,9 +141,13 @@ function StackExampleByRef() {
 
 export function StackExample() {
   return (
-    <ViewLevel1>
-      <StackExampleByReorder />
-      <StackExampleByRef />
-    </ViewLevel1>
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2>
+          <StackExampleByReorder />
+          <StackExampleByRef />
+        </ViewLevel2>
+      </ScrollView>
+    </View>
   )
 }

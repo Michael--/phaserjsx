@@ -2,8 +2,9 @@
  * Color Mode Example - demonstrates dynamic theme switching
  */
 import { setColorPreset, Text, useColorMode, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollView } from '../components'
 import { Button } from '../components/Button'
-import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
+import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**
  * Color mode toggle button
@@ -124,18 +125,20 @@ export function ColorModeExample() {
   if (!tokens) return null
 
   return (
-    <ViewLevel1>
-      <ViewLevel2>
-        <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
         <ViewLevel2>
-          <Text text={`Current Mode: ${colorMode}`} style={tokens.textStyles.large} />
-          <ModeToggle />
-          <PresetSelector />
+          <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
+          <ViewLevel2>
+            <Text text={`Current Mode: ${colorMode}`} style={tokens.textStyles.large} />
+            <ModeToggle />
+            <PresetSelector />
+          </ViewLevel2>
+          <ViewLevel2>
+            <ColorPalette />
+          </ViewLevel2>
         </ViewLevel2>
-        <ViewLevel2>
-          <ColorPalette />
-        </ViewLevel2>
-      </ViewLevel2>
-    </ViewLevel1>
+      </ScrollView>
+    </View>
   )
 }

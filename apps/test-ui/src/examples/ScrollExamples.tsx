@@ -1,6 +1,6 @@
 import { Text, useState, useThemeTokens, View, type SizeValue } from '@phaserjsx/ui'
 import { Button, ScrollView, type ScrollInfo } from '../components'
-import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
+import { ViewLevel2 } from './Helper/ViewLevel'
 
 function ListButton(props: { index: number; width?: SizeValue }) {
   const tokens = useThemeTokens()
@@ -204,19 +204,22 @@ function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
 
 export function ScrollExample() {
   return (
-    /** inherit all default theme */
-    <ViewLevel1>
-      {/** disable padding for only the next */}
-      <ViewLevel2 direction="row">
-        <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
-        <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
-        <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
-      </ViewLevel2>
-      {/** disable padding for only the next */}
-      <ViewLevel2 direction="row">
-        <ScrollExampleSliderLocal title="V-Slider" count={20} width="100%" />
-        <ScrollExampleSliderFullLocal title="XY-Slider" width="100%" />
-      </ViewLevel2>
-    </ViewLevel1>
+    <View width={'100%'} height={'100%'}>
+      <ScrollView>
+        <ViewLevel2>
+          {/** disable padding for only the next */}
+          <ViewLevel2 direction="row">
+            <ScrollExampleLocal title="Scroll Y" count={20} width="100%" />
+            <ScrollExampleLocal title="Scroll X" count={5} width="120%" />
+            <ScrollExampleLocal title="Scroll X+Y" count={20} width="120%" />
+          </ViewLevel2>
+          {/** disable padding for only the next */}
+          <ViewLevel2 direction="row">
+            <ScrollExampleSliderLocal title="V-Slider" count={20} width="100%" />
+            <ScrollExampleSliderFullLocal title="XY-Slider" width="100%" />
+          </ViewLevel2>
+        </ViewLevel2>
+      </ScrollView>
+    </View>
   )
 }
