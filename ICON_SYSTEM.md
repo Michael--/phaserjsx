@@ -55,9 +55,9 @@ export type IconType = 'bell-fill' | 'boxes' | 'bricks' | ... // 2078 Icons
 
 **Advantage:** Full type safety without bundle impact.
 
-### 3. Icon Generator
+### 3. Icon Generators
 
-Script for automatically generating icon types:
+Parameterized CLI tools in `packages/ui/scripts/` for automatic code generation:
 
 ```bash
 pnpm run generate-icons

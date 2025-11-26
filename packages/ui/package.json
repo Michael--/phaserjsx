@@ -6,6 +6,10 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "generate-icon-types": "./scripts/generate-icon-types.ts",
+    "generate-icon-loaders": "./scripts/generate-icon-loaders.ts"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -24,7 +28,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "scripts"
   ],
   "scripts": {
     "dev": "vite build --watch",

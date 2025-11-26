@@ -1,0 +1,6 @@
+{
+  "iconPackage": "bootstrap-icons",
+  "iconTypesOutput": "./src/components/icon-types.generated.ts",
+  "iconLoadersOutput": "./src/components/icon-loaders.generated.ts",
+  "sourceDir": "./src"
+}
