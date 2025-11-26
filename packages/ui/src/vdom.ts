@@ -107,6 +107,10 @@ function updateGestureHitAreaAfterLayout(container: Phaser.GameObjects.Container
 const LAYOUT_PROPS = [
   'width',
   'height',
+  'minWidth',
+  'maxWidth',
+  'minHeight',
+  'maxHeight',
   'flex',
   'margin',
   'padding',

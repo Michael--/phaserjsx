@@ -381,6 +381,76 @@ const strategies: Record<string, LayoutStrategy> = {
 }
 
 /**
+ * Invalidates parent layout if container size changed after recalculation
+ * Propagates layout changes up the hierarchy to ensure parent containers adapt
+ * @param container - Container that was just laid out
+ * @param oldSize - Size before layout calculation
+ * @param newWidth - New width after layout
+ * @param newHeight - New height after layout
+ */
+function invalidateParentLayoutIfNeeded(
+  container: Phaser.GameObjects.Container,
+  oldSize: { width: number; height: number } | undefined,
+  newWidth: number,
+  newHeight: number
+): void {
+  // Skip if no old size (first layout) or size unchanged
+  if (!oldSize || (oldSize.width === newWidth && oldSize.height === newHeight)) {
+    return
+  }
+
+  // Size changed - need to recalculate parent layout
+  const parent = container.parentContainer as
+    | (Phaser.GameObjects.Container & {
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => { width: number; height: number }
+      })
+    | undefined
+
+  if (!parent || !parent.__layoutProps) {
+    return // No layout parent to invalidate
+  }
+
+  DebugLogger.log(
+    'layout',
+    'Container size changed, invalidating parent:',
+    `${oldSize.width}x${oldSize.height} -> ${newWidth}x${newHeight}`
+  )
+
+  // Get parent's parent for context
+  const grandParent = parent.parentContainer as
+    | (Phaser.GameObjects.Container & {
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => { width: number; height: number }
+      })
+    | undefined
+
+  let grandParentSize: { width: number; height: number } | undefined
+  if (grandParent && grandParent.__getLayoutSize) {
+    const totalSize = grandParent.__getLayoutSize()
+    const padding = (grandParent.__layoutProps?.padding ?? 0) as
+      | number
+      | { left?: number; right?: number; top?: number; bottom?: number }
+    const normPadding =
+      typeof padding === 'number'
+        ? { left: padding, right: padding, top: padding, bottom: padding }
+        : {
+            left: padding.left ?? 0,
+            right: padding.right ?? 0,
+            top: padding.top ?? 0,
+            bottom: padding.bottom ?? 0,
+          }
+    grandParentSize = {
+      width: totalSize.width - normPadding.left - normPadding.right,
+      height: totalSize.height - normPadding.top - normPadding.bottom,
+    }
+  }
+
+  // Recalculate parent layout (will recursively invalidate grandparent if needed)
+  calculateLayout(parent, parent.__layoutProps, grandParentSize)
+}
+
+/**
  * Calculate layout for a container and its children immediately (internal)
  * DO NOT CALL DIRECTLY - Use calculateLayout() which batches for performance
  * @param container - Phaser container with children
@@ -395,6 +465,12 @@ function calculateLayoutImmediate(
   parentPadding?: { horizontal: number; vertical: number }
 ): void {
   const children = container.list as GameObjectWithLayout[]
+
+  // Store old size before layout calculation for parent invalidation
+  const containerWithLayout = container as typeof container & {
+    __getLayoutSize?: () => { width: number; height: number }
+  }
+  const oldContainerSize = containerWithLayout.__getLayoutSize?.()
 
   // Debug: Track excessive layout calls
   // console.log('[LAYOUT] calculateLayout called for container with', children?.length ?? 0, 'children')
@@ -929,6 +1005,15 @@ function calculateLayoutImmediate(
 
   // End performance timing
   DebugLogger.timeEnd('performance', 'calculateLayout')
+
+  // 15. Propagate layout changes to parent if size changed
+  // This ensures parent containers resize when child content changes
+  invalidateParentLayoutIfNeeded(
+    container,
+    oldContainerSize,
+    adjustedContainerWidth,
+    adjustedContainerHeight
+  )
 }
 
 /**

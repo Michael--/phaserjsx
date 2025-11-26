@@ -36,6 +36,10 @@ function updateGestureHitAreaIfNeeded(node: Phaser.GameObjects.Container): void 
 const LAYOUT_RELEVANT_PROPS: (keyof LayoutProps)[] = [
   'width',
   'height',
+  'minWidth',
+  'maxWidth',
+  'minHeight',
+  'maxHeight',
   'flex',
   'margin',
   'padding',
