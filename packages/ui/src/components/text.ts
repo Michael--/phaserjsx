@@ -168,7 +168,7 @@ export interface TextProps extends TextBaseProps, PropsDefaultExtension<Phaser.G
  * Text creator - creates a Phaser Text object
  */
 export const textCreator: HostCreator<'Text'> = (scene, props) => {
-  const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text, props.style)
+  const text = scene.add.text(props.x ?? 0, props.y ?? 0, props.text ?? '', props.style)
 
   // Set origin based on headless flag
   // Headless: (0.5, 0.5) - centered, works naturally with rotation/scale

@@ -532,8 +532,8 @@ export interface LayoutProps {
 export interface BackgroundProps {
   backgroundColor?: number | undefined
   backgroundAlpha?: number | undefined
-  cornerRadius?: number | CornerRadiusInsets
-  borderWidth?: number
+  cornerRadius?: number | CornerRadiusInsets | undefined
+  borderWidth?: number | undefined
   borderColor?: number | undefined
   borderAlpha?: number
 }

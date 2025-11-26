@@ -464,14 +464,10 @@ export function TextInput(props: TextInputProps) {
       ref={containerRef}
       width={width}
       height={height}
-      backgroundColor={
-        props.disabled
-          ? (themed.disabledColor ?? themed.backgroundColor)
-          : (themed.backgroundColor ?? 0x2a2a2a)
-      }
-      borderColor={themed.borderColor ?? 0x666666}
-      borderWidth={themed.borderWidth ?? 2}
-      cornerRadius={typeof themed.cornerRadius === 'number' ? themed.cornerRadius : 4}
+      backgroundColor={props.disabled ? themed.disabledColor : themed.backgroundColor}
+      borderColor={themed.borderColor}
+      borderWidth={themed.borderWidth}
+      cornerRadius={themed.cornerRadius}
       justifyContent={'center'}
       alignItems={'start'}
       padding={{ left: horizontalPadding, right: horizontalPadding }}
