@@ -36,7 +36,37 @@ declare module '@phaserjsx/ui' {
   }
 }
 
-const groupedExamples = {
+export type ExampleKey =
+  | 'button'
+  | 'graphics'
+  | 'image'
+  | 'sprite'
+  | 'nineslice'
+  | 'stack'
+  | 'flex'
+  | 'flexAdvanced'
+  | 'flexGrid'
+  | 'constraints'
+  | 'advanced'
+  | 'gesture'
+  | 'scroll'
+  | 'ref'
+  | 'theme'
+  | 'themePreview'
+  | 'colorMode'
+  | 'designToken'
+  | 'border'
+  | 'springAnimation'
+  | 'effects'
+  | 'origin'
+  | 'test'
+  | 'accordion'
+
+type ExampleConfig = { label: string; component: () => VNode }
+
+type GroupedExamples = Record<string, Partial<Record<ExampleKey, ExampleConfig>>>
+
+const groupedExamples: GroupedExamples = {
   components: {
     button: { label: 'Button Variants', component: ButtonExample },
     graphics: { label: 'Graphics Component', component: GraphicsExample },
@@ -75,37 +105,11 @@ const groupedExamples = {
   },
 } as const
 
-export type ExampleKey =
-  | 'button'
-  | 'graphics'
-  | 'image'
-  | 'sprite'
-  | 'nineslice'
-  | 'stack'
-  | 'flex'
-  | 'flexAdvanced'
-  | 'flexGrid'
-  | 'constraints'
-  | 'advanced'
-  | 'gesture'
-  | 'scroll'
-  | 'ref'
-  | 'theme'
-  | 'themePreview'
-  | 'colorMode'
-  | 'designToken'
-  | 'border'
-  | 'springAnimation'
-  | 'effects'
-  | 'origin'
-  | 'test'
-
-type ExampleConfig = { label: string; component: () => VNode }
-
 function getExample(key: ExampleKey): ExampleConfig {
   for (const group of Object.values(groupedExamples)) {
-    if (key in group) {
-      return group[key as keyof typeof group]
+    const config = group[key]
+    if (config !== undefined) {
+      return config
     }
   }
   throw new Error(`Example ${key} not found`)
