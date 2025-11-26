@@ -1,6 +1,7 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, View, type VNode } from '@phaserjsx/ui'
-import { RadioButton } from './components'
+import { getThemedProps, View, type VNode } from '@phaserjsx/ui'
+import { Accordion, RadioButton } from './components'
+import type { IconType } from './components/icon-types.generated'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
@@ -14,7 +15,7 @@ import { FlexGridExample } from './examples/FlexGridExample'
 import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
 import { GraphicsExample } from './examples/GraphicsExample'
-import { ViewLevel2 } from './examples/Helper'
+
 import { ImageExample } from './examples/ImageExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
@@ -66,12 +67,13 @@ type ExampleConfig = { label: string; component: () => VNode }
 
 type GroupedExamples = Record<
   string,
-  { label: string; examples: Partial<Record<ExampleKey, ExampleConfig>> }
+  { label: string; icon?: IconType; examples: Partial<Record<ExampleKey, ExampleConfig>> }
 >
 
 const groupedExamples: GroupedExamples = {
   components: {
     label: 'Components',
+    icon: 'gear',
     examples: {
       button: { label: 'Button Variants', component: ButtonExample },
       graphics: { label: 'Graphics Component', component: GraphicsExample },
@@ -83,6 +85,7 @@ const groupedExamples: GroupedExamples = {
   },
   layout: {
     label: 'Layout',
+    icon: 'grid',
     examples: {
       stack: { label: 'Stack', component: StackExample },
       flex: { label: 'Flex vs Spacer', component: FlexExample },
@@ -94,6 +97,7 @@ const groupedExamples: GroupedExamples = {
   },
   interactions: {
     label: 'Interactions',
+    icon: 'hand-index',
     examples: {
       gesture: { label: 'Gesture System', component: GestureExample },
       scroll: { label: 'Scroll Example', component: ScrollExample },
@@ -102,6 +106,7 @@ const groupedExamples: GroupedExamples = {
   },
   themes: {
     label: 'Themes & Styling',
+    icon: 'palette',
     examples: {
       theme: { label: 'Theme System', component: ThemeExample },
       themePreview: { label: 'Theme Preview', component: ThemePreviewExample },
@@ -112,6 +117,7 @@ const groupedExamples: GroupedExamples = {
   },
   effects: {
     label: 'Effects & Animations',
+    icon: 'stars',
     examples: {
       springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
       effects: { label: 'Object Effects', component: GameObjectEffectsExample },
@@ -120,6 +126,7 @@ const groupedExamples: GroupedExamples = {
   },
   miscellaneous: {
     label: 'Miscellaneous',
+    icon: 'question-circle',
     examples: {
       test: { label: 'Test', component: TestExample },
     },
@@ -142,18 +149,25 @@ export function ExampleSide(props: {
 }) {
   return (
     <>
-      {...Object.entries(groupedExamples).map(([groupKey, group]) => (
-        <ViewLevel2 key={groupKey} width={'100%'}>
-          <Text text={group.label} />
-          {...Object.entries(group.examples).map(([value, config]) => (
-            <RadioButton
-              label={config.label}
-              selected={props.selectedExample === value}
-              onClick={() => props.onChange(value as ExampleKey)}
-            />
-          ))}
-        </ViewLevel2>
-      ))}
+      {...Object.entries(groupedExamples).map(([groupKey, group]) => {
+        const isOpen = group.examples[props.selectedExample] !== undefined
+        return (
+          <Accordion
+            key={groupKey}
+            title={group.label}
+            {...(group.icon && { icon: group.icon })}
+            defaultOpen={isOpen}
+          >
+            {...Object.entries(group.examples).map(([value, config]) => (
+              <RadioButton
+                label={config.label}
+                selected={props.selectedExample === value}
+                onClick={() => props.onChange(value as ExampleKey)}
+              />
+            ))}
+          </Accordion>
+        )
+      })}
     </>
   )
 }
