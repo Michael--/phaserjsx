@@ -22,7 +22,8 @@
     "prepare": "husky",
     "doctor": "node -v && pnpm -v && pnpm exec tsc -v",
     "generate-stats": "ts-node scripts/generate-stats.ts",
-    "generate-icons": "tsx scripts/generate-icon-types.ts"
+    "generate-icons": "tsx scripts/generate-icon-types.ts",
+    "generate-icon-loaders": "tsx scripts/generate-icon-loaders.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",

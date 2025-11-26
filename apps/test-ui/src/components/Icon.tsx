@@ -1,8 +1,9 @@
 /**
  * Icon system with lazy loading and strong typing
- * Uses dynamic imports for tree-shaking - only used icons are bundled
+ * Uses auto-generated icon loaders for tree-shaking
  */
 import { Image, useEffect, useState, useSVGTexture, type ImageProps } from '@phaserjsx/ui'
+import { iconLoaders } from './icon-loaders.generated'
 import type { IconType } from './icon-types.generated'
 
 export type { IconType }
@@ -24,11 +25,18 @@ async function loadIcon(type: IconType): Promise<string> {
     return cached
   }
 
-  // Dynamic import - Vite will code-split this automatically
-  // Only used icons will be included in the bundle
-  const module = await import(`bootstrap-icons/icons/${type}.svg`)
-  const svg = module.default as string
+  // Get loader function from generated registry
+  const loader = iconLoaders[type]
 
+  if (!loader) {
+    throw new Error(
+      `Icon not registered: ${type}. Run 'pnpm run generate-icon-loaders' to update the registry.`
+    )
+  }
+
+  // Load the icon (Vite will code-split this automatically)
+  const module = await loader()
+  const svg = module.default
   iconCache.set(type, svg)
   return svg
 }
@@ -40,18 +48,24 @@ async function loadIcon(type: IconType): Promise<string> {
  */
 export function useIcon(type: IconType): boolean {
   const [svg, setSvg] = useState<string | null>(iconCache.get(type) || null)
-  const [isLoaded, setIsLoaded] = useState(iconCache.has(type))
 
   useEffect(() => {
-    if (!isLoaded) {
-      loadIcon(type).then((loadedSvg) => {
-        setSvg(loadedSvg)
-        setIsLoaded(true)
-      })
+    if (!iconCache.has(type)) {
+      loadIcon(type)
+        .then((loadedSvg) => {
+          setSvg(loadedSvg)
+        })
+        .catch((error) => {
+          console.error(`Failed to load icon ${type}:`, error)
+        })
     }
-  }, [type, isLoaded])
+  }, [type])
 
-  return useSVGTexture(`use-icon-${type}`, svg || '')
+  // Only call useSVGTexture when we actually have SVG data
+  // This prevents trying to load an empty texture
+  const isReady = svg ? useSVGTexture(`use-icon-${type}`, svg, 32, 32) : false
+
+  return isReady
 }
 
 /**

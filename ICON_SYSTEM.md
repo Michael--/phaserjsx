@@ -2,12 +2,12 @@
 
 ## Problem
 
-Das ursprüngliche Icon-System verwendete statische Imports:
+The original icon system used static imports:
 
 ```typescript
 import bell_fill from 'bootstrap-icons/icons/bell-fill.svg'
 import boxes from 'bootstrap-icons/icons/boxes.svg'
-// ... alle Icons wurden importiert
+// ... all icons were imported
 
 const iconRegistry: Record<IconType, string> = {
   'bell-fill': bell_fill,
@@ -16,63 +16,74 @@ const iconRegistry: Record<IconType, string> = {
 }
 ```
 
-**Problem:** Alle importierten Icons landen im Bundle, auch wenn sie nicht verwendet werden.
+**Problem:** All imported icons end up in the bundle, even if they are not used.
 
-## Lösung
+## Solution
 
-### 1. Dynamic Imports für Tree-Shaking
+### 1. Manual Icon Registration for Real Tree-Shaking
 
-Die neue Implementierung verwendet **dynamische Imports**:
+The final implementation uses **explicit icon registration**:
 
 ```typescript
+const iconLoaders: Record<string, () => Promise<{ default: string }>> = {
+  'bell-fill': () => import('bootstrap-icons/icons/bell-fill.svg'),
+  boxes: () => import('bootstrap-icons/icons/boxes.svg'),
+  // only registered icons are bundled
+}
+
 async function loadIcon(type: IconType): Promise<string> {
-  // Dynamic import - Vite erstellt automatisch separate Chunks
-  const module = await import(`bootstrap-icons/icons/${type}.svg`)
-  return module.default as string
+  const loader = iconLoaders[type]
+  if (!loader) {
+    throw new Error(`Icon not registered: ${type}`)
+  }
+  const module = await loader()
+  return module.default
 }
 ```
 
-**Vorteil:** Nur tatsächlich verwendete Icons werden ins Bundle aufgenommen.
+**Advantage:** Only explicitly registered icons are included in the bundle.
+
+**Note:** `import.meta.glob()` does not work for tree-shaking because Vite bundles all matched files at build time.
 
 ### 2. Type-Only Definitions
 
-Alle 2078 Bootstrap-Icon-Namen sind als TypeScript-Type verfügbar:
+All 2078 Bootstrap icon names are available as TypeScript types:
 
 ```typescript
 export type IconType = 'bell-fill' | 'boxes' | 'bricks' | ... // 2078 Icons
 ```
 
-**Vorteil:** Vollständige Typsicherheit ohne Bundle-Impact.
+**Advantage:** Full type safety without bundle impact.
 
-### 3. Icon-Generator
+### 3. Icon Generator
 
-Script zum automatischen Generieren der Icon-Typen:
+Script for automatically generating icon types:
 
 ```bash
 pnpm run generate-icons
 ```
 
-Generiert `apps/test-ui/src/components/icon-types.generated.ts` mit allen verfügbaren Icons.
+Generates `apps/test-ui/src/components/icon-types.generated.ts` with all available icons.
 
-## Verwendung
+## Usage
 
 ```tsx
 import { Icon } from '@/components'
 
-// Typsicher mit IntelliSense für alle 2078 Icons
+// Type-safe with IntelliSense for all 2078 icons
 <Icon type="bell-fill" size={32} />
 <Icon type="boxes" size={48} />
 ```
 
-## Bundle-Analyse
+## Bundle Analysis
 
-### Vorher (statische Imports)
+### Before (static imports)
 
-- Alle importierten Icons im Bundle
-- Keine Code-Splitting
-- Größere Bundle-Größe
+- All imported icons in the bundle
+- No code splitting
+- Larger bundle size
 
-### Nachher (dynamic imports)
+### After (dynamic imports)
 
 ```
 dist/assets/icons/icons/bell-fill-D7HmZJz2.js    0.47 kB
@@ -80,11 +91,11 @@ dist/assets/icons/icons/boxes-DHGjwfBQ.js        1.04 kB
 dist/assets/icons/icons/bricks-C1HQY1nd.js       0.81 kB
 ```
 
-- Jedes Icon in separatem Chunk
-- Automatisches Lazy-Loading
-- Nur verwendete Icons im Bundle
+- Each icon in separate chunk
+- Automatic lazy loading
+- Only used icons in the bundle
 
-## Vite-Konfiguration
+## Vite Configuration
 
 ```typescript
 build: {
@@ -101,18 +112,18 @@ build: {
 }
 ```
 
-## Vorteile
+## Advantages
 
-✅ **Vollständige Typsicherheit** für alle 2078 Bootstrap Icons  
-✅ **Zero Bundle Impact** für ungenutzte Icons  
-✅ **Automatisches Code-Splitting** durch Vite  
-✅ **Lazy Loading** on-demand  
-✅ **Caching** bereits geladener Icons  
-✅ **Einfache Erweiterung** durch Generator-Script
+✅ **Full type safety** for all 2078 Bootstrap Icons  
+✅ **Zero bundle impact** for unused icons  
+✅ **Automatic code splitting** through Vite  
+✅ **Lazy loading** on-demand  
+✅ **Caching** of already loaded icons  
+✅ **Easy extension** through generator script
 
-## Icon-Generator anpassen
+## Adapting the Icon Generator
 
-Der Generator kann für andere Icon-Libraries angepasst werden:
+The generator can be adapted for other icon libraries:
 
 ```typescript
 // scripts/generate-icon-types.ts
@@ -122,7 +133,7 @@ const iconsDir = join(
 )
 ```
 
-Dann im Icon-Loader den Pfad anpassen:
+Then adjust the path in the icon loader:
 
 ```typescript
 const module = await import(`your-icon-lib/icons/${type}.svg`)

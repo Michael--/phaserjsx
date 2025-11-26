@@ -7,3 +7,8 @@ coverage/
 
 # Ignore lock files
 pnpm-lock.yaml
+
+# Generated files
+*.generated.tsx
+*.generated.ts
+*.generated.js
