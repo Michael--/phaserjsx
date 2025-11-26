@@ -2,7 +2,9 @@ import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   getThemedProps,
   Text,
+  useForceRedraw,
   useRef,
+  useSpring,
   useState,
   useTheme,
   View,
@@ -45,6 +47,10 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
   isOpen?: boolean
   /** Callback when accordion is toggled */
   onToggle?: (isOpen: boolean) => void
+  /** Enable smooth height animation (default: false) */
+  animated?: boolean
+  /** Maximum height for animation (default: 200) */
+  maxHeight?: number
 }
 
 /**
@@ -62,9 +68,24 @@ export function Accordion(props: AccordionProps) {
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
+  const animated = props.animated ?? false
+  const maxHeight = props.maxHeight ?? 200
+
+  // Animate content height if enabled
+  const [contentHeight, setContentHeight] = useSpring(
+    animated ? (isOpen ? maxHeight : 0) : isOpen ? maxHeight : 0,
+    'gentle'
+  )
+  if (animated) {
+    useForceRedraw(20, contentHeight)
+  }
+
   const handleToggle = () => {
     const newState = !isOpen
     setInternalOpen(newState)
+    if (animated) {
+      setContentHeight(newState ? maxHeight : 0)
+    }
     props.onToggle?.(newState)
 
     // Apply effect: props override theme, theme overrides default
@@ -98,8 +119,7 @@ export function Accordion(props: AccordionProps) {
       {/* Content */}
       <View
         direction="column"
-        maxHeight={isOpen ? undefined : 0}
-        visible={isOpen}
+        height={animated ? contentHeight.value : isOpen ? undefined : 0}
         overflow="hidden"
         {...contentTheme}
       >

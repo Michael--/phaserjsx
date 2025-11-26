@@ -70,6 +70,13 @@ function DevelopPage1() {
           </Accordion>
         </Accordion>
 
+        {/* Animated Accordion */}
+        <Accordion title="Animated Accordion" animated={true} maxHeight={150}>
+          <Text text="This accordion animates its height smoothly." />
+          <Text text="You can adjust maxHeight for different content sizes." />
+          <Text text="Animation is optional and can be enabled per accordion." />
+        </Accordion>
+
         {/* Multiple accordions */}
         <View direction="column" gap={5}>
           <Text text="Multiple Accordion Items:" style={tokens?.textStyles.caption} />
