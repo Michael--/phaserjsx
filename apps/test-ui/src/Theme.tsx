@@ -77,6 +77,7 @@ export function createAppTheme(
         headerStyle: {
           backgroundColor: colors.surface.dark.toNumber(),
           padding: 10,
+          gap: 10,
           cornerRadius: 5,
           width: 'fill',
         },

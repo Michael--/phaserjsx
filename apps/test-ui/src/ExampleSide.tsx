@@ -1,6 +1,7 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, View, type VNode } from '@phaserjsx/ui'
 import { RadioButton } from './components'
+import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
@@ -42,6 +43,7 @@ const groupedExamples = {
     image: { label: 'Image Component', component: ImageExample },
     sprite: { label: 'Sprite Component', component: SpriteExample },
     nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+    accordion: { label: 'Accordion Component', component: AccordionExample },
   },
   layout: {
     stack: { label: 'Stack', component: StackExample },
