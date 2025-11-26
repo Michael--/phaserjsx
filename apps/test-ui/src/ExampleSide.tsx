@@ -67,13 +67,13 @@ type ExampleConfig = { label: string; component: () => VNode }
 
 type GroupedExamples = Record<
   string,
-  { label: string; icon?: IconType; examples: Partial<Record<ExampleKey, ExampleConfig>> }
+  { label: string; iconType?: IconType; examples: Partial<Record<ExampleKey, ExampleConfig>> }
 >
 
 const groupedExamples: GroupedExamples = {
   components: {
     label: 'Components',
-    icon: 'gear',
+    iconType: 'gear',
     examples: {
       button: { label: 'Button Variants', component: ButtonExample },
       graphics: { label: 'Graphics Component', component: GraphicsExample },
@@ -85,7 +85,7 @@ const groupedExamples: GroupedExamples = {
   },
   layout: {
     label: 'Layout',
-    icon: 'grid',
+    iconType: 'grid',
     examples: {
       stack: { label: 'Stack', component: StackExample },
       flex: { label: 'Flex vs Spacer', component: FlexExample },
@@ -97,7 +97,7 @@ const groupedExamples: GroupedExamples = {
   },
   interactions: {
     label: 'Interactions',
-    icon: 'hand-index',
+    iconType: 'hand-index',
     examples: {
       gesture: { label: 'Gesture System', component: GestureExample },
       scroll: { label: 'Scroll Example', component: ScrollExample },
@@ -106,7 +106,7 @@ const groupedExamples: GroupedExamples = {
   },
   themes: {
     label: 'Themes & Styling',
-    icon: 'palette',
+    iconType: 'palette',
     examples: {
       theme: { label: 'Theme System', component: ThemeExample },
       themePreview: { label: 'Theme Preview', component: ThemePreviewExample },
@@ -117,7 +117,7 @@ const groupedExamples: GroupedExamples = {
   },
   effects: {
     label: 'Effects & Animations',
-    icon: 'stars',
+    iconType: 'stars',
     examples: {
       springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
       effects: { label: 'Object Effects', component: GameObjectEffectsExample },
@@ -126,7 +126,7 @@ const groupedExamples: GroupedExamples = {
   },
   miscellaneous: {
     label: 'Miscellaneous',
-    icon: 'question-circle',
+    iconType: 'question-circle',
     examples: {
       test: { label: 'Test', component: TestExample },
     },
@@ -155,7 +155,7 @@ export function ExampleSide(props: {
           <Accordion
             key={groupKey}
             title={group.label}
-            {...(group.icon && { icon: group.icon })}
+            {...(group.iconType && { icon: group.iconType })}
             defaultOpen={isOpen}
           >
             {...Object.entries(group.examples).map(([value, config]) => (

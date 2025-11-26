@@ -66,6 +66,12 @@ function extractIconNames(content: string, componentName: string): Set<string> {
     iconNames.add(match[2])
   }
 
+  // Match: icon: 'icon-name' or iconType: 'icon-name' in object literals
+  const iconPropPattern = /(?:icon|iconType):\s*["']([^"']+)["']/g
+  while ((match = iconPropPattern.exec(content)) !== null) {
+    iconNames.add(match[1])
+  }
+
   return iconNames
 }
 
