@@ -17,12 +17,26 @@
  */
 import {
   createBounceEffect,
+  createBreatheEffect,
   createFadeEffect,
   createFlashEffect,
+  createFlipInEffect,
+  createFlipOutEffect,
+  createFloatEffect,
   createJelloEffect,
+  createNoneEffect,
   createPressEffect,
   createPulseEffect,
   createShakeEffect,
+  createSlideInEffect,
+  createSlideOutEffect,
+  createSpinEffect,
+  createSwingEffect,
+  createTadaEffect,
+  createWiggleEffect,
+  createWobbleEffect,
+  createZoomInEffect,
+  createZoomOutEffect,
   type EffectConfig,
   type EffectFn,
 } from './useGameObjectEffect'
@@ -31,6 +45,7 @@ import {
  * Available effect names
  */
 export type EffectName =
+  | 'none'
   | 'pulse'
   | 'shake'
   | 'bounce'
@@ -38,6 +53,19 @@ export type EffectName =
   | 'flash'
   | 'jello'
   | 'fade'
+  | 'wobble'
+  | 'tada'
+  | 'swing'
+  | 'wiggle'
+  | 'slideIn'
+  | 'slideOut'
+  | 'zoomIn'
+  | 'zoomOut'
+  | 'flipIn'
+  | 'flipOut'
+  | 'float'
+  | 'breathe'
+  | 'spin'
   | 'none'
 
 /**
@@ -52,6 +80,7 @@ export interface EffectDefinition {
  * Map of effect names to effect functions
  */
 export const EFFECT_REGISTRY: Record<EffectName, EffectFn | null> = {
+  none: createNoneEffect,
   pulse: createPulseEffect,
   shake: createShakeEffect,
   bounce: createBounceEffect,
@@ -59,7 +88,19 @@ export const EFFECT_REGISTRY: Record<EffectName, EffectFn | null> = {
   flash: createFlashEffect,
   jello: createJelloEffect,
   fade: createFadeEffect,
-  none: null,
+  wobble: createWobbleEffect,
+  tada: createTadaEffect,
+  swing: createSwingEffect,
+  wiggle: createWiggleEffect,
+  slideIn: createSlideInEffect,
+  slideOut: createSlideOutEffect,
+  zoomIn: createZoomInEffect,
+  zoomOut: createZoomOutEffect,
+  flipIn: createFlipInEffect,
+  flipOut: createFlipOutEffect,
+  float: createFloatEffect,
+  breathe: createBreatheEffect,
+  spin: createSpinEffect,
 }
 
 /**

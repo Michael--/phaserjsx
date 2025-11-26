@@ -179,6 +179,13 @@ function applyScaleWithOrigin(
 export type EffectFn = (obj: Phaser.GameObjects.Container, config: EffectConfig) => void
 
 /**
+ * This is a no-op effect function
+ */
+export const createNoneEffect: EffectFn = () => {
+  // nothing to do
+}
+
+/**
  * Create a shake effect
  * @param obj - Game object to shake
  * @param config - Effect config (magnitude, time)
