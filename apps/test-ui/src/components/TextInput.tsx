@@ -2,6 +2,7 @@ import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   DOMInputElement,
   getThemedProps,
+  Text,
   useEffect,
   useRef,
   View,
@@ -147,14 +148,8 @@ export function TextInput(props: TextInputProps) {
       styles: {
         fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
         fontSize: themed.textStyle?.fontSize ?? '16px',
-        color: themed.textStyle?.color ?? '#ffffff',
-        backgroundColor: props.disabled
-          ? `#${(themed.disabledColor ?? 0x1a1a1a).toString(16).padStart(6, '0')}`
-          : `#${(themed.backgroundColor ?? 0x2a2a2a).toString(16).padStart(6, '0')}`,
-        borderColor: `#${(themed.borderColor ?? 0x666666).toString(16).padStart(6, '0')}`,
-        borderWidth: `${themed.borderWidth ?? 2}px`,
-        borderRadius: `${typeof themed.cornerRadius === 'number' ? themed.cornerRadius : 4}px`,
-        padding: '8px 12px',
+        paddingLeft: '12px',
+        paddingRight: '12px',
       } as Partial<CSSStyleDeclaration>,
     }
 
@@ -187,6 +182,9 @@ export function TextInput(props: TextInputProps) {
     }
   }, [props.value])
 
+  // get the text to display, text when existing (length > 0), otherwise placeholder
+  const text = props.value && props.value.length > 0 ? props.value : props.placeholder
+
   return (
     <View
       ref={containerRef}
@@ -200,6 +198,18 @@ export function TextInput(props: TextInputProps) {
       borderColor={themed.borderColor ?? 0x666666}
       borderWidth={themed.borderWidth ?? 2}
       cornerRadius={typeof themed.cornerRadius === 'number' ? themed.cornerRadius : 4}
-    />
+      justifyContent={'center'}
+      alignItems={'start'}
+      padding={{ left: 12, right: 12 }}
+    >
+      <Text
+        text={text ?? ''}
+        style={{
+          fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
+          fontSize: themed.textStyle?.fontSize ?? '16px',
+          color: themed.textStyle?.color ?? '#ffffff',
+        }}
+      />
+    </View>
   )
 }

@@ -49,7 +49,7 @@ function DevelopPage1() {
             width={300}
             height={40}
           />
-          {submittedValue && <Text text={`Submitted: ${submittedValue}`} />}
+          {<Text text={`Submitted: ${submittedValue ?? ''}`} />}
         </View>
 
         <View direction="column" gap={10}>

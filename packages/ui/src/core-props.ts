@@ -542,7 +542,7 @@ export interface BackgroundProps {
  * Text-specific styling properties
  */
 export interface TextSpecificProps {
-  text: string
+  text: string | undefined
   fontStyle?: string
   align?: 'left' | 'center' | 'right'
   /**

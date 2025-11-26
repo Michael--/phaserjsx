@@ -118,23 +118,15 @@ export class DOMInputElement {
       boxSizing: 'border-box',
       fontFamily: 'Arial, sans-serif',
       fontSize: '16px',
-      padding: '8px 12px',
-      border: '2px solid #666',
-      borderRadius: '4px',
-      backgroundColor: '#2a2a2a',
-      color: '#ffffff',
+      padding: '0px',
+      margin: '0px',
+      border: 'none',
+      borderRadius: '0px',
+      backgroundColor: 'transparent',
+      color: 'transparent',
       outline: 'none',
-      transition: 'border-color 0.2s',
+      caretColor: '#ffffff',
     } as Partial<CSSStyleDeclaration>)
-
-    // Focus styles
-    this.input.addEventListener('focus', () => {
-      this.input.style.borderColor = '#4a9eff'
-    })
-
-    this.input.addEventListener('blur', () => {
-      this.input.style.borderColor = '#666'
-    })
   }
 
   /**
@@ -158,6 +150,7 @@ export class DOMInputElement {
     const scale = this.scene.game.scale
     const zoom = this.scene.cameras.main.zoom
 
+    // Calculate position and size with proper scaling
     const left = canvasRect.left + worldX * zoom * scale.displayScale.x
     const top = canvasRect.top + worldY * zoom * scale.displayScale.y
     const width = bounds.width * zoom * scale.displayScale.x
@@ -168,6 +161,7 @@ export class DOMInputElement {
     this.input.style.top = `${top}px`
     this.input.style.width = `${width}px`
     this.input.style.height = `${height}px`
+    this.input.style.lineHeight = `${height}px`
   }
 
   /**
