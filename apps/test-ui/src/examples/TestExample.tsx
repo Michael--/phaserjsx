@@ -101,9 +101,11 @@ function DevelopPage1() {
           animated={true}
           animationConfig={{ tension: 200, friction: 10 }}
           maxHeight={100}
+          onAnimationEnd={() => console.log('Animation ended')}
         >
           <Text text="This accordion uses a custom spring configuration." />
-          <Text text="You can fine-tune stiffness and damping." />
+          <Text text="You can fine-tune tension and friction." />
+          <Text text="Check console for onAnimationEnd callback." />
         </Accordion>
 
         {/* Multiple accordions */}

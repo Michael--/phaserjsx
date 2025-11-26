@@ -58,6 +58,8 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
   autoHeight?: boolean
   /** Spring animation config (preset name or custom config, default: 'gentle') */
   animationConfig?: AnimationConfig
+  /** Callback when accordion animation ends */
+  onAnimationEnd?: () => void
 }
 
 /**
@@ -110,7 +112,8 @@ export function Accordion(props: AccordionProps) {
           ? measuredHeight
           : maxHeight
         : 0,
-    animationConfig
+    animationConfig,
+    props.onAnimationEnd
   )
   if (animated) {
     useForceRedraw(20, contentHeight)

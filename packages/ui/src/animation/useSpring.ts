@@ -38,7 +38,8 @@ import {
  */
 export function useSpring(
   initialValue: number,
-  config?: SpringConfig | keyof typeof SPRING_PRESETS
+  config?: SpringConfig | keyof typeof SPRING_PRESETS,
+  onComplete?: () => void
 ): [AnimatedSignal, (target: number | ((prev: number) => number)) => void] {
   // Resolve config
   const resolvedConfig =
@@ -56,6 +57,7 @@ export function useSpring(
   const physics = useRef(new SpringPhysics(resolvedConfig))
   const updateListenerRef = useRef<((time: number, delta: number) => void) | null>(null)
   const sceneRef = useRef<Phaser.Scene | null>(null)
+  const wasAtRest = useRef<boolean>(true) // Track if previously at rest
 
   // Setter function - stable reference across renders
   const setValue = (newTarget: number | ((prev: number) => number)) => {
@@ -81,8 +83,17 @@ export function useSpring(
       const currentTarget = target.current.value
       const currentState = state.current
 
+      // Check if at rest
+      const atRest = physics.current.isAtRest(currentState, currentTarget)
+
+      // Call onComplete if just reached rest
+      if (atRest && !wasAtRest.current && onComplete) {
+        onComplete()
+      }
+      wasAtRest.current = atRest
+
       // Skip if already at rest
-      if (physics.current.isAtRest(currentState, currentTarget)) {
+      if (atRest) {
         // Snap to target
         const snapped = physics.current.snapIfAtRest(currentState, currentTarget)
         if (snapped.value !== currentState.value && valueSignal.current) {
