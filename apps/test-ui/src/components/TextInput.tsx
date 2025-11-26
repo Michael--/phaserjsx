@@ -83,6 +83,11 @@ export function TextInput(props: TextInputProps) {
   const width = props.width ?? 200
   const height = props.height ?? 40
 
+  // Layout constants
+  const horizontalPadding = 12
+  const cursorWidth = 2
+  const textBuffer = 10 // Buffer to prevent text from touching edges
+
   // Use controlled value if provided, otherwise use internal state
   const currentValue = props.value !== undefined ? props.value : internalValue
 
@@ -131,8 +136,9 @@ export function TextInput(props: TextInputProps) {
           const textWidth = tempText.width
           tempText.destroy()
 
-          // Max width = container width - left padding - right padding - cursor width - small buffer
-          const maxTextWidth = width - 12 - 12 - 2 - 10
+          // Max width = container width - left padding - right padding - cursor width - buffer
+          const maxTextWidth =
+            width - horizontalPadding - horizontalPadding - cursorWidth - textBuffer
 
           if (textWidth > maxTextWidth) {
             // Text is too wide, silently reject input - don't call onChange
@@ -212,8 +218,8 @@ export function TextInput(props: TextInputProps) {
       styles: {
         fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
         fontSize: themed.textStyle?.fontSize ?? '16px',
-        paddingLeft: '12px',
-        paddingRight: '12px',
+        paddingLeft: `${horizontalPadding}px`,
+        paddingRight: `${horizontalPadding}px`,
       } as Partial<CSSStyleDeclaration>,
     }
 
@@ -263,9 +269,9 @@ export function TextInput(props: TextInputProps) {
     const paddingVertical =
       (0.8 * (height - (themed.textStyle?.fontSize ? parseInt(themed.textStyle.fontSize) : 16))) / 2
     const cursor = scene.add.rectangle(
-      12, // Initial x (padding)
+      horizontalPadding, // Initial x
       paddingVertical,
-      2,
+      cursorWidth,
       height - paddingVertical * 2, // Cursor height (slightly smaller than container)
       0xffffff
     )
@@ -277,7 +283,7 @@ export function TextInput(props: TextInputProps) {
 
     // Create selection highlight rectangle (behind text)
     const selection = scene.add.rectangle(
-      12,
+      horizontalPadding,
       paddingVertical,
       0, // Width will be calculated dynamically
       height - paddingVertical * 2,
@@ -329,11 +335,11 @@ export function TextInput(props: TextInputProps) {
       const textWidth = tempText.width
       tempText.destroy()
 
-      // Position cursor (12px is left padding)
-      cursor.x = 12 + textWidth
+      // Position cursor
+      cursor.x = horizontalPadding + textWidth
 
-      // Check if cursor would exceed container width (accounting for padding)
-      const maxCursorX = width - 12 - 2 // width - right padding - cursor width
+      // Check if cursor would exceed container width
+      const maxCursorX = width - horizontalPadding - cursorWidth
       if (cursor.x > maxCursorX) {
         cursor.x = maxCursorX
       }
@@ -369,7 +375,7 @@ export function TextInput(props: TextInputProps) {
         const selectionWidth = tempTextSelected.width
         tempTextSelected.destroy()
 
-        selection.x = 12 + widthBefore
+        selection.x = horizontalPadding + widthBefore
         selection.width = selectionWidth
         selection.setVisible(true)
         cursor.setVisible(false) // Hide cursor when selecting
@@ -463,7 +469,7 @@ export function TextInput(props: TextInputProps) {
       cornerRadius={typeof themed.cornerRadius === 'number' ? themed.cornerRadius : 4}
       justifyContent={'center'}
       alignItems={'start'}
-      padding={{ left: 12, right: 12 }}
+      padding={{ left: horizontalPadding, right: horizontalPadding }}
     >
       <Text
         ref={textRef}
