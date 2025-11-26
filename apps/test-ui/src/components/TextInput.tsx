@@ -78,12 +78,16 @@ export function TextInput(props: TextInputProps) {
   const textRef = useRef<Phaser.GameObjects.Text | null>(null)
   const cursorTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
   const [internalValue, setInternalValue] = useState('')
+  const valueRef = useRef('')
 
   const width = props.width ?? 200
   const height = props.height ?? 40
 
   // Use controlled value if provided, otherwise use internal state
   const currentValue = props.value !== undefined ? props.value : internalValue
+
+  // Keep valueRef in sync with currentValue
+  valueRef.current = currentValue
 
   // Setup DOM input element
   useEffect(() => {
@@ -96,6 +100,20 @@ export function TextInput(props: TextInputProps) {
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       onInput: (value, event) => {
+        // Get current value from ref (not from closure)
+        const previousValue = valueRef.current
+
+        // Check maxLength first (character limit)
+        if (props.maxLength && value.length > props.maxLength) {
+          // Silently reject input beyond maxLength - don't call onChange
+          event.preventDefault()
+          const input = inputRef.current?.getElement()
+          if (input) {
+            input.value = previousValue
+          }
+          return // Exit early, don't update state or call onChange
+        }
+
         // Check if text would exceed visual width
         const scene = containerRef.current?.scene
         if (scene && textRef.current) {
@@ -117,32 +135,22 @@ export function TextInput(props: TextInputProps) {
           const maxTextWidth = width - 12 - 12 - 2 - 10
 
           if (textWidth > maxTextWidth) {
-            // Text is too wide, prevent input
+            // Text is too wide, silently reject input - don't call onChange
             event.preventDefault()
             const input = inputRef.current?.getElement()
             if (input) {
-              input.value = currentValue // Revert to previous value
+              input.value = previousValue
             }
-            return
+            return // Exit early, don't update state or call onChange
           }
         }
 
-        // Check maxLength if specified (character limit)
-        if (props.maxLength && value.length > props.maxLength) {
-          // Prevent input beyond maxLength
-          event.preventDefault()
-          const input = inputRef.current?.getElement()
-          if (input) {
-            input.value = value.substring(0, props.maxLength)
-          }
-          return
-        }
-
-        // Update internal state if uncontrolled
+        // Accept the input - update internal state if uncontrolled
         if (props.value === undefined) {
           setInternalValue(value)
         }
 
+        // Only call onChange if we accepted the input
         if (props.onChange) {
           const inputEventData: InputEventData = {
             value,
@@ -238,6 +246,13 @@ export function TextInput(props: TextInputProps) {
     }
   }, [props.value])
 
+  // Ensure text renders above selection highlight
+  useEffect(() => {
+    if (textRef.current) {
+      textRef.current.setDepth(0) // Above selection (-1)
+    }
+  }, [textRef.current])
+
   // Setup cursor and sync cursor position
   useEffect(() => {
     if (!containerRef.current || !containerRef.current.scene) return
@@ -271,8 +286,8 @@ export function TextInput(props: TextInputProps) {
     )
     selection.setOrigin(0, 0)
     selection.setVisible(false)
+    selection.setDepth(-1) // Behind text
     containerRef.current.add(selection)
-    containerRef.current.sendToBack(selection) // Behind text
     selectionRef.current = selection
 
     // Blinking animation
@@ -295,6 +310,8 @@ export function TextInput(props: TextInputProps) {
       const cursorIndex = input.selectionStart ?? 0
       const selectionEnd = input.selectionEnd ?? 0
       const hasSelection = cursorIndex !== selectionEnd
+
+      // console.log('selection', { cursorIndex, selectionEnd })
 
       // Get displayed text (masked for password) up to cursor position
       let displayedTextBeforeCursor: string
