@@ -170,6 +170,7 @@ export function Accordion(props: AccordionProps) {
         direction="column"
         height={animated ? contentHeight.value : isOpen ? undefined : 0}
         overflow="hidden"
+        visible={animated ? contentHeight.value > 0.5 : isOpen}
         {...contentTheme}
       >
         {props.children}

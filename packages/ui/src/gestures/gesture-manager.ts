@@ -599,6 +599,7 @@ export class GestureManager {
 
   /**
    * Check if pointer is within a container's hit area
+   * Also checks parent visibility chain to handle collapsed accordions
    */
   private isPointerInContainer(
     pointer: Phaser.Input.Pointer,
@@ -606,6 +607,14 @@ export class GestureManager {
   ): boolean {
     const container = state.container
     if (!container.visible || container.alpha === 0) return false
+
+    // Check parent container visibility chain
+    // This prevents interaction with children in collapsed accordions
+    let parent = container.parentContainer
+    while (parent) {
+      if (!parent.visible || parent.alpha === 0) return false
+      parent = parent.parentContainer
+    }
 
     const localPos = this.getLocalPosition(pointer, container)
     return state.hitArea.contains(localPos.x, localPos.y)
