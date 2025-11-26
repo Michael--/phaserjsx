@@ -5,6 +5,7 @@ import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 function DevelopPage1() {
   const [inputValue, setInputValue] = useState('')
   const [password, setPassword] = useState('')
+  const [submitInputValue, setSubmitInputValue] = useState('')
   const [submittedValue, setSubmittedValue] = useState('')
 
   return (
@@ -15,15 +16,16 @@ function DevelopPage1() {
       </View>
       <ViewLevel3 gap={20} direction="column" padding={10}>
         <View direction="column" gap={10}>
-          <Text text="Basic TextInput:" />
+          <Text text="Basic TextInput (max 20 chars):" />
           <TextInput
             placeholder="Type something..."
             value={inputValue}
             onChange={(event) => setInputValue(event.value)}
             width={300}
             height={40}
+            maxLength={20}
           />
-          <Text text={`Value: ${inputValue}`} />
+          <Text text={`Value: ${inputValue} (${inputValue.length}/20)`} />
         </View>
 
         <View direction="column" gap={10}>
@@ -43,13 +45,16 @@ function DevelopPage1() {
           <Text text="Input with Submit (press Enter):" />
           <TextInput
             placeholder="Press Enter to submit"
+            value={submitInputValue}
+            onChange={(event) => setSubmitInputValue(event.value)}
             onSubmit={(value) => {
               setSubmittedValue(value)
+              setSubmitInputValue('') // Clear input after submit
             }}
             width={300}
             height={40}
           />
-          {<Text text={`Submitted: ${submittedValue ?? ''}`} />}
+          {submittedValue ? <Text text={`Submitted: ${submittedValue}`} /> : null}
         </View>
 
         <View direction="column" gap={10}>

@@ -5,6 +5,7 @@ import {
   Text,
   useEffect,
   useRef,
+  useState,
   View,
   type DOMInputConfig,
   type InputEventData,
@@ -73,11 +74,16 @@ export function TextInput(props: TextInputProps) {
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputRef = useRef<DOMInputElement | null>(null)
   const cursorRef = useRef<Phaser.GameObjects.Rectangle | null>(null)
+  const selectionRef = useRef<Phaser.GameObjects.Rectangle | null>(null)
   const textRef = useRef<Phaser.GameObjects.Text | null>(null)
   const cursorTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
+  const [internalValue, setInternalValue] = useState('')
 
   const width = props.width ?? 200
   const height = props.height ?? 40
+
+  // Use controlled value if provided, otherwise use internal state
+  const currentValue = props.value !== undefined ? props.value : internalValue
 
   // Setup DOM input element
   useEffect(() => {
@@ -90,6 +96,53 @@ export function TextInput(props: TextInputProps) {
       ...(props.disabled !== undefined && { disabled: props.disabled }),
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       onInput: (value, event) => {
+        // Check if text would exceed visual width
+        const scene = containerRef.current?.scene
+        if (scene && textRef.current) {
+          // Calculate display text (masked for password)
+          let displayText = value
+          if (props.type === 'password') {
+            displayText = '\u2022'.repeat(value.length)
+          }
+
+          // Check visual width
+          const tempText = scene.add.text(0, 0, displayText, {
+            fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
+            fontSize: themed.textStyle?.fontSize ?? '16px',
+          })
+          const textWidth = tempText.width
+          tempText.destroy()
+
+          // Max width = container width - left padding - right padding - cursor width - small buffer
+          const maxTextWidth = width - 12 - 12 - 2 - 10
+
+          if (textWidth > maxTextWidth) {
+            // Text is too wide, prevent input
+            event.preventDefault()
+            const input = inputRef.current?.getElement()
+            if (input) {
+              input.value = currentValue // Revert to previous value
+            }
+            return
+          }
+        }
+
+        // Check maxLength if specified (character limit)
+        if (props.maxLength && value.length > props.maxLength) {
+          // Prevent input beyond maxLength
+          event.preventDefault()
+          const input = inputRef.current?.getElement()
+          if (input) {
+            input.value = value.substring(0, props.maxLength)
+          }
+          return
+        }
+
+        // Update internal state if uncontrolled
+        if (props.value === undefined) {
+          setInternalValue(value)
+        }
+
         if (props.onChange) {
           const inputEventData: InputEventData = {
             value,
@@ -191,7 +244,7 @@ export function TextInput(props: TextInputProps) {
 
     const scene = containerRef.current.scene
 
-    // Create blinking cursor
+    // Create blinking cursor (hidden initially until focus)
     const paddingVertical =
       (0.8 * (height - (themed.textStyle?.fontSize ? parseInt(themed.textStyle.fontSize) : 16))) / 2
     const cursor = scene.add.rectangle(
@@ -203,8 +256,24 @@ export function TextInput(props: TextInputProps) {
     )
     cursor.setOrigin(0, 0)
     cursor.setAlpha(1)
+    cursor.setVisible(false) // Hidden initially
     containerRef.current.add(cursor)
     cursorRef.current = cursor
+
+    // Create selection highlight rectangle (behind text)
+    const selection = scene.add.rectangle(
+      12,
+      paddingVertical,
+      0, // Width will be calculated dynamically
+      height - paddingVertical * 2,
+      0x4a9eff,
+      0.3 // Semi-transparent
+    )
+    selection.setOrigin(0, 0)
+    selection.setVisible(false)
+    containerRef.current.add(selection)
+    containerRef.current.sendToBack(selection) // Behind text
+    selectionRef.current = selection
 
     // Blinking animation
     const tween = scene.tweens.add({
@@ -216,17 +285,27 @@ export function TextInput(props: TextInputProps) {
     })
     cursorTweenRef.current = tween
 
-    // Sync cursor position on input/selection change
+    // Sync cursor and selection position on input/selection change
     const updateCursorPosition = () => {
       const input = inputRef.current?.getElement()
       const text = textRef.current
-      if (!input || !text || !cursor) return
+      const selection = selectionRef.current
+      if (!input || !text || !cursor || !selection) return
 
       const cursorIndex = input.selectionStart ?? 0
-      const textBeforeCursor = (props.value ?? '').substring(0, cursorIndex)
+      const selectionEnd = input.selectionEnd ?? 0
+      const hasSelection = cursorIndex !== selectionEnd
 
-      // Calculate text width up to cursor position
-      const tempText = scene.add.text(0, 0, textBeforeCursor, {
+      // Get displayed text (masked for password) up to cursor position
+      let displayedTextBeforeCursor: string
+      if (props.type === 'password') {
+        displayedTextBeforeCursor = '•'.repeat(cursorIndex)
+      } else {
+        displayedTextBeforeCursor = currentValue.substring(0, cursorIndex)
+      }
+
+      // Calculate text width up to cursor position using DISPLAYED text
+      const tempText = scene.add.text(0, 0, displayedTextBeforeCursor, {
         fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
         fontSize: themed.textStyle?.fontSize ?? '16px',
       })
@@ -236,10 +315,58 @@ export function TextInput(props: TextInputProps) {
       // Position cursor (12px is left padding)
       cursor.x = 12 + textWidth
 
-      // Reset blink animation
-      cursor.setAlpha(1)
-      if (tween.isPlaying() || tween.isPaused()) {
-        tween.restart()
+      // Check if cursor would exceed container width (accounting for padding)
+      const maxCursorX = width - 12 - 2 // width - right padding - cursor width
+      if (cursor.x > maxCursorX) {
+        cursor.x = maxCursorX
+      }
+
+      // Handle selection highlight
+      if (hasSelection) {
+        const selectionStart = Math.min(cursorIndex, selectionEnd)
+        const selectionEndPos = Math.max(cursorIndex, selectionEnd)
+
+        // Calculate selection dimensions
+        let displayedTextBeforeSelection: string
+        let displayedSelectedText: string
+
+        if (props.type === 'password') {
+          displayedTextBeforeSelection = '\u2022'.repeat(selectionStart)
+          displayedSelectedText = '\u2022'.repeat(selectionEndPos - selectionStart)
+        } else {
+          displayedTextBeforeSelection = currentValue.substring(0, selectionStart)
+          displayedSelectedText = currentValue.substring(selectionStart, selectionEndPos)
+        }
+
+        const tempTextBefore = scene.add.text(0, 0, displayedTextBeforeSelection, {
+          fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
+          fontSize: themed.textStyle?.fontSize ?? '16px',
+        })
+        const widthBefore = tempTextBefore.width
+        tempTextBefore.destroy()
+
+        const tempTextSelected = scene.add.text(0, 0, displayedSelectedText, {
+          fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
+          fontSize: themed.textStyle?.fontSize ?? '16px',
+        })
+        const selectionWidth = tempTextSelected.width
+        tempTextSelected.destroy()
+
+        selection.x = 12 + widthBefore
+        selection.width = selectionWidth
+        selection.setVisible(true)
+        cursor.setVisible(false) // Hide cursor when selecting
+      } else {
+        selection.setVisible(false)
+        cursor.setVisible(input === document.activeElement) // Show cursor only if focused
+      }
+
+      // Reset blink animation (only if cursor is visible)
+      if (!hasSelection) {
+        cursor.setAlpha(1)
+        if (tween.isPlaying() || tween.isPaused()) {
+          tween.restart()
+        }
       }
     }
 
@@ -250,6 +377,8 @@ export function TextInput(props: TextInputProps) {
       input.addEventListener('keydown', updateCursorPosition)
       input.addEventListener('keyup', updateCursorPosition)
       input.addEventListener('click', updateCursorPosition)
+      input.addEventListener('mouseup', updateCursorPosition)
+      input.addEventListener('select', updateCursorPosition)
       input.addEventListener('focus', () => {
         cursor.setVisible(true)
         if (tween.isPlaying() || tween.isPaused()) {
@@ -258,33 +387,49 @@ export function TextInput(props: TextInputProps) {
       })
       input.addEventListener('blur', () => {
         cursor.setVisible(false)
+        selection.setVisible(false)
         if (tween.isPlaying()) {
           tween.pause()
         }
       })
     }
 
-    // Initial position
-    updateCursorPosition()
+    // Don't update position initially - cursor is hidden until focus
+    // updateCursorPosition() is called on focus event
 
     return () => {
       tween.stop()
       cursor.destroy()
+      selection.destroy()
       cursorRef.current = null
+      selectionRef.current = null
       cursorTweenRef.current = null
     }
   }, [
     containerRef.current,
     textRef.current,
     inputRef.current,
-    props.value,
+    currentValue,
+    props.type,
+    props.maxLength,
+    width,
     height,
     themed.textStyle?.fontFamily,
     themed.textStyle?.fontSize,
   ])
 
-  // get the text to display, text when existing (length > 0), otherwise placeholder
-  const text = props.value && props.value.length > 0 ? props.value : props.placeholder
+  // Get the text to display
+  let displayText: string
+  if (currentValue.length > 0) {
+    // Mask password with bullets
+    if (props.type === 'password') {
+      displayText = '•'.repeat(currentValue.length)
+    } else {
+      displayText = currentValue
+    }
+  } else {
+    displayText = props.placeholder ?? ''
+  }
 
   return (
     <View
@@ -305,7 +450,7 @@ export function TextInput(props: TextInputProps) {
     >
       <Text
         ref={textRef}
-        text={text ?? ''}
+        text={displayText}
         style={{
           fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
           fontSize: themed.textStyle?.fontSize ?? '16px',

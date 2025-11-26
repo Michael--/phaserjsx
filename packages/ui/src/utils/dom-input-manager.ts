@@ -127,6 +127,22 @@ export class DOMInputElement {
       outline: 'none',
       caretColor: 'transparent',
     } as Partial<CSSStyleDeclaration>)
+
+    // Inject CSS to disable selection highlighting
+    const styleId = 'phaserjsx-input-no-selection'
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style')
+      style.id = styleId
+      style.textContent = `
+        input[type="text"]::selection,
+        input[type="password"]::selection,
+        input[type="email"]::selection {
+          background: transparent !important;
+          color: transparent !important;
+        }
+      `
+      document.head.appendChild(style)
+    }
   }
 
   /**
