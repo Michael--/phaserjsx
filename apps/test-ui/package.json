@@ -13,8 +13,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "generate-icons": "tsx ../../packages/ui/scripts/generate-icon-types.ts -p bootstrap-icons -o ./src/components/icon-types.generated.ts",
-    "generate-icon-loaders": "tsx ../../packages/ui/scripts/generate-icon-loaders.ts -s ./src -o ./src/components/icon-loaders.generated.ts -p bootstrap-icons"
+    "generate-icons": "tsx ../../packages/ui/src/scripts/generate-icon-types.ts -p bootstrap-icons -o ./src/components/icon-types.generated.ts",
+    "generate-icon-loaders": "tsx ../../packages/ui/src/scripts/generate-icon-loaders.ts -s ./src -o ./src/components/icon-loaders.generated.ts -p bootstrap-icons"
   },
   "dependencies": {
     "@phaserjsx/ui": "workspace:*",

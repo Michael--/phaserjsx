@@ -63,13 +63,17 @@ function extractIconNames(content: string, componentName: string): Set<string> {
   // Match: themed.xxxIcon ?? 'icon-name' (only if property ends with 'Icon')
   const themedPattern = /themed\.(\w*[Ii]con)\s*\?\?\s*["']([^"']+)["']/g
   while ((match = themedPattern.exec(content)) !== null) {
-    iconNames.add(match[2])
+    if (match[2]) {
+      iconNames.add(match[2])
+    }
   }
 
   // Match: icon: 'icon-name' or iconType: 'icon-name' in object literals
   const iconPropPattern = /(?:icon|iconType):\s*["']([^"']+)["']/g
   while ((match = iconPropPattern.exec(content)) !== null) {
-    iconNames.add(match[1])
+    if (match[1]) {
+      iconNames.add(match[1])
+    }
   }
 
   return iconNames
@@ -176,10 +180,18 @@ Example:
 }
 
 // Run generator
-generateIconLoaders({
+const options: Options = {
   source: values.source as string,
   output: values.output as string,
   package: values.package as string,
-  iconsPath: values.iconsPath as string | undefined,
-  componentName: values.componentName as string | undefined,
-})
+}
+
+if (values.iconsPath) {
+  options.iconsPath = values.iconsPath
+}
+
+if (values.componentName) {
+  options.componentName = values.componentName
+}
+
+generateIconLoaders(options)

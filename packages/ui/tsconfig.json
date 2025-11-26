@@ -15,7 +15,10 @@
 
     // JSX configuration
     "jsx": "react-jsx",
-    "jsxImportSource": "."
+    "jsxImportSource": ".",
+
+    // Include Node types for scripts
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/samples/**/*", "node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]

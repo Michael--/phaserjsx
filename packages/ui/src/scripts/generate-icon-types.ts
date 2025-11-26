@@ -137,9 +137,17 @@ Example:
 }
 
 // Run generator
-generateIconTypes({
+const options: Options = {
   package: values.package as string,
   output: values.output as string,
-  typeName: values.typeName as string | undefined,
-  iconsPath: values.iconsPath as string | undefined,
-})
+}
+
+if (values.typeName) {
+  options.typeName = values.typeName
+}
+
+if (values.iconsPath) {
+  options.iconsPath = values.iconsPath
+}
+
+generateIconTypes(options)
