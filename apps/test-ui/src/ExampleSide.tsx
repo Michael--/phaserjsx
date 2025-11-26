@@ -64,50 +64,71 @@ export type ExampleKey =
 
 type ExampleConfig = { label: string; component: () => VNode }
 
-type GroupedExamples = Record<string, Partial<Record<ExampleKey, ExampleConfig>>>
+type GroupedExamples = Record<
+  string,
+  { label: string; examples: Partial<Record<ExampleKey, ExampleConfig>> }
+>
 
 const groupedExamples: GroupedExamples = {
   components: {
-    button: { label: 'Button Variants', component: ButtonExample },
-    graphics: { label: 'Graphics Component', component: GraphicsExample },
-    image: { label: 'Image Component', component: ImageExample },
-    sprite: { label: 'Sprite Component', component: SpriteExample },
-    nineslice: { label: 'NineSlice UI', component: NineSliceExample },
-    accordion: { label: 'Accordion Component', component: AccordionExample },
+    label: 'Components',
+    examples: {
+      button: { label: 'Button Variants', component: ButtonExample },
+      graphics: { label: 'Graphics Component', component: GraphicsExample },
+      image: { label: 'Image Component', component: ImageExample },
+      sprite: { label: 'Sprite Component', component: SpriteExample },
+      nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+      accordion: { label: 'Accordion Component', component: AccordionExample },
+    },
   },
   layout: {
-    stack: { label: 'Stack', component: StackExample },
-    flex: { label: 'Flex vs Spacer', component: FlexExample },
-    flexAdvanced: { label: 'Flex Shrink/Basis', component: FlexAdvancedExample },
-    flexGrid: { label: 'Flex Grid (Wrap)', component: FlexGridExample },
-    constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
-    advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
+    label: 'Layout',
+    examples: {
+      stack: { label: 'Stack', component: StackExample },
+      flex: { label: 'Flex vs Spacer', component: FlexExample },
+      flexAdvanced: { label: 'Flex Shrink/Basis', component: FlexAdvancedExample },
+      flexGrid: { label: 'Flex Grid (Wrap)', component: FlexGridExample },
+      constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
+      advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
+    },
   },
   interactions: {
-    gesture: { label: 'Gesture System', component: GestureExample },
-    scroll: { label: 'Scroll Example', component: ScrollExample },
-    ref: { label: 'Ref Example', component: RefExample },
+    label: 'Interactions',
+    examples: {
+      gesture: { label: 'Gesture System', component: GestureExample },
+      scroll: { label: 'Scroll Example', component: ScrollExample },
+      ref: { label: 'Ref Example', component: RefExample },
+    },
   },
   themes: {
-    theme: { label: 'Theme System', component: ThemeExample },
-    themePreview: { label: 'Theme Preview', component: ThemePreviewExample },
-    colorMode: { label: 'Color Mode', component: ColorModeExample },
-    designToken: { label: 'Design Tokens', component: DesignTokensExample },
-    border: { label: 'Border & Corners', component: BorderExample },
+    label: 'Themes & Styling',
+    examples: {
+      theme: { label: 'Theme System', component: ThemeExample },
+      themePreview: { label: 'Theme Preview', component: ThemePreviewExample },
+      colorMode: { label: 'Color Mode', component: ColorModeExample },
+      designToken: { label: 'Design Tokens', component: DesignTokensExample },
+      border: { label: 'Border & Corners', component: BorderExample },
+    },
   },
   effects: {
-    springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
-    effects: { label: 'Object Effects', component: GameObjectEffectsExample },
-    origin: { label: 'Origin View', component: OriginExample },
+    label: 'Effects & Animations',
+    examples: {
+      springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
+      effects: { label: 'Object Effects', component: GameObjectEffectsExample },
+      origin: { label: 'Origin View', component: OriginExample },
+    },
   },
   miscellaneous: {
-    test: { label: 'Test', component: TestExample },
+    label: 'Miscellaneous',
+    examples: {
+      test: { label: 'Test', component: TestExample },
+    },
   },
 } as const
 
 function getExample(key: ExampleKey): ExampleConfig {
   for (const group of Object.values(groupedExamples)) {
-    const config = group[key]
+    const config = group.examples[key]
     if (config !== undefined) {
       return config
     }
@@ -119,21 +140,12 @@ export function ExampleSide(props: {
   selectedExample: ExampleKey
   onChange: (value: ExampleKey) => void
 }) {
-  const groupLabels = {
-    components: 'Components',
-    layout: 'Layout',
-    interactions: 'Interactions',
-    themes: 'Themes & Styling',
-    effects: 'Effects & Animations',
-    miscellaneous: 'Miscellaneous',
-  } as const
-
   return (
     <>
-      {...Object.entries(groupedExamples).map(([groupKey, groupExamples]) => (
+      {...Object.entries(groupedExamples).map(([groupKey, group]) => (
         <ViewLevel2 key={groupKey} width={'100%'}>
-          <Text text={groupLabels[groupKey as keyof typeof groupLabels]} />
-          {...Object.entries(groupExamples).map(([value, config]) => (
+          <Text text={group.label} />
+          {...Object.entries(group.examples).map(([value, config]) => (
             <RadioButton
               label={config.label}
               selected={props.selectedExample === value}
