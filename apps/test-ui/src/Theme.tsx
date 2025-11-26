@@ -71,6 +71,26 @@ export function createAppTheme(
         },
       },
 
+      Accordion: {
+        headerStyle: {
+          backgroundColor: colors.surface.dark.toNumber(),
+          padding: 10,
+          cornerRadius: 5,
+          width: 'fill',
+        },
+        contentStyle: {
+          backgroundColor: colors.surface.light.toNumber(),
+          padding: 10,
+          cornerRadius: 5,
+          width: 'fill',
+        },
+        iconSize: 24,
+        textStyle: {
+          color: colors.text.DEFAULT.toString(),
+          fontSize: '18px',
+        },
+      },
+
       ScrollSlider: {
         borderColor: colors.border.dark.toNumber(),
         trackColor: colors.surface.dark.toNumber(),

@@ -1,13 +1,21 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, useState, View, type ChildrenType } from '@phaserjsx/ui'
+import {
+  getThemedProps,
+  Text,
+  useState,
+  useTheme,
+  View,
+  type ChildrenType,
+  type ViewProps,
+} from '@phaserjsx/ui'
 import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Accordion: {
-      headerTheme?: PhaserJSX.ViewTheme
-      contentTheme?: PhaserJSX.ViewTheme
+      headerStyle?: PhaserJSX.ViewTheme
+      contentStyle?: PhaserJSX.ViewTheme
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
       iconSize?: number
       iconColor?: number
@@ -18,7 +26,7 @@ declare module '@phaserjsx/ui' {
 /**
  * Props for Accordion component
  */
-export interface AccordionProps {
+export interface AccordionProps extends ViewProps {
   /** Title as string or custom JSX element */
   title?: string | ChildrenType
   /** Optional icon displayed in header */
@@ -29,11 +37,6 @@ export interface AccordionProps {
   isOpen?: boolean
   /** Callback when accordion is toggled */
   onToggle?: (isOpen: boolean) => void
-  /** AccordionPage children */
-  children?: ChildrenType
-  /** Additional styling props */
-  width?: number
-  height?: number
 }
 
 /**
@@ -42,7 +45,8 @@ export interface AccordionProps {
  * @returns Accordion JSX element
  */
 export function Accordion(props: AccordionProps) {
-  const { props: themed } = getThemedProps('Accordion', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed } = getThemedProps('Accordion', localTheme, {})
 
   const [internalOpen, setInternalOpen] = useState<boolean>(props.defaultOpen ?? false)
   const isOpen = props.isOpen !== undefined ? props.isOpen : internalOpen
@@ -53,8 +57,8 @@ export function Accordion(props: AccordionProps) {
     props.onToggle?.(newState)
   }
 
-  const headerTheme = themed.headerTheme ?? {}
-  const contentTheme = themed.contentTheme ?? {}
+  const headerTheme = themed.headerStyle ?? {}
+  const contentTheme = themed.contentStyle ?? {}
   const iconSize = themed.iconSize ?? 24
   const textStyle = themed.textStyle
 
@@ -64,7 +68,6 @@ export function Accordion(props: AccordionProps) {
       <View
         direction="row"
         alignItems="center"
-        gap={10}
         enableGestures={true}
         onTouch={handleToggle}
         {...headerTheme}

@@ -1,8 +1,10 @@
-import { Text, View } from '@phaserjsx/ui'
-import { Accordion, AccordionPage, Icon, ScrollView } from '../components'
+import { createTheme, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { Accordion, Icon, ScrollView } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage1() {
+  const tokens = useThemeTokens()
+
   return (
     <ViewLevel2 direction="column" padding={10} width={1500}>
       <View gap={10} direction="row" alignContent="center">
@@ -11,58 +13,68 @@ function DevelopPage1() {
       </View>
       <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
         {/* Simple Accordion with string title */}
-        <Accordion title="Simple Accordion" width={400}>
-          <AccordionPage padding={15}>
-            <Text text="This is a simple accordion with a string title." />
-            <Text text="It can contain any content you want." />
-          </AccordionPage>
+        <Accordion title="Simple Accordion">
+          <Text text="This is a simple accordion with a string title." />
+          <Text text="It can contain any content you want." />
         </Accordion>
 
         {/* Accordion with icon */}
-        <Accordion title="Accordion with Icon" icon="bell" width={400} defaultOpen={true}>
-          <AccordionPage padding={15}>
-            <Text text="This accordion has an icon and is open by default." />
-            <View direction="column" gap={10}>
-              <Text text="• Feature 1" />
-              <Text text="• Feature 2" />
-              <Text text="• Feature 3" />
-            </View>
-          </AccordionPage>
+        <Accordion title="Accordion with Icon" icon="bell" defaultOpen={true}>
+          <Text text="This accordion has an icon and is open by default." />
+          <View direction="column" gap={10}>
+            <Text text="• Feature 1" />
+            <Text text="• Feature 2" />
+            <Text text="• Feature 3" />
+          </View>
         </Accordion>
 
         {/* Accordion with custom title */}
         <Accordion
+          defaultOpen={true}
+          theme={createTheme({
+            Accordion: {
+              headerStyle: {
+                backgroundColor: tokens?.colors.info.light.toNumber(),
+                cornerRadius: { tl: 20, tr: 20, bl: 0, br: 0 },
+              },
+              contentStyle: { padding: 0 },
+            },
+          })}
           title={
-            <View direction="row" gap={10} alignItems="center">
-              <Icon type="check" size={20} />
-              <Text text="Custom Title with JSX" style={{ fontSize: 18 }} />
+            <View direction="row" gap={{ horizontal: 10 }} alignItems="center">
+              <Text text="Custom Title with JSX" style={tokens?.textStyles.heading} />
+              <Icon type="check" size={64} />
             </View>
           }
-          width={400}
         >
-          <AccordionPage padding={15}>
+          <View backgroundColor={tokens?.colors.info.light.toNumber()}>
             <Text text="This accordion uses a custom JSX element as title." />
             <Text text="You can compose any layout you need." />
-          </AccordionPage>
+          </View>
+        </Accordion>
+
+        {/* Nested Accordions */}
+        <Accordion title="Nested Accordions">
+          <Text text="This accordion contains nested accordions." />
+          <Accordion title="Sub Accordion 1">
+            <Text text="Content of sub accordion 1." />
+          </Accordion>
+          <Accordion title="Sub Accordion 2">
+            <Text text="Content of sub accordion 2." />
+          </Accordion>
         </Accordion>
 
         {/* Multiple accordions */}
-        <View direction="column" gap={5} width={400}>
-          <Text text="Multiple Accordion Items:" style={{ fontSize: 16 }} />
-          <Accordion title="Section 1" icon="boxes" width={400}>
-            <AccordionPage padding={15}>
-              <Text text="Content for section 1" />
-            </AccordionPage>
+        <View direction="column" gap={5}>
+          <Text text="Multiple Accordion Items:" style={tokens?.textStyles.caption} />
+          <Accordion title="Section 1" icon="boxes">
+            <Text text="Content for section 1" />
           </Accordion>
-          <Accordion title="Section 2" icon="boxes" width={400}>
-            <AccordionPage padding={15}>
-              <Text text="Content for section 2" />
-            </AccordionPage>
+          <Accordion title="Section 2" icon="boxes">
+            <Text text="Content for section 2" />
           </Accordion>
-          <Accordion title="Section 3" icon="boxes" width={400}>
-            <AccordionPage padding={15}>
-              <Text text="Content for section 3" />
-            </AccordionPage>
+          <Accordion title="Section 3" icon="boxes">
+            <Text text="Content for section 3" />
           </Accordion>
         </View>
       </ViewLevel3>
