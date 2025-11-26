@@ -11,19 +11,15 @@ export function ButtonExample() {
       <ViewLevel2>
         {/* Basic Buttons */}
         <ViewLevel3 alignItems="center" direction="row">
-          <Button text="Default Button" onClick={() => console.log('Default clicked')} />
-          <Button text="Disabled" disabled onClick={() => console.log('Disabled clicked')} />
+          <Button text="Default Button" onClick={() => undefined} />
+          <Button text="Disabled" disabled onClick={() => undefined} />
         </ViewLevel3>
 
         {/* Variants */}
         <ViewLevel3 alignItems="center" direction="row">
-          <Button text="Primary" variant="primary" onClick={() => console.log('Primary clicked')} />
-          <Button
-            text="Secondary"
-            variant="secondary"
-            onClick={() => console.log('Secondary clicked')}
-          />
-          <Button text="Outline" variant="outline" onClick={() => console.log('Outline clicked')} />
+          <Button text="Primary" variant="primary" onClick={() => undefined} />
+          <Button text="Secondary" variant="secondary" onClick={() => undefined} />
+          <Button text="Outline" variant="outline" onClick={() => undefined} />
         </ViewLevel3>
 
         {/* Disabled Variants */}
@@ -35,14 +31,42 @@ export function ButtonExample() {
 
         {/* Size Variants */}
         <ViewLevel3 alignItems="center" direction="row">
-          <Button text="Small" size="small" width={80} height={30} />
-          <Button text="Medium" size="medium" width={120} height={40} />
-          <Button text="Large" size="large" width={160} height={50} />
+          <Button
+            icon="bricks"
+            text="Small"
+            size="small"
+            width={80}
+            height={30}
+            onClick={() => undefined}
+          />
+          <Button
+            icon="bricks"
+            text="Medium"
+            size="medium"
+            width={120}
+            height={40}
+            onClick={() => undefined}
+          />
+          <Button
+            icon="bricks"
+            text="Large"
+            size="large"
+            width={160}
+            height={50}
+            onClick={() => undefined}
+          />
         </ViewLevel3>
 
         {/* With Children */}
         <ViewLevel3 alignItems="center" direction="row">
-          <Button width={100} height={40}>
+          <Button
+            effect="tada" // override effect from theme to demonstrate
+            effectConfig={{ time: 500 }}
+            icon="bricks"
+            width={100}
+            height={40}
+            onClick={() => undefined}
+          >
             <View width={40} height={20} backgroundColor={0xaa33aa} backgroundAlpha={1}>
               {/* Custom content can be added here */}
             </View>

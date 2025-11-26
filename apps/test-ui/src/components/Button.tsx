@@ -6,13 +6,20 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../hooks'
+import { Icon, type IconType } from './Icon'
 
 /**
- * Button variant theme with text style and effect support
+ * Button variant theme with text style and icon size
  */
 type ButtonVariantTheme = PhaserJSX.ViewTheme & {
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-} & EffectDefinition
+  iconSize?: number
+}
+
+/**
+ * Button variant theme and effect support
+ */
+type ButtonVariantEffectTheme = ButtonVariantTheme & EffectDefinition
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -20,12 +27,13 @@ declare module '@phaserjsx/ui' {
     Button: {
       disabledColor?: number
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      primary?: ButtonVariantTheme
-      secondary?: ButtonVariantTheme
-      outline?: ButtonVariantTheme
-      small?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-      medium?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-      large?: PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
+      iconSize?: number
+      primary?: ButtonVariantEffectTheme
+      secondary?: ButtonVariantEffectTheme
+      outline?: ButtonVariantEffectTheme
+      small?: ButtonVariantTheme
+      medium?: ButtonVariantTheme
+      large?: ButtonVariantTheme
     } & PhaserJSX.ViewTheme &
       EffectDefinition
   }
@@ -36,6 +44,7 @@ declare module '@phaserjsx/ui' {
  */
 export interface ButtonProps extends EffectDefinition {
   text?: string
+  icon?: IconType
   onClick?: () => void
   width?: number
   height?: number
@@ -55,10 +64,7 @@ export function Button(props: ButtonProps) {
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
-  type ThemeRecord = Record<
-    string,
-    PhaserJSX.ViewTheme & { textStyle?: Phaser.Types.GameObjects.Text.TextStyle }
-  >
+  type ThemeRecord = Record<string, ButtonVariantTheme>
 
   // Merge base theme with variant and size overrides
   const variantTheme = props.variant
@@ -90,6 +96,7 @@ export function Button(props: ButtonProps) {
       : undefined
 
   // Extract textStyle from theme for Text component only
+  const iconSize = effectiveTheme.iconSize ?? 24
   const textStyle = (effectiveTheme as ThemeRecord[string]).textStyle
 
   return (
@@ -98,13 +105,17 @@ export function Button(props: ButtonProps) {
       width={props.width}
       height={props.height}
       enableGestures={!props.disabled}
+      direction="row"
+      alignItems="center"
+      justifyContent="center"
       {...(handleTouch && { onTouch: handleTouch })}
       {...effectiveTheme}
     >
+      {props.icon != null && <Icon type={props.icon} size={iconSize} />}
       {props.text != null ? (
         <Text text={props.text} {...(textStyle && { style: textStyle })} />
       ) : (
-        props.children
+        <>{props.children}</>
       )}
     </View>
   )

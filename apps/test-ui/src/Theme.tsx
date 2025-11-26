@@ -118,6 +118,7 @@ export function createAppTheme(
         borderWidth: 1,
         cornerRadius: 6,
         padding: 8,
+        gap: 8,
         justifyContent: 'center',
         alignItems: 'center',
         effect: 'pulse',
@@ -149,6 +150,7 @@ export function createAppTheme(
         small: {
           padding: 6,
           cornerRadius: 4,
+          iconSize: 16,
           textStyle: {
             fontSize: '14px',
           },
@@ -161,8 +163,9 @@ export function createAppTheme(
           },
         },
         large: {
-          padding: 12,
+          padding: { top: 12, bottom: 12, left: 8, right: 8 },
           cornerRadius: 8,
+          iconSize: 32,
           textStyle: {
             fontSize: '24px',
           },
