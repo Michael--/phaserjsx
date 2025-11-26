@@ -2,12 +2,19 @@ import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   getThemedProps,
   Text,
+  useRef,
   useState,
   useTheme,
   View,
   type ChildrenType,
   type ViewProps,
 } from '@phaserjsx/ui'
+import {
+  applyEffectByName,
+  resolveEffect,
+  useGameObjectEffect,
+  type EffectDefinition,
+} from '../hooks'
 import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
@@ -19,14 +26,15 @@ declare module '@phaserjsx/ui' {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
       iconSize?: number
       iconColor?: number
-    } & PhaserJSX.ViewTheme
+    } & PhaserJSX.ViewTheme &
+      EffectDefinition
   }
 }
 
 /**
  * Props for Accordion component
  */
-export interface AccordionProps extends ViewProps {
+export interface AccordionProps extends ViewProps, EffectDefinition {
   /** Title as string or custom JSX element */
   title?: string | ChildrenType
   /** Optional icon displayed in header */
@@ -51,10 +59,17 @@ export function Accordion(props: AccordionProps) {
   const [internalOpen, setInternalOpen] = useState<boolean>(props.defaultOpen ?? false)
   const isOpen = props.isOpen !== undefined ? props.isOpen : internalOpen
 
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyEffect } = useGameObjectEffect(ref)
+
   const handleToggle = () => {
     const newState = !isOpen
     setInternalOpen(newState)
     props.onToggle?.(newState)
+
+    // Apply effect: props override theme, theme overrides default
+    const resolved = resolveEffect(props, themed)
+    applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
   }
 
   const headerTheme = themed.headerStyle ?? {}
@@ -84,6 +99,7 @@ export function Accordion(props: AccordionProps) {
       <View
         direction="column"
         maxHeight={isOpen ? undefined : 0}
+        visible={isOpen}
         overflow="hidden"
         {...contentTheme}
       >

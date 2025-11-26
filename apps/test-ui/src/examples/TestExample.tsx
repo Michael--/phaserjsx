@@ -33,6 +33,7 @@ function DevelopPage1() {
           defaultOpen={true}
           theme={createTheme({
             Accordion: {
+              effect: 'none', // disable effect
               headerStyle: {
                 backgroundColor: tokens?.colors.info.light.toNumber(),
                 cornerRadius: { tl: 20, tr: 20, bl: 0, br: 0 },
@@ -47,7 +48,12 @@ function DevelopPage1() {
             </View>
           }
         >
-          <View backgroundColor={tokens?.colors.info.light.toNumber()}>
+          <View
+            width={'fill'}
+            backgroundColor={tokens?.colors.info.light.toNumber()}
+            cornerRadius={{ tl: 0, tr: 0, bl: 20, br: 20 }}
+            padding={10}
+          >
             <Text text="This accordion uses a custom JSX element as title." />
             <Text text="You can compose any layout you need." />
           </View>

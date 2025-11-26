@@ -72,6 +72,8 @@ export function createAppTheme(
       },
 
       Accordion: {
+        effect: 'wobble',
+        effectConfig: { magnitude: 0.02, time: 150 },
         headerStyle: {
           backgroundColor: colors.surface.dark.toNumber(),
           padding: 10,
