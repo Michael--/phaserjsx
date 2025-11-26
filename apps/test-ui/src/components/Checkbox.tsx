@@ -48,7 +48,7 @@ export function Checkbox(props: CheckboxProps) {
   const [checked, setChecked] = useState<CheckedState>(initialChecked)
   const bodyIcon = themed.bodyIcon ?? 'square'
   const checkedIcon = themed.checkedIcon ?? 'check'
-  const indeterminateIcon = themed.intermediateIcon ?? 'minus'
+  const indeterminateIcon = themed.intermediateIcon ?? 'dash'
 
   const onClick = () => {
     let newChecked: CheckedState

@@ -1,41 +1,57 @@
 /**
  * Icon system with lazy loading and strong typing
+ * Uses dynamic imports for tree-shaking - only used icons are bundled
  */
-import { Image, useSVGTexture, type ImageProps } from '@phaserjsx/ui'
+import { Image, useEffect, useState, useSVGTexture, type ImageProps } from '@phaserjsx/ui'
+import type { IconType } from './icon-types.generated'
 
-// Import SVG strings (these could be from any icon library)
-import bell_fill from 'bootstrap-icons/icons/bell-fill.svg'
-import boxes from 'bootstrap-icons/icons/boxes.svg'
-import bricks from 'bootstrap-icons/icons/bricks.svg'
-import check from 'bootstrap-icons/icons/check.svg'
-import minus from 'bootstrap-icons/icons/dash.svg'
-import square from 'bootstrap-icons/icons/square.svg'
+export type { IconType }
 
 /**
- * Available icon types with strong typing
+ * Cache for loaded icon SVG strings
  */
-export type IconType = 'bell-fill' | 'boxes' | 'bricks' | 'check' | 'square' | 'minus'
+const iconCache = new Map<IconType, string>()
 
 /**
- * Icon registry mapping types to SVG strings
+ * Dynamically import an icon SVG
+ * @param type - The icon type to load
+ * @returns Promise resolving to SVG string
  */
-const iconRegistry: Record<IconType, string> = {
-  'bell-fill': bell_fill,
-  boxes: boxes,
-  bricks: bricks,
-  check: check,
-  square: square,
-  minus: minus,
+async function loadIcon(type: IconType): Promise<string> {
+  // Check cache first
+  const cached = iconCache.get(type)
+  if (cached) {
+    return cached
+  }
+
+  // Dynamic import - Vite will code-split this automatically
+  // Only used icons will be included in the bundle
+  const module = await import(`bootstrap-icons/icons/${type}.svg`)
+  const svg = module.default as string
+
+  iconCache.set(type, svg)
+  return svg
 }
 
 /**
- * Hook to load an icon lazily
+ * Hook to load an icon lazily with dynamic imports
  * @param type - The icon type to load
  * @returns true when icon is loaded and ready to use
  */
 export function useIcon(type: IconType): boolean {
-  const svg = iconRegistry[type]
-  return useSVGTexture(`use-icon-${type}`, svg)
+  const [svg, setSvg] = useState<string | null>(iconCache.get(type) || null)
+  const [isLoaded, setIsLoaded] = useState(iconCache.has(type))
+
+  useEffect(() => {
+    if (!isLoaded) {
+      loadIcon(type).then((loadedSvg) => {
+        setSvg(loadedSvg)
+        setIsLoaded(true)
+      })
+    }
+  }, [type, isLoaded])
+
+  return useSVGTexture(`use-icon-${type}`, svg || '')
 }
 
 /**

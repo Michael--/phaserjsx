@@ -21,7 +21,8 @@
     "release": "pnpm -w changeset version && pnpm -r install --no-frozen-lockfile && pnpm -r build && pnpm -w changeset publish",
     "prepare": "husky",
     "doctor": "node -v && pnpm -v && pnpm exec tsc -v",
-    "generate-stats": "ts-node scripts/generate-stats.ts"
+    "generate-stats": "ts-node scripts/generate-stats.ts",
+    "generate-icons": "tsx scripts/generate-icon-types.ts"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
@@ -40,6 +41,7 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   },
   "engines": {

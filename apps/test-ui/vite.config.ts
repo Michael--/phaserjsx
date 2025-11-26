@@ -28,5 +28,16 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     target: 'es2022',
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Split bootstrap icons into separate chunks for better tree-shaking
+          if (id.includes('bootstrap-icons/icons/')) {
+            const iconName = id.match(/icons\/([^.]+)\.svg/)?.[1]
+            return iconName ? `icons/${iconName}` : undefined
+          }
+        },
+      },
+    },
   },
 })
