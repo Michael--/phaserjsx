@@ -125,7 +125,7 @@ export class DOMInputElement {
       backgroundColor: 'transparent',
       color: 'transparent',
       outline: 'none',
-      caretColor: '#ffffff',
+      caretColor: 'transparent',
     } as Partial<CSSStyleDeclaration>)
   }
 

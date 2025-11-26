@@ -72,6 +72,9 @@ export function TextInput(props: TextInputProps) {
   const { props: themed } = getThemedProps('TextInput', undefined, {})
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputRef = useRef<DOMInputElement | null>(null)
+  const cursorRef = useRef<Phaser.GameObjects.Rectangle | null>(null)
+  const textRef = useRef<Phaser.GameObjects.Text | null>(null)
+  const cursorTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
   const width = props.width ?? 200
   const height = props.height ?? 40
@@ -150,17 +153,8 @@ export function TextInput(props: TextInputProps) {
         fontSize: themed.textStyle?.fontSize ?? '16px',
         paddingLeft: '12px',
         paddingRight: '12px',
-        border: '2px solid #ff0000',
       } as Partial<CSSStyleDeclaration>,
     }
-
-    console.log(
-      'Container position:',
-      containerRef.current.x,
-      containerRef.current.y,
-      containerRef.current.width,
-      containerRef.current.height
-    )
 
     inputRef.current = new DOMInputElement(containerRef.current, config)
 
@@ -191,6 +185,98 @@ export function TextInput(props: TextInputProps) {
     }
   }, [props.value])
 
+  // Setup cursor and sync cursor position
+  useEffect(() => {
+    if (!containerRef.current || !containerRef.current.scene) return
+
+    const scene = containerRef.current.scene
+
+    // Create blinking cursor
+    const paddingVertical =
+      (0.8 * (height - (themed.textStyle?.fontSize ? parseInt(themed.textStyle.fontSize) : 16))) / 2
+    const cursor = scene.add.rectangle(
+      12, // Initial x (padding)
+      paddingVertical,
+      2,
+      height - paddingVertical * 2, // Cursor height (slightly smaller than container)
+      0xffffff
+    )
+    cursor.setOrigin(0, 0)
+    cursor.setAlpha(1)
+    containerRef.current.add(cursor)
+    cursorRef.current = cursor
+
+    // Blinking animation
+    const tween = scene.tweens.add({
+      targets: cursor,
+      alpha: { from: 1, to: 0 },
+      duration: 530,
+      yoyo: true,
+      repeat: -1,
+    })
+    cursorTweenRef.current = tween
+
+    // Sync cursor position on input/selection change
+    const updateCursorPosition = () => {
+      const input = inputRef.current?.getElement()
+      const text = textRef.current
+      if (!input || !text || !cursor) return
+
+      const cursorIndex = input.selectionStart ?? 0
+      const textBeforeCursor = (props.value ?? '').substring(0, cursorIndex)
+
+      // Calculate text width up to cursor position
+      const tempText = scene.add.text(0, 0, textBeforeCursor, {
+        fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
+        fontSize: themed.textStyle?.fontSize ?? '16px',
+      })
+      const textWidth = tempText.width
+      tempText.destroy()
+
+      // Position cursor (12px is left padding)
+      cursor.x = 12 + textWidth
+
+      // Reset blink animation
+      cursor.setAlpha(1)
+      tween.restart()
+    }
+
+    // Update cursor on input events
+    const input = inputRef.current?.getElement()
+    if (input) {
+      input.addEventListener('input', updateCursorPosition)
+      input.addEventListener('keydown', updateCursorPosition)
+      input.addEventListener('keyup', updateCursorPosition)
+      input.addEventListener('click', updateCursorPosition)
+      input.addEventListener('focus', () => {
+        cursor.setVisible(true)
+        tween.restart()
+      })
+      input.addEventListener('blur', () => {
+        cursor.setVisible(false)
+        tween.pause()
+      })
+    }
+
+    // Initial position
+    updateCursorPosition()
+
+    return () => {
+      tween.stop()
+      cursor.destroy()
+      cursorRef.current = null
+      cursorTweenRef.current = null
+    }
+  }, [
+    containerRef.current,
+    textRef.current,
+    inputRef.current,
+    props.value,
+    height,
+    themed.textStyle?.fontFamily,
+    themed.textStyle?.fontSize,
+  ])
+
   // get the text to display, text when existing (length > 0), otherwise placeholder
   const text = props.value && props.value.length > 0 ? props.value : props.placeholder
 
@@ -212,6 +298,7 @@ export function TextInput(props: TextInputProps) {
       padding={{ left: 12, right: 12 }}
     >
       <Text
+        ref={textRef}
         text={text ?? ''}
         style={{
           fontFamily: themed.textStyle?.fontFamily ?? 'Arial, sans-serif',
