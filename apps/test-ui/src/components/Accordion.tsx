@@ -75,7 +75,7 @@ export function Accordion(props: AccordionProps) {
   const isOpen = props.isOpen !== undefined ? props.isOpen : internalOpen
 
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
-  const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const measurementRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
   const animated = props.animated ?? false
@@ -87,11 +87,11 @@ export function Accordion(props: AccordionProps) {
 
   // Measure content height when opened
   useEffect(() => {
-    if (autoHeight && isOpen && contentRef.current) {
+    if (autoHeight && isOpen && measurementRef.current) {
       // Wait for next frame to ensure rendering
       setTimeout(() => {
-        if (contentRef.current) {
-          const height = contentRef.current.height
+        if (measurementRef.current) {
+          const height = measurementRef.current.height
           setMeasuredHeight(height)
           setContentHeight(height)
         }
@@ -159,7 +159,7 @@ export function Accordion(props: AccordionProps) {
       {/* Invisible measurement container */}
       {autoHeight && (
         <View visible={false} direction="stack">
-          <View ref={contentRef} {...contentTheme}>
+          <View ref={measurementRef} {...contentTheme}>
             {props.children}
           </View>
         </View>
