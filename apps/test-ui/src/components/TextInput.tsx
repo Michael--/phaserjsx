@@ -221,6 +221,11 @@ export function TextInput(props: TextInputProps) {
         paddingLeft: `${horizontalPadding}px`,
         paddingRight: `${horizontalPadding}px`,
       } as Partial<CSSStyleDeclaration>,
+      // Disable browser features
+      autocomplete: 'off',
+      autocorrect: 'off',
+      autocapitalize: 'off',
+      spellcheck: false,
     }
 
     inputRef.current = new DOMInputElement(containerRef.current, config)

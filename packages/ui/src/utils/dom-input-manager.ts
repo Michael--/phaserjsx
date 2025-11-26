@@ -18,6 +18,14 @@ export interface DOMInputConfig {
   disabled?: boolean
   /** Maximum length of input */
   maxLength?: number
+  /** Autocomplete behavior */
+  autocomplete?: string
+  /** Autocorrect behavior (Safari) */
+  autocorrect?: string
+  /** Autocapitalize behavior (mobile) */
+  autocapitalize?: string
+  /** Spellcheck behavior */
+  spellcheck?: boolean
   /** CSS styles to apply */
   styles?: Partial<CSSStyleDeclaration>
   /** Input event callback */
@@ -51,6 +59,11 @@ export class DOMInputElement {
     if (config.value) this.input.value = config.value
     if (config.disabled) this.input.disabled = config.disabled
     if (config.maxLength) this.input.maxLength = config.maxLength
+    if (config.autocomplete) this.input.setAttribute('autocomplete', config.autocomplete)
+    if (config.autocorrect) this.input.setAttribute('autocorrect', config.autocorrect)
+    if (config.autocapitalize) this.input.setAttribute('autocapitalize', config.autocapitalize)
+    if (config.spellcheck !== undefined)
+      this.input.setAttribute('spellcheck', config.spellcheck.toString())
 
     // Apply default styles
     this.applyDefaultStyles()
