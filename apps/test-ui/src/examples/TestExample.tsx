@@ -77,6 +77,13 @@ function DevelopPage1() {
           <Text text="Animation is optional and can be enabled per accordion." />
         </Accordion>
 
+        {/* Auto-Height Animated Accordion */}
+        <Accordion title="Auto-Height Animated Accordion" animated={true} autoHeight={true}>
+          <Text text="This accordion measures its content height automatically." />
+          <Text text="No need to specify maxHeight." />
+          <Text text="But force extra calculation because of a hidden measurement container" />
+        </Accordion>
+
         {/* Multiple accordions */}
         <View direction="column" gap={5}>
           <Text text="Multiple Accordion Items:" style={tokens?.textStyles.caption} />

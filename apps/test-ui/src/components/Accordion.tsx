@@ -2,6 +2,7 @@ import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   getThemedProps,
   Text,
+  useEffect,
   useForceRedraw,
   useRef,
   useSpring,
@@ -51,6 +52,8 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
   animated?: boolean
   /** Maximum height for animation (default: 200) */
   maxHeight?: number
+  /** Automatically measure content height for animation. Note: Creates a duplicate invisible container for measurement. */
+  autoHeight?: boolean
 }
 
 /**
@@ -66,14 +69,42 @@ export function Accordion(props: AccordionProps) {
   const isOpen = props.isOpen !== undefined ? props.isOpen : internalOpen
 
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
   const animated = props.animated ?? false
+  const autoHeight = props.autoHeight ?? false
   const maxHeight = props.maxHeight ?? 200
+
+  const [measuredHeight, setMeasuredHeight] = useState<number>(maxHeight)
+
+  // Measure content height when opened
+  useEffect(() => {
+    if (autoHeight && isOpen && contentRef.current) {
+      // Wait for next frame to ensure rendering
+      setTimeout(() => {
+        if (contentRef.current) {
+          const height = contentRef.current.height
+          setMeasuredHeight(height)
+          setContentHeight(height)
+        }
+      }, 0)
+    }
+  }, [isOpen, autoHeight])
 
   // Animate content height if enabled
   const [contentHeight, setContentHeight] = useSpring(
-    animated ? (isOpen ? maxHeight : 0) : isOpen ? maxHeight : 0,
+    animated
+      ? isOpen
+        ? autoHeight
+          ? measuredHeight
+          : maxHeight
+        : 0
+      : isOpen
+        ? autoHeight
+          ? measuredHeight
+          : maxHeight
+        : 0,
     'gentle'
   )
   if (animated) {
@@ -84,7 +115,8 @@ export function Accordion(props: AccordionProps) {
     const newState = !isOpen
     setInternalOpen(newState)
     if (animated) {
-      setContentHeight(newState ? maxHeight : 0)
+      const targetHeight = autoHeight ? measuredHeight : maxHeight
+      setContentHeight(newState ? targetHeight : 0)
     }
     props.onToggle?.(newState)
 
@@ -115,6 +147,15 @@ export function Accordion(props: AccordionProps) {
           props.title
         )}
       </View>
+
+      {/* Invisible measurement container */}
+      {autoHeight && (
+        <View visible={false} direction="stack">
+          <View ref={contentRef} {...contentTheme}>
+            {props.children}
+          </View>
+        </View>
+      )}
 
       {/* Content */}
       <View
