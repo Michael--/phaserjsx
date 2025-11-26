@@ -64,6 +64,15 @@ export const SPRING_PRESETS = {
 } as const
 
 /**
+ * Type for animation preset keys
+ */
+export type AnimationPreset = keyof typeof SPRING_PRESETS
+/**
+ * Type for animation configuration (preset name or custom config)
+ */
+export type AnimationConfig = AnimationPreset | SpringConfig
+
+/**
  * Spring physics engine
  * Implements spring-damper physics for smooth, natural animations
  */

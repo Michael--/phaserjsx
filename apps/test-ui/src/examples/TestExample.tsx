@@ -84,6 +84,28 @@ function DevelopPage1() {
           <Text text="But force extra calculation because of a hidden measurement container" />
         </Accordion>
 
+        {/* Animated Accordion with Wobbly Preset */}
+        <Accordion
+          title="Animated Accordion (Wobbly)"
+          animated={true}
+          animationConfig="wobbly"
+          maxHeight={120}
+        >
+          <Text text="This accordion uses the 'wobbly' animation preset." />
+          <Text text="Different presets provide various animation feels." />
+        </Accordion>
+
+        {/* Animated Accordion with Custom Config */}
+        <Accordion
+          title="Animated Accordion (Custom)"
+          animated={true}
+          animationConfig={{ tension: 200, friction: 10 }}
+          maxHeight={100}
+        >
+          <Text text="This accordion uses a custom spring configuration." />
+          <Text text="You can fine-tune stiffness and damping." />
+        </Accordion>
+
         {/* Multiple accordions */}
         <View direction="column" gap={5}>
           <Text text="Multiple Accordion Items:" style={tokens?.textStyles.caption} />

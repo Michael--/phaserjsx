@@ -9,6 +9,7 @@ import {
   useState,
   useTheme,
   View,
+  type AnimationConfig,
   type ChildrenType,
   type ViewProps,
 } from '@phaserjsx/ui'
@@ -29,6 +30,7 @@ declare module '@phaserjsx/ui' {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
       iconSize?: number
       iconColor?: number
+      animationConfig?: AnimationConfig
     } & PhaserJSX.ViewTheme &
       EffectDefinition
   }
@@ -54,6 +56,8 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
   maxHeight?: number
   /** Automatically measure content height for animation. Note: Creates a duplicate invisible container for measurement. */
   autoHeight?: boolean
+  /** Spring animation config (preset name or custom config, default: 'gentle') */
+  animationConfig?: AnimationConfig
 }
 
 /**
@@ -75,6 +79,7 @@ export function Accordion(props: AccordionProps) {
   const animated = props.animated ?? false
   const autoHeight = props.autoHeight ?? false
   const maxHeight = props.maxHeight ?? 200
+  const animationConfig = props.animationConfig ?? themed.animationConfig ?? 'gentle'
 
   const [measuredHeight, setMeasuredHeight] = useState<number>(maxHeight)
 
@@ -105,7 +110,7 @@ export function Accordion(props: AccordionProps) {
           ? measuredHeight
           : maxHeight
         : 0,
-    'gentle'
+    animationConfig
   )
   if (animated) {
     useForceRedraw(20, contentHeight)
