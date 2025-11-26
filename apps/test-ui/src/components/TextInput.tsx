@@ -238,7 +238,9 @@ export function TextInput(props: TextInputProps) {
 
       // Reset blink animation
       cursor.setAlpha(1)
-      tween.restart()
+      if (tween.isPlaying() || tween.isPaused()) {
+        tween.restart()
+      }
     }
 
     // Update cursor on input events
@@ -250,11 +252,15 @@ export function TextInput(props: TextInputProps) {
       input.addEventListener('click', updateCursorPosition)
       input.addEventListener('focus', () => {
         cursor.setVisible(true)
-        tween.restart()
+        if (tween.isPlaying() || tween.isPaused()) {
+          tween.restart()
+        }
       })
       input.addEventListener('blur', () => {
         cursor.setVisible(false)
-        tween.pause()
+        if (tween.isPlaying()) {
+          tween.pause()
+        }
       })
     }
 
