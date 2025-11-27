@@ -168,6 +168,7 @@ export function CharText(props: CharTextProps) {
 
   // Character state management
   const [chars, setChars] = useState<CharInfo[]>([])
+  const charsRef = useRef<CharInfo[]>([])
   const [internalText, setInternalText] = useState('')
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
@@ -204,6 +205,22 @@ export function CharText(props: CharTextProps) {
   // Track if we're in controlled mode
   const isControlled = props.text !== undefined
   const displayedText = isControlled ? (props.text ?? '') : internalText
+
+  // Keep charsRef in sync with chars state
+  useEffect(() => {
+    charsRef.current = chars
+  }, [chars])
+
+  // Cleanup all chars on unmount
+  useEffect(() => {
+    return () => {
+      charsRef.current.forEach((charInfo) => {
+        if (charInfo.textObject) {
+          charInfo.textObject.destroy()
+        }
+      })
+    }
+  }, [])
 
   // Extract style and spacing from props/theme
   const textStyle = props.textStyle ?? themed.textStyle
@@ -546,7 +563,7 @@ export function CharText(props: CharTextProps) {
     // Check if text has changed
     if (displayedText === prevText) return
 
-    // Cleanup old character GameObjects
+    // Cleanup old character GameObjects IMMEDIATELY before creating new ones
     chars.forEach((charInfo) => {
       if (charInfo.textObject) {
         charInfo.textObject.destroy()
@@ -554,7 +571,7 @@ export function CharText(props: CharTextProps) {
     })
 
     // Wait for container bounds to be available
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       const startX = padLeft
       const startY = padTop
 
@@ -633,13 +650,9 @@ export function CharText(props: CharTextProps) {
       setHeight(calculatedHeight + verticalPadding)
     }, 0)
 
-    // Cleanup function
+    // Cleanup function - clear timeout and destroy current chars on unmount
     return () => {
-      chars.forEach((charInfo) => {
-        if (charInfo.textObject) {
-          charInfo.textObject.destroy()
-        }
-      })
+      clearTimeout(timeoutId)
     }
   }, [
     displayedText,

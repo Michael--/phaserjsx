@@ -252,7 +252,7 @@ export function CharTextInput(props: CharTextInputProps) {
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)
 
   // Internal state for uncontrolled mode
-  const [internalValue, setInternalValue] = useState('')
+  const [internalValue, setInternalValue] = useState(props.value ?? '')
   const [cursorPosition, setCursorPosition] = useState(0)
   const [selectionStart, setSelectionStart] = useState(-1)
   const [selectionEnd, setSelectionEnd] = useState(-1)
