@@ -14,6 +14,7 @@ export default [
       '**/build/**',
       '**/*.config.{js,ts}',
       '**/.electron/**',
+      '**/*.generated.{js,ts,tsx}',
     ],
   },
   js.configs.recommended,

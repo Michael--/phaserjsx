@@ -78,20 +78,6 @@ export function createAppTheme(
         },
       },
 
-      TextInput: {
-        backgroundColor: colors.surface.darkest.toNumber(),
-        borderColor: colors.border.medium.toNumber(),
-        borderWidth: 2,
-        cornerRadius: 6,
-        padding: { top: 40, bottom: 40, left: 28, right: 28 },
-        textStyle: {
-          color: colors.text.DEFAULT.toString(),
-          fontSize: '20px',
-        },
-        focusedBorderColor: colors.accent.lightest.toNumber(),
-        disabledColor: colors.border.dark.toNumber(),
-      },
-
       CharText: {
         borderColor: colors.border.medium.toNumber(),
         borderWidth: 2,

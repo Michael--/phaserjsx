@@ -1,5 +1,13 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, useEffect, useRef, useState, View, type ViewProps } from '@phaserjsx/ui'
+import {
+  getThemedProps,
+  useEffect,
+  useRef,
+  useState,
+  View,
+  type GestureEventData,
+  type ViewProps,
+} from '@phaserjsx/ui'
 import { useGameObjectEffect, type EffectDefinition } from '../hooks'
 
 /**
@@ -949,7 +957,7 @@ export function CharText(props: CharTextProps) {
       width={width}
       height={height}
       enableGestures={!props.disabled && showCursor}
-      onTouch={(data) => {
+      onTouch={(data: GestureEventData) => {
         if (!showCursor) return
         const pos = getPositionFromPointer(data.pointer.worldX, data.pointer.worldY)
         dragStartPosRef.current = pos
@@ -957,7 +965,7 @@ export function CharText(props: CharTextProps) {
         props.onSelectionChange?.(-1, -1)
         data.stopPropagation()
       }}
-      onTouchMove={(data) => {
+      onTouchMove={(data: GestureEventData) => {
         if (!showCursor) return
         if (data.state === 'start') {
           dragStartPosRef.current = getPositionFromPointer(data.pointer.worldX, data.pointer.worldY)
