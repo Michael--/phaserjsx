@@ -1,6 +1,25 @@
-import { Text, useState, View } from '@phaserjsx/ui'
+import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
 import { Icon, ScrollView, TextInput } from '../components'
+import { CharText } from '../components/CharText'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
+
+function DevelopPage2() {
+  const tokens = useThemeTokens()
+
+  return (
+    <ViewLevel2 direction="column" padding={10}>
+      <View gap={10} direction="row" alignContent="center">
+        <Icon type="bricks" />
+        <SectionHeader title="CharText & CharTextInput Component" />
+      </View>
+      <ViewLevel3 gap={20} direction="column" padding={10}>
+        <View direction="column" gap={10}>
+          <CharText value="Example" textStyle={tokens?.textStyles.heading} />
+        </View>
+      </ViewLevel3>
+    </ViewLevel2>
+  )
+}
 
 function DevelopPage1() {
   const [inputValue, setInputValue] = useState('')
@@ -75,6 +94,9 @@ export function TestExample() {
   return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
+        <ViewLevel2>
+          <DevelopPage2 />
+        </ViewLevel2>
         <ViewLevel2>
           <DevelopPage1 />
         </ViewLevel2>
