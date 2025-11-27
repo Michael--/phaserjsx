@@ -461,7 +461,7 @@ export function CharTextInput(props: CharTextInputProps) {
   } = props
 
   // Determine displayed text: actual value, or placeholder if empty and not focused
-  const displayText = currentValue // ?? (props.placeholder && !isFocused ? props.placeholder : '')
+  const displayText = currentValue || (props.placeholder && !isFocused ? props.placeholder : '')
 
   return (
     <CharText
