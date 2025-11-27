@@ -731,11 +731,10 @@ export function CharText(props: CharTextProps) {
         cursorY = startY
       }
 
-      // Get cursor height from character at cursor line
+      // Get cursor height from character before cursor
       let cursorHeight = 20
-      const charAtCursor = chars[clampedPosition - 1]
-      if (clampedPosition > 0 && charAtCursor) {
-        cursorHeight = charAtCursor.height
+      if (charBeforeCursor) {
+        cursorHeight = charBeforeCursor.height
       } else if (chars.length > 0 && chars[0]) {
         cursorHeight = chars[0].height
       }
@@ -831,9 +830,9 @@ export function CharText(props: CharTextProps) {
       // Group selected characters by line
       const lineGroups = new Map<number, CharInfo[]>()
 
-      for (let i = selectionStart; i < selectionEnd && i < chars.length; i++) {
-        const char = chars[i]
-        if (char) {
+      // Filter chars by their charIndex (text position), not array index
+      for (const char of chars) {
+        if (char && char.charIndex >= selectionStart && char.charIndex < selectionEnd) {
           const lineIndex = char.lineIndex
           if (!lineGroups.has(lineIndex)) {
             lineGroups.set(lineIndex, [])
