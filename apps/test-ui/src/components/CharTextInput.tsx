@@ -258,9 +258,21 @@ export function CharTextInput(props: CharTextInputProps) {
   const [selectionEnd, setSelectionEnd] = useState(-1)
   const [isFocused, setIsFocused] = useState(false)
 
+  // Refs for current values (used in event handlers to avoid stale closures)
+  const refCurrentValue = useRef(props.value ?? '')
+  const refCursorPosition = useRef(0)
+  const refSelectionStart = useRef(-1)
+  const refSelectionEnd = useRef(-1)
+
   // Use controlled value if provided
   const currentValue = props.value !== undefined ? props.value : internalValue
   const isControlled = props.value !== undefined
+
+  // Sync refs with state
+  refCurrentValue.current = currentValue
+  refCursorPosition.current = cursorPosition
+  refSelectionStart.current = selectionStart
+  refSelectionEnd.current = selectionEnd
 
   /**
    * Setup keyboard input manager
@@ -276,7 +288,8 @@ export function CharTextInput(props: CharTextInputProps) {
       debug: true, // for a while
       onInput: (value, _event) => {
         // Handle input changes
-        if (isControlled) {
+        const controlled = props.value !== undefined
+        if (controlled) {
           props.onChange?.(value)
         } else {
           setInternalValue(value)
@@ -289,12 +302,11 @@ export function CharTextInput(props: CharTextInputProps) {
         setSelectionEnd(-1)
       },
       onKeyDown: (event) => {
-        console.log('KeyDown:', event.key)
         // Handle special keys
         if (event.key === 'Enter') {
           if (!props.multiline) {
             event.preventDefault()
-            props.onSubmit?.(currentValue)
+            props.onSubmit?.(refCurrentValue.current)
           }
         } else if (event.key === 'Backspace') {
           handleBackspace(event)
@@ -350,11 +362,16 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleBackspace = (event: KeyboardEvent) => {
     event.preventDefault()
 
-    if (selectionStart >= 0 && selectionEnd > selectionStart) {
+    const currentValue = refCurrentValue.current
+    const cursorPosition = refCursorPosition.current
+    const selStart = refSelectionStart.current
+    const selEnd = refSelectionEnd.current
+
+    if (selStart >= 0 && selEnd > selStart) {
       // Delete selection
-      const newValue = currentValue.slice(0, selectionStart) + currentValue.slice(selectionEnd)
+      const newValue = currentValue.slice(0, selStart) + currentValue.slice(selEnd)
       updateValue(newValue)
-      setCursorPosition(selectionStart)
+      setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
     } else if (cursorPosition > 0) {
@@ -372,11 +389,16 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleDelete = (event: KeyboardEvent) => {
     event.preventDefault()
 
-    if (selectionStart >= 0 && selectionEnd > selectionStart) {
+    const currentValue = refCurrentValue.current
+    const cursorPosition = refCursorPosition.current
+    const selStart = refSelectionStart.current
+    const selEnd = refSelectionEnd.current
+
+    if (selStart >= 0 && selEnd > selStart) {
       // Delete selection
-      const newValue = currentValue.slice(0, selectionStart) + currentValue.slice(selectionEnd)
+      const newValue = currentValue.slice(0, selStart) + currentValue.slice(selEnd)
       updateValue(newValue)
-      setCursorPosition(selectionStart)
+      setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
     } else if (cursorPosition < currentValue.length) {
@@ -393,16 +415,19 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleArrowLeft = (event: KeyboardEvent) => {
     event.preventDefault()
 
+    const cursorPosition = refCursorPosition.current
+    const selStart = refSelectionStart.current
+
     if (event.shiftKey) {
       // Extend selection
-      if (selectionStart < 0) {
+      if (selStart < 0) {
         setSelectionStart(cursorPosition)
         setSelectionEnd(cursorPosition)
       }
       if (cursorPosition > 0) {
         const newPos = cursorPosition - 1
         setCursorPosition(newPos)
-        if (newPos < selectionStart) {
+        if (newPos < selStart) {
           setSelectionStart(newPos)
         } else {
           setSelectionEnd(newPos)
@@ -430,16 +455,21 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleArrowRight = (event: KeyboardEvent) => {
     event.preventDefault()
 
+    const currentValue = refCurrentValue.current
+    const cursorPosition = refCursorPosition.current
+    const selStart = refSelectionStart.current
+    const selEnd = refSelectionEnd.current
+
     if (event.shiftKey) {
       // Extend selection
-      if (selectionStart < 0) {
+      if (selStart < 0) {
         setSelectionStart(cursorPosition)
         setSelectionEnd(cursorPosition)
       }
       if (cursorPosition < currentValue.length) {
         const newPos = cursorPosition + 1
         setCursorPosition(newPos)
-        if (newPos > selectionEnd) {
+        if (newPos > selEnd) {
           setSelectionEnd(newPos)
         } else {
           setSelectionStart(newPos)
@@ -479,6 +509,7 @@ export function CharTextInput(props: CharTextInputProps) {
    */
   const handleEnd = (event: KeyboardEvent) => {
     event.preventDefault()
+    const currentValue = refCurrentValue.current
     setSelectionStart(-1)
     setSelectionEnd(-1)
     setCursorPosition(currentValue.length)
@@ -489,6 +520,7 @@ export function CharTextInput(props: CharTextInputProps) {
    */
   const handleSelectAll = (event: KeyboardEvent) => {
     event.preventDefault()
+    const currentValue = refCurrentValue.current
     setSelectionStart(0)
     setSelectionEnd(currentValue.length)
     setCursorPosition(currentValue.length)
@@ -511,6 +543,7 @@ export function CharTextInput(props: CharTextInputProps) {
    * Handle cursor position change from CharText click
    */
   const handleCursorPositionChange = (position: number) => {
+    console.log('Cursor position change:', position)
     setCursorPosition(position)
     setSelectionStart(-1)
     setSelectionEnd(-1)
@@ -523,6 +556,7 @@ export function CharTextInput(props: CharTextInputProps) {
    * Handle selection change from CharText drag
    */
   const handleSelectionChange = (start: number, end: number) => {
+    console.log('Selection change:', start, end)
     if (start >= 0 && end > start) {
       setSelectionStart(start)
       setSelectionEnd(end)
