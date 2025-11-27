@@ -68,7 +68,10 @@ declare module '@phaserjsx/ui' {
 /**
  * Props for CharText component
  */
-export interface CharTextProps extends Omit<ViewProps, 'children'>, EffectDefinition {
+export interface CharTextProps extends Omit<ViewProps, 'children' | 'ref'>, EffectDefinition {
+  /** Ref to the container */
+  forwardRef?: (ref: Phaser.GameObjects.Container | null) => void
+
   /** Text to display */
   text?: string
 
@@ -160,14 +163,35 @@ export interface CharTextAPI {
  */
 export function CharText(props: CharTextProps) {
   const { props: themed } = getThemedProps('CharText', undefined, {})
-  const ref = useRef<Phaser.GameObjects.Container | null>(null)
-  const { applyEffect: _applyEffect } = useGameObjectEffect(ref)
+  const internalRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyEffect: _applyEffect } = useGameObjectEffect(internalRef)
 
   // Character state management
   const [chars, setChars] = useState<CharInfo[]>([])
   const [internalText, setInternalText] = useState('')
   const [width, setWidth] = useState(0)
   const [height, setHeight] = useState(0)
+  const [containerReady, setContainerReady] = useState(false)
+
+  // Track when container is ready
+  useEffect(() => {
+    if (internalRef.current && !containerReady) {
+      setContainerReady(true)
+    }
+  })
+
+  // Sync external ref with internal ref when container becomes available
+  useEffect(() => {
+    if (!containerReady || !internalRef.current) return
+
+    const currentRef = props.forwardRef
+    currentRef?.(internalRef.current)
+
+    // Cleanup: reset external ref on unmount or ref change
+    return () => {
+      currentRef?.(null)
+    }
+  }, [containerReady, props.forwardRef])
 
   // Cursor management
   const cursorRef = useRef<Phaser.GameObjects.Rectangle | null>(null)
@@ -511,9 +535,9 @@ export function CharText(props: CharTextProps) {
    * Create or update character GameObjects based on text prop
    */
   useEffect(() => {
-    if (!ref.current) return
+    if (!internalRef.current) return
 
-    const container = ref.current
+    const container = internalRef.current
     const scene = container.scene
 
     // Get the previous displayed text from chars state
@@ -638,7 +662,7 @@ export function CharText(props: CharTextProps) {
    * Update cursor position and visibility
    */
   useEffect(() => {
-    if (!ref.current || !showCursor) {
+    if (!internalRef.current || !showCursor) {
       // Hide cursor if not needed
       if (cursorRef.current) {
         cursorRef.current.setVisible(false)
@@ -650,7 +674,7 @@ export function CharText(props: CharTextProps) {
       return
     }
 
-    const container = ref.current
+    const container = internalRef.current
     const scene = container.scene
 
     // Wait for chars to be ready
@@ -765,9 +789,9 @@ export function CharText(props: CharTextProps) {
    * Render selection background
    */
   useEffect(() => {
-    if (!ref.current) return
+    if (!internalRef.current) return
 
-    const container = ref.current
+    const container = internalRef.current
     const scene = container.scene
 
     // Clear old selection rectangles
@@ -852,7 +876,7 @@ export function CharText(props: CharTextProps) {
 
   return (
     <View
-      ref={ref}
+      ref={internalRef}
       width={width}
       height={height}
       enableGestures={!props.disabled && showCursor}

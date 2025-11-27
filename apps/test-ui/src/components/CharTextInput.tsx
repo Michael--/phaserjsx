@@ -23,6 +23,7 @@ class KeyboardInputManager {
     onBlur?: () => void
     maxLength?: number
     disabled?: boolean
+    debug?: boolean
   }
 
   constructor(
@@ -35,6 +36,7 @@ class KeyboardInputManager {
       onBlur?: () => void
       maxLength?: number
       disabled?: boolean
+      debug?: boolean
     }
   ) {
     this.container = container
@@ -46,6 +48,15 @@ class KeyboardInputManager {
    * Create hidden DOM input element
    */
   private create(): void {
+    const debugStyle: Partial<CSSStyleDeclaration> = this.config.debug
+      ? {
+          opacity: '0.3',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          border: '4px dashed red',
+          color: 'white',
+        }
+      : {}
+
     const domConfig: DOMInputConfig = {
       type: 'text',
       value: '',
@@ -67,8 +78,14 @@ class KeyboardInputManager {
         this.config.onBlur?.()
       },
       styles: {
-        opacity: '0',
+        // need to debug until successful at all
+        opacity: '0.0',
         pointerEvents: 'none',
+        position: 'absolute',
+        width: '1px',
+        height: '1px',
+        overflow: 'hidden',
+        ...debugStyle,
       } as Partial<CSSStyleDeclaration>,
       autocomplete: 'off',
       autocorrect: 'off',
@@ -246,6 +263,7 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current = new KeyboardInputManager(container, {
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
+      debug: true, // for a while
       onInput: (value, _event) => {
         // Handle input changes
         if (isControlled) {
@@ -302,14 +320,16 @@ export function CharTextInput(props: CharTextInputProps) {
       inputManagerRef.current?.destroy()
       inputManagerRef.current = null
     }
-  }, [
-    containerRef.current,
-    props.maxLength,
-    props.disabled,
-    props.multiline,
-    isControlled,
-    currentValue,
-  ])
+  }, [containerRef.current, props.maxLength, props.disabled, props.multiline, isControlled])
+
+  /**
+   * Sync DOM input value when currentValue changes
+   */
+  useEffect(() => {
+    if (inputManagerRef.current) {
+      inputManagerRef.current.setValue(currentValue)
+    }
+  }, [currentValue])
 
   /**
    * Handle backspace key
@@ -499,7 +519,7 @@ export function CharTextInput(props: CharTextInputProps) {
 
   return (
     <CharText
-      ref={containerRef}
+      forwardRef={(r) => (containerRef.current = r)}
       {...viewProps}
       text={currentValue || props.placeholder || ''}
       showCursor={isFocused}
