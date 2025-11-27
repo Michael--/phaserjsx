@@ -92,6 +92,20 @@ export function createAppTheme(
         disabledColor: colors.border.dark.toNumber(),
       },
 
+      CharText: {
+        borderColor: colors.border.medium.toNumber(),
+        borderWidth: 2,
+        cornerRadius: 6,
+        padding: 10,
+        textStyle: {
+          color: colors.text.DEFAULT.toString(),
+          fontSize: '20px',
+        },
+        cursorColor: colors.accent.DEFAULT.toNumber(),
+        cursorWidth: 3,
+        cursorBlinkSpeed: 200,
+      },
+
       Accordion: {
         effect: 'wobble',
         effectConfig: { magnitude: 0.02, time: 150 },

@@ -5,6 +5,8 @@ import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage2() {
   const tokens = useThemeTokens()
+  const [cursorPos, _setCursorPos] = useState(5)
+  const [editableText, setEditableText] = useState('Edit me!')
 
   return (
     <ViewLevel2 direction="column" padding={10}>
@@ -20,27 +22,46 @@ function DevelopPage2() {
       >
         <View direction="column" gap={10}>
           <Text text="Basic CharText:" />
-          <CharText text="Hello" borderColor={0xff0000} />
+          <CharText text="Hello" />
         </View>
         <View direction="column" gap={10}>
           <Text text="CharText with spacing:" />
-          <CharText text="Spaced" charSpacing={5} borderColor={0xff0000} />
+          <CharText text="Spaced" charSpacing={5} />
         </View>
         <View direction="column" gap={10}>
           <Text text="CharText with heading style:" />
-          <CharText text="Big Text" textStyle={tokens?.textStyles.heading} borderColor={0xff0000} />
+          <CharText text="Big Text" textStyle={tokens?.textStyles.heading} />
         </View>
         <View direction="column" gap={10}>
-          <Text text="CharText with heading style:" />
+          <Text text="CharText with cursor:" />
+          <CharText text="Hello" showCursor={true} cursorPosition={cursorPos} />
+          <View direction="row" gap={10}>
+            <Text text={`Cursor at: ${cursorPos}`} />
+          </View>
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with cursor (custom style):" />
           <CharText
-            text="Very long and many blabla on this line beyond every one limit - yet?"
-            textStyle={tokens?.textStyles.heading}
-            borderColor={0xff0000}
+            text="Styled"
+            showCursor={true}
+            cursorPosition={3}
+            cursorColor={0xff00ff}
+            cursorWidth={4}
+            cursorBlinkSpeed={300}
           />
         </View>
         <View direction="column" gap={10}>
+          <Text text="Controlled CharText (editable via onChange):" />
+          <CharText
+            text={editableText}
+            showCursor={true}
+            onChange={(newText) => setEditableText(newText)}
+          />
+          <Text text={`Current text: "${editableText}"`} />
+        </View>
+        <View direction="column" gap={10}>
           <Text text="CharText with padding:" />
-          <CharText text="Padded" padding={10} borderColor={0xff0000} />
+          <CharText text="Padded" padding={10} />
         </View>
       </ViewLevel3>
     </ViewLevel2>
