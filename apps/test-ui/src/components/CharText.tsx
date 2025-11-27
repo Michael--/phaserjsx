@@ -577,9 +577,8 @@ export function CharText(props: CharTextProps) {
     scene: Phaser.Scene,
     container: Phaser.GameObjects.Container
   ): Phaser.GameObjects.Text => {
-    let textObj: Phaser.GameObjects.Text
-    if (textObjectPool.current.length > 0) {
-      textObj = textObjectPool.current.pop()!
+    let textObj = textObjectPool.current.pop()
+    if (textObj != null) {
       textObj.setVisible(true)
     } else {
       textObj = scene.add.text(0, 0, '', textStyle ?? {})

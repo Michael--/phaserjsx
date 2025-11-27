@@ -26,10 +26,10 @@
  *      <Text text="Label" />                    // Layout-aware
  *      <Text text="+100" headless={true} />    // Floating (no layout impact)
  *
- * 3. Layout Size Provider: UNROTATED DIMENSIONS ✅
- *    Implementation: Uses text.width and text.height (unrotated)
+ * 3. Layout Size Provider: UN-ROTATED DIMENSIONS ✅
+ *    Implementation: Uses text.width and text.height (un-rotated)
  *    Behavior:
- *    - Returns unrotated text dimensions
+ *    - Returns un-rotated text dimensions
  *    - Rotation is IGNORED for layout-aware text (headless=false)
  *    - Rotation only works with headless=true (no layout impact)
  *    Reasoning:
