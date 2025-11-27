@@ -174,6 +174,10 @@ export function CharText(props: CharTextProps) {
   const [height, setHeight] = useState(0)
   const [containerReady, setContainerReady] = useState(false)
 
+  // Object pool for text objects to avoid creating/destroying on every text change
+  const textObjectPool = useRef<Phaser.GameObjects.Text[]>([])
+  const activeTextObjects = useRef<Phaser.GameObjects.Text[]>([])
+
   // Track when container is ready
   useEffect(() => {
     if (internalRef.current && !containerReady) {
@@ -211,11 +215,28 @@ export function CharText(props: CharTextProps) {
     charsRef.current = chars
   }, [chars])
 
-  // Cleanup all chars on unmount
+  // Cleanup all text objects on unmount
   useEffect(() => {
     return () => {
+      // Destroy all pooled text objects
+      textObjectPool.current.forEach((textObj) => {
+        if (textObj && textObj.scene) {
+          textObj.destroy()
+        }
+      })
+      textObjectPool.current = []
+
+      // Destroy all active text objects
+      activeTextObjects.current.forEach((textObj) => {
+        if (textObj && textObj.scene) {
+          textObj.destroy()
+        }
+      })
+      activeTextObjects.current = []
+
+      // Also destroy any remaining in chars
       charsRef.current.forEach((charInfo) => {
-        if (charInfo.textObject) {
+        if (charInfo.textObject && charInfo.textObject.scene) {
           charInfo.textObject.destroy()
         }
       })
@@ -550,8 +571,36 @@ export function CharText(props: CharTextProps) {
   }
 
   /**
-   * Create or update character GameObjects based on text prop
+   * Get a text object from pool or create new one
    */
+  const getTextObject = (
+    scene: Phaser.Scene,
+    container: Phaser.GameObjects.Container
+  ): Phaser.GameObjects.Text => {
+    let textObj: Phaser.GameObjects.Text
+    if (textObjectPool.current.length > 0) {
+      textObj = textObjectPool.current.pop()!
+      textObj.setVisible(true)
+    } else {
+      textObj = scene.add.text(0, 0, '', textStyle ?? {})
+      textObj.setOrigin(0, 0)
+      container.add(textObj)
+    }
+    activeTextObjects.current.push(textObj)
+    return textObj
+  }
+
+  /**
+   * Return a text object to pool (make invisible)
+   */
+  const returnToPool = (textObj: Phaser.GameObjects.Text): void => {
+    textObj.setVisible(false)
+    const index = activeTextObjects.current.indexOf(textObj)
+    if (index > -1) {
+      activeTextObjects.current.splice(index, 1)
+    }
+    textObjectPool.current.push(textObj)
+  }
   useEffect(() => {
     if (!internalRef.current) return
 
@@ -564,12 +613,7 @@ export function CharText(props: CharTextProps) {
     // Check if text has changed
     if (displayedText === prevText) return
 
-    // Cleanup old character GameObjects IMMEDIATELY before creating new ones
-    chars.forEach((charInfo) => {
-      if (charInfo.textObject) {
-        charInfo.textObject.destroy()
-      }
-    })
+    // Instead of destroying all, we'll reuse text objects from pool
 
     // Wait for container bounds to be available
     const timeoutId = setTimeout(() => {
@@ -631,13 +675,22 @@ export function CharText(props: CharTextProps) {
         lines = allChars.length > 0 ? [createLineInfo(allChars, 0)] : []
       }
 
-      // Create GameObjects for all characters
+      // Assign text objects to characters, reusing from pool
+      const usedTextObjects: Phaser.GameObjects.Text[] = []
       for (const charInfo of allChars) {
-        const textObj = scene.add.text(0, 0, charInfo.char, textStyle ?? {})
-        textObj.setOrigin(0, 0)
+        const textObj = getTextObject(scene, container)
+        textObj.setText(charInfo.char)
         textObj.setPosition(startX + charInfo.x, startY + charInfo.y)
-        container.add(textObj)
         charInfo.textObject = textObj
+        usedTextObjects.push(textObj)
+      }
+
+      // Return unused active text objects to pool
+      const currentActive = [...activeTextObjects.current]
+      for (const textObj of currentActive) {
+        if (!usedTextObjects.includes(textObj)) {
+          returnToPool(textObj)
+        }
       }
 
       // Calculate total dimensions
@@ -651,7 +704,7 @@ export function CharText(props: CharTextProps) {
       setHeight(calculatedHeight + verticalPadding)
     }, 0)
 
-    // Cleanup function - clear timeout and destroy current chars on unmount
+    // Cleanup function - clear timeout
     return () => {
       clearTimeout(timeoutId)
     }
