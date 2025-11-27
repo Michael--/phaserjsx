@@ -135,6 +135,9 @@ export interface CharTextProps
 
   /** Called when selection changes */
   onSelectionChange?: (start: number, end: number) => void
+
+  /** Called when API is ready (provides access to CharTextAPI) */
+  onApiReady?: (api: CharTextAPI) => void
 }
 
 /**
@@ -155,4 +158,6 @@ export interface CharTextAPI {
   clear(): void
   /** Get character index at world position */
   getCharAtPosition(worldX: number, worldY: number): number | null
+  /** Check if a character can fit at the specified position (single-line only) */
+  canFitChar(char: string, position: number): boolean
 }

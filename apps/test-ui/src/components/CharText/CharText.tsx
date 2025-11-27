@@ -200,11 +200,58 @@ export function CharText(props: CharTextProps) {
       }
       return null
     },
+    canFitChar: (char: string, position: number) => {
+      // Only applies to single-line mode
+      if (multiline) return true
+
+      // If no maxWidth set, always fits
+      const effectiveMaxWidth =
+        props.maxWidth !== undefined && typeof props.maxWidth === 'number'
+          ? props.maxWidth
+          : props.width !== undefined && typeof props.width === 'number'
+            ? props.width
+            : Infinity
+
+      if (effectiveMaxWidth === Infinity) return true
+
+      // Calculate available content width (excluding padding)
+      const availableWidth = effectiveMaxWidth - horizontalPadding
+
+      if (!internalRef.current) return false
+
+      const scene = internalRef.current.scene
+
+      // Build the text that would result from inserting the character
+      const textWithChar = displayedText.slice(0, position) + char + displayedText.slice(position)
+
+      // Calculate total width of the new text
+      let totalWidth = 0
+      for (let i = 0; i < textWithChar.length; i++) {
+        const c = textWithChar.charAt(i)
+        const tempText = scene.add.text(0, 0, c, textStyle ?? {})
+        const charWidth = tempText.width
+        tempText.destroy()
+
+        totalWidth += charWidth
+        if (i < textWithChar.length - 1) {
+          totalWidth += charSpacing
+        }
+      }
+
+      return totalWidth <= availableWidth
+    },
   }
 
   // Store API in ref for external access (future use)
   const apiRef = useRef<CharTextAPI>(api)
   apiRef.current = api
+
+  // Expose API to parent via callback
+  useEffect(() => {
+    if (containerReady && props.onApiReady) {
+      props.onApiReady(api)
+    }
+  }, [containerReady, props.onApiReady])
 
   /**
    * Create or update character GameObjects based on text prop

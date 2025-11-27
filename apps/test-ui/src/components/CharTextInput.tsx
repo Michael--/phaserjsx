@@ -1,6 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { useEffect, useRef, useState, type ViewProps } from '@phaserjsx/ui'
-import { CharText } from './CharText'
+import { CharText, type CharTextAPI } from './CharText'
 import { KeyboardInputManager } from './KeyboardInputManager'
 
 /**
@@ -103,6 +103,7 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
 export function CharTextInput(props: CharTextInputProps) {
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)
+  const charTextApiRef = useRef<CharTextAPI | null>(null)
 
   // Internal state for uncontrolled mode
   const [internalValue, setInternalValue] = useState(props.value ?? '')
@@ -242,6 +243,15 @@ export function CharTextInput(props: CharTextInputProps) {
     // Enforce maxLength
     if (props.maxLength !== undefined && newValue.length > props.maxLength) {
       return
+    }
+
+    // Check if character fits (single-line only)
+    if (!props.multiline && charTextApiRef.current) {
+      // For selection replacement, we need to check if the char fits at the selection start
+      const insertPosition = anchor >= 0 ? Math.min(anchor, cursorPosition) : cursorPosition
+      if (!charTextApiRef.current.canFitChar(char, insertPosition)) {
+        return
+      }
     }
 
     updateValue(newValue)
@@ -464,6 +474,7 @@ export function CharTextInput(props: CharTextInputProps) {
       selectionEnd={selectionEnd}
       onCursorPositionChange={handleCursorPositionChange}
       onSelectionChange={handleSelectionChange}
+      onApiReady={(api) => (charTextApiRef.current = api)}
     />
   )
 }
