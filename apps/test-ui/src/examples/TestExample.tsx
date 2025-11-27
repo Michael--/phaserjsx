@@ -12,9 +12,35 @@ function DevelopPage2() {
         <Icon type="bricks" />
         <SectionHeader title="CharText & CharTextInput Component" />
       </View>
-      <ViewLevel3 gap={20} direction="column" padding={10}>
+      <ViewLevel3
+        gap={20}
+        direction="column"
+        padding={10}
+        backgroundColor={tokens?.colors.background.medium.toNumber()}
+      >
         <View direction="column" gap={10}>
-          <CharText value="Example" textStyle={tokens?.textStyles.heading} />
+          <Text text="Basic CharText:" />
+          <CharText text="Hello" borderColor={0xff0000} />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with spacing:" />
+          <CharText text="Spaced" charSpacing={5} borderColor={0xff0000} />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with heading style:" />
+          <CharText text="Big Text" textStyle={tokens?.textStyles.heading} borderColor={0xff0000} />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with heading style:" />
+          <CharText
+            text="Very long and many blabla on this line beyond every one limit - yet?"
+            textStyle={tokens?.textStyles.heading}
+            borderColor={0xff0000}
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with padding:" />
+          <CharText text="Padded" padding={10} borderColor={0xff0000} />
         </View>
       </ViewLevel3>
     </ViewLevel2>
