@@ -107,6 +107,24 @@ export function createAppTheme(
         cursorBlinkSpeed: 200,
       },
 
+      CharTextInput: {
+        textStyle: {
+          color: colors.text.DEFAULT.toString(),
+          fontSize: '20px',
+          fontFamily: 'Arial',
+        },
+        charSpacing: 2,
+        cursorColor: colors.accent.DEFAULT.toNumber(),
+        cursorWidth: 3,
+        cursorBlinkSpeed: 200,
+        selectionColor: colors.accent.light.toNumber(),
+        selectionAlpha: 0.5,
+        lineHeight: 1.2,
+        wordWrap: false,
+        focusedBorderColor: colors.accent.lightest.toNumber(),
+        disabledColor: colors.border.dark.toNumber(),
+      },
+
       Accordion: {
         effect: 'wobble',
         effectConfig: { magnitude: 0.02, time: 150 },

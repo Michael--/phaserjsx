@@ -1,10 +1,16 @@
 import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
-import { Icon, ScrollView, TextInput } from '../components'
-import { CharText } from '../components/CharText'
+import { CharText, CharTextInput, Icon, ScrollView, TextInput } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage3() {
   const tokens = useThemeTokens()
+  const [inputValue, setInputValue] = useState('Type here...')
+  const [password, setPassword] = useState('')
+  const [multilineValue, setMultilineValue] = useState(
+    'Multi-line text input. Try typing and using keyboard shortcuts!'
+  )
+  const [submitValue, setSubmitValue] = useState('')
+  const [submitted, setSubmitted] = useState('')
 
   return (
     <ViewLevel2 direction="column" padding={10}>
@@ -17,7 +23,126 @@ function DevelopPage3() {
         direction="column"
         padding={10}
         backgroundColor={tokens?.colors.background.medium.toNumber()}
-      ></ViewLevel3>
+      >
+        <View direction="column" gap={10}>
+          <Text text="Basic CharTextInput:" />
+          <CharTextInput
+            value={inputValue}
+            onChange={(value) => setInputValue(value)}
+            width={300}
+            height={40}
+            padding={10}
+          />
+          <Text text={`Value: ${inputValue} (${inputValue.length} chars)`} />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="CharTextInput with placeholder:" />
+          <CharTextInput
+            value=""
+            placeholder="Click here to type..."
+            onChange={(value) => console.log('Changed:', value)}
+            width={300}
+            height={40}
+            padding={10}
+          />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="CharTextInput with maxLength (20):" />
+          <CharTextInput
+            value={password}
+            onChange={(value) => setPassword(value)}
+            maxLength={20}
+            width={300}
+            height={40}
+            padding={10}
+          />
+          <Text text={`Length: ${password.length}/20`} />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Multi-line CharTextInput:" />
+          <CharTextInput
+            value={multilineValue}
+            onChange={(value) => setMultilineValue(value)}
+            multiline={true}
+            maxWidth={400}
+            maxLines={5}
+            lineHeight={1.3}
+            width={400}
+            minHeight={100}
+            padding={10}
+          />
+          <Text
+            text={`Lines: ${multilineValue.split('\n').length}, Chars: ${multilineValue.length}`}
+          />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="CharTextInput with Submit (Enter):" />
+          <CharTextInput
+            value={submitValue}
+            onChange={(value) => setSubmitValue(value)}
+            onSubmit={(value) => {
+              setSubmitted(value)
+              setSubmitValue('')
+            }}
+            placeholder="Type and press Enter"
+            width={300}
+            height={40}
+            padding={10}
+          />
+          {submitted ? <Text text={`Submitted: "${submitted}"`} /> : null}
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Disabled CharTextInput:" />
+          <CharTextInput
+            value="Cannot edit this"
+            disabled={true}
+            width={300}
+            height={40}
+            padding={10}
+          />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Custom cursor style:" />
+          <CharTextInput
+            value="Custom cursor"
+            onChange={() => {}}
+            cursorColor={0xff00ff}
+            cursorWidth={3}
+            cursorBlinkSpeed={300}
+            width={300}
+            height={40}
+            padding={10}
+          />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Custom selection color:" />
+          <CharTextInput
+            value="Select this text"
+            onChange={() => {}}
+            selectionColor={0xff6600}
+            selectionAlpha={0.4}
+            width={300}
+            height={40}
+            padding={10}
+          />
+        </View>
+
+        <View direction="column" gap={10}>
+          <Text text="Keyboard shortcuts:" />
+          <Text text="• Backspace/Delete - Remove chars" />
+          <Text text="• Arrow Left/Right - Move cursor" />
+          <Text text="• Shift+Arrow - Select text" />
+          <Text text="• Ctrl/Cmd+A - Select all" />
+          <Text text="• Home/End - Jump to start/end" />
+        </View>
+      </ViewLevel3>
     </ViewLevel2>
   )
 }

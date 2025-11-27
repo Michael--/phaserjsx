@@ -1,7 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   DOMInputElement,
-  getThemedProps,
   useEffect,
   useRef,
   useState,
@@ -222,7 +221,6 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
  * @returns CharTextInput JSX element
  */
 export function CharTextInput(props: CharTextInputProps) {
-  const { props: themed } = getThemedProps('CharTextInput', undefined, {})
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)
 
@@ -488,45 +486,28 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current?.focus()
   }
 
-  // Extract only CharText-compatible props
-  const charTextSpecificProps = {
-    text: currentValue || props.placeholder || '',
-    ...(props.textStyle !== undefined && { textStyle: props.textStyle }),
-    ...((props.charSpacing ?? themed.charSpacing) !== undefined && {
-      charSpacing: props.charSpacing ?? themed.charSpacing,
-    }),
-    ...(props.multiline !== undefined && { multiline: props.multiline }),
-    ...((props.lineHeight ?? themed.lineHeight) !== undefined && {
-      lineHeight: props.lineHeight ?? themed.lineHeight,
-    }),
-    ...(props.maxLines !== undefined && { maxLines: props.maxLines }),
-    ...(props.textOverflow !== undefined && { textOverflow: props.textOverflow }),
-    ...((props.wordWrap ?? themed.wordWrap) !== undefined && {
-      wordWrap: props.wordWrap ?? themed.wordWrap,
-    }),
-    showCursor: isFocused,
-    cursorPosition,
-    ...((props.cursorColor ?? themed.cursorColor) !== undefined && {
-      cursorColor: props.cursorColor ?? themed.cursorColor,
-    }),
-    ...((props.cursorWidth ?? themed.cursorWidth) !== undefined && {
-      cursorWidth: props.cursorWidth ?? themed.cursorWidth,
-    }),
-    ...((props.cursorBlinkSpeed ?? themed.cursorBlinkSpeed) !== undefined && {
-      cursorBlinkSpeed: props.cursorBlinkSpeed ?? themed.cursorBlinkSpeed,
-    }),
-    selectionStart,
-    selectionEnd,
-    ...((props.selectionColor ?? themed.selectionColor) !== undefined && {
-      selectionColor: props.selectionColor ?? themed.selectionColor,
-    }),
-    ...((props.selectionAlpha ?? themed.selectionAlpha) !== undefined && {
-      selectionAlpha: props.selectionAlpha ?? themed.selectionAlpha,
-    }),
-    ...(props.disabled !== undefined && { disabled: props.disabled }),
-    onCursorPositionChange: handleCursorPositionChange,
-    onSelectionChange: handleSelectionChange,
-  }
+  // Build CharText props - extract CharTextInput-specific props and pass rest to CharText
+  const {
+    value: _value,
+    placeholder: _placeholder,
+    onChange: _onChange,
+    onFocus: _onFocus,
+    onBlur: _onBlur,
+    onSubmit: _onSubmit,
+    ...viewProps
+  } = props
 
-  return <CharText ref={containerRef} {...charTextSpecificProps} />
+  return (
+    <CharText
+      ref={containerRef}
+      {...viewProps}
+      text={currentValue || props.placeholder || ''}
+      showCursor={isFocused}
+      cursorPosition={cursorPosition}
+      selectionStart={selectionStart}
+      selectionEnd={selectionEnd}
+      onCursorPositionChange={handleCursorPositionChange}
+      onSelectionChange={handleSelectionChange}
+    />
+  )
 }
