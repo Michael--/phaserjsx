@@ -80,7 +80,7 @@ class KeyboardInputManager {
       styles: {
         // need to debug until successful at all
         opacity: '0.0',
-        pointerEvents: 'none',
+        // pointerEvents: 'none',
         position: 'absolute',
         width: '1px',
         height: '1px',
@@ -132,6 +132,16 @@ class KeyboardInputManager {
   isFocused(): boolean {
     const element = this.domInput?.getElement()
     return element === document.activeElement
+  }
+
+  /**
+   * Set pointer events (auto when not focused, none when focused)
+   */
+  setPointerEvents(enabled: boolean): void {
+    const element = this.domInput?.getElement()
+    if (element) {
+      element.style.pointerEvents = enabled ? 'auto' : 'none'
+    }
   }
 
   /**
@@ -279,6 +289,7 @@ export function CharTextInput(props: CharTextInputProps) {
         setSelectionEnd(-1)
       },
       onKeyDown: (event) => {
+        console.log('KeyDown:', event.key)
         // Handle special keys
         if (event.key === 'Enter') {
           if (!props.multiline) {
@@ -303,12 +314,14 @@ export function CharTextInput(props: CharTextInputProps) {
       },
       onFocus: () => {
         setIsFocused(true)
+        inputManagerRef.current?.setPointerEvents(false)
         props.onFocus?.()
       },
       onBlur: () => {
         setIsFocused(false)
         setSelectionStart(-1)
         setSelectionEnd(-1)
+        inputManagerRef.current?.setPointerEvents(true)
         props.onBlur?.()
       },
     })
@@ -387,11 +400,12 @@ export function CharTextInput(props: CharTextInputProps) {
         setSelectionEnd(cursorPosition)
       }
       if (cursorPosition > 0) {
-        setCursorPosition(cursorPosition - 1)
-        if (cursorPosition - 1 < selectionStart) {
-          setSelectionStart(cursorPosition - 1)
+        const newPos = cursorPosition - 1
+        setCursorPosition(newPos)
+        if (newPos < selectionStart) {
+          setSelectionStart(newPos)
         } else {
-          setSelectionEnd(cursorPosition - 1)
+          setSelectionEnd(newPos)
         }
       }
     } else {
@@ -401,6 +415,12 @@ export function CharTextInput(props: CharTextInputProps) {
       if (cursorPosition > 0) {
         setCursorPosition(cursorPosition - 1)
       }
+    }
+
+    // Sync DOM input cursor position
+    const element = inputManagerRef.current?.['domInput']?.getElement()
+    if (element) {
+      element.selectionStart = element.selectionEnd = Math.max(0, cursorPosition - 1)
     }
   }
 
@@ -417,11 +437,12 @@ export function CharTextInput(props: CharTextInputProps) {
         setSelectionEnd(cursorPosition)
       }
       if (cursorPosition < currentValue.length) {
-        setCursorPosition(cursorPosition + 1)
-        if (cursorPosition + 1 > selectionEnd) {
-          setSelectionEnd(cursorPosition + 1)
+        const newPos = cursorPosition + 1
+        setCursorPosition(newPos)
+        if (newPos > selectionEnd) {
+          setSelectionEnd(newPos)
         } else {
-          setSelectionStart(cursorPosition + 1)
+          setSelectionStart(newPos)
         }
       }
     } else {
@@ -431,6 +452,15 @@ export function CharTextInput(props: CharTextInputProps) {
       if (cursorPosition < currentValue.length) {
         setCursorPosition(cursorPosition + 1)
       }
+    }
+
+    // Sync DOM input cursor position
+    const element = inputManagerRef.current?.['domInput']?.getElement()
+    if (element) {
+      element.selectionStart = element.selectionEnd = Math.min(
+        currentValue.length,
+        cursorPosition + 1
+      )
     }
   }
 
@@ -517,11 +547,14 @@ export function CharTextInput(props: CharTextInputProps) {
     ...viewProps
   } = props
 
+  // Determine displayed text: actual value, or placeholder if empty and not focused
+  const displayText = currentValue // ?? (props.placeholder && !isFocused ? props.placeholder : '')
+
   return (
     <CharText
       forwardRef={(r) => (containerRef.current = r)}
       {...viewProps}
-      text={currentValue || props.placeholder || ''}
+      text={displayText}
       showCursor={isFocused}
       cursorPosition={cursorPosition}
       selectionStart={selectionStart}

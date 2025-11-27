@@ -4,7 +4,7 @@ import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function DevelopPage3() {
   const tokens = useThemeTokens()
-  const [inputValue, setInputValue] = useState('Type here...')
+  const [inputValue, setInputValue] = useState('abcdef')
   const [password, setPassword] = useState('')
   const [multilineValue, setMultilineValue] = useState(
     'Multi-line text input. Try typing and using keyboard shortcuts!'
