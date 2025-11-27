@@ -316,8 +316,11 @@ export function CharText(props: CharTextProps) {
         continue
       }
 
-      // Check if we need to wrap
-      if (multiline && currentX + charWidth > effectiveMaxWidth && currentLine.length > 0) {
+      // Check if we need to wrap (check with spacing included for existing chars)
+      const nextX = currentX + charWidth
+      const wouldExceedWidth = currentLine.length > 0 ? nextX > effectiveMaxWidth : false
+
+      if (multiline && wouldExceedWidth) {
         // Try word wrap
         if (wordWrap && char !== ' ') {
           // Find last space in current line
@@ -330,8 +333,11 @@ export function CharText(props: CharTextProps) {
           }
 
           if (lastSpaceIdx >= 0) {
-            // Break at space
+            // Break at space - remove space and everything after it
             const charsToMove = currentLine.splice(lastSpaceIdx + 1)
+            // Remove the space itself from current line
+            currentLine.splice(lastSpaceIdx, 1)
+
             lines.push(createLineInfo(currentLine, currentLineIndex))
             currentLine = charsToMove
             currentLineIndex++
@@ -345,14 +351,14 @@ export function CharText(props: CharTextProps) {
               currentX += movedChar.width + charSpacing
             }
           } else {
-            // No space found, hard break
+            // No space found, hard break - current char goes to next line
             lines.push(createLineInfo(currentLine, currentLineIndex))
             currentLine = []
             currentLineIndex++
             currentX = 0
           }
         } else {
-          // Hard break (or at space)
+          // Hard break (or at space) - current char goes to next line
           lines.push(createLineInfo(currentLine, currentLineIndex))
           currentLine = []
           currentLineIndex++
@@ -529,9 +535,10 @@ export function CharText(props: CharTextProps) {
       const startY = padTop
 
       // Get effective max width (use container width if multiline and no explicit maxWidth)
+      // Important: maxWidth is the content area width, not including padding
       const effectiveMaxWidth =
         multiline && props.maxWidth !== undefined && typeof props.maxWidth === 'number'
-          ? props.maxWidth
+          ? props.maxWidth - horizontalPadding
           : multiline && props.width !== undefined && typeof props.width === 'number'
             ? props.width - horizontalPadding
             : Infinity
