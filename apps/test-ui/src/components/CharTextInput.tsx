@@ -288,44 +288,9 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current = new KeyboardInputManager(container, {
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
-      debug: props.debugHtmlInput, // for a while
-      onInput: (value, event) => {
-        // Handle input changes
-        const controlled = props.value !== undefined
-        const oldValue = refCurrentValue.current
-        const oldCursorPos = refCursorPosition.current
-        const selStart = refSelectionStart.current
-        const selEnd = refSelectionEnd.current
-
-        // Calculate new cursor position based on what was inserted
-        let newCursorPos: number
-
-        if (selStart >= 0 && selEnd > selStart) {
-          // Had selection - cursor goes to start + length of new inserted text
-          const insertedLength = value.length - oldValue.length + (selEnd - selStart)
-          newCursorPos = selStart + insertedLength
-        } else {
-          // No selection - calculate based on difference
-          const lengthDiff = value.length - oldValue.length
-          newCursorPos = oldCursorPos + lengthDiff
-        }
-
-        // Get actual cursor position from DOM input if available
-        const element = event.target as HTMLInputElement
-        if (element?.selectionStart !== null && element?.selectionStart !== undefined) {
-          newCursorPos = element.selectionStart
-        }
-
-        if (controlled) {
-          props.onChange?.(value)
-        } else {
-          setInternalValue(value)
-          props.onChange?.(value)
-        }
-
-        setCursorPosition(newCursorPos)
-        setSelectionStart(-1)
-        setSelectionEnd(-1)
+      debug: props.debugHtmlInput,
+      onInput: (_value, _event) => {
+        // Ignored - we handle all input via onKeyDown
       },
       onKeyDown: (event) => {
         // Handle special keys
@@ -333,6 +298,9 @@ export function CharTextInput(props: CharTextInputProps) {
           if (!props.multiline) {
             event.preventDefault()
             props.onSubmit?.(refCurrentValue.current)
+          } else {
+            // TODO: handle multi-line enter
+            event.preventDefault()
           }
         } else if (event.key === 'Backspace') {
           handleBackspace(event)
@@ -348,7 +316,12 @@ export function CharTextInput(props: CharTextInputProps) {
           handleEnd(event)
         } else if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
           handleSelectAll(event)
+        } else if (isPrintableKey(event)) {
+          // Handle printable characters
+          event.preventDefault()
+          handleCharacterInput(event.key)
         }
+        // TODO: Copy/Paste with Ctrl+C/V or Cmd+C/V
       },
       onFocus: () => {
         setIsFocused(true)
@@ -382,6 +355,59 @@ export function CharTextInput(props: CharTextInputProps) {
       inputManagerRef.current.setValue(currentValue)
     }
   }, [currentValue])
+
+  /**
+   * Check if key event represents a printable character
+   */
+  const isPrintableKey = (event: KeyboardEvent): boolean => {
+    // Ignore if modifier keys are pressed (except Shift)
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return false
+    }
+
+    // Single printable character
+    if (event.key.length === 1) {
+      return true
+    }
+
+    return false
+  }
+
+  /**
+   * Handle printable character input
+   */
+  const handleCharacterInput = (char: string) => {
+    const currentValue = refCurrentValue.current
+    const cursorPosition = refCursorPosition.current
+    const selStart = refSelectionStart.current
+    const selEnd = refSelectionEnd.current
+
+    let newValue: string
+    let newCursorPos: number
+
+    if (selStart >= 0 && selEnd > selStart) {
+      // Replace selection with new character
+      newValue = currentValue.slice(0, selStart) + char + currentValue.slice(selEnd)
+      newCursorPos = selStart + char.length
+    } else {
+      // Insert at cursor position
+      newValue = currentValue.slice(0, cursorPosition) + char + currentValue.slice(cursorPosition)
+      newCursorPos = cursorPosition + char.length
+    }
+
+    updateValue(newValue)
+    setCursorPosition(newCursorPos)
+    setSelectionStart(-1)
+    setSelectionEnd(-1)
+
+    // Sync DOM input cursor
+    setTimeout(() => {
+      const element = inputManagerRef.current?.['domInput']?.getElement()
+      if (element) {
+        element.selectionStart = element.selectionEnd = newCursorPos
+      }
+    }, 0)
+  }
 
   /**
    * Handle backspace key
