@@ -23,7 +23,7 @@ class KeyboardInputManager {
     onBlur?: () => void
     maxLength?: number
     disabled?: boolean
-    debug?: boolean
+    debug?: boolean | undefined
   }
 
   constructor(
@@ -36,7 +36,7 @@ class KeyboardInputManager {
       onBlur?: () => void
       maxLength?: number
       disabled?: boolean
-      debug?: boolean
+      debug?: boolean | undefined
     }
   ) {
     this.container = container
@@ -229,6 +229,9 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
   /** Selection background alpha */
   selectionAlpha?: number
 
+  /** show html input area */
+  debugHtmlInput?: boolean
+
   /** Called when input value changes */
   onChange?: (value: string) => void
 
@@ -285,10 +288,34 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current = new KeyboardInputManager(container, {
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
-      debug: true, // for a while
-      onInput: (value, _event) => {
+      debug: props.debugHtmlInput, // for a while
+      onInput: (value, event) => {
         // Handle input changes
         const controlled = props.value !== undefined
+        const oldValue = refCurrentValue.current
+        const oldCursorPos = refCursorPosition.current
+        const selStart = refSelectionStart.current
+        const selEnd = refSelectionEnd.current
+
+        // Calculate new cursor position based on what was inserted
+        let newCursorPos: number
+
+        if (selStart >= 0 && selEnd > selStart) {
+          // Had selection - cursor goes to start + length of new inserted text
+          const insertedLength = value.length - oldValue.length + (selEnd - selStart)
+          newCursorPos = selStart + insertedLength
+        } else {
+          // No selection - calculate based on difference
+          const lengthDiff = value.length - oldValue.length
+          newCursorPos = oldCursorPos + lengthDiff
+        }
+
+        // Get actual cursor position from DOM input if available
+        const element = event.target as HTMLInputElement
+        if (element?.selectionStart !== null && element?.selectionStart !== undefined) {
+          newCursorPos = element.selectionStart
+        }
+
         if (controlled) {
           props.onChange?.(value)
         } else {
@@ -296,8 +323,7 @@ export function CharTextInput(props: CharTextInputProps) {
           props.onChange?.(value)
         }
 
-        // Move cursor to end
-        setCursorPosition(value.length)
+        setCursorPosition(newCursorPos)
         setSelectionStart(-1)
         setSelectionEnd(-1)
       },
@@ -327,6 +353,7 @@ export function CharTextInput(props: CharTextInputProps) {
       onFocus: () => {
         setIsFocused(true)
         inputManagerRef.current?.setPointerEvents(false)
+        setCursorPosition(currentValue.length)
         props.onFocus?.()
       },
       onBlur: () => {
@@ -374,12 +401,29 @@ export function CharTextInput(props: CharTextInputProps) {
       setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
+
+      // Sync DOM input cursor
+      setTimeout(() => {
+        const element = inputManagerRef.current?.['domInput']?.getElement()
+        if (element) {
+          element.selectionStart = element.selectionEnd = selStart
+        }
+      }, 0)
     } else if (cursorPosition > 0) {
       // Delete character before cursor
       const newValue =
         currentValue.slice(0, cursorPosition - 1) + currentValue.slice(cursorPosition)
       updateValue(newValue)
-      setCursorPosition(cursorPosition - 1)
+      const newPos = cursorPosition - 1
+      setCursorPosition(newPos)
+
+      // Sync DOM input cursor
+      setTimeout(() => {
+        const element = inputManagerRef.current?.['domInput']?.getElement()
+        if (element) {
+          element.selectionStart = element.selectionEnd = newPos
+        }
+      }, 0)
     }
   }
 
@@ -401,11 +445,28 @@ export function CharTextInput(props: CharTextInputProps) {
       setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
+
+      // Sync DOM input cursor
+      setTimeout(() => {
+        const element = inputManagerRef.current?.['domInput']?.getElement()
+        if (element) {
+          element.selectionStart = element.selectionEnd = selStart
+        }
+      }, 0)
     } else if (cursorPosition < currentValue.length) {
       // Delete character after cursor
       const newValue =
         currentValue.slice(0, cursorPosition) + currentValue.slice(cursorPosition + 1)
       updateValue(newValue)
+
+      // Cursor stays at same position
+      // Sync DOM input cursor
+      setTimeout(() => {
+        const element = inputManagerRef.current?.['domInput']?.getElement()
+        if (element) {
+          element.selectionStart = element.selectionEnd = cursorPosition
+        }
+      }, 0)
     }
   }
 
@@ -543,7 +604,6 @@ export function CharTextInput(props: CharTextInputProps) {
    * Handle cursor position change from CharText click
    */
   const handleCursorPositionChange = (position: number) => {
-    console.log('Cursor position change:', position)
     setCursorPosition(position)
     setSelectionStart(-1)
     setSelectionEnd(-1)
@@ -556,7 +616,6 @@ export function CharTextInput(props: CharTextInputProps) {
    * Handle selection change from CharText drag
    */
   const handleSelectionChange = (start: number, end: number) => {
-    console.log('Selection change:', start, end)
     if (start >= 0 && end > start) {
       setSelectionStart(start)
       setSelectionEnd(end)
