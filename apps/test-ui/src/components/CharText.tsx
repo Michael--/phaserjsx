@@ -311,7 +311,7 @@ export function CharText(props: CharTextProps) {
             worldY >= bounds.top &&
             worldY <= bounds.bottom
           ) {
-            return i
+            return charInfo.charIndex
           }
         }
       }
@@ -541,7 +541,8 @@ export function CharText(props: CharTextProps) {
       if (worldX < firstBounds.left) {
         return 0
       } else if (worldX > lastBounds.right) {
-        return chars.length
+        // Return position after last character in original text
+        return lastChar.charIndex + 1
       }
     }
 
@@ -700,32 +701,34 @@ export function CharText(props: CharTextProps) {
       // Find the character at cursor position to get correct line Y
       let cursorX = startX
       let cursorY = startY
-      const clampedPosition = Math.max(0, Math.min(cursorPosition, chars.length))
+      const clampedPosition = Math.max(0, Math.min(cursorPosition, displayedText.length))
 
-      // Find which line the cursor is on
-      if (clampedPosition > 0 && clampedPosition <= chars.length) {
-        const charBeforeCursor = chars[clampedPosition - 1]
-        if (charBeforeCursor) {
-          cursorY = startY + charBeforeCursor.y
-        }
-      } else if (clampedPosition === 0 && chars.length > 0) {
-        const firstChar = chars[0]
-        if (firstChar) {
-          cursorY = startY + firstChar.y
+      // Find the character right before the cursor position (charIndex < clampedPosition)
+      // The cursor is positioned AFTER this character
+      let charBeforeCursor: CharInfo | null = null
+
+      for (const char of chars) {
+        if (char.charIndex < clampedPosition) {
+          if (!charBeforeCursor || char.charIndex > charBeforeCursor.charIndex) {
+            charBeforeCursor = char
+          }
         }
       }
 
-      // Calculate cursor X position
-      for (let i = 0; i < clampedPosition; i++) {
-        const char = chars[i]
-        if (char) {
-          // If we're at the start of a new line, reset X
-          const prevChar = chars[i - 1]
-          if (i > 0 && prevChar && char.lineIndex !== prevChar.lineIndex) {
-            cursorX = startX
-          }
-          cursorX += char.width + charSpacing
-        }
+      // Position cursor based on the character before it
+      if (charBeforeCursor) {
+        // Cursor goes after this character
+        cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
+        cursorY = startY + charBeforeCursor.y
+      } else if (chars.length > 0 && chars[0]) {
+        // Cursor at position 0 (before first char)
+        const firstChar = chars[0]
+        cursorX = startX + firstChar.x
+        cursorY = startY + firstChar.y
+      } else {
+        // No chars at all
+        cursorX = startX
+        cursorY = startY
       }
 
       // Get cursor height from character at cursor line
@@ -736,6 +739,8 @@ export function CharText(props: CharTextProps) {
       } else if (chars.length > 0 && chars[0]) {
         cursorHeight = chars[0].height
       }
+
+      // console.log('cursorPosition', cursorPosition, 'cursorX', cursorX, 'cursorY', cursorY)
 
       // Create or update cursor rectangle
       if (!cursorRef.current) {

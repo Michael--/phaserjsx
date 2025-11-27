@@ -257,15 +257,13 @@ export function CharTextInput(props: CharTextInputProps) {
   // Internal state for uncontrolled mode
   const [internalValue, setInternalValue] = useState(props.value ?? '')
   const [cursorPosition, setCursorPosition] = useState(0)
-  const [selectionStart, setSelectionStart] = useState(-1)
-  const [selectionEnd, setSelectionEnd] = useState(-1)
+  const [selectionAnchor, setSelectionAnchor] = useState(-1) // -1 = no selection, else anchor position
   const [isFocused, setIsFocused] = useState(false)
 
   // Refs for current values (used in event handlers to avoid stale closures)
   const refCurrentValue = useRef(props.value ?? '')
   const refCursorPosition = useRef(0)
-  const refSelectionStart = useRef(-1)
-  const refSelectionEnd = useRef(-1)
+  const refSelectionAnchor = useRef(-1)
 
   // Use controlled value if provided
   const currentValue = props.value !== undefined ? props.value : internalValue
@@ -274,8 +272,11 @@ export function CharTextInput(props: CharTextInputProps) {
   // Sync refs with state
   refCurrentValue.current = currentValue
   refCursorPosition.current = cursorPosition
-  refSelectionStart.current = selectionStart
-  refSelectionEnd.current = selectionEnd
+  refSelectionAnchor.current = selectionAnchor
+
+  // Calculate selection start/end from anchor and cursor
+  const selectionStart = selectionAnchor >= 0 ? Math.min(selectionAnchor, cursorPosition) : -1
+  const selectionEnd = selectionAnchor >= 0 ? Math.max(selectionAnchor, cursorPosition) : -1
 
   /**
    * Setup keyboard input manager
@@ -299,8 +300,9 @@ export function CharTextInput(props: CharTextInputProps) {
             event.preventDefault()
             props.onSubmit?.(refCurrentValue.current)
           } else {
-            // TODO: handle multi-line enter
+            // Insert newline
             event.preventDefault()
+            handleCharacterInput('\n')
           }
         } else if (event.key === 'Backspace') {
           handleBackspace(event)
@@ -310,6 +312,10 @@ export function CharTextInput(props: CharTextInputProps) {
           handleArrowLeft(event)
         } else if (event.key === 'ArrowRight') {
           handleArrowRight(event)
+        } else if (event.key === 'ArrowUp') {
+          handleArrowUp(event)
+        } else if (event.key === 'ArrowDown') {
+          handleArrowDown(event)
         } else if (event.key === 'Home') {
           handleHome(event)
         } else if (event.key === 'End') {
@@ -331,8 +337,7 @@ export function CharTextInput(props: CharTextInputProps) {
       },
       onBlur: () => {
         setIsFocused(false)
-        setSelectionStart(-1)
-        setSelectionEnd(-1)
+        setSelectionAnchor(-1)
         inputManagerRef.current?.setPointerEvents(true)
         props.onBlur?.()
       },
@@ -367,14 +372,15 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleCharacterInput = (char: string) => {
     const currentValue = refCurrentValue.current
     const cursorPosition = refCursorPosition.current
-    const selStart = refSelectionStart.current
-    const selEnd = refSelectionEnd.current
+    const anchor = refSelectionAnchor.current
 
     let newValue: string
     let newCursorPos: number
 
-    if (selStart >= 0 && selEnd > selStart) {
+    if (anchor >= 0) {
       // Replace selection with new character
+      const selStart = Math.min(anchor, cursorPosition)
+      const selEnd = Math.max(anchor, cursorPosition)
       newValue = currentValue.slice(0, selStart) + char + currentValue.slice(selEnd)
       newCursorPos = selStart + char.length
     } else {
@@ -385,8 +391,7 @@ export function CharTextInput(props: CharTextInputProps) {
 
     updateValue(newValue)
     setCursorPosition(newCursorPos)
-    setSelectionStart(-1)
-    setSelectionEnd(-1)
+    setSelectionAnchor(-1)
   }
 
   /**
@@ -397,16 +402,16 @@ export function CharTextInput(props: CharTextInputProps) {
 
     const currentValue = refCurrentValue.current
     const cursorPosition = refCursorPosition.current
-    const selStart = refSelectionStart.current
-    const selEnd = refSelectionEnd.current
+    const anchor = refSelectionAnchor.current
 
-    if (selStart >= 0 && selEnd > selStart) {
+    if (anchor >= 0) {
       // Delete selection
+      const selStart = Math.min(anchor, cursorPosition)
+      const selEnd = Math.max(anchor, cursorPosition)
       const newValue = currentValue.slice(0, selStart) + currentValue.slice(selEnd)
       updateValue(newValue)
       setCursorPosition(selStart)
-      setSelectionStart(-1)
-      setSelectionEnd(-1)
+      setSelectionAnchor(-1)
     } else if (cursorPosition > 0) {
       // Delete character before cursor
       const newValue =
@@ -425,16 +430,16 @@ export function CharTextInput(props: CharTextInputProps) {
 
     const currentValue = refCurrentValue.current
     const cursorPosition = refCursorPosition.current
-    const selStart = refSelectionStart.current
-    const selEnd = refSelectionEnd.current
+    const anchor = refSelectionAnchor.current
 
-    if (selStart >= 0 && selEnd > selStart) {
+    if (anchor >= 0) {
       // Delete selection
+      const selStart = Math.min(anchor, cursorPosition)
+      const selEnd = Math.max(anchor, cursorPosition)
       const newValue = currentValue.slice(0, selStart) + currentValue.slice(selEnd)
       updateValue(newValue)
       setCursorPosition(selStart)
-      setSelectionStart(-1)
-      setSelectionEnd(-1)
+      setSelectionAnchor(-1)
     } else if (cursorPosition < currentValue.length) {
       // Delete character after cursor
       const newValue =
@@ -450,27 +455,21 @@ export function CharTextInput(props: CharTextInputProps) {
     event.preventDefault()
 
     const cursorPosition = refCursorPosition.current
-    const selStart = refSelectionStart.current
+    const anchor = refSelectionAnchor.current
 
     if (event.shiftKey) {
-      // Extend selection
-      if (selStart < 0) {
-        setSelectionStart(cursorPosition)
-        setSelectionEnd(cursorPosition)
+      // Extend/start selection to the left
+      if (anchor < 0) {
+        // Start new selection - anchor at current position
+        setSelectionAnchor(cursorPosition)
       }
       if (cursorPosition > 0) {
-        const newPos = cursorPosition - 1
-        setCursorPosition(newPos)
-        if (newPos < selStart) {
-          setSelectionStart(newPos)
-        } else {
-          setSelectionEnd(newPos)
-        }
+        setCursorPosition(cursorPosition - 1)
       }
     } else {
-      // Move cursor
-      setSelectionStart(-1)
-      setSelectionEnd(-1)
+      // Move cursor (clear selection)
+
+      setSelectionAnchor(-1)
       if (cursorPosition > 0) {
         setCursorPosition(cursorPosition - 1)
       }
@@ -485,28 +484,19 @@ export function CharTextInput(props: CharTextInputProps) {
 
     const currentValue = refCurrentValue.current
     const cursorPosition = refCursorPosition.current
-    const selStart = refSelectionStart.current
-    const selEnd = refSelectionEnd.current
+    const anchor = refSelectionAnchor.current
 
     if (event.shiftKey) {
-      // Extend selection
-      if (selStart < 0) {
-        setSelectionStart(cursorPosition)
-        setSelectionEnd(cursorPosition)
+      // Extend/start selection to the right
+      if (anchor < 0) {
+        // Start new selection - anchor at current position
+        setSelectionAnchor(cursorPosition)
       }
       if (cursorPosition < currentValue.length) {
-        const newPos = cursorPosition + 1
-        setCursorPosition(newPos)
-        if (newPos > selEnd) {
-          setSelectionEnd(newPos)
-        } else {
-          setSelectionStart(newPos)
-        }
+        setCursorPosition(cursorPosition + 1)
       }
     } else {
-      // Move cursor
-      setSelectionStart(-1)
-      setSelectionEnd(-1)
+      setSelectionAnchor(-1)
       if (cursorPosition < currentValue.length) {
         setCursorPosition(cursorPosition + 1)
       }
@@ -514,12 +504,25 @@ export function CharTextInput(props: CharTextInputProps) {
   }
 
   /**
+   * Handle arrow up key (multiline)
+   */
+  const handleArrowUp = (event: KeyboardEvent) => {
+    event.preventDefault()
+  }
+
+  /**
+   * Handle arrow down key (multiline)
+   */
+  const handleArrowDown = (event: KeyboardEvent) => {
+    event.preventDefault()
+  }
+
+  /**
    * Handle home key
    */
   const handleHome = (event: KeyboardEvent) => {
     event.preventDefault()
-    setSelectionStart(-1)
-    setSelectionEnd(-1)
+    setSelectionAnchor(-1)
     setCursorPosition(0)
   }
 
@@ -529,8 +532,7 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleEnd = (event: KeyboardEvent) => {
     event.preventDefault()
     const currentValue = refCurrentValue.current
-    setSelectionStart(-1)
-    setSelectionEnd(-1)
+    setSelectionAnchor(-1)
     setCursorPosition(currentValue.length)
   }
 
@@ -540,8 +542,7 @@ export function CharTextInput(props: CharTextInputProps) {
   const handleSelectAll = (event: KeyboardEvent) => {
     event.preventDefault()
     const currentValue = refCurrentValue.current
-    setSelectionStart(0)
-    setSelectionEnd(currentValue.length)
+    setSelectionAnchor(0)
     setCursorPosition(currentValue.length)
   }
 
@@ -562,8 +563,7 @@ export function CharTextInput(props: CharTextInputProps) {
    */
   const handleCursorPositionChange = (position: number) => {
     setCursorPosition(position)
-    setSelectionStart(-1)
-    setSelectionEnd(-1)
+    setSelectionAnchor(-1)
 
     // Focus DOM input
     // inputManagerRef.current?.focus()
@@ -574,12 +574,10 @@ export function CharTextInput(props: CharTextInputProps) {
    */
   const handleSelectionChange = (start: number, end: number) => {
     if (start >= 0 && end > start) {
-      setSelectionStart(start)
-      setSelectionEnd(end)
+      setSelectionAnchor(start)
       setCursorPosition(end)
     } else {
-      setSelectionStart(-1)
-      setSelectionEnd(-1)
+      setSelectionAnchor(-1)
     }
 
     // Focus DOM input
