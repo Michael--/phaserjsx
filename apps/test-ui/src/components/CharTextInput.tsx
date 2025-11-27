@@ -239,6 +239,11 @@ export function CharTextInput(props: CharTextInputProps) {
       newCursorPos = cursorPosition + char.length
     }
 
+    // Enforce maxLength
+    if (props.maxLength !== undefined && newValue.length > props.maxLength) {
+      return
+    }
+
     updateValue(newValue)
     setCursorPosition(newCursorPos)
     setSelectionAnchor(-1)
