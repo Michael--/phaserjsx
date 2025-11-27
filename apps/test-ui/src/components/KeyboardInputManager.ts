@@ -1,35 +1,25 @@
 import { DOMInputElement, type DOMInputConfig } from '@phaserjsx/ui'
 
+type KeyboardInputManagerConfig = {
+  onInput?: (value: string, event: Event) => void
+  onKeyDown?: (event: KeyboardEvent) => void
+  onKeyUp?: (event: KeyboardEvent) => void
+  onFocus?: () => void
+  onBlur?: () => void
+  maxLength?: number
+  disabled?: boolean
+  debug?: boolean | undefined
+}
+
 /**
  * Manages hidden DOM input for keyboard events
  */
 export class KeyboardInputManager {
   private domInput: DOMInputElement | null = null
   private container: Phaser.GameObjects.Container
-  private config: {
-    onInput?: (value: string, event: Event) => void
-    onKeyDown?: (event: KeyboardEvent) => void
-    onKeyUp?: (event: KeyboardEvent) => void
-    onFocus?: () => void
-    onBlur?: () => void
-    maxLength?: number
-    disabled?: boolean
-    debug?: boolean | undefined
-  }
+  private config: KeyboardInputManagerConfig
 
-  constructor(
-    container: Phaser.GameObjects.Container,
-    config: {
-      onInput?: (value: string, event: Event) => void
-      onKeyDown?: (event: KeyboardEvent) => void
-      onKeyUp?: (event: KeyboardEvent) => void
-      onFocus?: () => void
-      onBlur?: () => void
-      maxLength?: number
-      disabled?: boolean
-      debug?: boolean | undefined
-    }
-  ) {
+  constructor(container: Phaser.GameObjects.Container, config: KeyboardInputManagerConfig) {
     this.container = container
     this.config = config
     this.create()
