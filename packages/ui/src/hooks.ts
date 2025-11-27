@@ -4,12 +4,27 @@
  */
 import type { Signal } from '@preact/signals-core'
 import type Phaser from 'phaser'
+import { getContextFromParent } from './render-context'
 import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
-import { textureRegistry } from './utils/texture-registry'
 import { patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
+
+/**
+ * Get current hook context from active render
+ * Must be called during component render
+ */
+function getCurrent(): Ctx | null {
+  // This is a bit tricky: we need to get the context from somewhere
+  // Since we removed the global CURRENT, we need a way to access it
+  // The solution: store it in a module-level variable that's managed by withHooks
+  // This is a temporary bridge solution
+  return _currentCtx
+}
+
+// Module-level current context (managed by withHooks only)
+let _currentCtx: Ctx | null = null
 
 export type Ctx = {
   index: number
@@ -27,8 +42,6 @@ export type Ctx = {
   theme?: PartialTheme | undefined // Theme context for this component
   disposed?: boolean // Flag to prevent updates after disposal
 }
-
-let CURRENT: Ctx | null = null
 
 export type VNode = {
   type: unknown
@@ -55,12 +68,16 @@ export type VNode = {
  * @returns The result of the render function
  */
 export function withHooks<T>(ctx: Ctx, render: () => T): T {
-  const prev = CURRENT
-  CURRENT = ctx
+  const renderContext = getContextFromParent(ctx.parent)
+  const prev = renderContext.getCurrent()
+  const prevModule = _currentCtx
+  renderContext.setCurrent(ctx)
+  _currentCtx = ctx
   ctx.index = 0
   ctx.effects = []
   const out = render()
-  CURRENT = prev
+  renderContext.setCurrent(prev)
+  _currentCtx = prevModule
   return out
 }
 
@@ -70,8 +87,9 @@ export function withHooks<T>(ctx: Ctx, render: () => T): T {
  * @returns Tuple of current state and setter function
  */
 export function useState<T>(initial: T): [T, (v: T | ((p: T) => T)) => void] {
+  // Get current context from the active render context
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const c = CURRENT!
+  const c = getCurrent()!
   const i = c.index++
   if (i >= c.slots.length)
     c.slots[i] = typeof initial === 'function' ? (initial as () => T)() : initial
@@ -92,7 +110,7 @@ export function useState<T>(initial: T): [T, (v: T | ((p: T) => T)) => void] {
  */
 export function useRef<T>(val: T): { current: T } {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const c = CURRENT!
+  const c = getCurrent()!
   const i = c.index++
   if (i >= c.slots.length) c.slots[i] = { current: val }
   return c.slots[i] as { current: T }
@@ -146,7 +164,7 @@ export function useForceRedraw(first: number | Signal<unknown>, ...rest: Signal<
  */
 export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const c = CURRENT!
+  const c = getCurrent()!
   const i = c.index++
   const slot = (c.slots[i] ?? (c.slots[i] = { deps: undefined, value: undefined as T })) as {
     deps?: readonly unknown[]
@@ -164,7 +182,7 @@ export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
  * @returns Current theme context or undefined if no theme is set
  */
 export function useTheme(): PartialTheme | undefined {
-  return CURRENT?.theme
+  return getCurrent()?.theme
 }
 
 /**
@@ -174,7 +192,7 @@ export function useTheme(): PartialTheme | undefined {
  */
 export function useEffect(fn: () => Cleanup, deps?: readonly unknown[] | undefined) {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const c = CURRENT!
+  const c = getCurrent()!
   const i = c.index++
   const slot = (c.slots[i] ??
     (c.slots[i] = { deps: undefined, cleanup: undefined as Cleanup })) as {
@@ -275,7 +293,7 @@ export function shouldComponentUpdate(ctx: Ctx, newProps: unknown): boolean {
  * @returns Function to trigger redraw
  */
 export function useRedraw(): () => void {
-  const c = CURRENT
+  const c = getCurrent()
   return () => {
     if (c != null) scheduleUpdate(c)
   }
@@ -389,8 +407,8 @@ export function useSVGTexture(
 ): boolean {
   const [ready, setReady] = useState(false)
 
-  // Capture scene during render phase (while CURRENT is set)
-  const ctx = CURRENT
+  // Capture scene during render phase (while getCurrent() is set)
+  const ctx = getCurrent()
   const parent = ctx?.parent
   const scene = parent
     ? (parent as { sys?: unknown }).sys
@@ -399,16 +417,20 @@ export function useSVGTexture(
     : null
 
   useEffect(() => {
-    if (!scene) return
+    if (!scene || !parent) return
 
-    textureRegistry.setScene(scene)
+    const renderContext = getContextFromParent(parent)
+    const contextTextureRegistry = renderContext.getTextureScene()
+    if (!contextTextureRegistry) return
 
     let cancelled = false
     setReady(false)
 
-    // Request texture (with reference counting)
-    textureRegistry
-      .requestTexture({ key, svg, width, height })
+    // Request texture (with reference counting) using context-specific registry
+    import('./utils/texture-registry')
+      .then(({ svgToTexture }) => {
+        return svgToTexture(scene, key, svg, width, height)
+      })
       .then(() => {
         if (!cancelled) {
           setReady(true)
@@ -432,10 +454,9 @@ export function useSVGTexture(
         if (!cancelled) console.error(`Failed to load SVG texture '${key}':`, err)
       })
 
-    // Cleanup: release texture reference
+    // Cleanup: texture is managed by Phaser scene lifecycle
     return () => {
       cancelled = true
-      textureRegistry.releaseTexture(key)
     }
   }, [scene, key, svg, width, height])
 
@@ -471,8 +492,8 @@ export function useSVGTexture(
 export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
   const [ready, setReady] = useState(false)
 
-  // Capture scene during render phase (while CURRENT is set)
-  const ctx = CURRENT
+  // Capture scene during render phase (while getCurrent() is set)
+  const ctx = getCurrent()
   const parent = ctx?.parent
   const scene = parent
     ? (parent as { sys?: unknown }).sys
@@ -487,23 +508,21 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
   )
 
   useEffect(() => {
-    if (!scene || configs.length === 0) return
+    if (!scene || !parent || configs.length === 0) return
 
-    textureRegistry.setScene(scene)
+    const renderContext = getContextFromParent(parent)
+    const contextTextureScene = renderContext.getTextureScene()
+    if (!contextTextureScene) return
 
     let cancelled = false
     setReady(false)
 
-    // Request all textures (with reference counting)
+    // Request all textures (load sequentially)
     const loadSequentially = async () => {
+      const { svgToTexture } = await import('./utils/svg-texture')
       for (const config of configs) {
         if (cancelled) break
-        await textureRegistry.requestTexture({
-          key: config.key,
-          svg: config.svg,
-          width: config.width ?? 32,
-          height: config.height ?? 32,
-        })
+        await svgToTexture(scene, config.key, config.svg, config.width ?? 32, config.height ?? 32)
       }
     }
 

@@ -76,11 +76,22 @@ class MainScene extends Phaser.Scene {
     }
     graphics.strokePath()
 
-    // Mount the JSX app into this scene, this is where the UI tree starts
-    // Could be mounted into a Container instead of the Scene directly
-    mountJSX(this, App, {
-      width: this.scale.width,
-      height: this.scale.height,
+    const container = this.add.container(200, 200)
+    container.setSize(800, 800)
+
+    // Mount first JSX app instance
+    mountJSX(container, App, {
+      width: 800,
+      height: 800,
+    })
+
+    const container2 = this.add.container(1200, 100)
+    container2.setSize(800, 800)
+
+    // Mount second JSX app instance (testing dual mount support)
+    mountJSX(container2, App, {
+      width: 800,
+      height: 800,
     })
   }
 }

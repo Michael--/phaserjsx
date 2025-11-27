@@ -62,6 +62,9 @@ export * from './design-tokens'
 // Viewport context - provides screen dimensions for vw/vh units
 export { viewportRegistry, type ViewportSize } from './viewport-context'
 
+// Render context - isolates global state per mount point (advanced usage)
+export { getRenderContext, type RenderContext } from './render-context'
+
 /**
  * Consumers can import JSX runtime from here:
  *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";

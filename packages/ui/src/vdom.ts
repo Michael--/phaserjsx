@@ -10,10 +10,10 @@ import { getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
-import { DeferredLayoutQueue, calculateLayout, type LayoutSize } from './layout/index'
+import { calculateLayout, type LayoutSize } from './layout/index'
+import { getRenderContext } from './render-context'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
-import { viewportRegistry } from './viewport-context'
 
 export type VNodeLike = VNode | VNode[] | null
 
@@ -435,7 +435,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
     // Defer gesture hit area update to next frame after layout completes
     // This ensures __getLayoutSize() returns correct dimensions (not 0x0)
-    DeferredLayoutQueue.defer(() => updateGestureHitAreaAfterLayout(container))
+    const renderContext = getRenderContext(parentOrScene)
+    renderContext.deferLayout(() => updateGestureHitAreaAfterLayout(container))
   }
 
   return node
@@ -753,7 +754,8 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       calculateLayout(container, container.__layoutProps, parentSize)
 
       // Defer gesture hit area update to next frame after layout completes
-      DeferredLayoutQueue.defer(() => updateGestureHitAreaAfterLayout(container))
+      const renderContext = getRenderContext(parent)
+      renderContext.deferLayout(() => updateGestureHitAreaAfterLayout(container))
     }
   }
 }
@@ -790,7 +792,8 @@ export function mountJSX(
       : (parentOrScene as Phaser.GameObjects.GameObject).scene
 
   if (scene) {
-    viewportRegistry.setViewport(scene.scale.width, scene.scale.height, scene)
+    const renderContext = getRenderContext(parentOrScene)
+    renderContext.setViewport(scene.scale.width, scene.scale.height, scene)
   }
 
   const vnode: VNode = { type, props, children: [] }

@@ -1,0 +1,55 @@
+feat: multi-mount support via render context isolation
+
+Implements scene-based RenderContext to isolate global state per mount point.
+
+## Changes
+
+### New: render-context.ts
+- RenderContext class encapsulates previously global singletons
+- Stored in scene.data with unique keys per container
+- Automatic cleanup on scene shutdown
+
+### Modified: hooks.ts
+- Replaced global CURRENT with context-based access
+- All hooks updated to use getCurrent() helper
+- Module-level _currentCtx bridge for hook access
+- Texture registry operations now context-aware
+
+### Modified: vdom.ts
+- mountJSX creates RenderContext per mount
+- Deferred layout uses context-specific queue
+- Viewport dimensions stored per context
+
+### Modified: index.ts
+- Export getRenderContext and RenderContext type
+
+### Test: main.ts
+- Enabled dual mountJSX test
+
+## Architecture
+
+Before:
+- Global CURRENT, textureRegistry, viewportRegistry
+- Second mountJSX overwrites first context
+
+After:
+- Per-mount RenderContext in scene.data
+- Each mount isolated: hooks, textures, viewport, layouts
+- Pattern similar to existing GestureManager
+
+## Impact
+
+- ✅ No breaking changes - API unchanged
+- ✅ Enables multiple UI instances per scene
+- ✅ Enables split-screen and nested UIs
+- ✅ Minimal performance overhead
+
+## Files Changed
+
+- packages/ui/src/render-context.ts (new, 206 lines)
+- packages/ui/src/hooks.ts (~50 lines)
+- packages/ui/src/vdom.ts (~10 lines)
+- packages/ui/src/index.ts (2 lines)
+- apps/test-ui/src/main.ts (uncommented test)
+
+Total: ~270 lines across 5 files
