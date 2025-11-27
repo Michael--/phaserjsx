@@ -779,45 +779,51 @@ export function CharText(props: CharTextProps) {
       const startX = padLeft
       const startY = padTop
 
-      // Calculate selection bounds
-      let selectionX = startX
-      let selectionWidth = 0
+      // Group selected characters by line
+      const lineGroups = new Map<number, CharInfo[]>()
 
-      // Calculate X position for selection start
-      for (let i = 0; i < selectionStart && i < chars.length; i++) {
-        const char = chars[i]
-        if (char) {
-          selectionX += char.width + charSpacing
-        }
-      }
-
-      // Calculate selection width
       for (let i = selectionStart; i < selectionEnd && i < chars.length; i++) {
         const char = chars[i]
         if (char) {
-          selectionWidth += char.width + charSpacing
+          const lineIndex = char.lineIndex
+          if (!lineGroups.has(lineIndex)) {
+            lineGroups.set(lineIndex, [])
+          }
+          lineGroups.get(lineIndex)?.push(char)
         }
       }
 
-      if (selectionWidth > 0) {
-        const selectionHeight = chars[0] ? chars[0].height : 20
+      // Create one selection rectangle per line
+      for (const [_lineIndex, lineChars] of lineGroups) {
+        if (lineChars.length === 0) continue
 
-        // Create selection rectangle
-        const selectionRect = scene.add.rectangle(
-          selectionX,
-          startY,
-          selectionWidth,
-          selectionHeight,
-          selectionColor,
-          selectionAlpha
-        )
-        selectionRect.setOrigin(0, 0)
-        container.add(selectionRect)
+        const firstChar = lineChars[0]
+        const lastChar = lineChars[lineChars.length - 1]
 
-        // Move selection behind text
-        container.moveDown(selectionRect)
+        if (firstChar && lastChar) {
+          const selectionX = startX + firstChar.x
+          const selectionY = startY + firstChar.y
+          const selectionWidth =
+            lastChar.x + lastChar.width - firstChar.x + (lineChars.length > 1 ? charSpacing : 0)
+          const selectionHeight = firstChar.height
 
-        selectionRefs.current.push(selectionRect)
+          // Create selection rectangle for this line
+          const selectionRect = scene.add.rectangle(
+            selectionX,
+            selectionY,
+            selectionWidth,
+            selectionHeight,
+            selectionColor,
+            selectionAlpha
+          )
+          selectionRect.setOrigin(0, 0)
+          container.add(selectionRect)
+
+          // Move selection behind text
+          container.moveDown(selectionRect)
+
+          selectionRefs.current.push(selectionRect)
+        }
       }
     }, 15)
 
