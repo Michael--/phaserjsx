@@ -41,3 +41,17 @@ export function ViewLevel3(props: ViewProps) {
     />
   )
 }
+
+export function ViewLevel4(props: ViewProps) {
+  const colors = useThemeTokens()?.colors
+  return (
+    <View
+      width={'fill'}
+      backgroundColor={colors?.background.light.toNumber()}
+      padding={10}
+      gap={10}
+      cornerRadius={5}
+      {...props}
+    />
+  )
+}
