@@ -98,8 +98,9 @@ export function createAppTheme(
         cornerRadius: 6,
         padding: 10,
         textStyle: {
-          color: colors.text.DEFAULT.toString(),
+          color: colors.text.toString(),
           fontSize: '20px',
+          fontFamily: 'Arial',
         },
         cursorColor: colors.accent.DEFAULT.toNumber(),
         cursorWidth: 3,

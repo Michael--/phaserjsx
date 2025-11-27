@@ -3,6 +3,25 @@ import { Icon, ScrollView, TextInput } from '../components'
 import { CharText } from '../components/CharText'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
+function DevelopPage3() {
+  const tokens = useThemeTokens()
+
+  return (
+    <ViewLevel2 direction="column" padding={10}>
+      <View gap={10} direction="row" alignContent="center">
+        <Icon type="bricks" />
+        <SectionHeader title="CharTextInput Component" />
+      </View>
+      <ViewLevel3
+        gap={20}
+        direction="column"
+        padding={10}
+        backgroundColor={tokens?.colors.background.medium.toNumber()}
+      ></ViewLevel3>
+    </ViewLevel2>
+  )
+}
+
 function DevelopPage2() {
   const tokens = useThemeTokens()
   const [cursorPos, _setCursorPos] = useState(5)
@@ -19,7 +38,7 @@ function DevelopPage2() {
     <ViewLevel2 direction="column" padding={10}>
       <View gap={10} direction="row" alignContent="center">
         <Icon type="bricks" />
-        <SectionHeader title="CharText & CharTextInput Component" />
+        <SectionHeader title="CharText" />
       </View>
       <ViewLevel3
         gap={20}
@@ -240,8 +259,9 @@ export function TestExample() {
   return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
-        <ViewLevel2>
+        <ViewLevel2 direction="row" padding={10}>
           <DevelopPage2 />
+          <DevelopPage3 />
         </ViewLevel2>
         <ViewLevel2>
           <DevelopPage1 />

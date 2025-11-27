@@ -4,6 +4,8 @@
  */
 export { Accordion, type AccordionProps } from './Accordion'
 export { Button, type ButtonProps } from './Button'
+export { CharText, type CharTextProps } from './CharText'
+export { CharTextInput, type CharTextInputProps } from './CharTextInput'
 export { Icon, useIcon, type IconType } from './Icon'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
