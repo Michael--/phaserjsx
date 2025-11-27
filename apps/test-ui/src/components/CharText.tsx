@@ -34,6 +34,8 @@ declare module '@phaserjsx/ui' {
       cursorColor?: number
       cursorWidth?: number
       cursorBlinkSpeed?: number
+      selectionColor?: number
+      selectionAlpha?: number
     } & PhaserJSX.ViewTheme &
       EffectDefinition
   }
@@ -72,6 +74,24 @@ export interface CharTextProps extends Omit<ViewProps, 'children'>, EffectDefini
 
   /** Called when text changes (for controlled mode) */
   onChange?: (text: string) => void
+
+  /** Called when cursor position changes */
+  onCursorPositionChange?: (position: number) => void
+
+  /** Selection start index */
+  selectionStart?: number
+
+  /** Selection end index */
+  selectionEnd?: number
+
+  /** Selection background color */
+  selectionColor?: number
+
+  /** Selection background alpha */
+  selectionAlpha?: number
+
+  /** Called when selection changes */
+  onSelectionChange?: (start: number, end: number) => void
 }
 
 /**
@@ -90,6 +110,8 @@ export interface CharTextAPI {
   getText(): string
   /** Clear all text */
   clear(): void
+  /** Get character index at world position */
+  getCharAtPosition(worldX: number, worldY: number): number | null
 }
 
 /**
@@ -112,6 +134,10 @@ export function CharText(props: CharTextProps) {
   const cursorRef = useRef<Phaser.GameObjects.Rectangle | null>(null)
   const cursorTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
+  // Selection management
+  const selectionRefs = useRef<Phaser.GameObjects.Rectangle[]>([])
+  const dragStartPosRef = useRef<number>(-1)
+
   // Track if we're in controlled mode
   const isControlled = props.text !== undefined
   const displayedText = isControlled ? (props.text ?? '') : internalText
@@ -132,6 +158,11 @@ export function CharText(props: CharTextProps) {
   const cursorColor = props.cursorColor ?? themed.cursorColor ?? 0xffffff
   const cursorWidth = props.cursorWidth ?? themed.cursorWidth ?? 2
   const cursorBlinkSpeed = props.cursorBlinkSpeed ?? themed.cursorBlinkSpeed ?? 530
+
+  const selectionStart = props.selectionStart ?? -1
+  const selectionEnd = props.selectionEnd ?? -1
+  const selectionColor = props.selectionColor ?? themed.selectionColor ?? 0x4a90e2
+  const selectionAlpha = props.selectionAlpha ?? themed.selectionAlpha ?? 0.3
 
   /**
    * Text manipulation API
@@ -183,11 +214,59 @@ export function CharText(props: CharTextProps) {
         props.onChange?.('')
       }
     },
+    getCharAtPosition: (worldX: number, worldY: number) => {
+      for (let i = 0; i < chars.length; i++) {
+        const charInfo = chars[i]
+        if (charInfo?.textObject) {
+          const bounds = charInfo.textObject.getBounds()
+          if (
+            worldX >= bounds.left &&
+            worldX <= bounds.right &&
+            worldY >= bounds.top &&
+            worldY <= bounds.bottom
+          ) {
+            return i
+          }
+        }
+      }
+      return null
+    },
   }
 
   // Store API in ref for external access (future use)
   const apiRef = useRef<CharTextAPI>(api)
   apiRef.current = api
+
+  /**
+   * Get cursor position from pointer world coordinates
+   */
+  const getPositionFromPointer = (worldX: number, worldY: number): number => {
+    const charIndex = api.getCharAtPosition(worldX, worldY)
+
+    if (charIndex !== null) {
+      return charIndex + 1
+    }
+
+    if (chars.length === 0) {
+      return 0
+    }
+
+    const firstChar = chars[0]
+    const lastChar = chars[chars.length - 1]
+
+    if (firstChar?.textObject && lastChar?.textObject) {
+      const firstBounds = firstChar.textObject.getBounds()
+      const lastBounds = lastChar.textObject.getBounds()
+
+      if (worldX < firstBounds.left) {
+        return 0
+      } else if (worldX > lastBounds.right) {
+        return chars.length
+      }
+    }
+
+    return cursorPosition
+  }
 
   /**
    * Create or update character GameObjects based on text prop
@@ -374,12 +453,119 @@ export function CharText(props: CharTextProps) {
     charSpacing,
   ])
 
+  /**
+   * Render selection background
+   */
+  useEffect(() => {
+    if (!ref.current) return
+
+    const container = ref.current
+    const scene = container.scene
+
+    // Clear old selection rectangles
+    selectionRefs.current.forEach((rect) => rect.destroy())
+    selectionRefs.current = []
+
+    // Check if we have a valid selection
+    if (selectionStart < 0 || selectionEnd < 0 || selectionStart >= selectionEnd) {
+      return
+    }
+
+    // Wait for chars to be ready
+    if (chars.length === 0) return
+
+    setTimeout(() => {
+      const startX = padLeft
+      const startY = padTop
+
+      // Calculate selection bounds
+      let selectionX = startX
+      let selectionWidth = 0
+
+      // Calculate X position for selection start
+      for (let i = 0; i < selectionStart && i < chars.length; i++) {
+        const char = chars[i]
+        if (char) {
+          selectionX += char.width + charSpacing
+        }
+      }
+
+      // Calculate selection width
+      for (let i = selectionStart; i < selectionEnd && i < chars.length; i++) {
+        const char = chars[i]
+        if (char) {
+          selectionWidth += char.width + charSpacing
+        }
+      }
+
+      if (selectionWidth > 0) {
+        const selectionHeight = chars[0] ? chars[0].height : 20
+
+        // Create selection rectangle
+        const selectionRect = scene.add.rectangle(
+          selectionX,
+          startY,
+          selectionWidth,
+          selectionHeight,
+          selectionColor,
+          selectionAlpha
+        )
+        selectionRect.setOrigin(0, 0)
+        container.add(selectionRect)
+
+        // Move selection behind text
+        container.moveDown(selectionRect)
+
+        selectionRefs.current.push(selectionRect)
+      }
+    }, 15)
+
+    // Cleanup
+    return () => {
+      selectionRefs.current.forEach((rect) => rect.destroy())
+      selectionRefs.current = []
+    }
+  }, [
+    selectionStart,
+    selectionEnd,
+    chars,
+    selectionColor,
+    selectionAlpha,
+    padLeft,
+    padTop,
+    charSpacing,
+  ])
+
   return (
     <View
       ref={ref}
       width={width}
       height={height}
-      enableGestures={!props.disabled}
+      enableGestures={!props.disabled && showCursor}
+      onTouch={(data) => {
+        if (!showCursor) return
+        const pos = getPositionFromPointer(data.pointer.worldX, data.pointer.worldY)
+        dragStartPosRef.current = pos
+        props.onCursorPositionChange?.(pos)
+        props.onSelectionChange?.(-1, -1)
+        data.stopPropagation()
+      }}
+      onTouchMove={(data) => {
+        if (!showCursor) return
+        if (data.state === 'start') {
+          dragStartPosRef.current = getPositionFromPointer(data.pointer.worldX, data.pointer.worldY)
+        } else if (data.state === 'move' && dragStartPosRef.current >= 0) {
+          const currentPos = getPositionFromPointer(data.pointer.worldX, data.pointer.worldY)
+          if (currentPos !== dragStartPosRef.current) {
+            const start = Math.min(dragStartPosRef.current, currentPos)
+            const end = Math.max(dragStartPosRef.current, currentPos)
+            props.onSelectionChange?.(start, end)
+          }
+        } else if (data.state === 'end') {
+          dragStartPosRef.current = -1
+        }
+        data.stopPropagation()
+      }}
       {...props}
       {...themed}
     />

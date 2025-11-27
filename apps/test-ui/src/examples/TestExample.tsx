@@ -7,6 +7,10 @@ function DevelopPage2() {
   const tokens = useThemeTokens()
   const [cursorPos, _setCursorPos] = useState(5)
   const [editableText, setEditableText] = useState('Edit me!')
+  const [clickableCursorPos, setClickableCursorPos] = useState(0)
+  const [clickableCursorPos2, setClickableCursorPos2] = useState(0)
+  const [selectionStart, setSelectionStart] = useState(-1)
+  const [selectionEnd, setSelectionEnd] = useState(-1)
 
   return (
     <ViewLevel2 direction="column" padding={10}>
@@ -48,6 +52,41 @@ function DevelopPage2() {
             cursorColor={0xff00ff}
             cursorWidth={4}
             cursorBlinkSpeed={300}
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Clickable CharText (click to set cursor):" />
+          <CharText
+            text="Click me!"
+            showCursor={true}
+            cursorPosition={clickableCursorPos}
+            onCursorPositionChange={(pos) => setClickableCursorPos(pos)}
+          />
+          <Text text={`Cursor at: ${clickableCursorPos}`} />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="CharText with selection (drag to select):" />
+          <CharText
+            text="Drag over this text to select!"
+            showCursor={true}
+            cursorPosition={clickableCursorPos2}
+            selectionStart={selectionStart}
+            selectionEnd={selectionEnd}
+            onCursorPositionChange={(pos) => setClickableCursorPos2(pos)}
+            onSelectionChange={(start, end) => {
+              setSelectionStart(start)
+              setSelectionEnd(end)
+              if (end - start > 0) {
+                setClickableCursorPos2(end)
+              }
+            }}
+          />
+          <Text
+            text={
+              selectionStart >= 0 && selectionEnd >= 0
+                ? `Selection: ${selectionStart} - ${selectionEnd}`
+                : 'No selection'
+            }
           />
         </View>
         <View direction="column" gap={10}>
