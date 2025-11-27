@@ -126,11 +126,6 @@ function AccordionShowcase() {
   )
 }
 
-/**
- * Main theme preview component
- * TODO: worse idea to fiddle out size of content - find better way
- * TODO: may missing property fit-content for width/height on View
- */
 export function AccordionExample() {
   return (
     <View width={'100%'} height={'100%'}>
