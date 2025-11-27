@@ -9,8 +9,11 @@ function DevelopPage2() {
   const [editableText, setEditableText] = useState('Edit me!')
   const [clickableCursorPos, setClickableCursorPos] = useState(0)
   const [clickableCursorPos2, setClickableCursorPos2] = useState(0)
-  const [selectionStart, setSelectionStart] = useState(-1)
-  const [selectionEnd, setSelectionEnd] = useState(-1)
+  const [selectionStart2, setSelectionStart2] = useState(-1)
+  const [selectionEnd2, setSelectionEnd2] = useState(-1)
+  const [clickableCursorPos3, setClickableCursorPos3] = useState(0)
+  const [selectionStart3, setSelectionStart3] = useState(-1)
+  const [selectionEnd3, setSelectionEnd3] = useState(-1)
 
   return (
     <ViewLevel2 direction="column" padding={10}>
@@ -70,23 +73,80 @@ function DevelopPage2() {
             text="Drag over this text to select!"
             showCursor={true}
             cursorPosition={clickableCursorPos2}
-            selectionStart={selectionStart}
-            selectionEnd={selectionEnd}
+            selectionStart={selectionStart2}
+            selectionEnd={selectionEnd2}
             onCursorPositionChange={(pos) => setClickableCursorPos2(pos)}
             onSelectionChange={(start, end) => {
-              setSelectionStart(start)
-              setSelectionEnd(end)
-              if (end - start > 0) {
+              setSelectionStart2(start)
+              setSelectionEnd2(end)
+              if (end - start > 0 && end >= 0) {
                 setClickableCursorPos2(end)
               }
             }}
           />
           <Text
             text={
-              selectionStart >= 0 && selectionEnd >= 0
-                ? `Selection: ${selectionStart} - ${selectionEnd}`
+              selectionStart2 >= 0 && selectionEnd2 >= 0
+                ? `Selection: ${selectionStart2} - ${selectionEnd2}`
                 : 'No selection'
             }
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Multi-line CharText (word wrap):" />
+          <CharText
+            text="This is a very long text that should automatically wrap to multiple lines when it exceeds the maximum width."
+            multiline={true}
+            maxWidth={300}
+            wordWrap={true}
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Multi-line with cursor & selection:" />
+          <CharText
+            text="Multi-line text with interactive cursor. Try clicking and dragging to select across lines!"
+            multiline={true}
+            maxWidth={300}
+            showCursor={true}
+            cursorPosition={clickableCursorPos3}
+            selectionStart={selectionStart3}
+            selectionEnd={selectionEnd3}
+            onCursorPositionChange={(pos) => setClickableCursorPos3(pos)}
+            onSelectionChange={(start, end) => {
+              setSelectionStart3(start)
+              setSelectionEnd3(end)
+              if (end - start > 0 && end >= 0) {
+                setClickableCursorPos3(end)
+              }
+            }}
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Multi-line with maxLines (3) + ellipsis:" />
+          <CharText
+            text="This is a very long text with many words that will be limited to only three lines maximum. The rest will be truncated with an ellipsis indicator at the end of the third line."
+            multiline={true}
+            maxWidth={300}
+            maxLines={3}
+            textOverflow="ellipsis"
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Multi-line without word wrap (char break):" />
+          <CharText
+            text="Supercalifragilisticexpialidocious"
+            multiline={true}
+            maxWidth={200}
+            wordWrap={false}
+          />
+        </View>
+        <View direction="column" gap={10}>
+          <Text text="Multi-line with custom lineHeight (1.5):" />
+          <CharText
+            text="This text has increased line spacing for better readability. Notice the extra vertical space between lines."
+            multiline={true}
+            maxWidth={300}
+            lineHeight={1.5}
           />
         </View>
         <View direction="column" gap={10}>

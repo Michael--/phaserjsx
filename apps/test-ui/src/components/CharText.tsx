@@ -22,6 +22,28 @@ export interface CharInfo {
   lineIndex: number
   /** Character index in the full text */
   charIndex: number
+  /** Character index within the line */
+  lineCharIndex: number
+}
+
+/**
+ * Information about a text line
+ */
+export interface LineInfo {
+  /** Characters in this line */
+  chars: CharInfo[]
+  /** Starting character index in full text */
+  startCharIndex: number
+  /** Ending character index in full text */
+  endCharIndex: number
+  /** Y position of this line */
+  y: number
+  /** Width of this line */
+  width: number
+  /** Height of this line */
+  height: number
+  /** Line number (0-based) */
+  lineIndex: number
 }
 
 // Module augmentation to add CharText theme to CustomComponentThemes
@@ -36,6 +58,8 @@ declare module '@phaserjsx/ui' {
       cursorBlinkSpeed?: number
       selectionColor?: number
       selectionAlpha?: number
+      lineHeight?: number
+      wordWrap?: boolean
     } & PhaserJSX.ViewTheme &
       EffectDefinition
   }
@@ -56,6 +80,21 @@ export interface CharTextProps extends Omit<ViewProps, 'children'>, EffectDefini
 
   /** Spacing between characters */
   charSpacing?: number
+
+  /** Enable multi-line text wrapping */
+  multiline?: boolean
+
+  /** Line height multiplier (default: 1.2) */
+  lineHeight?: number
+
+  /** Maximum number of lines (truncate after) */
+  maxLines?: number
+
+  /** How to handle text overflow when maxLines is reached */
+  textOverflow?: 'clip' | 'ellipsis'
+
+  /** Word wrap behavior (default: true, break at spaces) */
+  wordWrap?: boolean
 
   /** Whether to show cursor */
   showCursor?: boolean
@@ -164,6 +203,12 @@ export function CharText(props: CharTextProps) {
   const selectionColor = props.selectionColor ?? themed.selectionColor ?? 0x4a90e2
   const selectionAlpha = props.selectionAlpha ?? themed.selectionAlpha ?? 0.3
 
+  const multiline = props.multiline ?? false
+  const lineHeight = props.lineHeight ?? themed.lineHeight ?? 1.2
+  const maxLines = props.maxLines
+  const textOverflow = props.textOverflow ?? 'clip'
+  const wordWrap = props.wordWrap ?? themed.wordWrap ?? true
+
   /**
    * Text manipulation API
    */
@@ -238,6 +283,194 @@ export function CharText(props: CharTextProps) {
   apiRef.current = api
 
   /**
+   * Break text into lines based on width constraints
+   */
+  const breakIntoLines = (
+    text: string,
+    scene: Phaser.Scene,
+    effectiveMaxWidth: number
+  ): LineInfo[] => {
+    const lines: LineInfo[] = []
+    let currentLine: CharInfo[] = []
+    let currentX = 0
+    let currentLineIndex = 0
+    let charIndex = 0
+
+    for (let i = 0; i < text.length; i++) {
+      const char = text.charAt(i)
+
+      // Create temporary text object to measure
+      const tempText = scene.add.text(0, 0, char, textStyle ?? {})
+      const charWidth = tempText.width
+      const charHeight = tempText.height
+      tempText.destroy()
+
+      // Check for explicit line break
+      if (char === '\n') {
+        // Finish current line
+        lines.push(createLineInfo(currentLine, currentLineIndex))
+        currentLine = []
+        currentLineIndex++
+        currentX = 0
+        charIndex++
+        continue
+      }
+
+      // Check if we need to wrap
+      if (multiline && currentX + charWidth > effectiveMaxWidth && currentLine.length > 0) {
+        // Try word wrap
+        if (wordWrap && char !== ' ') {
+          // Find last space in current line
+          let lastSpaceIdx = -1
+          for (let j = currentLine.length - 1; j >= 0; j--) {
+            if (currentLine[j]?.char === ' ') {
+              lastSpaceIdx = j
+              break
+            }
+          }
+
+          if (lastSpaceIdx >= 0) {
+            // Break at space
+            const charsToMove = currentLine.splice(lastSpaceIdx + 1)
+            lines.push(createLineInfo(currentLine, currentLineIndex))
+            currentLine = charsToMove
+            currentLineIndex++
+
+            // Recalculate X for moved chars
+            currentX = 0
+            for (const movedChar of currentLine) {
+              movedChar.x = currentX
+              movedChar.lineIndex = currentLineIndex
+              movedChar.lineCharIndex = currentLine.indexOf(movedChar)
+              currentX += movedChar.width + charSpacing
+            }
+          } else {
+            // No space found, hard break
+            lines.push(createLineInfo(currentLine, currentLineIndex))
+            currentLine = []
+            currentLineIndex++
+            currentX = 0
+          }
+        } else {
+          // Hard break (or at space)
+          lines.push(createLineInfo(currentLine, currentLineIndex))
+          currentLine = []
+          currentLineIndex++
+          currentX = 0
+        }
+      }
+
+      // Add char to current line
+      const charInfo: CharInfo = {
+        char,
+        textObject: null,
+        x: currentX,
+        y: 0,
+        width: charWidth,
+        height: charHeight,
+        lineIndex: currentLineIndex,
+        charIndex,
+        lineCharIndex: currentLine.length,
+      }
+
+      currentLine.push(charInfo)
+      currentX += charWidth + charSpacing
+      charIndex++
+    }
+
+    // Add last line
+    if (currentLine.length > 0) {
+      lines.push(createLineInfo(currentLine, currentLineIndex))
+    }
+
+    return lines
+  }
+
+  /**
+   * Create LineInfo from array of CharInfo
+   */
+  const createLineInfo = (chars: CharInfo[], lineIndex: number): LineInfo => {
+    if (chars.length === 0) {
+      return {
+        chars: [],
+        startCharIndex: 0,
+        endCharIndex: 0,
+        y: 0,
+        width: 0,
+        height: 0,
+        lineIndex,
+      }
+    }
+
+    const width = chars.reduce((sum, char, idx) => {
+      return sum + char.width + (idx < chars.length - 1 ? charSpacing : 0)
+    }, 0)
+
+    const height = Math.max(...chars.map((c) => c.height))
+
+    return {
+      chars,
+      startCharIndex: chars[0]?.charIndex ?? 0,
+      endCharIndex: chars[chars.length - 1]?.charIndex ?? 0,
+      y: 0,
+      width,
+      height,
+      lineIndex,
+    }
+  }
+
+  /**
+   * Position lines vertically with lineHeight spacing
+   */
+  const positionLinesVertically = (lines: LineInfo[]): void => {
+    let currentY = 0
+
+    for (const line of lines) {
+      line.y = currentY
+
+      // Update Y position for all chars in line
+      for (const char of line.chars) {
+        char.y = currentY
+      }
+
+      // Calculate spacing to next line
+      const lineHeightPx = line.height * lineHeight
+      currentY += lineHeightPx
+    }
+  }
+
+  /**
+   * Handle text overflow with maxLines limit
+   */
+  const handleOverflow = (lines: LineInfo[]): LineInfo[] => {
+    if (!maxLines || lines.length <= maxLines) {
+      return lines
+    }
+
+    const visibleLines = lines.slice(0, maxLines)
+
+    if (textOverflow === 'ellipsis' && visibleLines.length > 0) {
+      const lastLine = visibleLines[maxLines - 1]
+      if (lastLine) {
+        // Add ellipsis indicator by modifying last chars
+        const ellipsis = '...'
+        if (lastLine.chars.length > ellipsis.length) {
+          // Replace last chars with ellipsis
+          for (let i = 0; i < ellipsis.length; i++) {
+            const charIdx = lastLine.chars.length - ellipsis.length + i
+            const char = lastLine.chars[charIdx]
+            if (char) {
+              char.char = ellipsis[i] ?? '.'
+            }
+          }
+        }
+      }
+    }
+
+    return visibleLines
+  }
+
+  /**
    * Get cursor position from pointer world coordinates
    */
   const getPositionFromPointer = (worldX: number, worldY: number): number => {
@@ -290,67 +523,109 @@ export function CharText(props: CharTextProps) {
       }
     })
 
-    // Create new character array
-    const newChars: CharInfo[] = []
-    let currentX = 0
-    let maxHeight = 0
-
     // Wait for container bounds to be available
     setTimeout(() => {
-      const bounds = container.getBounds()
-      const startX = bounds.left + padLeft
-      const startY = bounds.top + padTop
+      const startX = padLeft
+      const startY = padTop
 
-      // Create a character GameObject for each character
-      for (let i = 0; i < displayedText.length; i++) {
-        const char = displayedText.charAt(i)
-        const textObj = scene.add.text(0, 0, char, textStyle ?? {})
-        textObj.setOrigin(0, 0)
+      // Get effective max width (use container width if multiline and no explicit maxWidth)
+      const effectiveMaxWidth =
+        multiline && props.maxWidth !== undefined && typeof props.maxWidth === 'number'
+          ? props.maxWidth
+          : multiline && props.width !== undefined && typeof props.width === 'number'
+            ? props.width - horizontalPadding
+            : Infinity
 
-        const charWidth = textObj.width
-        const charHeight = textObj.height
+      let lines: LineInfo[]
+      let allChars: CharInfo[]
 
-        // Position the character
-        const x = startX + currentX
-        const y = startY
+      if (multiline) {
+        // Multi-line layout
+        lines = breakIntoLines(displayedText, scene, effectiveMaxWidth)
+        positionLinesVertically(lines)
+        lines = handleOverflow(lines)
 
-        textObj.setPosition(x, y)
+        // Flatten lines to chars array
+        allChars = []
+        for (const line of lines) {
+          for (const charInfo of line.chars) {
+            allChars.push(charInfo)
+          }
+        }
+      } else {
+        // Single-line layout (original logic)
+        allChars = []
+        let currentX = 0
 
-        // Add to container
-        container.add(textObj)
+        for (let i = 0; i < displayedText.length; i++) {
+          const char = displayedText.charAt(i)
+          const tempText = scene.add.text(0, 0, char, textStyle ?? {})
+          const charWidth = tempText.width
+          const charHeight = tempText.height
+          tempText.destroy()
 
-        // Store character info
-        newChars.push({
-          char,
-          textObject: textObj,
-          x: currentX,
-          y: 0,
-          width: charWidth,
-          height: charHeight,
-          lineIndex: 0,
-          charIndex: i,
-        })
+          allChars.push({
+            char,
+            textObject: null,
+            x: currentX,
+            y: 0,
+            width: charWidth,
+            height: charHeight,
+            lineIndex: 0,
+            charIndex: i,
+            lineCharIndex: i,
+          })
 
-        // Update position for next character
-        currentX += charWidth + charSpacing
-        maxHeight = Math.max(maxHeight, charHeight)
+          currentX += charWidth + charSpacing
+        }
+
+        lines = allChars.length > 0 ? [createLineInfo(allChars, 0)] : []
       }
 
+      // Create GameObjects for all characters
+      for (const charInfo of allChars) {
+        const textObj = scene.add.text(0, 0, charInfo.char, textStyle ?? {})
+        textObj.setOrigin(0, 0)
+        textObj.setPosition(startX + charInfo.x, startY + charInfo.y)
+        container.add(textObj)
+        charInfo.textObject = textObj
+      }
+
+      // Calculate total dimensions
+      const calculatedWidth = lines.length > 0 ? Math.max(...lines.map((l) => l.width)) : 0
+      const lastLine = lines[lines.length - 1]
+      const calculatedHeight = lines.length > 0 && lastLine ? lastLine.y + lastLine.height : 0
+
       // Update state
-      setChars(newChars)
-      setWidth(currentX - charSpacing + horizontalPadding)
-      setHeight(maxHeight + verticalPadding)
+      setChars(allChars)
+      setWidth(calculatedWidth + horizontalPadding)
+      setHeight(calculatedHeight + verticalPadding)
     }, 0)
 
     // Cleanup function
     return () => {
-      newChars.forEach((charInfo) => {
+      chars.forEach((charInfo) => {
         if (charInfo.textObject) {
           charInfo.textObject.destroy()
         }
       })
     }
-  }, [displayedText, textStyle, charSpacing, padLeft, padTop, horizontalPadding, verticalPadding])
+  }, [
+    displayedText,
+    textStyle,
+    charSpacing,
+    padLeft,
+    padTop,
+    horizontalPadding,
+    verticalPadding,
+    multiline,
+    lineHeight,
+    maxLines,
+    textOverflow,
+    wordWrap,
+    props.maxWidth,
+    props.width,
+  ])
 
   /**
    * Update cursor position and visibility
@@ -378,25 +653,51 @@ export function CharText(props: CharTextProps) {
       const startX = padLeft
       const startY = padTop
 
-      // Calculate cursor X position based on cursorPosition
+      // Find the character at cursor position to get correct line Y
       let cursorX = startX
+      let cursorY = startY
       const clampedPosition = Math.max(0, Math.min(cursorPosition, chars.length))
 
+      // Find which line the cursor is on
+      if (clampedPosition > 0 && clampedPosition <= chars.length) {
+        const charBeforeCursor = chars[clampedPosition - 1]
+        if (charBeforeCursor) {
+          cursorY = startY + charBeforeCursor.y
+        }
+      } else if (clampedPosition === 0 && chars.length > 0) {
+        const firstChar = chars[0]
+        if (firstChar) {
+          cursorY = startY + firstChar.y
+        }
+      }
+
+      // Calculate cursor X position
       for (let i = 0; i < clampedPosition; i++) {
         const char = chars[i]
         if (char) {
+          // If we're at the start of a new line, reset X
+          const prevChar = chars[i - 1]
+          if (i > 0 && prevChar && char.lineIndex !== prevChar.lineIndex) {
+            cursorX = startX
+          }
           cursorX += char.width + charSpacing
         }
       }
 
-      // Get cursor height from first character or default
-      const cursorHeight = chars.length > 0 && chars[0] ? chars[0].height : 20
+      // Get cursor height from character at cursor line
+      let cursorHeight = 20
+      const charAtCursor = chars[clampedPosition - 1]
+      if (clampedPosition > 0 && charAtCursor) {
+        cursorHeight = charAtCursor.height
+      } else if (chars.length > 0 && chars[0]) {
+        cursorHeight = chars[0].height
+      }
 
       // Create or update cursor rectangle
       if (!cursorRef.current) {
         cursorRef.current = scene.add.rectangle(
           cursorX,
-          startY,
+          cursorY,
           cursorWidth,
           cursorHeight,
           cursorColor
@@ -414,7 +715,7 @@ export function CharText(props: CharTextProps) {
         })
       } else {
         // Update existing cursor
-        cursorRef.current.setPosition(cursorX, startY)
+        cursorRef.current.setPosition(cursorX, cursorY)
         cursorRef.current.setSize(cursorWidth, cursorHeight)
         cursorRef.current.setFillStyle(cursorColor)
         cursorRef.current.setVisible(true)
