@@ -338,23 +338,11 @@ export function CharTextInput(props: CharTextInputProps) {
       },
     })
 
-    // Sync DOM input value with current value
-    inputManagerRef.current.setValue(currentValue)
-
     return () => {
       inputManagerRef.current?.destroy()
       inputManagerRef.current = null
     }
   }, [containerRef.current, props.maxLength, props.disabled, props.multiline, isControlled])
-
-  /**
-   * Sync DOM input value when currentValue changes
-   */
-  useEffect(() => {
-    if (inputManagerRef.current) {
-      inputManagerRef.current.setValue(currentValue)
-    }
-  }, [currentValue])
 
   /**
    * Check if key event represents a printable character
@@ -399,14 +387,6 @@ export function CharTextInput(props: CharTextInputProps) {
     setCursorPosition(newCursorPos)
     setSelectionStart(-1)
     setSelectionEnd(-1)
-
-    // Sync DOM input cursor
-    setTimeout(() => {
-      const element = inputManagerRef.current?.['domInput']?.getElement()
-      if (element) {
-        element.selectionStart = element.selectionEnd = newCursorPos
-      }
-    }, 0)
   }
 
   /**
@@ -427,14 +407,6 @@ export function CharTextInput(props: CharTextInputProps) {
       setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
-
-      // Sync DOM input cursor
-      setTimeout(() => {
-        const element = inputManagerRef.current?.['domInput']?.getElement()
-        if (element) {
-          element.selectionStart = element.selectionEnd = selStart
-        }
-      }, 0)
     } else if (cursorPosition > 0) {
       // Delete character before cursor
       const newValue =
@@ -442,14 +414,6 @@ export function CharTextInput(props: CharTextInputProps) {
       updateValue(newValue)
       const newPos = cursorPosition - 1
       setCursorPosition(newPos)
-
-      // Sync DOM input cursor
-      setTimeout(() => {
-        const element = inputManagerRef.current?.['domInput']?.getElement()
-        if (element) {
-          element.selectionStart = element.selectionEnd = newPos
-        }
-      }, 0)
     }
   }
 
@@ -471,28 +435,11 @@ export function CharTextInput(props: CharTextInputProps) {
       setCursorPosition(selStart)
       setSelectionStart(-1)
       setSelectionEnd(-1)
-
-      // Sync DOM input cursor
-      setTimeout(() => {
-        const element = inputManagerRef.current?.['domInput']?.getElement()
-        if (element) {
-          element.selectionStart = element.selectionEnd = selStart
-        }
-      }, 0)
     } else if (cursorPosition < currentValue.length) {
       // Delete character after cursor
       const newValue =
         currentValue.slice(0, cursorPosition) + currentValue.slice(cursorPosition + 1)
       updateValue(newValue)
-
-      // Cursor stays at same position
-      // Sync DOM input cursor
-      setTimeout(() => {
-        const element = inputManagerRef.current?.['domInput']?.getElement()
-        if (element) {
-          element.selectionStart = element.selectionEnd = cursorPosition
-        }
-      }, 0)
     }
   }
 
@@ -527,12 +474,6 @@ export function CharTextInput(props: CharTextInputProps) {
       if (cursorPosition > 0) {
         setCursorPosition(cursorPosition - 1)
       }
-    }
-
-    // Sync DOM input cursor position
-    const element = inputManagerRef.current?.['domInput']?.getElement()
-    if (element) {
-      element.selectionStart = element.selectionEnd = Math.max(0, cursorPosition - 1)
     }
   }
 
@@ -569,15 +510,6 @@ export function CharTextInput(props: CharTextInputProps) {
       if (cursorPosition < currentValue.length) {
         setCursorPosition(cursorPosition + 1)
       }
-    }
-
-    // Sync DOM input cursor position
-    const element = inputManagerRef.current?.['domInput']?.getElement()
-    if (element) {
-      element.selectionStart = element.selectionEnd = Math.min(
-        currentValue.length,
-        cursorPosition + 1
-      )
     }
   }
 
@@ -623,7 +555,6 @@ export function CharTextInput(props: CharTextInputProps) {
       setInternalValue(newValue)
       props.onChange?.(newValue)
     }
-    inputManagerRef.current?.setValue(newValue)
   }
 
   /**
@@ -635,7 +566,7 @@ export function CharTextInput(props: CharTextInputProps) {
     setSelectionEnd(-1)
 
     // Focus DOM input
-    inputManagerRef.current?.focus()
+    // inputManagerRef.current?.focus()
   }
 
   /**
@@ -652,7 +583,7 @@ export function CharTextInput(props: CharTextInputProps) {
     }
 
     // Focus DOM input
-    inputManagerRef.current?.focus()
+    // inputManagerRef.current?.focus()
   }
 
   // Build CharText props - extract CharTextInput-specific props and pass rest to CharText
