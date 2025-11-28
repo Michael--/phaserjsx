@@ -8,7 +8,7 @@ export {
   type ScrollInfo,
   type ScrollSliderProps,
   type ScrollViewProps,
-} from '@phaserjsx/ui/components/custom'
+} from '@phaserjsx/ui'
 export { Accordion, type AccordionProps } from './Accordion'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextProps } from './CharText'

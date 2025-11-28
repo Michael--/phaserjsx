@@ -2,6 +2,7 @@
  * Demo: Layout system showcase with automatic positioning, margins, and padding
  */
 import {
+  Divider,
   getAvailablePresets,
   setColorPreset,
   Text,
@@ -12,7 +13,6 @@ import {
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
-import { Divider } from '@phaserjsx/ui/components/custom'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'

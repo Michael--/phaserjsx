@@ -48,6 +48,9 @@ export { mountJSX as mountComponent } from './vdom'
 // Re-export component creators/patchers for advanced usage
 export * from './components'
 
+// Re-export custom components for convenience
+export * from './components/custom'
+
 // Animation utilities for spring-based transitions
 export * from './animation'
 
