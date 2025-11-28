@@ -1,3 +1,4 @@
+import { iconGeneratorPlugin } from '@phaserjsx/ui/vite-plugin-icons'
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
 
@@ -6,6 +7,11 @@ import { defineConfig } from 'vite'
  * Provides HMR dev server with direct source imports from @phaserjsx/ui
  */
 export default defineConfig({
+  plugins: [
+    iconGeneratorPlugin({
+      configPath: './icon-generator.config.ts',
+    }) as any, // Type workaround for multiple Vite versions in pnpm
+  ],
   root: '.',
   publicDir: 'public',
   server: {

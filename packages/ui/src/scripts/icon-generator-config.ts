@@ -13,6 +13,8 @@ export interface IconSource {
   directory?: string
   /** Relative path to icons within package (default: 'icons') */
   iconsPath?: string
+  /** Optional label for this source (used in logs for multi-source) */
+  label?: string
 }
 
 /**
@@ -59,8 +61,8 @@ export interface CustomPattern {
  * Main configuration for icon generator
  */
 export interface IconGeneratorConfig {
-  /** Icon source configuration */
-  source: IconSource
+  /** Icon source configuration - single source or array of sources */
+  source: IconSource | IconSource[]
 
   /** Type generation configuration */
   types?: TypesConfig

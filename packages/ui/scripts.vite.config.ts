@@ -8,22 +8,29 @@ import dts from 'vite-plugin-dts'
  */
 export default defineConfig({
   build: {
-    outDir: 'dist/scripts',
-    emptyOutDir: true,
+    outDir: 'dist',
+    emptyOutDir: false,
     lib: {
       entry: {
-        'generate-icons': resolve(__dirname, 'src/scripts/generate-icons.ts'),
-        'generate-icon-types': resolve(__dirname, 'src/scripts/generate-icon-types.ts'),
-        'generate-icon-loaders': resolve(__dirname, 'src/scripts/generate-icon-loaders.ts'),
-        'icon-generator-config': resolve(__dirname, 'src/scripts/icon-generator-config.ts'),
+        'scripts/generate-icons': resolve(__dirname, 'src/scripts/generate-icons.ts'),
+        'scripts/generate-icon-types': resolve(__dirname, 'src/scripts/generate-icon-types.ts'),
+        'scripts/generate-icon-loaders': resolve(__dirname, 'src/scripts/generate-icon-loaders.ts'),
+        'scripts/icon-generator-config': resolve(__dirname, 'src/scripts/icon-generator-config.ts'),
+        'vite-plugin-icons': resolve(__dirname, 'src/vite-plugin-icons.ts'),
       },
       formats: ['es'],
       fileName: (format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['node:fs', 'node:fs/promises', 'node:path', 'node:util', 'node:url'],
+      external: ['node:fs', 'node:fs/promises', 'node:path', 'node:util', 'node:url', 'vite'],
       output: {
-        banner: '#!/usr/bin/env node',
+        banner: (chunk) => {
+          // Only add shebang to executable scripts
+          if (chunk.name?.startsWith('scripts/generate-')) {
+            return '#!/usr/bin/env node'
+          }
+          return ''
+        },
       },
     },
     sourcemap: false,
@@ -32,8 +39,8 @@ export default defineConfig({
   },
   plugins: [
     dts({
-      include: ['src/scripts/icon-generator-config.ts'],
-      outDir: 'dist/scripts',
+      include: ['src/scripts/icon-generator-config.ts', 'src/vite-plugin-icons.ts'],
+      outDir: 'dist',
     }),
   ],
 })

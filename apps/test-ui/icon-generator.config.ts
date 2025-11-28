@@ -5,11 +5,18 @@ import { defineIconConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
  * Replaces long CLI arguments with a clean config file
  */
 export default defineIconConfig({
-  // Icon source - where to find the icons
-  source: {
-    package: 'bootstrap-icons',
-    iconsPath: 'icons',
-  },
+  // Icon sources - multiple sources are supported!
+  source: [
+    {
+      package: 'bootstrap-icons',
+      iconsPath: 'icons',
+      label: 'Bootstrap Icons',
+    },
+    {
+      directory: './public/custom-icons',
+      label: 'Custom Icons',
+    },
+  ],
 
   // Type generation - creates TypeScript union type
   types: {

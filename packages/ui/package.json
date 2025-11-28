@@ -35,6 +35,10 @@
     "./scripts/icon-generator-config": {
       "types": "./dist/scripts/icon-generator-config.d.ts",
       "import": "./dist/scripts/icon-generator-config.js"
+    },
+    "./vite-plugin-icons": {
+      "types": "./dist/vite-plugin-icons.d.ts",
+      "import": "./dist/vite-plugin-icons.js"
     }
   },
   "files": [
