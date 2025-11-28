@@ -16,6 +16,8 @@ interface Options {
   package: string
   iconsPath?: string
   componentName?: string
+  componentNames?: string[]
+  typesFile?: string
 }
 
 /**
@@ -43,20 +45,22 @@ async function findTsFiles(dir: string): Promise<string[]> {
 /**
  * Extract icon names from file content
  */
-function extractIconNames(content: string, componentName: string): Set<string> {
+function extractIconNames(content: string, componentNames: string[]): Set<string> {
   const iconNames = new Set<string>()
-
-  // Match: <Icon type="icon-name" or <Icon type={'icon-name'}
-  const typePattern = new RegExp(
-    `<${componentName}\\s+[^>]*type=(?:["']([^"']+)["']|\\{['"]([^"']+)['"]}})`,
-    'g'
-  )
   let match: RegExpExecArray | null
 
-  while ((match = typePattern.exec(content)) !== null) {
-    const iconName = match[1] || match[2]
-    if (iconName) {
-      iconNames.add(iconName)
+  // Match: <Icon type="icon-name" or <Icon type={'icon-name'} for all component names
+  for (const componentName of componentNames) {
+    const typePattern = new RegExp(
+      `<${componentName}\\s+[^>]*type=(?:["']([^"']+)["']|\\{['"]([^"']+)["']}})`,
+      'g'
+    )
+
+    while ((match = typePattern.exec(content)) !== null) {
+      const iconName = match[1] || match[2]
+      if (iconName) {
+        iconNames.add(iconName)
+      }
     }
   }
 
@@ -80,16 +84,56 @@ function extractIconNames(content: string, componentName: string): Set<string> {
 }
 
 /**
+ * Load available icon names from generated types file
+ */
+async function loadAvailableIcons(typesFile: string): Promise<Set<string> | null> {
+  try {
+    const content = await readFile(typesFile, 'utf-8')
+    // Extract union type: export type IconType = 'icon1' | 'icon2' | ...
+    const match = content.match(/(?:export\s+)?type\s+\w+\s*=\s*([\s\S]+?)(?=\n\nexport|\n\/\/|$)/s)
+    if (!match?.[1]) return null
+
+    const typeContent = match[1]
+    const icons = new Set<string>()
+    const iconPattern = /'([^']+)'/g
+    let iconMatch: RegExpExecArray | null
+
+    while ((iconMatch = iconPattern.exec(typeContent)) !== null) {
+      const iconName = iconMatch[1]
+      if (iconName) {
+        icons.add(iconName)
+      }
+    }
+
+    return icons
+  } catch {
+    return null
+  }
+}
+
+/**
  * Main generator function
  */
 async function generateIconLoaders(options: Options) {
   try {
     const cwd = process.cwd()
     const srcDir = resolve(cwd, options.source)
-    const componentName = options.componentName || 'Icon'
+    const componentNames = options.componentNames || [options.componentName || 'Icon']
 
     console.log(`📁 Scanning directory: ${srcDir}`)
-    console.log(`🔍 Looking for <${componentName}> components...`)
+    console.log(`🔍 Looking for components: ${componentNames.join(', ')}`)
+
+    // Load available icons if types file provided
+    let availableIcons: Set<string> | null = null
+    if (options.typesFile) {
+      const typesPath = resolve(cwd, options.typesFile)
+      availableIcons = await loadAvailableIcons(typesPath)
+      if (availableIcons) {
+        console.log(`✓ Loaded ${availableIcons.size} available icons from ${options.typesFile}`)
+      } else {
+        console.warn(`⚠️  Could not parse types file: ${options.typesFile}`)
+      }
+    }
 
     const files = await findTsFiles(srcDir)
     console.log(`📄 Found ${files.length} TypeScript files`)
@@ -98,11 +142,25 @@ async function generateIconLoaders(options: Options) {
 
     for (const file of files) {
       const content = await readFile(file, 'utf-8')
-      const icons = extractIconNames(content, componentName)
+      const icons = extractIconNames(content, componentNames)
       icons.forEach((icon) => allIconNames.add(icon))
     }
 
-    const iconArray = Array.from(allIconNames).sort()
+    let iconArray = Array.from(allIconNames).sort()
+
+    // Validate against available icons if provided
+    if (availableIcons) {
+      const invalidIcons = iconArray.filter((icon) => !availableIcons.has(icon))
+      if (invalidIcons.length > 0) {
+        console.warn(`⚠️  Found ${invalidIcons.length} icons not in types file:`)
+        console.warn(
+          `   ${invalidIcons.slice(0, 5).join(', ')}${invalidIcons.length > 5 ? '...' : ''}`
+        )
+      }
+      // Only generate loaders for valid icons
+      iconArray = iconArray.filter((icon) => availableIcons.has(icon))
+    }
+
     console.log(`✓ Found ${iconArray.length} unique icons`)
 
     if (iconArray.length > 0) {
@@ -154,6 +212,8 @@ const { values } = parseArgs({
     package: { type: 'string', short: 'p' },
     iconsPath: { type: 'string', short: 'i' },
     componentName: { type: 'string', short: 'c' },
+    componentNames: { type: 'string', multiple: true },
+    typesFile: { type: 'string', short: 't' },
     help: { type: 'boolean', short: 'h' },
   },
 })
@@ -163,18 +223,26 @@ if (values.help || !values.source || !values.output || !values.package) {
 Usage: generate-icon-loaders [options]
 
 Options:
-  -s, --source <path>       Source directory to scan (e.g., ./src)
-  -o, --output <path>       Output file path (e.g., ./src/components/icon-loaders.generated.ts)
-  -p, --package <name>      Icon package name (e.g., bootstrap-icons)
-  -i, --iconsPath <path>    Relative path to icons in package (default: icons)
-  -c, --componentName <name> Icon component name to search for (default: Icon)
-  -h, --help                Show this help message
+  -s, --source <path>         Source directory to scan (e.g., ./src)
+  -o, --output <path>         Output file path (e.g., ./src/components/icon-loaders.generated.ts)
+  -p, --package <name>        Icon package name (e.g., bootstrap-icons)
+  -i, --iconsPath <path>      Relative path to icons in package (default: icons)
+  -c, --componentName <name>  Icon component name to search for (default: Icon)
+  --componentNames <names...> Multiple component names (e.g., Icon BootstrapIcon)
+  -t, --typesFile <path>      Types file for validation (e.g., ./src/icon-types.generated.ts)
+  -h, --help                  Show this help message
 
-Example:
-  generate-icon-loaders \\
-    -s ./src \\
-    -o ./src/components/icon-loaders.generated.ts \\
-    -p bootstrap-icons
+Examples:
+  # Single component name
+  generate-icon-loaders -s ./src -o ./src/icon-loaders.generated.ts -p bootstrap-icons
+
+  # Multiple component names
+  generate-icon-loaders -s ./src -o ./src/icon-loaders.generated.ts -p bootstrap-icons \\
+    --componentNames Icon BootstrapIcon CustomIcon
+
+  # With validation
+  generate-icon-loaders -s ./src -o ./src/icon-loaders.generated.ts -p bootstrap-icons \\
+    -t ./src/icon-types.generated.ts
 `)
   process.exit(values.help ? 0 : 1)
 }
@@ -192,6 +260,14 @@ if (values.iconsPath) {
 
 if (values.componentName) {
   options.componentName = values.componentName
+}
+
+if (values.componentNames && values.componentNames.length > 0) {
+  options.componentNames = values.componentNames as string[]
+}
+
+if (values.typesFile) {
+  options.typesFile = values.typesFile as string
 }
 
 generateIconLoaders(options)
