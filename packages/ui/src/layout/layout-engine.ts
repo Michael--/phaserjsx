@@ -232,78 +232,92 @@ function updateMaskWorldPosition(
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
+    __overflowMaskUpdateListener?: (() => void) | undefined
   }
 
   if (!extendedContainer.__overflowMask) return
 
-  // Build parent chain from container to root (bottom-up)
-  const parentChain: Phaser.GameObjects.Container[] = []
-  let current: Phaser.GameObjects.Container | null = container
-  while (current) {
-    parentChain.push(current)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    current = (current as any).parentContainer || null
+  // Remove existing listener to avoid duplicates
+  if (extendedContainer.__overflowMaskUpdateListener) {
+    container.scene.events.off('postupdate', extendedContainer.__overflowMaskUpdateListener)
   }
 
-  // Reverse to get root-to-container order (top-down)
-  parentChain.reverse()
-
-  // Apply transforms cumulatively from root to container
-  let worldX = 0
-  let worldY = 0
-  let worldRotation = 0
-  let worldScaleX = 1
-  let worldScaleY = 1
-
-  for (const parent of parentChain) {
-    // Apply parent's rotation to current position (rotate around origin)
-    if (worldRotation !== 0) {
-      const cos = Math.cos(worldRotation)
-      const sin = Math.sin(worldRotation)
-      const rotatedX = parent.x * cos - parent.y * sin
-      const rotatedY = parent.x * sin + parent.y * cos
-      worldX += rotatedX * worldScaleX
-      worldY += rotatedY * worldScaleY
-    } else {
-      // No rotation yet, simple addition
-      worldX += parent.x * worldScaleX
-      worldY += parent.y * worldScaleY
+  // Create update function that recalculates mask position when container moves
+  const updateMask = () => {
+    // Build parent chain from container to root (bottom-up)
+    const parentChain: Phaser.GameObjects.Container[] = []
+    let current: Phaser.GameObjects.Container | null = container
+    while (current) {
+      parentChain.push(current)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      current = (current as any).parentContainer || null
     }
 
-    // Accumulate rotation and scale
-    worldRotation += parent.rotation
-    worldScaleX *= parent.scaleX
-    worldScaleY *= parent.scaleY
+    // Reverse to get root-to-container order (top-down)
+    parentChain.reverse()
+
+    // Apply transforms cumulatively from root to container
+    let worldX = 0
+    let worldY = 0
+    let worldRotation = 0
+    let worldScaleX = 1
+    let worldScaleY = 1
+
+    for (const parent of parentChain) {
+      // Apply parent's rotation to current position (rotate around origin)
+      if (worldRotation !== 0) {
+        const cos = Math.cos(worldRotation)
+        const sin = Math.sin(worldRotation)
+        const rotatedX = parent.x * cos - parent.y * sin
+        const rotatedY = parent.x * sin + parent.y * cos
+        worldX += rotatedX * worldScaleX
+        worldY += rotatedY * worldScaleY
+      } else {
+        // No rotation yet, simple addition
+        worldX += parent.x * worldScaleX
+        worldY += parent.y * worldScaleY
+      }
+
+      // Accumulate rotation and scale
+      worldRotation += parent.rotation
+      worldScaleX *= parent.scaleX
+      worldScaleY *= parent.scaleY
+    }
+
+    // Update mask geometry with accumulated world transform
+    const maskGraphics = extendedContainer.__overflowMask
+    if (!maskGraphics) return
+
+    maskGraphics.clear()
+
+    // Apply world transform to mask graphics
+    maskGraphics.setPosition(worldX, worldY)
+    maskGraphics.setRotation(worldRotation)
+    maskGraphics.setScale(worldScaleX, worldScaleY)
+
+    // Use configurable color and alpha for debugging
+    maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
+    maskGraphics.setAlpha(
+      DevConfig.visual.showOverflowMasks ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
+    )
+
+    // Draw rectangle in local space (will be transformed by graphics properties)
+    // Expand by 1px on each side to prevent edge artifacts
+    maskGraphics.fillRect(-1, -1, width + 2, height + 2)
+
+    // console.log('Updated overflow mask position:')
   }
 
-  // Update mask geometry with accumulated world transform
-  const maskGraphics = extendedContainer.__overflowMask
-  maskGraphics.clear()
+  // Store reference to update function
+  extendedContainer.__overflowMaskUpdateListener = updateMask
 
-  // Apply world transform to mask graphics
-  maskGraphics.setPosition(worldX, worldY)
-  maskGraphics.setRotation(worldRotation)
-  maskGraphics.setScale(worldScaleX, worldScaleY)
+  // Listen for postupdate event (fires every frame after all updates)
+  container.scene.events.on('postupdate', updateMask)
 
-  // Use configurable color and alpha for debugging
-  maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
-  maskGraphics.setAlpha(
-    DevConfig.visual.showOverflowMasks ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
-  )
+  // Initial update
+  updateMask()
 
-  // Draw rectangle in local space (will be transformed by graphics properties)
-  // Expand by 1px on each side to prevent edge artifacts
-  maskGraphics.fillRect(-1, -1, width + 2, height + 2)
-
-  DebugLogger.log('overflowMask', 'Updated overflow mask world position:', {
-    worldX,
-    worldY,
-    worldRotation,
-    worldScaleX,
-    worldScaleY,
-    width,
-    height,
-  })
+  DebugLogger.log('overflowMask', 'Set up dynamic mask updates for container and parents')
 }
 
 /**
@@ -369,10 +383,21 @@ function applyOverflowMask(
 
       // Destroy mask when container is destroyed
       container.once('destroy', () => {
+        const extendedContainer = container as typeof container & {
+          __overflowMask?: Phaser.GameObjects.Graphics | undefined
+          __overflowMaskUpdateListener?: (() => void) | undefined
+        }
+
+        // Remove postupdate listener from scene
+        if (extendedContainer.__overflowMaskUpdateListener) {
+          container.scene.events.off('postupdate', extendedContainer.__overflowMaskUpdateListener)
+        }
+
         if (extendedContainer.__overflowMask) {
           extendedContainer.__overflowMask.destroy()
           extendedContainer.__overflowMask = undefined
         }
+        extendedContainer.__overflowMaskUpdateListener = undefined
       })
 
       DebugLogger.log('overflowMask', 'Created overflow mask')

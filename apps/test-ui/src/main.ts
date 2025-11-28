@@ -5,8 +5,8 @@ import { mountJSX } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import { App } from './App'
 
-type DemoMode = 'Default' | 'Separated' | 'Effects'
-const demo: DemoMode = 'Effects'
+type DemoMode = 'Default' | 'Separated' | 'Effects' | 'MovingSprite'
+const demo: DemoMode = 'MovingSprite'
 
 /**
  * Main Phaser scene
@@ -110,12 +110,32 @@ class MainScene extends Phaser.Scene {
         (this.scale.height - size) / 2
       )
       container.setSize(size, size)
-      container.setRotation(0.1)
+      container.setRotation(0.3)
 
       // Mount first JSX app instance
       mountJSX(container, App, {
         width: size,
         height: size,
+      })
+    } else if (demo === 'MovingSprite') {
+      const size = 1000
+      const container = this.add.container(
+        (this.scale.width - size) / 2,
+        (this.scale.height - size) / 2
+      )
+      container.setSize(size, size)
+
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: size,
+        height: size,
+      })
+
+      // Animate the container
+      this.tweens.add({
+        targets: container,
+        x: { from: 200, to: 600, duration: 20000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
+        rotation: { from: 0, to: Math.PI * 2, duration: 80000, ease: 'Linear', repeat: -1 },
       })
     }
   }
