@@ -19,7 +19,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../hooks'
-import { Icon, type IconType } from './Icon'
+import { Icon, type IconType } from './BootstrapIcon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {

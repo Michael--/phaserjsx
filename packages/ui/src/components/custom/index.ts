@@ -4,6 +4,7 @@
  */
 
 export { Divider, type DividerProps } from './Divider'
+export { createIconComponent, Icon, useIcon, type IconLoaderFn, type IconProps } from './Icon'
 export {
   calculateSliderSize,
   ScrollSlider,

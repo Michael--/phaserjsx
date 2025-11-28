@@ -3,7 +3,7 @@
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
 import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
-import { Icon, type IconType } from './Icon'
+import { Icon, type IconType } from './BootstrapIcon'
 
 // Module augmentation to add RadioGroup theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {

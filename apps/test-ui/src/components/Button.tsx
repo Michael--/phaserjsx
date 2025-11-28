@@ -6,7 +6,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../hooks'
-import { Icon, type IconType } from './Icon'
+import { Icon, type IconType } from './BootstrapIcon'
 
 /**
  * Button variant theme with text style and icon size
