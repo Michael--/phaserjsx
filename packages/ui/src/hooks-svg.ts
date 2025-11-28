@@ -71,7 +71,7 @@ export function useSVGTexture(
     // Cleanup: release texture reference
     return () => {
       cancelled = true
-      textureRegistry.releaseTexture(key)
+      // textureRegistry.releaseTexture(key)
     }
   }, [scene, key, svg, width, height])
 
@@ -150,9 +150,10 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
     // Cleanup: release all texture references
     return () => {
       cancelled = true
-      for (const config of configs) {
-        textureRegistry.releaseTexture(config.key)
-      }
+      // Textures are global and shared across mounts - don't release them
+      // for (const config of configs) {
+      //   textureRegistry.releaseTexture(config.key)
+      // }
     }
   }, [scene, configKey])
 
