@@ -1,13 +1,16 @@
+/** @jsxImportSource ../.. */
 /**
  * ScrollSlider component for scrollable content areas
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
-import type { GestureEventData, LayoutSize } from '@phaserjsx/ui'
-import { getThemedProps, useRef, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
+import type { GestureEventData } from '../../core-props'
+import { useRef } from '../../hooks'
+import { getThemedProps } from '../../theme'
+import type { LayoutSize } from '../index'
+import { View } from '../index'
 
 // Module augmentation to add ScrollSlider theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
+declare module '../../theme' {
   interface CustomComponentThemes {
     ScrollSlider: {
       borderColor?: number
@@ -16,7 +19,7 @@ declare module '@phaserjsx/ui' {
       borderWidth?: number
       size?: number
       minThumbSize?: number
-    } & PhaserJSX.NestedComponentThemes
+    }
   }
 }
 
@@ -25,8 +28,8 @@ export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | undefined
 
 /**
  * Calculate slider dimensions based on size variant and theme
- * @param size
- * @returns
+ * @param size - Size variant
+ * @returns Calculated dimensions
  */
 export function calculateSliderSize(size: SliderSize) {
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})

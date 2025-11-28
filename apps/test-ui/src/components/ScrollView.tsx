@@ -7,7 +7,7 @@ import {
   type GestureEventData,
   type ViewProps,
 } from '@phaserjsx/ui'
-import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
+import { calculateSliderSize, ScrollSlider, type SliderSize } from '@phaserjsx/ui/components/custom'
 
 /**
  * Scroll information data

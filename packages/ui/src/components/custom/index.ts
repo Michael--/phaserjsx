@@ -4,3 +4,9 @@
  */
 
 export { Divider, type DividerProps } from './Divider'
+export {
+  calculateSliderSize,
+  ScrollSlider,
+  type ScrollSliderProps,
+  type SliderSize,
+} from './ScrollSlider'

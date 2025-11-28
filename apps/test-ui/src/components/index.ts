@@ -2,6 +2,7 @@
  * High-level UI components built with PhaserJSX
  * These demonstrate how to build composite components using the base View and Text primitives
  */
+export { ScrollSlider, type ScrollSliderProps } from '@phaserjsx/ui/components/custom'
 export { Accordion, type AccordionProps } from './Accordion'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextProps } from './CharText'
@@ -11,7 +12,6 @@ export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './RadioGroup'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'
-export { ScrollSlider, type ScrollSliderProps } from './ScrollSlider'
 export { ScrollView, type ScrollInfo, type ScrollViewProps } from './ScrollView'
 export { Sidebar, type SidebarProps } from './Sidebar'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'

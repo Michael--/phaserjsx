@@ -188,6 +188,7 @@ export const defaultTheme: Theme = {
     alpha: 1,
     visible: true,
   },
+  ScrollSlider: {},
 }
 
 /**
