@@ -7,6 +7,7 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
+    "generate-icons": "./dist/scripts/generate-icons.js",
     "generate-icon-types": "./dist/scripts/generate-icon-types.js",
     "generate-icon-loaders": "./dist/scripts/generate-icon-loaders.js"
   },
@@ -30,6 +31,10 @@
       "types": "./dist/components/custom/index.d.ts",
       "import": "./dist/components/custom/index.js",
       "require": "./dist/components/custom/index.cjs"
+    },
+    "./scripts/icon-generator-config": {
+      "types": "./dist/scripts/icon-generator-config.d.ts",
+      "import": "./dist/scripts/icon-generator-config.js"
     }
   },
   "files": [
