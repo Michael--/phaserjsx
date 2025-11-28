@@ -10,3 +10,4 @@ export {
   type ScrollSliderProps,
   type SliderSize,
 } from './ScrollSlider'
+export { ScrollView, type ScrollInfo, type ScrollViewProps } from './ScrollView'

@@ -1,13 +1,13 @@
-import {
-  useEffect,
-  useRedraw,
-  useRef,
-  useState,
-  View,
-  type GestureEventData,
-  type ViewProps,
-} from '@phaserjsx/ui'
-import { calculateSliderSize, ScrollSlider, type SliderSize } from '@phaserjsx/ui/components/custom'
+/** @jsxImportSource ../.. */
+/**
+ * ScrollView component providing a scrollable area with optional sliders
+ */
+import type Phaser from 'phaser'
+import type { GestureEventData } from '../../core-props'
+import { useEffect, useRedraw, useRef, useState } from '../../hooks'
+import { View } from '../index'
+import type { ViewProps } from '../view'
+import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
 /**
  * Scroll information data
