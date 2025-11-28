@@ -1,7 +1,14 @@
 import type { DesignTokens } from '@phaserjsx/ui'
-import { Text, useRef, useState, useThemeTokens, View, type GestureEventData } from '@phaserjsx/ui'
+import {
+  ScrollView,
+  Text,
+  useRef,
+  useState,
+  useThemeTokens,
+  View,
+  type GestureEventData,
+} from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ScrollView } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 interface StackItem {

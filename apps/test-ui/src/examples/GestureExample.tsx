@@ -2,8 +2,14 @@
  * Example demonstrating the new gesture system
  * Shows all gesture types: onTouch, onTouchMove, onDoubleTap, onLongPress
  */
-import { Text, View, useState, useThemeTokens, type GestureEventData } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import {
+  ScrollView,
+  Text,
+  View,
+  useState,
+  useThemeTokens,
+  type GestureEventData,
+} from '@phaserjsx/ui'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**

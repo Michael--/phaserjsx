@@ -3,8 +3,7 @@
  * Shows colors, typography, spacing, shadows, and component examples
  */
 import type { ColorShade } from '@phaserjsx/ui'
-import { Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

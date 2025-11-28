@@ -2,6 +2,7 @@
  * Color Mode Example - demonstrates dynamic theme switching
  */
 import {
+  ScrollView,
   setColorPreset,
   Text,
   useColorMode,
@@ -10,7 +11,6 @@ import {
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
 import { Button } from '../components/Button'
 import { ViewLevel2 } from './Helper/ViewLevel'
 

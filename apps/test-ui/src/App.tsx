@@ -4,6 +4,7 @@
 import {
   Divider,
   getAvailablePresets,
+  ScrollView,
   setColorPreset,
   Text,
   themeRegistry,
@@ -16,7 +17,7 @@ import {
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
-import { Button, RadioGroup, ScrollView, Sidebar, type RadioGroupOption } from './components'
+import { Button, RadioGroup, Sidebar, type RadioGroupOption } from './components'
 import { Spacer } from './components/Spacer'
 import { ViewLevel2 } from './examples/Helper'
 

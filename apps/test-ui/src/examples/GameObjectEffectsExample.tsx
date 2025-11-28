@@ -2,8 +2,8 @@
  * Example: Using game object effects (shake, pulse, fade, etc.)
  * Demonstrates the complete effect system with all available animations
  */
-import { Text, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
-import { Button, ScrollView } from '../components'
+import { ScrollView, Text, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import { Button } from '../components'
 import {
   createBounceEffect,
   createBreatheEffect,

@@ -1,8 +1,7 @@
 /**
  * ButtonExample - Demonstrates various Button variants, states, and configurations
  */
-import { View } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import { ScrollView, View } from '@phaserjsx/ui'
 import { Button } from '../components/Button'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

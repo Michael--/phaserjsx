@@ -2,9 +2,8 @@
  * Graphics Component Examples
  * Demonstrates various uses of the Graphics component
  */
-import { Graphics, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
+import { Graphics, ScrollView, Text, View, useState, useThemeTokens } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { ScrollView } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

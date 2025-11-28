@@ -1,5 +1,5 @@
-import { Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
-import { CharText, Icon, ScrollView } from '../components'
+import { ScrollView, Text, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import { CharText, Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3, ViewLevel4 } from './Helper'
 
 function Example() {

@@ -2,6 +2,7 @@
  * Spring Animation Example - demonstrates physics-based animations with useSpring
  */
 import {
+  ScrollView,
   SPRING_PRESETS,
   Text,
   useEffect,
@@ -12,7 +13,7 @@ import {
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
-import { Button, ScrollView, TransformOriginView } from '../components'
+import { Button, TransformOriginView } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**

@@ -1,5 +1,5 @@
-import { createTheme, Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { Accordion, Icon, ScrollView } from '../components'
+import { createTheme, ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { Accordion, Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function AccordionShowcase() {

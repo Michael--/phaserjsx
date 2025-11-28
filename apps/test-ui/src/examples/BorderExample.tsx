@@ -1,8 +1,7 @@
 /**
  * Border and CornerRadius Demo - showcasing new background features
  */
-import { Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**

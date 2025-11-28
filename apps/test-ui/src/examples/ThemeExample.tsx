@@ -1,8 +1,7 @@
 /**
  * Theme System Example - demonstrates global and local theme usage
  */
-import { Text, View, createTheme, useTheme } from '@phaserjsx/ui'
-import { ScrollView } from '../components'
+import { ScrollView, Text, View, createTheme, useTheme } from '@phaserjsx/ui'
 import { ViewLevel2 } from './Helper'
 
 /**

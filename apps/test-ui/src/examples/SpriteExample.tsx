@@ -2,9 +2,18 @@
  * Example: Sprite component with animations and transforms
  * Demonstrates static sprites, rotation, scaling, tinting, and Phaser animations
  */
-import { Sprite, Text, useEffect, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import {
+  ScrollView,
+  Sprite,
+  Text,
+  useEffect,
+  useRef,
+  useState,
+  useThemeTokens,
+  View,
+} from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { Button, ScrollView } from '../components'
+import { Button } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 
