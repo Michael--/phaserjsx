@@ -5,6 +5,9 @@ import { mountJSX } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import { App } from './App'
 
+type DemoMode = 'Default' | 'Separated' | 'Effects'
+const demo: DemoMode = 'Effects'
+
 /**
  * Main Phaser scene
  */
@@ -76,23 +79,45 @@ class MainScene extends Phaser.Scene {
     }
     graphics.strokePath()
 
-    const container = this.add.container(200, 200)
-    container.setSize(800, 800)
+    if (demo === 'Default') {
+      // Mount single JSX app instance
+      mountJSX(this, App, {
+        width: this.scale.width,
+        height: this.scale.height,
+      })
+    } else if (demo === 'Separated') {
+      const container = this.add.container(200, 200)
+      container.setSize(800, 800)
 
-    // Mount first JSX app instance
-    mountJSX(container, App, {
-      width: 800,
-      height: 800,
-    })
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: 800,
+        height: 800,
+      })
 
-    const container2 = this.add.container(1200, 100)
-    container2.setSize(800, 800)
+      const container2 = this.add.container(1200, 100)
+      container2.setSize(800, 800)
 
-    // Mount second JSX app instance (testing dual mount support)
-    mountJSX(container2, App, {
-      width: 800,
-      height: 800,
-    })
+      // Mount second JSX app instance (testing dual mount support)
+      mountJSX(container2, App, {
+        width: 800,
+        height: 800,
+      })
+    } else if (demo === 'Effects') {
+      const size = 1000
+      const container = this.add.container(
+        (this.scale.width - size) / 2,
+        (this.scale.height - size) / 2
+      )
+      container.setSize(size, size)
+      container.setRotation(0.05)
+
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: size,
+        height: size,
+      })
+    }
   }
 }
 
