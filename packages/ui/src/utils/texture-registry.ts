@@ -122,6 +122,21 @@ class TextureRegistry {
       .filter(([, entry]) => entry.loaded)
       .map(([key]) => key)
   }
+
+  /**
+   * Release all textures from memory
+   * Use with caution - removes all textures from Phaser and clears the registry
+   */
+  releaseAll() {
+    if (!this.scene) return
+
+    for (const key of this.textures.keys()) {
+      if (this.scene.textures.exists(key)) {
+        this.scene.textures.remove(key)
+      }
+    }
+    this.textures.clear()
+  }
 }
 
 // Global instance

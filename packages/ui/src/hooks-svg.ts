@@ -17,6 +17,61 @@ export interface SVGTextureConfig {
 }
 
 /**
+ * Manually release a global SVG texture from memory
+ * Only call this if you're sure no component needs the texture anymore
+ *
+ * @param key - The texture key to release
+ * @example
+ * ```ts
+ * // In a Phaser scene
+ * import { releaseSVGTexture } from '@phaserjsx/ui'
+ *
+ * // When changing levels or cleaning up
+ * releaseSVGTexture('icon-bell')
+ * ```
+ */
+export function releaseSVGTexture(key: string): void {
+  textureRegistry.releaseTexture(key)
+}
+
+/**
+ * Manually release multiple global SVG textures from memory
+ * Only call this if you're sure no component needs these textures anymore
+ *
+ * @param keys - Array of texture keys to release
+ * @example
+ * ```ts
+ * // In a Phaser scene
+ * import { releaseSVGTextures } from '@phaserjsx/ui'
+ *
+ * // Clean up all icon textures when changing scenes
+ * releaseSVGTextures(['icon-bell', 'icon-settings', 'icon-user'])
+ * ```
+ */
+export function releaseSVGTextures(keys: string[]): void {
+  for (const key of keys) {
+    textureRegistry.releaseTexture(key)
+  }
+}
+
+/**
+ * Manually release ALL global SVG textures from memory
+ * Use with caution - this clears all textures managed by the texture registry
+ *
+ * @example
+ * ```ts
+ * // In a Phaser scene shutdown or cleanup
+ * import { releaseAllSVGTextures } from '@phaserjsx/ui'
+ *
+ * // When changing to a different scene or restarting
+ * releaseAllSVGTextures()
+ * ```
+ */
+export function releaseAllSVGTextures(): void {
+  textureRegistry.releaseAll()
+}
+
+/**
  * Hook to load a single SVG as a Phaser texture
  *
  * Automatically handles:
