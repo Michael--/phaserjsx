@@ -21,6 +21,10 @@ export default defineConfig({
         '../../packages/ui/src/jsx-dev-runtime.ts'
       ),
       '@phaserjsx/ui/jsx-runtime': resolve(__dirname, '../../packages/ui/src/jsx-runtime.ts'),
+      '@phaserjsx/ui/components/custom': resolve(
+        __dirname,
+        '../../packages/ui/src/components/custom/index.ts'
+      ),
       '@phaserjsx/ui': resolve(__dirname, '../../packages/ui/src/index.ts'),
     },
   },

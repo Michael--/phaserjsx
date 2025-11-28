@@ -5,12 +5,16 @@ import dts from 'vite-plugin-dts'
 // Vite configuration for library build
 // Outputs ESM and CJS bundles with TypeScript declarations
 export default defineConfig({
+  esbuild: {
+    jsxImportSource: '.',
+  },
   build: {
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.ts'),
         'jsx-runtime': resolve(__dirname, 'src/jsx-runtime.ts'),
         'jsx-dev-runtime': resolve(__dirname, 'src/jsx-dev-runtime.ts'),
+        'components/custom/index': resolve(__dirname, 'src/components/custom/index.ts'),
       },
       name: 'PhaserJSX',
       formats: ['es', 'cjs'],
@@ -35,7 +39,7 @@ export default defineConfig({
   },
   plugins: [
     dts({
-      rollupTypes: true,
+      rollupTypes: false,
       tsconfigPath: './tsconfig.json',
       // Ensure all types are properly exported
       insertTypesEntry: true,

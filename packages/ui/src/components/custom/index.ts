@@ -1,0 +1,6 @@
+/**
+ * Custom components for PhaserJSX UI
+ * Higher-level components built on top of built-in primitives
+ */
+
+export { Divider, type DividerProps } from './Divider'

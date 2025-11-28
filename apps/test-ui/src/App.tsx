@@ -12,6 +12,7 @@ import {
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
+import { Divider } from '@phaserjsx/ui/components/custom'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
@@ -238,6 +239,7 @@ export function Switcher(props: SwitcherProps) {
       <View width={'fill'} height={'fill'} justifyContent="center" alignItems="end" padding={10}>
         <ViewLevel2 alignItems="center">
           <Text text="Select" />
+          <Divider orientation="horizontal" length={100} />
           <RadioGroup
             options={options}
             value={props.demoMode}
