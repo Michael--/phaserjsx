@@ -1,7 +1,15 @@
 /**
  * Color Mode Example - demonstrates dynamic theme switching
  */
-import { setColorPreset, Text, useColorMode, useThemeTokens, View } from '@phaserjsx/ui'
+import {
+  setColorPreset,
+  Text,
+  useColorMode,
+  useEffect,
+  useRedraw,
+  useThemeTokens,
+  View,
+} from '@phaserjsx/ui'
 import { ScrollView } from '../components'
 import { Button } from '../components/Button'
 import { ViewLevel2 } from './Helper/ViewLevel'
@@ -118,26 +126,39 @@ function ColorPalette() {
 /**
  * Full color mode example - demonstrates useThemeTokens with text styles
  */
-export function ColorModeExample() {
+function Example() {
   const { colorMode } = useColorMode()
   const tokens = useThemeTokens()
 
   if (!tokens) return null
 
   return (
+    <ViewLevel2>
+      <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
+      <ViewLevel2>
+        <Text text={`Current Mode: ${colorMode}`} style={tokens.textStyles.large} />
+        <ModeToggle />
+        <PresetSelector />
+      </ViewLevel2>
+      <ViewLevel2>
+        <ColorPalette />
+      </ViewLevel2>
+    </ViewLevel2>
+  )
+}
+
+export function ColorModeExample() {
+  const rd = useRedraw()
+  useEffect(() => {
+    // redraw workaround to ensure correct initial rendering after mount
+    // this is done because of wrong hscrollbar size on initial render detected once
+    // possible, that this can be fixed in the future in the ScrollView component itself
+    rd()
+  }, [])
+  return (
     <View width={'100%'} height={'100%'}>
       <ScrollView>
-        <ViewLevel2>
-          <Text text="Color Mode & Preset Demo" style={tokens.textStyles.title} />
-          <ViewLevel2>
-            <Text text={`Current Mode: ${colorMode}`} style={tokens.textStyles.large} />
-            <ModeToggle />
-            <PresetSelector />
-          </ViewLevel2>
-          <ViewLevel2>
-            <ColorPalette />
-          </ViewLevel2>
-        </ViewLevel2>
+        <Example />
       </ScrollView>
     </View>
   )
