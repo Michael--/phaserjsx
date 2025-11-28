@@ -10,6 +10,7 @@ registerBuiltins()
 
 export * from './core-types'
 export * from './hooks'
+export * from './hooks-svg'
 export * from './host'
 export * from './memo'
 export * from './theme'
@@ -75,5 +76,5 @@ export { Fragment, jsx, jsxs } from './jsx-runtime'
 export { DebugLogger, DevConfig, DevPresets } from './dev-config'
 
 // SVG to texture utilities
-export type { SVGTextureConfig } from './hooks'
+export type { SVGTextureConfig } from './hooks-svg'
 export { svgToTexture } from './utils/svg-texture'
