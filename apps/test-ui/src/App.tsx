@@ -15,8 +15,9 @@ import {
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
-import { Button, ScrollView, Sidebar } from './components'
+import { Button, RadioGroup, ScrollView, Sidebar, type RadioGroupOption } from './components'
 import { Spacer } from './components/Spacer'
+import { ViewLevel2 } from './examples/Helper'
 
 // Set global theme ONCE (safe in function body for SPA)
 themeRegistry.updateGlobalTheme(globalTheme)
@@ -205,6 +206,47 @@ export function App(props: AppProps) {
           <Spacer />
           <Text text={`Screen: ${width} x ${height}`} style={token?.textStyles.small} />
         </View>
+      </View>
+    </View>
+  )
+}
+
+const demoMode = {
+  Default: { label: 'Default' },
+  Separated: { label: 'Separated' },
+  Effects: { label: 'Effects' },
+  Moving: { label: 'Moving' },
+} as const
+
+export type DemoMode = keyof typeof demoMode
+
+export interface SwitcherProps extends AppProps {
+  /** Initial demo mode */
+  demoMode: DemoMode
+  /** Callback when demo mode switched */
+  onSwitch?: (mode: DemoMode) => void
+}
+
+export function Switcher(props: SwitcherProps) {
+  const options: RadioGroupOption[] = Object.entries(demoMode).map(([value, config]) => ({
+    value: value as DemoMode,
+    label: config.label,
+  }))
+
+  return (
+    <View width={props.width} height={props.height} direction="stack">
+      <View width={'fill'} height={'fill'} justifyContent="center" alignItems="end" padding={10}>
+        <ViewLevel2 alignItems="center">
+          <Text text="Select" />
+          <RadioGroup
+            options={options}
+            value={props.demoMode}
+            onChange={(value: string) => {
+              const key = value as DemoMode
+              props.onSwitch?.(key)
+            }}
+          />
+        </ViewLevel2>
       </View>
     </View>
   )

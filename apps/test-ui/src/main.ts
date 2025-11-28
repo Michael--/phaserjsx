@@ -3,15 +3,90 @@
  */
 import { mountJSX } from '@phaserjsx/ui'
 import Phaser from 'phaser'
-import { App } from './App'
+import { App, type DemoMode, Switcher } from './App'
 
-type DemoMode = 'Default' | 'Separated' | 'Effects' | 'MovingSprite'
-const demo: DemoMode = 'MovingSprite'
+//type DemoMode = 'Default' | 'Separated' | 'Effects' | 'MovingSprite'
+let demo: DemoMode = 'Default'
 
 /**
  * Main Phaser scene
  */
 class MainScene extends Phaser.Scene {
+  private updateDemo(mode: DemoMode) {
+    if (mode === 'Default') {
+      const container = this.add.container(0, 0)
+      container.setDepth(500)
+
+      // Mount single JSX app instance
+      mountJSX(container, App, {
+        width: this.scale.width,
+        height: this.scale.height,
+      })
+    } else if (mode === 'Separated') {
+      const container = this.add.container(200, 200)
+      container.setSize(800, 800)
+      container.setDepth(500)
+
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: 800,
+        height: 800,
+      })
+
+      const container2 = this.add.container(1200, 100)
+      container2.setSize(800, 800)
+      container2.setDepth(500)
+
+      // Mount second JSX app instance (testing dual mount support)
+      mountJSX(container2, App, {
+        width: 800,
+        height: 800,
+      })
+    } else if (mode === 'Effects') {
+      const size = 1000
+      const container = this.add.container(
+        (this.scale.width - size) / 2,
+        (this.scale.height - size) / 2
+      )
+      container.setSize(size, size)
+      container.setRotation(0.3)
+      container.setDepth(500)
+
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: size,
+        height: size,
+      })
+    } else if (mode === 'Moving') {
+      const size = 1000
+      const container = this.add.container(
+        (this.scale.width - size) / 2,
+        (this.scale.height - size) / 2
+      )
+      container.setSize(size, size)
+      container.setDepth(500)
+
+      // Mount first JSX app instance
+      mountJSX(container, App, {
+        width: size,
+        height: size,
+      })
+
+      // Animate the container
+      this.tweens.add({
+        targets: container,
+        x: { from: 200, to: 600, duration: 20000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
+        rotation: {
+          from: 0,
+          to: Math.PI / 8,
+          duration: 80000,
+          ease: 'Linear',
+          yoyo: true,
+          repeat: -1,
+        },
+      })
+    }
+  }
   preload() {
     // Load local assets
     this.load.atlas('ui', 'assets/ui/buttons.png', 'assets/ui/buttons.json')
@@ -79,72 +154,21 @@ class MainScene extends Phaser.Scene {
     }
     graphics.strokePath()
 
-    if (demo === 'Default') {
-      // Mount single JSX app instance
-      mountJSX(this, App, {
-        width: this.scale.width,
-        height: this.scale.height,
-      })
-    } else if (demo === 'Separated') {
-      const container = this.add.container(200, 200)
-      container.setSize(800, 800)
+    this.updateDemo(demo)
 
-      // Mount first JSX app instance
-      mountJSX(container, App, {
-        width: 800,
-        height: 800,
-      })
-
-      const container2 = this.add.container(1200, 100)
-      container2.setSize(800, 800)
-
-      // Mount second JSX app instance (testing dual mount support)
-      mountJSX(container2, App, {
-        width: 800,
-        height: 800,
-      })
-    } else if (demo === 'Effects') {
-      const size = 1000
-      const container = this.add.container(
-        (this.scale.width - size) / 2,
-        (this.scale.height - size) / 2
-      )
-      container.setSize(size, size)
-      container.setRotation(0.3)
-
-      // Mount first JSX app instance
-      mountJSX(container, App, {
-        width: size,
-        height: size,
-      })
-    } else if (demo === 'MovingSprite') {
-      const size = 1000
-      const container = this.add.container(
-        (this.scale.width - size) / 2,
-        (this.scale.height - size) / 2
-      )
-      container.setSize(size, size)
-
-      // Mount first JSX app instance
-      mountJSX(container, App, {
-        width: size,
-        height: size,
-      })
-
-      // Animate the container
-      this.tweens.add({
-        targets: container,
-        x: { from: 200, to: 600, duration: 20000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
-        rotation: {
-          from: 0,
-          to: Math.PI / 8,
-          duration: 80000,
-          ease: 'Linear',
-          yoyo: true,
-          repeat: -1,
-        },
-      })
-    }
+    const switcherContainer = this.add.container(0, 0)
+    switcherContainer.setDepth(1000)
+    mountJSX(switcherContainer, Switcher, {
+      width: this.scale.width,
+      height: this.scale.height,
+      demoMode: demo,
+      onSwitch: (mode) => {
+        console.log('Switched demo mode to:', mode)
+        demo = mode
+        this.scene.restart()
+        // this.updateDemo(mode) // for dynamic switching without restart, but may have issues when overlapping
+      },
+    })
   }
 }
 
