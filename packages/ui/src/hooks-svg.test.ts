@@ -27,6 +27,7 @@ vi.mock('./render-context', () => ({
     deferLayout: vi.fn(),
     setViewport: vi.fn(),
     getTextureScene: vi.fn(),
+    isShutdown: vi.fn(() => false),
   })),
   getRenderContext: vi.fn(() => ({
     getCurrent: vi.fn(() => null),
@@ -34,6 +35,7 @@ vi.mock('./render-context', () => ({
     deferLayout: vi.fn(),
     setViewport: vi.fn(),
     getTextureScene: vi.fn(),
+    isShutdown: vi.fn(() => false),
   })),
 }))
 
@@ -58,6 +60,11 @@ const mockAddCanvas = vi.fn()
 const mockExists = vi.fn(() => true)
 
 const mockScene = {
+  sys: {
+    settings: {
+      active: true,
+    },
+  },
   textures: {
     exists: mockExists,
     remove: mockRemove,

@@ -33,9 +33,30 @@ vi.mock('./render-context', () => ({
   })),
 }))
 
+// Mock render context before imports
+vi.mock('./render-context', () => ({
+  getContextFromParent: vi.fn(() => ({
+    getCurrent: vi.fn(() => null),
+    setCurrent: vi.fn(),
+    deferLayout: vi.fn(),
+    setViewport: vi.fn(),
+    getTextureScene: vi.fn(),
+    isShutdown: vi.fn(() => false),
+  })),
+}))
+
+import Phaser from 'phaser'
 import { useEffect, useRedraw, useRef, useState, withHooks, type Ctx } from './hooks'
-import type { ParentType } from './types'
 import { createElement } from './vdom'
+
+const makeMockScene = (): Phaser.Scene => {
+  const scene = new Phaser.Scene()
+  // Ensure scene is properly initialized for tests
+  ;(scene as unknown as { sys: { settings: { active: boolean } } }).sys = {
+    settings: { active: true },
+  }
+  return scene
+}
 
 const makeMockCtx = (overrides: Partial<Ctx> = {}): Ctx => ({
   index: 0,
@@ -44,7 +65,7 @@ const makeMockCtx = (overrides: Partial<Ctx> = {}): Ctx => ({
   cleanups: [],
   vnode: createElement('div', {}),
   componentVNode: createElement('component', {}),
-  parent: {} as ParentType,
+  parent: makeMockScene(),
   function: vi.fn(() => createElement('div', {})),
   isFactory: false,
   ...overrides,

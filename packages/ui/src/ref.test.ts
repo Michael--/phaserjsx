@@ -21,6 +21,7 @@ vi.mock('./render-context', () => ({
     deferLayout: vi.fn(),
     setViewport: vi.fn(),
     getTextureScene: vi.fn(),
+    isShutdown: vi.fn(() => false),
   })),
   getRenderContext: vi.fn(() => ({
     getCurrent: vi.fn(() => null),
@@ -28,6 +29,7 @@ vi.mock('./render-context', () => ({
     deferLayout: vi.fn(),
     setViewport: vi.fn(),
     getTextureScene: vi.fn(),
+    isShutdown: vi.fn(() => false),
   })),
 }))
 
@@ -69,7 +71,17 @@ import { registerBuiltins } from './components'
  */
 function createMockScene() {
   return {
-    sys: { queueDepthSort: vi.fn() },
+    sys: {
+      queueDepthSort: vi.fn(),
+      settings: {
+        active: true,
+      },
+    },
+    add: {
+      container: vi.fn(() => ({
+        setVisible: vi.fn(),
+      })),
+    },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any
 }
