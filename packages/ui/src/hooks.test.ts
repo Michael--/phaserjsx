@@ -15,9 +15,22 @@ vi.mock('./host', () => ({
   },
 }))
 
-// Mock Phaser minimally
-vi.mock('phaser', () => ({
-  Scene: vi.fn(),
+// Mock render context
+vi.mock('./render-context', () => ({
+  getContextFromParent: vi.fn(() => ({
+    getCurrent: vi.fn(() => null),
+    setCurrent: vi.fn(),
+    deferLayout: vi.fn(),
+    setViewport: vi.fn(),
+    getTextureScene: vi.fn(),
+  })),
+  getRenderContext: vi.fn(() => ({
+    getCurrent: vi.fn(() => null),
+    setCurrent: vi.fn(),
+    deferLayout: vi.fn(),
+    setViewport: vi.fn(),
+    getTextureScene: vi.fn(),
+  })),
 }))
 
 import { useEffect, useRedraw, useRef, useState, withHooks, type Ctx } from './hooks'

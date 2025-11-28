@@ -3,7 +3,8 @@
  */
 import type Phaser from 'phaser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { disposeCtx, useSVGTexture, useSVGTextures, withHooks, type Ctx } from './hooks'
+import { disposeCtx, withHooks, type Ctx } from './hooks'
+import { useSVGTexture, useSVGTextures } from './hooks-svg'
 import type { ParentType } from './types'
 import { createElement } from './vdom'
 
@@ -18,9 +19,22 @@ vi.mock('./host', () => ({
   },
 }))
 
-// Mock Phaser minimally
-vi.mock('phaser', () => ({
-  Scene: vi.fn(),
+// Mock render context
+vi.mock('./render-context', () => ({
+  getContextFromParent: vi.fn(() => ({
+    getCurrent: vi.fn(() => null),
+    setCurrent: vi.fn(),
+    deferLayout: vi.fn(),
+    setViewport: vi.fn(),
+    getTextureScene: vi.fn(),
+  })),
+  getRenderContext: vi.fn(() => ({
+    getCurrent: vi.fn(() => null),
+    setCurrent: vi.fn(),
+    deferLayout: vi.fn(),
+    setViewport: vi.fn(),
+    getTextureScene: vi.fn(),
+  })),
 }))
 
 // Mock svgToTexture utility

@@ -1,8 +1,23 @@
 import { vi } from 'vitest'
 
+// Mock Phaser Scene class
+class MockScene {
+  data = {
+    get: vi.fn(),
+    set: vi.fn(),
+    has: vi.fn(() => false),
+  }
+  textures = {
+    exists: vi.fn(() => true),
+    remove: vi.fn(),
+    addCanvas: vi.fn(),
+  }
+}
+
 // Mock Phaser to prevent initialization issues in tests
 vi.mock('phaser', () => ({
   default: {
+    Scene: MockScene,
     GameObjects: {
       Container: class MockContainer {
         constructor() {
@@ -38,4 +53,5 @@ vi.mock('phaser', () => ({
       },
     },
   },
+  Scene: MockScene,
 }))
