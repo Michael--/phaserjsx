@@ -22,7 +22,7 @@ class MockSceneClass {
     addCanvas: vi.fn(),
   }
   add = {
-    container: vi.fn((x: number, y: number) => new MockContainer(this)),
+    container: vi.fn((_x: number, _y: number) => new MockContainer(this)),
   }
 }
 
@@ -59,7 +59,7 @@ class MockContainerClass {
     return this
   }
 
-  setVisible(visible: boolean) {
+  setVisible(_visible: boolean) {
     return this
   }
 

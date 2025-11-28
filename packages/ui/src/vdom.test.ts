@@ -103,6 +103,7 @@ describe('VDOM', () => {
       const vnode = createElement(mockComponent, { test: 'value' })
 
       // Mock host.create for the View element
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(host.create).mockReturnValue({ id: 'component-mounted' } as any)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
