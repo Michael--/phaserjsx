@@ -135,7 +135,14 @@ class MainScene extends Phaser.Scene {
       this.tweens.add({
         targets: container,
         x: { from: 200, to: 600, duration: 20000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
-        rotation: { from: 0, to: Math.PI * 2, duration: 80000, ease: 'Linear', repeat: -1 },
+        rotation: {
+          from: 0,
+          to: Math.PI / 8,
+          duration: 80000,
+          ease: 'Linear',
+          yoyo: true,
+          repeat: -1,
+        },
       })
     }
   }

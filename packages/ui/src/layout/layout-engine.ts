@@ -305,7 +305,7 @@ function updateMaskWorldPosition(
     // Expand by 1px on each side to prevent edge artifacts
     maskGraphics.fillRect(-1, -1, width + 2, height + 2)
 
-    // console.log('Updated overflow mask position:')
+    //console.log('Updated overflow mask position:')
   }
 
   // Store reference to update function
