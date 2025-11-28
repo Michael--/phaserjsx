@@ -13,7 +13,7 @@ export default defineIconConfig({
       label: 'Bootstrap Icons',
     },
     {
-      directory: './public/custom-icons',
+      directory: './src/custom-icons',
       label: 'Custom Icons',
     },
   ],

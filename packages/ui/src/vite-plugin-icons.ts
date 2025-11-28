@@ -97,11 +97,11 @@ export function iconGeneratorPlugin(options: IconGeneratorPluginOptions): Plugin
         const { generateTypes, generateLoaders } = await loadGeneratorFunctions()
 
         // Generate types first
-        const iconNames = config.types?.enabled ? await generateTypes(config, root) : null
+        const typesResult = config.types?.enabled ? await generateTypes(config, root) : null
 
-        // Generate loaders
+        // Generate loaders (pass types result for accurate source mapping)
         if (config.loaders?.enabled) {
-          await generateLoaders(config, root, iconNames || undefined)
+          await generateLoaders(config, root, typesResult || undefined)
         }
 
         console.log('✨ [Icon Generator] Done!')
@@ -113,19 +113,27 @@ export function iconGeneratorPlugin(options: IconGeneratorPluginOptions): Plugin
     async handleHotUpdate({ file, server }) {
       if (!isDevMode || !config || options.watch === false) return
 
+      // Normalize paths for comparison (file is absolute, configs are relative)
+      const scanDirAbs = config.loaders?.enabled ? resolve(root, config.loaders.scanDir) : null
+
       // Check if file is in scan directory (for loader regeneration)
       const shouldRegenerateLoaders =
         config.loaders?.enabled &&
-        file.includes(config.loaders.scanDir) &&
+        scanDirAbs &&
+        file.startsWith(scanDirAbs) &&
         /\.(tsx?|jsx?)$/.test(file) &&
         !file.endsWith('.generated.ts')
 
       // Check if file is an SVG in any icon source directory
       const sources = Array.isArray(config.source) ? config.source : [config.source]
+      const sourceAbsPaths = sources
+        .filter((s) => s.directory)
+        .map((s) => resolve(root, s.directory as string))
+
       const shouldRegenerateTypes =
         config.types?.enabled &&
         file.endsWith('.svg') &&
-        sources.some((source) => source.directory && file.includes(source.directory))
+        sourceAbsPaths.some((path) => file.startsWith(path))
 
       if (shouldRegenerateLoaders || shouldRegenerateTypes) {
         console.log('🔄 [Icon Generator] File changed, regenerating...')
@@ -133,13 +141,15 @@ export function iconGeneratorPlugin(options: IconGeneratorPluginOptions): Plugin
         try {
           const { generateTypes, generateLoaders } = await loadGeneratorFunctions()
 
-          if (shouldRegenerateTypes) {
-            await generateTypes(config, root)
+          // Always generate types when regenerating loaders (needed for sourceIconSets)
+          let typesResult = null
+          if (shouldRegenerateTypes || (shouldRegenerateLoaders && config.types?.enabled)) {
+            typesResult = await generateTypes(config, root)
           }
 
+          // Generate loaders if needed (pass types result for accurate source mapping)
           if (shouldRegenerateLoaders) {
-            const iconNames = config.types?.enabled ? await generateTypes(config, root) : null
-            await generateLoaders(config, root, iconNames || undefined)
+            await generateLoaders(config, root, typesResult || undefined)
           }
 
           console.log('✅ [Icon Generator] Regenerated')

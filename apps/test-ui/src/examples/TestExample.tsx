@@ -9,6 +9,7 @@ function Example() {
     <ViewLevel2 direction="column" padding={10}>
       <View gap={10} direction="row" alignContent="center">
         <Icon type="bricks" />
+        <Icon type="custom-check" />
         <SectionHeader title="Whatever Example" />
       </View>
       <ViewLevel3

@@ -9,8 +9,8 @@
  *   generate-icons --config ./icon-generator.config.ts --watch
  */
 import { watch } from 'node:fs'
-import { readdir, readFile, writeFile } from 'node:fs/promises'
-import { basename, join, resolve } from 'node:path'
+import { access, readdir, readFile, writeFile } from 'node:fs/promises'
+import { basename, dirname, join, relative, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 import type { IconGeneratorConfig } from './icon-generator-config'
@@ -160,7 +160,7 @@ async function loadAvailableIcons(typesFile: string): Promise<Set<string> | null
 export async function generateTypes(
   config: IconGeneratorConfig,
   cwd: string
-): Promise<string[] | null> {
+): Promise<{ iconNames: string[]; sourceIconSets: Map<number, Set<string>> } | null> {
   if (!config.types?.enabled) return null
 
   console.log('\n📝 Generating icon types...')
@@ -169,9 +169,12 @@ export async function generateTypes(
   const sources = Array.isArray(config.source) ? config.source : [config.source]
   const allIconNames: string[] = []
   const sourceInfos: Array<{ name: string; count: number }> = []
+  const sourceIconSets = new Map<number, Set<string>>() // Track which icons belong to which source
 
   // Collect icons from all sources
-  for (const source of sources) {
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i]
+    if (!source) continue
     let iconsDir: string
     let sourceName: string
 
@@ -196,6 +199,7 @@ export async function generateTypes(
     console.log(`✓ Found ${iconNames.length} icons from ${sourceName}`)
     allIconNames.push(...iconNames)
     sourceInfos.push({ name: sourceName, count: iconNames.length })
+    sourceIconSets.set(i, new Set(iconNames))
   }
 
   // Remove duplicates and sort
@@ -234,7 +238,7 @@ ${typeDefinition}
   console.log(`✓ Generated: ${outputPath}`)
   console.log(`✓ Type name: ${typeName}`)
 
-  return uniqueIconNames
+  return { iconNames: uniqueIconNames, sourceIconSets }
 }
 
 /**
@@ -244,7 +248,7 @@ ${typeDefinition}
 export async function generateLoaders(
   config: IconGeneratorConfig,
   cwd: string,
-  availableIcons?: string[]
+  typesResult?: { iconNames: string[]; sourceIconSets: Map<number, Set<string>> }
 ): Promise<void> {
   if (!config.loaders?.enabled) return
 
@@ -258,14 +262,18 @@ export async function generateLoaders(
 
   // Load available icons for validation if requested
   let availableIconsSet: Set<string> | null = null
-  if (config.loaders.validate && config.types?.output) {
+  let sourceIconSets: Map<number, Set<string>> | null = null
+
+  if (typesResult) {
+    availableIconsSet = new Set(typesResult.iconNames)
+    sourceIconSets = typesResult.sourceIconSets
+    console.log(`✓ Loaded ${availableIconsSet.size} available icons for validation`)
+  } else if (config.loaders.validate && config.types?.output) {
     const typesPath = resolve(cwd, config.types.output)
     availableIconsSet = await loadAvailableIcons(typesPath)
     if (availableIconsSet) {
       console.log(`✓ Loaded ${availableIconsSet.size} available icons for validation`)
     }
-  } else if (availableIcons) {
-    availableIconsSet = new Set(availableIcons)
   }
 
   const files = await findTsFiles(scanDir, config.exclude)
@@ -304,27 +312,98 @@ export async function generateLoaders(
   // Normalize source to array
   const sources = Array.isArray(config.source) ? config.source : [config.source]
 
-  // Generate loaders for each source
-  const loaderEntries: string[] = []
-  for (const source of sources) {
-    if (source.package) {
-      const packageName = source.package
-      const iconsPath = source.iconsPath || 'icons'
-      // Only generate loaders for icons from this package
-      loaderEntries.push(
-        ...iconArray.map(
-          (icon) =>
-            `  '${icon}': () => import('${packageName}/${iconsPath}/${icon}.svg' as string),`
-        )
-      )
-    } else if (source.directory) {
-      // For local directories, use relative imports
-      const dirPath = source.directory
-      loaderEntries.push(
-        ...iconArray.map((icon) => `  '${icon}': () => import('${dirPath}/${icon}.svg'),`)
-      )
+  // Build icon-to-source mapping (check which source has each icon)
+  const iconSourceMap = new Map<string, { path: string; isPackage: boolean }>()
+
+  for (const icon of iconArray) {
+    // If we have sourceIconSets from types generation, use that for accurate mapping
+    if (sourceIconSets) {
+      for (let i = 0; i < sources.length; i++) {
+        const source = sources[i]
+        const iconsForThisSource = sourceIconSets.get(i)
+        if (!source || !iconsForThisSource) continue
+
+        if (iconsForThisSource.has(icon)) {
+          let iconPath = ''
+          if (source.package) {
+            const packageName = source.package
+            const iconsPath = source.iconsPath || 'icons'
+            iconPath = `${packageName}/${iconsPath}/${icon}.svg`
+          } else if (source.directory) {
+            iconPath = `${source.directory}/${icon}.svg`
+          }
+
+          if (iconPath) {
+            // For local directories, calculate relative path from loader output to icon file
+            if (source.directory && config.loaders.output) {
+              const loaderDir = dirname(resolve(cwd, config.loaders.output))
+              const iconAbsPath = resolve(cwd, iconPath)
+              iconPath = relative(loaderDir, iconAbsPath)
+              // Ensure forward slashes and leading ./
+              iconPath = './' + iconPath.replace(/\\/g, '/')
+            }
+
+            iconSourceMap.set(icon, {
+              path: iconPath,
+              isPackage: !!source.package,
+            })
+            break // First source that has this icon wins
+          }
+        }
+      }
+    } else {
+      // Fallback: Try each source in order (first match wins)
+      for (const source of sources) {
+        let iconPath = ''
+        let exists = false
+
+        if (source.package) {
+          const packageName = source.package
+          const iconsPath = source.iconsPath || 'icons'
+          iconPath = `${packageName}/${iconsPath}/${icon}.svg`
+          // For packages, we assume the icon exists if it's in the types file
+          exists = availableIconsSet ? availableIconsSet.has(icon) : true
+        } else if (source.directory) {
+          const dirPath = source.directory
+          iconPath = `${dirPath}/${icon}.svg`
+          // For directories, check file existence
+          try {
+            const fullPath = resolve(cwd, dirPath, `${icon}.svg`)
+            await access(fullPath)
+            exists = true
+          } catch {
+            exists = false
+          }
+        }
+
+        if (exists && iconPath) {
+          // For local directories, calculate relative path from loader output to icon file
+          if (source.directory && config.loaders.output) {
+            const loaderDir = dirname(resolve(cwd, config.loaders.output))
+            const iconAbsPath = resolve(cwd, iconPath)
+            iconPath = relative(loaderDir, iconAbsPath)
+            // Ensure forward slashes and leading ./
+            iconPath = './' + iconPath.replace(/\\/g, '/')
+          }
+
+          iconSourceMap.set(icon, {
+            path: iconPath,
+            isPackage: !!source.package,
+          })
+          break // First source that has this icon wins
+        }
+      }
     }
   }
+
+  // Generate loaders from the mapping
+  const loaderEntries = Array.from(iconSourceMap.entries()).map(([icon, { path, isPackage }]) => {
+    if (isPackage) {
+      return `  '${icon}': () => import('${path}' as string),`
+    } else {
+      return `  '${icon}': () => import('${path}'),`
+    }
+  })
 
   const loaders = loaderEntries.join('\n')
 
@@ -371,10 +450,10 @@ async function runGeneration(config: IconGeneratorConfig, cwd: string): Promise<
   console.log('─'.repeat(50))
 
   // Generate types first (so loaders can validate against them)
-  const iconNames = await generateTypes(config, cwd)
+  const typesResult = await generateTypes(config, cwd)
 
-  // Generate loaders
-  await generateLoaders(config, cwd, iconNames || undefined)
+  // Generate loaders (pass types result for accurate source mapping)
+  await generateLoaders(config, cwd, typesResult || undefined)
 
   console.log('\n✨ Done!\n')
 }
