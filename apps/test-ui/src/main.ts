@@ -110,7 +110,7 @@ class MainScene extends Phaser.Scene {
         (this.scale.height - size) / 2
       )
       container.setSize(size, size)
-      container.setRotation(0.05)
+      container.setRotation(0.1)
 
       // Mount first JSX app instance
       mountJSX(container, App, {

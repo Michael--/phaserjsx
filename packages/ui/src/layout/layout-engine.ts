@@ -236,21 +236,54 @@ function updateMaskWorldPosition(
 
   if (!extendedContainer.__overflowMask) return
 
-  // Calculate absolute world position by traversing parent chain
-  let worldX = 0
-  let worldY = 0
+  // Build parent chain from container to root (bottom-up)
+  const parentChain: Phaser.GameObjects.Container[] = []
   let current: Phaser.GameObjects.Container | null = container
-
   while (current) {
-    worldX += current.x
-    worldY += current.y
+    parentChain.push(current)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     current = (current as any).parentContainer || null
   }
 
-  // Update mask geometry
+  // Reverse to get root-to-container order (top-down)
+  parentChain.reverse()
+
+  // Apply transforms cumulatively from root to container
+  let worldX = 0
+  let worldY = 0
+  let worldRotation = 0
+  let worldScaleX = 1
+  let worldScaleY = 1
+
+  for (const parent of parentChain) {
+    // Apply parent's rotation to current position (rotate around origin)
+    if (worldRotation !== 0) {
+      const cos = Math.cos(worldRotation)
+      const sin = Math.sin(worldRotation)
+      const rotatedX = parent.x * cos - parent.y * sin
+      const rotatedY = parent.x * sin + parent.y * cos
+      worldX += rotatedX * worldScaleX
+      worldY += rotatedY * worldScaleY
+    } else {
+      // No rotation yet, simple addition
+      worldX += parent.x * worldScaleX
+      worldY += parent.y * worldScaleY
+    }
+
+    // Accumulate rotation and scale
+    worldRotation += parent.rotation
+    worldScaleX *= parent.scaleX
+    worldScaleY *= parent.scaleY
+  }
+
+  // Update mask geometry with accumulated world transform
   const maskGraphics = extendedContainer.__overflowMask
   maskGraphics.clear()
+
+  // Apply world transform to mask graphics
+  maskGraphics.setPosition(worldX, worldY)
+  maskGraphics.setRotation(worldRotation)
+  maskGraphics.setScale(worldScaleX, worldScaleY)
 
   // Use configurable color and alpha for debugging
   maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
@@ -258,12 +291,16 @@ function updateMaskWorldPosition(
     DevConfig.visual.showOverflowMasks ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
   )
 
+  // Draw rectangle in local space (will be transformed by graphics properties)
   // Expand by 1px on each side to prevent edge artifacts
-  maskGraphics.fillRect(worldX - 1, worldY - 1, width + 2, height + 2)
+  maskGraphics.fillRect(-1, -1, width + 2, height + 2)
 
   DebugLogger.log('overflowMask', 'Updated overflow mask world position:', {
-    x: worldX,
-    y: worldY,
+    worldX,
+    worldY,
+    worldRotation,
+    worldScaleX,
+    worldScaleY,
     width,
     height,
   })
