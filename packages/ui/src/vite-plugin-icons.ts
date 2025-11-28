@@ -15,7 +15,6 @@
  *   })
  */
 import { resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
 import type { Plugin } from 'vite'
 import type { IconGeneratorConfig } from './scripts/icon-generator-config'
 
@@ -31,21 +30,6 @@ export interface IconGeneratorPluginOptions {
 }
 
 /**
- * Load config file
- */
-async function loadConfig(configPath: string, root: string): Promise<IconGeneratorConfig> {
-  const absolutePath = resolve(root, configPath)
-  const fileUrl = pathToFileURL(absolutePath).href
-
-  try {
-    const module = await import(fileUrl)
-    return module.default || module
-  } catch (error) {
-    throw new Error(`Failed to load icon config from ${configPath}: ${error}`)
-  }
-}
-
-/**
  * Import generation functions dynamically to avoid circular deps
  */
 async function loadGeneratorFunctions() {
@@ -53,6 +37,7 @@ async function loadGeneratorFunctions() {
   // Import without extension - Vite/Node will resolve to .ts in dev, .js in prod
   const module = await import('./scripts/generate-icons')
   return {
+    loadConfig: module.loadConfig,
     generateTypes: module.generateTypes,
     generateLoaders: module.generateLoaders,
   }
@@ -74,6 +59,7 @@ export function iconGeneratorPlugin(options: IconGeneratorPluginOptions): Plugin
       isDevMode = resolvedConfig.command === 'serve'
 
       try {
+        const { loadConfig } = await loadGeneratorFunctions()
         config = await loadConfig(options.configPath, root)
 
         // Apply CLI-style overrides

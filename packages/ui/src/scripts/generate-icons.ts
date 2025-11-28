@@ -430,8 +430,15 @@ ${loaders}
 /**
  * Load config file
  */
-async function loadConfig(configPath: string): Promise<IconGeneratorConfig> {
-  const absolutePath = resolve(process.cwd(), configPath)
+/**
+ * Load icon generator config file
+ * Exported for use by Vite plugin and other tools
+ */
+export async function loadConfig(
+  configPath: string,
+  cwd = process.cwd()
+): Promise<IconGeneratorConfig> {
+  const absolutePath = resolve(cwd, configPath)
   const fileUrl = pathToFileURL(absolutePath).href
 
   try {
