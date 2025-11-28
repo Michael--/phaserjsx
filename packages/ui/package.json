@@ -7,8 +7,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "generate-icon-types": "./scripts/generate-icon-types.ts",
-    "generate-icon-loaders": "./scripts/generate-icon-loaders.ts"
+    "generate-icon-types": "./dist/scripts/generate-icon-types.js",
+    "generate-icon-loaders": "./dist/scripts/generate-icon-loaders.js"
   },
   "exports": {
     ".": {
@@ -33,12 +33,12 @@
     }
   },
   "files": [
-    "dist",
-    "scripts"
+    "dist"
   ],
   "scripts": {
     "dev": "vite build --watch",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && pnpm build:scripts",
+    "build:scripts": "vite build --config scripts.vite.config.ts && chmod +x dist/scripts/*.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",

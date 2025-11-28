@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Generator for icon type definitions from any icon library
  * Scans an icon package and generates TypeScript union type

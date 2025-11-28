@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Auto-generates icon loader registry from actual icon usage in the codebase
  * Scans TSX/TS files for Icon component usage and generates loaders
