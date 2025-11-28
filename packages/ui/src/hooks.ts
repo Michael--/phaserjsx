@@ -67,7 +67,20 @@ export type VNode = {
  * @returns The result of the render function
  */
 export function withHooks<T>(ctx: Ctx, render: () => T): T {
+  // Check scene validity before accessing render context
+  const scene = ctx.parent instanceof Phaser.Scene ? ctx.parent : ctx.parent.scene
+  if (!scene || !scene.sys || !scene.sys.settings.active) {
+    // Scene is shutting down, return a safe default
+    return null as T
+  }
+
   const renderContext = getContextFromParent(ctx.parent)
+
+  // Check if render context is shutting down
+  if (renderContext.isShutdown()) {
+    return null as T
+  }
+
   const prev = renderContext.getCurrent()
   const prevModule = _currentCtx
   renderContext.setCurrent(ctx)
@@ -309,6 +322,13 @@ function scheduleUpdate(c: Ctx) {
 
     // Skip update if context has been disposed
     if (c.disposed) {
+      return
+    }
+
+    // Get scene and check if it's still valid
+    const scene = c.parent instanceof Phaser.Scene ? c.parent : c.parent.scene
+    if (!scene || !scene.sys || !scene.sys.settings.active) {
+      // Scene is being shut down or destroyed, skip update
       return
     }
 

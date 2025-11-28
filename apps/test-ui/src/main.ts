@@ -5,7 +5,6 @@ import { mountJSX } from '@phaserjsx/ui'
 import Phaser from 'phaser'
 import { App, type DemoMode, Switcher } from './App'
 
-//type DemoMode = 'Default' | 'Separated' | 'Effects' | 'MovingSprite'
 let demo: DemoMode = 'Default'
 
 /**

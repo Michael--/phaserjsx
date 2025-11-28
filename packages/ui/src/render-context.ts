@@ -44,8 +44,27 @@ export class RenderContext {
   private layoutBatchMap = new Map<Phaser.GameObjects.Container, LayoutBatchEntry>()
   private batchScheduled = false
 
+  // Track if context is shutting down
+  private isShuttingDown = false
+
   constructor(public scene: Phaser.Scene) {
     this.textureScene = scene
+  }
+
+  /**
+   * Check if context is shutting down
+   */
+  isShutdown(): boolean {
+    return this.isShuttingDown
+  }
+
+  /**
+   * Mark context as shutting down
+   */
+  shutdown(): void {
+    this.isShuttingDown = true
+    this.deferredCallbacks = []
+    this.layoutBatchMap.clear()
   }
 
   /**
@@ -102,6 +121,7 @@ export class RenderContext {
    * Defer a layout callback to next frame
    */
   deferLayout(callback: () => void): void {
+    if (this.isShuttingDown) return
     this.deferredCallbacks.push(callback)
     if (!this.deferredScheduled) {
       this.deferredScheduled = true
@@ -113,6 +133,7 @@ export class RenderContext {
    * Flush all deferred layout callbacks
    */
   private flushDeferred(): void {
+    if (this.isShuttingDown) return
     this.deferredScheduled = false
     const callbacks = [...this.deferredCallbacks]
     this.deferredCallbacks = []
@@ -165,7 +186,7 @@ export function getRenderContext(
 ): RenderContext {
   const scene = parentOrScene instanceof Phaser.Scene ? parentOrScene : parentOrScene.scene
 
-  if (!scene || !scene.data) {
+  if (!scene || !scene.data || !scene.sys || !scene.sys.settings.active) {
     throw new Error('getRenderContext: Invalid scene or scene.data is undefined')
   }
 
@@ -184,6 +205,9 @@ export function getRenderContext(
 
     // Cleanup on scene shutdown
     scene.events.once('shutdown', () => {
+      if (context) {
+        context.shutdown()
+      }
       scene.data.remove(containerKey)
     })
   }
