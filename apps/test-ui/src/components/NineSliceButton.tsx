@@ -5,14 +5,16 @@
  * the stack layout pattern and inner content positioning.
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
-import type { ChildrenType, ViewProps } from '@phaserjsx/ui'
+import type { ViewProps } from '@phaserjsx/ui'
 import {
   applyEffectByName,
   getThemedProps,
   NineSlice,
   resolveEffect,
+  useEffect,
   useGameObjectEffect,
   useRef,
+  useState,
   View,
   type EffectDefinition,
 } from '@phaserjsx/ui'
@@ -81,7 +83,7 @@ declare module '@phaserjsx/ui' {
  * </NineSliceButton>
  * ```
  */
-export interface NineSliceButtonProps extends EffectDefinition {
+export interface NineSliceButtonProps extends ViewProps, EffectDefinition {
   /**
    * Texture key from the loaded texture atlas
    * Must be loaded before use (e.g., in a preload scene)
@@ -93,16 +95,6 @@ export interface NineSliceButtonProps extends EffectDefinition {
    * Optional if the texture is not an atlas
    */
   frame?: string | number
-
-  /**
-   * Final width of the button in pixels
-   */
-  width: number
-
-  /**
-   * Final height of the button in pixels
-   */
-  height: number
 
   /**
    * Width of the left slice in pixels of the SOURCE texture
@@ -135,84 +127,8 @@ export interface NineSliceButtonProps extends EffectDefinition {
    */
   onClick?: () => void
 
-  /**
-   * Children to render in the content area (inside the slices)
-   * Automatically positioned within the inner bounds
-   */
-  children?: ChildrenType
-
-  /**
-   * Optional depth for rendering order
-   */
-  depth?: number
-
-  /**
-   * Optional alpha/transparency (0-1)
-   */
-  alpha?: number
-
-  /**
-   * Optional visibility toggle
-   */
-  visible?: boolean
-
   //* Optional disabled state - if true, button will not respond to clicks */
   disabled?: boolean
-
-  /**
-   * Optional scale transformation
-   */
-  scale?: number
-
-  /**
-   * Optional X-axis scale
-   */
-  scaleX?: number
-
-  /**
-   * Optional Y-axis scale
-   */
-  scaleY?: number
-
-  /**
-   * Optional rotation in radians
-   */
-  rotation?: number
-
-  /**
-   * Alignment of children within the content area (horizontal)
-   */
-  alignItems?: ViewProps['alignItems']
-
-  /**
-   * Alignment of children within the content area (vertical)
-   */
-  justifyContent?: ViewProps['justifyContent']
-
-  /**
-   * Optional border for debugging content area
-   */
-  borderWidth?: number
-
-  /**
-   * Optional border color for debugging content area
-   */
-  borderColor?: number
-
-  /**
-   * Optional gap between children in the content area
-   */
-  gap?: number
-
-  /**
-   * Optional padding inside the content area
-   */
-  padding?: ViewProps['padding']
-
-  /**
-   * Layout direction for children within the content area
-   */
-  direction?: ViewProps['direction']
 }
 
 /**
@@ -248,17 +164,52 @@ export interface NineSliceButtonProps extends EffectDefinition {
  */
 
 export function NineSliceButton(props: NineSliceButtonProps) {
+  const {
+    texture,
+    frame,
+    leftWidth,
+    rightWidth,
+    topHeight,
+    bottomHeight,
+    onClick,
+    disabled,
+    visible,
+    // Inner view layout props - used for content area, get here and not passed to outer View
+    children: innerChildren,
+    direction: innerDirection,
+    gap: innerGap,
+    padding: innerPadding,
+    borderWidth: innerBorderWidth,
+    borderColor: innerBorderColor,
+    alignItems: innerAlignItems,
+    justifyContent: innerJustifyContent,
+    // Rest goes to outer view
+    ...viewProps
+  } = props
+
   const { props: themed } = getThemedProps('NineSliceButton', undefined, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(ref)
 
-  const innerWidth = props.width - props.leftWidth - props.rightWidth
-  const innerHeight = props.height - (props.topHeight ?? 0) - (props.bottomHeight ?? 0)
+  // Force redraw after mount to ensure dimensions are calculated
+  // and show content after that to avoid visual glitches
+  const [show, setShow] = useState(false)
+
+  useEffect(() => {
+    // redraw to catch any layout adjustments and slider dimensions
+    const timer = setTimeout(() => setShow(true), 0)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [])
+
+  const innerWidth = (ref.current?.width ?? 0) - leftWidth - rightWidth
+  const innerHeight = (ref.current?.height ?? 0) - (topHeight ?? 0) - (bottomHeight ?? 0)
 
   const handleTouch =
-    !props.disabled && props.onClick
+    !disabled && onClick
       ? () => {
-          props.onClick?.()
+          onClick?.()
 
           // Apply effect: props override theme, theme overrides default
           const resolved = resolveEffect(props, themed)
@@ -271,44 +222,37 @@ export function NineSliceButton(props: NineSliceButtonProps) {
       ref={ref}
       direction="stack"
       backgroundAlpha={0.0}
-      width={props.width}
-      height={props.height}
-      enableGestures={!props.disabled}
+      enableGestures={!disabled}
+      visible={show && (visible ?? true)}
       {...themed}
+      {...viewProps}
       {...(handleTouch && { onTouch: handleTouch })}
-      {...(props.depth !== undefined && { depth: props.depth })}
-      {...(props.alpha !== undefined && { alpha: props.alpha })}
-      {...(props.visible !== undefined && { visible: props.visible })}
-      {...(props.scale !== undefined && { scale: props.scale })}
-      {...(props.scaleX !== undefined && { scaleX: props.scaleX })}
-      {...(props.scaleY !== undefined && { scaleY: props.scaleY })}
-      {...(props.rotation !== undefined && { rotation: props.rotation })}
     >
       <NineSlice
-        texture={props.texture}
-        {...(props.frame !== undefined && { frame: props.frame })}
+        texture={texture}
+        {...(frame !== undefined && { frame })}
         width="100%"
         height="100%"
-        leftWidth={props.leftWidth}
-        rightWidth={props.rightWidth}
-        {...(props.topHeight !== undefined && { topHeight: props.topHeight })}
-        {...(props.bottomHeight !== undefined && { bottomHeight: props.bottomHeight })}
+        leftWidth={leftWidth}
+        rightWidth={rightWidth}
+        {...(topHeight !== undefined && { topHeight })}
+        {...(bottomHeight !== undefined && { bottomHeight })}
       />
       <View
         backgroundAlpha={0.0}
-        direction={props.direction ?? 'column'}
-        x={props.leftWidth}
-        y={props.topHeight ?? 0}
+        direction={innerDirection ?? 'column'}
+        x={leftWidth}
+        y={topHeight ?? 0}
         width={innerWidth}
         height={innerHeight}
-        alignItems={props.alignItems ?? 'center'}
-        justifyContent={props.justifyContent ?? 'center'}
-        {...(props.gap !== undefined && { gap: props.gap })}
-        {...(props.padding !== undefined && { padding: props.padding })}
-        {...(props.borderWidth !== undefined && { borderWidth: props.borderWidth })}
-        {...(props.borderColor !== undefined && { borderColor: props.borderColor })}
+        alignItems={innerAlignItems ?? 'center'}
+        justifyContent={innerJustifyContent ?? 'center'}
+        {...(innerGap !== undefined && { gap: innerGap })}
+        {...(innerPadding !== undefined && { padding: innerPadding })}
+        {...(innerBorderWidth !== undefined && { borderWidth: innerBorderWidth })}
+        {...(innerBorderColor !== undefined && { borderColor: innerBorderColor })}
       >
-        {props.children}
+        {innerChildren}
       </View>
     </View>
   )
