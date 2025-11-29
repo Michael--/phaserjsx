@@ -4,7 +4,7 @@
  */
 import type { ColorShade } from '@phaserjsx/ui'
 import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
-import { Button } from '../components/Button'
+import { Button } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 /**

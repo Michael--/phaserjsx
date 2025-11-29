@@ -11,7 +11,7 @@ import {
   useThemeTokens,
   View,
 } from '@phaserjsx/ui'
-import { Button } from '../components/Button'
+import { Button } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**
