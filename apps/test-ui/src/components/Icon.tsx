@@ -2,6 +2,7 @@
  * Icons implementation using the generic Icon system
  * This is a specialized wrapper that provides type-safe Icons
  */
+import type * as PhaserJSX from '@phaserjsx/ui'
 import { createIconComponent, useIconPreload } from '@phaserjsx/ui'
 import { iconLoaders } from './icon-loaders.generated'
 import type { IconType } from './icon-types.generated'
@@ -44,6 +45,15 @@ async function iconLoader(type: IconType): Promise<string> {
   const svg = module.default
   iconCache.set(type, svg)
   return svg
+}
+
+// Module augmentation to add Accordion theme to CustomComponentThemes
+declare module '@phaserjsx/ui' {
+  interface CustomComponentThemes {
+    Icon: {
+      size?: number
+    } & PhaserJSX.ViewTheme
+  }
 }
 
 /**

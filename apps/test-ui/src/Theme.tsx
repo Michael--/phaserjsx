@@ -111,6 +111,10 @@ export function createAppTheme(
         disabledColor: colors.border.dark.toNumber(),
       },
 
+      Icon: {
+        size: 24,
+      },
+
       Accordion: {
         effect: 'wobble',
         effectConfig: { magnitude: 0.02, time: 150 },
@@ -127,8 +131,8 @@ export function createAppTheme(
           cornerRadius: 5,
           width: 'fill',
         },
-        IconButton: {
-          iconSize: 24,
+        Icon: {
+          size: 24,
         },
         textStyle: {
           color: colors.text.DEFAULT.toString(),
