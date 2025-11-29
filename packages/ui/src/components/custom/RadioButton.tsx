@@ -1,22 +1,9 @@
+/** @jsxImportSource ../.. */
 /**
  * RadioButton component - Selectable option with circle indicator and label
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, View } from '@phaserjsx/ui'
-
-// Module augmentation to add RadioGroup theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    RadioButton: {
-      selectedColor?: number
-      color?: number
-      labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      gap?: number
-      size?: number
-      innerSize?: number
-    } & PhaserJSX.NestedComponentThemes
-  }
-}
+import { getThemedProps } from '../../theme'
+import { Text, View } from '../index'
 
 /**
  * Props for RadioButton component

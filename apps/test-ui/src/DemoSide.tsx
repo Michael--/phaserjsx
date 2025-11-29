@@ -1,5 +1,4 @@
-import { DevPresets, Text } from '@phaserjsx/ui'
-import { RadioGroup, type RadioGroupOption } from './components'
+import { DevPresets, RadioGroup, Text, type RadioGroupOption } from '@phaserjsx/ui'
 import { ViewLevel2 } from './examples/Helper'
 
 const debugPresets = {

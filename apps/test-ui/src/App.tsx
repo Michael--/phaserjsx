@@ -4,6 +4,7 @@
 import {
   Divider,
   getAvailablePresets,
+  RadioGroup,
   ScrollView,
   setColorPreset,
   Text,
@@ -13,11 +14,12 @@ import {
   useState,
   useThemeTokens,
   View,
+  type RadioGroupOption,
 } from '@phaserjsx/ui'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
-import { Button, RadioGroup, Sidebar, type RadioGroupOption } from './components'
+import { Button, Sidebar } from './components'
 import { Spacer } from './components/Spacer'
 import { ViewLevel2 } from './examples/Helper'
 

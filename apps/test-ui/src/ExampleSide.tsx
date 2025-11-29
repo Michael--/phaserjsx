@@ -1,6 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, View, type VNode } from '@phaserjsx/ui'
-import { Accordion, RadioButton } from './components'
+import { getThemedProps, RadioButton, View, type VNode } from '@phaserjsx/ui'
+import { Accordion } from './components'
 import type { IconType } from './components/icon-types.generated'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'

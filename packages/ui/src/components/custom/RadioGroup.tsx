@@ -1,7 +1,13 @@
+/** @jsxImportSource ../.. */
 /**
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
-import { Text, View, getThemedProps, useState } from '@phaserjsx/ui'
+
+import { useState } from '../../hooks'
+import { getThemedProps } from '../../theme'
+import { Text, View } from '../index'
+
+// import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
 
 /**
  * Option item for RadioGroup

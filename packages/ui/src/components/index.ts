@@ -77,3 +77,7 @@ export {
   type TileSpriteBaseProps,
   type TileSpriteProps,
 } from './tilesprite'
+
+// Re-export custom components
+export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
+export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'

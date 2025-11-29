@@ -117,11 +117,17 @@ export interface BuiltInComponentThemes {
  * Custom component themes can be registered here
  * This allows custom components to extend the theme system
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CustomComponentThemes {
-  // Custom components will extend this interface via module augmentation
-  // Example:
-  // Sidebar: { backgroundColor: number; width: number }
+  // Custom components can extend this interface via module augmentation
+  // or be defined directly here for built-in custom components
+  RadioButton: {
+    selectedColor?: number
+    color?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    gap?: number
+    size?: number
+    innerSize?: number
+  } & NestedComponentThemes
 }
 
 /**
@@ -189,6 +195,17 @@ export const defaultTheme: Theme = {
     visible: true,
   },
   ScrollSlider: {},
+  RadioButton: {
+    selectedColor: 0x4a9eff,
+    color: 0x333333,
+    gap: 8,
+    size: 16,
+    innerSize: 12,
+    labelStyle: {
+      color: '#ffffff',
+      fontSize: '14px',
+    },
+  },
 }
 
 /**
