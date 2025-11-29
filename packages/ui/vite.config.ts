@@ -43,6 +43,10 @@ export default defineConfig({
       tsconfigPath: './tsconfig.json',
       // Ensure all types are properly exported
       insertTypesEntry: true,
+      // Suppress composite mode warnings
+      compilerOptions: {
+        composite: false,
+      },
     }),
   ],
 })

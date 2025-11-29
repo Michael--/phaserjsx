@@ -41,6 +41,10 @@ export default defineConfig({
     dts({
       include: ['src/scripts/icon-generator-config.ts', 'src/vite-plugin-icons.ts'],
       outDir: 'dist',
+      // Suppress composite mode warnings
+      compilerOptions: {
+        composite: false,
+      },
     }),
   ],
 })

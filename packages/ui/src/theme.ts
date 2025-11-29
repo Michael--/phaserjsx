@@ -128,6 +128,14 @@ export interface CustomComponentThemes {
     size?: number
     innerSize?: number
   } & NestedComponentThemes
+  ScrollSlider: {
+    borderColor?: number
+    trackColor?: number
+    thumbColor?: number
+    borderWidth?: number
+    size?: number
+    minThumbSize?: number
+  } & NestedComponentThemes
 }
 
 /**
@@ -150,9 +158,12 @@ export type PartialTheme = {
 
 /**
  * Complete theme with all component styles defined
+ * Built-in components are required, custom components are optional
  */
 export type Theme = {
-  [K in keyof ComponentThemes]: ComponentThemes[K]
+  [K in keyof BuiltInComponentThemes]: BuiltInComponentThemes[K]
+} & {
+  [K in keyof CustomComponentThemes]?: CustomComponentThemes[K]
 }
 
 /**
@@ -194,7 +205,6 @@ export const defaultTheme: Theme = {
     alpha: 1,
     visible: true,
   },
-  ScrollSlider: {},
   RadioButton: {
     selectedColor: 0x4a9eff,
     color: 0x333333,
@@ -205,6 +215,14 @@ export const defaultTheme: Theme = {
       color: '#ffffff',
       fontSize: '14px',
     },
+  },
+  ScrollSlider: {
+    borderColor: 0x666666,
+    trackColor: 0x333333,
+    thumbColor: 0x999999,
+    borderWidth: 1,
+    size: 12,
+    minThumbSize: 20,
   },
 }
 

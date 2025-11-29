@@ -9,20 +9,6 @@ import { getThemedProps } from '../../theme'
 import type { LayoutSize } from '../index'
 import { View } from '../index'
 
-// Module augmentation to add ScrollSlider theme to CustomComponentThemes
-declare module '../../theme' {
-  interface CustomComponentThemes {
-    ScrollSlider: {
-      borderColor?: number
-      trackColor?: number
-      thumbColor?: number
-      borderWidth?: number
-      size?: number
-      minThumbSize?: number
-    }
-  }
-}
-
 /** Size variants for the scroll slider */
 export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | undefined
 
