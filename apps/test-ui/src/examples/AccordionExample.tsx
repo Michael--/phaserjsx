@@ -19,7 +19,15 @@ function AccordionShowcase() {
         </Accordion>
 
         {/* Accordion with icon */}
-        <Accordion title="Accordion with Icon" icon="bell-fill" defaultOpen={true}>
+        <Accordion
+          title={
+            <>
+              <Icon type={'bell-fill'} />
+              <Text text={'Accordion with Icon'} />
+            </>
+          }
+          defaultOpen={true}
+        >
           <Text text="This accordion has an icon and is open by default." />
           <View direction="column" gap={10}>
             <Text text="• Feature 1" />
@@ -111,13 +119,34 @@ function AccordionShowcase() {
         {/* Multiple accordions */}
         <View direction="column" gap={5}>
           <Text text="Multiple Accordion Items:" style={tokens?.textStyles.caption} />
-          <Accordion title="Section 1" icon="boxes">
+          <Accordion
+            title={
+              <>
+                <Icon type={'boxes'} />
+                <Text text={'Section 1'} />
+              </>
+            }
+          >
             <Text text="Content for section 1" />
           </Accordion>
-          <Accordion title="Section 2" icon="boxes">
+          <Accordion
+            title={
+              <>
+                <Icon type={'boxes'} />
+                <Text text={'Section 2'} />
+              </>
+            }
+          >
             <Text text="Content for section 2" />
           </Accordion>
-          <Accordion title="Section 3" icon="boxes">
+          <Accordion
+            title={
+              <>
+                <Icon type={'boxes'} />
+                <Text text={'Section 3'} />
+              </>
+            }
+          >
             <Text text="Content for section 3" />
           </Accordion>
         </View>

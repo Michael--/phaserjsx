@@ -17,7 +17,6 @@ import {
   type EffectDefinition,
   type ViewProps,
 } from '@phaserjsx/ui'
-import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -26,8 +25,6 @@ declare module '@phaserjsx/ui' {
       headerStyle?: PhaserJSX.ViewTheme
       contentStyle?: PhaserJSX.ViewTheme
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      iconSize?: number
-      iconColor?: number
       animated?: boolean
       animationConfig?: AnimationConfig
     } & PhaserJSX.ViewTheme &
@@ -41,8 +38,6 @@ declare module '@phaserjsx/ui' {
 export interface AccordionProps extends ViewProps, EffectDefinition {
   /** Title as string or custom JSX element */
   title?: string | ChildrenType
-  /** Optional icon displayed in header */
-  icon?: IconType
   /** Initial open state (default: false) */
   defaultOpen?: boolean
   /** Controlled open state */
@@ -134,7 +129,6 @@ export function Accordion(props: AccordionProps) {
 
   const headerTheme = themed.headerStyle ?? {}
   const contentTheme = themed.contentStyle ?? {}
-  const iconSize = themed.iconSize ?? 24
   const textStyle = themed.textStyle
 
   return (
@@ -148,7 +142,6 @@ export function Accordion(props: AccordionProps) {
         onTouch={handleToggle}
         {...headerTheme}
       >
-        {props.icon && <Icon type={props.icon} size={iconSize} />}
         {typeof props.title === 'string' ? (
           <Text text={props.title} {...(textStyle && { style: textStyle })} />
         ) : (

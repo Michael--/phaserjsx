@@ -127,7 +127,9 @@ export function createAppTheme(
           cornerRadius: 5,
           width: 'fill',
         },
-        iconSize: 24,
+        IconButton: {
+          iconSize: 24,
+        },
         textStyle: {
           color: colors.text.DEFAULT.toString(),
           fontSize: '18px',

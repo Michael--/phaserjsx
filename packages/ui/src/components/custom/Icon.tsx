@@ -22,7 +22,7 @@ export interface IconLoaderFn<T extends string = string> {
 export interface IconProps<T extends string = string>
   extends Omit<ImageProps, 'texture' | 'displayWidth' | 'displayHeight'> {
   /** The icon type/name to load */
-  type: T
+  type: T | undefined
   /** Loader function that fetches the icon SVG */
   loader: IconLoaderFn<T>
   /** Icon size in pixels (default: 32) */
@@ -47,9 +47,10 @@ export function Icon<T extends string = string>(props: IconProps<T>) {
   const [svg, setSvg] = useState<string | null>(null)
 
   useEffect(() => {
-    loader(type)
-      .then(setSvg)
-      .catch((err) => console.error(`Failed to load icon ${type}:`, err))
+    if (type != null)
+      loader(type)
+        .then(setSvg)
+        .catch((err) => console.error(`Failed to load icon ${type}:`, err))
   }, [type, loader])
 
   const ready = svg ? useSVGTexture(`icon-${type}`, svg, size, size) : false
