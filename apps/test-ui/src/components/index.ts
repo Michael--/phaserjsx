@@ -3,7 +3,8 @@
  * These demonstrate how to build composite components using the base View and Text primitives
  */
 export { Accordion, type AccordionProps } from './Accordion'
-export { CharText, type CharTextProps } from './CharText'
+export { CharText } from './CharText/CharText'
+export type { CharInfo, CharTextAPI, CharTextProps, LineInfo } from './CharText/types'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'
 export { Icon, useIcon, type IconType } from './Icon'
 export {

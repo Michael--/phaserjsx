@@ -1,7 +1,6 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { useEffect, useRef, useState, type ViewProps } from '@phaserjsx/ui'
+import { KeyboardInputManager, useEffect, useRef, useState, type ViewProps } from '@phaserjsx/ui'
 import { CharText, type CharTextAPI } from './CharText'
-import { KeyboardInputManager } from './KeyboardInputManager'
 
 /**
  * CharTextInput theme configuration

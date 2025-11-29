@@ -1,6 +1,6 @@
-import { DOMInputElement, type DOMInputConfig } from '@phaserjsx/ui'
+import { DOMInputElement, type DOMInputConfig } from './dom-input-manager'
 
-type KeyboardInputManagerConfig = {
+export type KeyboardInputManagerConfig = {
   onInput?: (value: string, event: Event) => void
   onKeyDown?: (event: KeyboardEvent) => void
   onKeyUp?: (event: KeyboardEvent) => void
