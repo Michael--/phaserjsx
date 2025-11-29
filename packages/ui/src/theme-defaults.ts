@@ -63,4 +63,8 @@ export const defaultTheme: Theme = {
     size: 12,
     minThumbSize: 20,
   },
+  Button: {
+    disabledColor: 0x666666,
+    iconSize: 24,
+  },
 }

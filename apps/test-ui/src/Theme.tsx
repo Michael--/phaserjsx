@@ -154,8 +154,6 @@ export function createAppTheme(
         gap: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        effect: 'pulse',
-        effectConfig: { intensity: 1.1, time: 100 },
         textStyle: {
           color: '#ffffff',
           fontSize: '18px',
@@ -163,8 +161,6 @@ export function createAppTheme(
         primary: {
           backgroundColor: colors.primary.medium.toNumber(),
           borderColor: colors.primary.dark.toNumber(),
-          effect: 'pulse',
-          effectConfig: { intensity: 1.2, time: 150 },
         },
         secondary: {
           backgroundColor: colors.secondary.DEFAULT.toNumber(),

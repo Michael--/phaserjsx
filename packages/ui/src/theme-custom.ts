@@ -6,7 +6,7 @@
  * 1. Add the theme definition to the CustomComponentThemes interface below
  * 2. Add the corresponding default values in theme-defaults.ts
  */
-import type { NestedComponentThemes } from './theme-base'
+import type { NestedComponentThemes, ViewTheme } from './theme-base'
 
 /**
  * Custom component themes
@@ -30,4 +30,15 @@ export interface CustomComponentThemes {
     size?: number
     minThumbSize?: number
   } & NestedComponentThemes
+  Button: ViewTheme & {
+    disabledColor?: number
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    iconSize?: number
+    primary?: Record<string, unknown>
+    secondary?: Record<string, unknown>
+    outline?: Record<string, unknown>
+    small?: Record<string, unknown>
+    medium?: Record<string, unknown>
+    large?: Record<string, unknown>
+  }
 }
