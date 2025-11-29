@@ -7,6 +7,7 @@ import {
   Icon as GenericIcon,
   getThemedProps,
   useIconPreload,
+  useTheme,
   type IconProps as GenericIconProps,
 } from '@phaserjsx/ui'
 import { iconLoaders } from './icon-loaders.generated'
@@ -79,7 +80,8 @@ export interface IconProps extends Omit<GenericIconProps<IconType>, 'loader'> {
  * ```
  */
 export function Icon(props: IconProps) {
-  const { props: themed } = getThemedProps('Icon', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed } = getThemedProps('Icon', localTheme, {})
 
   // Merge themed props with component props (props override theme)
   const size = props.size ?? themed.size ?? 32

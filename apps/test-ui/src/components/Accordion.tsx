@@ -63,7 +63,7 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
  */
 export function Accordion(props: AccordionProps) {
   const localTheme = useTheme()
-  const { props: themed } = getThemedProps('Accordion', localTheme, {})
+  const { props: themed, nestedTheme } = getThemedProps('Accordion', localTheme, {})
 
   const [internalOpen, setInternalOpen] = useState<boolean>(props.defaultOpen ?? false)
   const isOpen = props.isOpen !== undefined ? props.isOpen : internalOpen
@@ -132,7 +132,13 @@ export function Accordion(props: AccordionProps) {
   const textStyle = themed.textStyle
 
   return (
-    <View width={props.width} height={props.height} direction="column" {...themed}>
+    <View
+      width={props.width}
+      height={props.height}
+      direction="column"
+      {...themed}
+      theme={nestedTheme}
+    >
       {/* Header */}
       <View
         ref={ref}
