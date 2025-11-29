@@ -242,6 +242,50 @@ ${typeDefinition}
 }
 
 /**
+ * Scan icon sources without generating the types file
+ * Used by Vite plugin to get sourceIconSets for loader generation without full type regeneration
+ * @param config - Icon generator configuration
+ * @param cwd - Current working directory
+ * @returns Icon names and source mapping
+ */
+export async function scanIconSources(
+  config: IconGeneratorConfig,
+  cwd: string
+): Promise<{ iconNames: string[]; sourceIconSets: Map<number, Set<string>> }> {
+  // Normalize source to array
+  const sources = Array.isArray(config.source) ? config.source : [config.source]
+  const allIconNames: string[] = []
+  const sourceIconSets = new Map<number, Set<string>>()
+
+  // Collect icons from all sources
+  for (let i = 0; i < sources.length; i++) {
+    const source = sources[i]
+    if (!source) continue
+    let iconsDir: string
+
+    if (source.directory) {
+      iconsDir = resolve(cwd, source.directory)
+    } else if (source.package) {
+      const packagePath = await findIconPackage(source.package, cwd)
+      iconsDir = join(packagePath, source.iconsPath || 'icons')
+    } else {
+      throw new Error('Either source.package or source.directory must be specified')
+    }
+
+    const files = await readdir(iconsDir)
+    const iconNames = files
+      .filter((file: string) => file.endsWith('.svg'))
+      .map((file: string) => basename(file, '.svg'))
+
+    allIconNames.push(...iconNames)
+    sourceIconSets.set(i, new Set(iconNames))
+  }
+
+  const uniqueIconNames = [...new Set(allIconNames)].sort()
+  return { iconNames: uniqueIconNames, sourceIconSets }
+}
+
+/**
  * Generate icon loaders
  * Exported for use by Vite plugin
  */

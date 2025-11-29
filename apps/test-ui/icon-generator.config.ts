@@ -21,6 +21,7 @@ export default defineIconConfig({
   // Type generation - creates TypeScript union type
   types: {
     enabled: true,
+    scanIconDirectory: 'start',
     output: './src/components/icon-types.generated.ts',
     typeName: 'IconType',
   },
@@ -28,6 +29,7 @@ export default defineIconConfig({
   // Loader generation - creates dynamic imports for used icons
   loaders: {
     enabled: true,
+    generateLoaders: 'watch',
     output: './src/components/icon-loaders.generated.ts',
     scanDir: './src',
     componentNames: ['Icon', 'BootstrapIcon'],

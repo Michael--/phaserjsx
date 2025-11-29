@@ -27,6 +27,13 @@ export interface TypesConfig {
   output: string
   /** TypeScript type name (default: 'IconType') */
   typeName?: string
+  /**
+   * When to scan icon directories (Vite plugin only)
+   * - 'never': Never scan (types must be generated manually)
+   * - 'start': Scan once at startup
+   * - 'watch': Scan at startup and on SVG file changes (default)
+   */
+  scanIconDirectory?: 'never' | 'start' | 'watch'
 }
 
 /**
@@ -43,6 +50,12 @@ export interface LoadersConfig {
   componentNames?: string[]
   /** Validate against types file (enables warnings for invalid icons) */
   validate?: boolean
+  /**
+   * When to generate loaders (Vite plugin only)
+   * - 'start': Generate once at startup
+   * - 'watch': Generate at startup and on code file changes (default)
+   */
+  generateLoaders?: 'start' | 'watch'
 }
 
 /**
