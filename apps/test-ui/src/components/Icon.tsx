@@ -1,6 +1,6 @@
 /**
- * Bootstrap Icons implementation using the generic Icon system
- * This is a specialized wrapper that provides type-safe Bootstrap Icons
+ * Icons implementation using the generic Icon system
+ * This is a specialized wrapper that provides type-safe Icons
  */
 import { createIconComponent, useIconPreload } from '@phaserjsx/ui'
 import { iconLoaders } from './icon-loaders.generated'
@@ -8,7 +8,6 @@ import type { IconType } from './icon-types.generated'
 
 // Re-export the IconType for convenience
 export type { IconType }
-export type BootstrapIconType = IconType
 
 /**
  * Cache for loaded icon SVG strings
@@ -17,14 +16,14 @@ export type BootstrapIconType = IconType
 const iconCache = new Map<IconType, string>()
 
 /**
- * Bootstrap Icons loader function
+ * Icons loader function
  * Loads icons from the generated icon loaders registry
  *
- * @param type - The Bootstrap icon type to load
+ * @param type - The icon type to load
  * @returns Promise resolving to SVG string
  * @throws Error if icon is not registered in the loaders
  */
-async function bootstrapIconLoader(type: IconType): Promise<string> {
+async function iconLoader(type: IconType): Promise<string> {
   // Check cache first
   const cached = iconCache.get(type)
   if (cached) {
@@ -48,34 +47,30 @@ async function bootstrapIconLoader(type: IconType): Promise<string> {
 }
 
 /**
- * Bootstrap Icon component - strongly typed for Bootstrap Icons
+ * Icon component - strongly typed for Icons
  *
  * @example
  * ```tsx
- * <BootstrapIcon type="check" size={24} />
- * <BootstrapIcon type="gear" size={32} tint={0xff0000} />
+ * <Icon type="check" size={24} />
+ * <Icon type="gear" size={32} tint={0xff0000} />
  * ```
  */
-export const BootstrapIcon = createIconComponent<IconType>(bootstrapIconLoader)
+export const Icon = createIconComponent<IconType>(iconLoader)
 
 /**
- * Hook to preload a Bootstrap icon and check if it's ready
+ * Hook to preload a icon and check if it's ready
  *
- * @param type - The Bootstrap icon type to load
+ * @param type - The icon type to load
  * @returns true when the icon is loaded and ready to use
  *
  * @example
  * ```tsx
  * function MyComponent() {
- *   const iconReady = useBootstrapIcon('check')
- *   return iconReady ? <BootstrapIcon type="check" /> : <Text text="Loading..." />
+ *   const iconReady = useIcon('check')
+ *   return iconReady ? <Icon type="check" /> : <Text text="Loading..." />
  * }
  * ```
  */
-export function useBootstrapIcon(type: IconType): boolean {
-  return useIconPreload(type, bootstrapIconLoader)
+export function useIcon(type: IconType): boolean {
+  return useIconPreload(type, iconLoader)
 }
-
-// Default exports for this app - use Bootstrap Icons as the standard Icon
-export const Icon = BootstrapIcon
-export const useIcon = useBootstrapIcon

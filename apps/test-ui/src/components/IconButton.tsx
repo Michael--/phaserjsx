@@ -3,7 +3,7 @@
  * Specialized Button component with Icons support
  */
 import { Button, getThemedProps, Text, type ButtonProps } from '@phaserjsx/ui'
-import { Icon, type IconType } from './BootstrapIcon'
+import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add IconButton theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {

@@ -17,7 +17,7 @@ import {
   type EffectDefinition,
   type ViewProps,
 } from '@phaserjsx/ui'
-import { Icon, type IconType } from './BootstrapIcon'
+import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
