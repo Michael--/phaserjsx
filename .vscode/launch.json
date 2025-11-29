@@ -6,14 +6,15 @@
       "request": "launch",
       "type": "chrome",
       "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/apps/test-ui",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
       "sourceMapPathOverrides": {
-        "vite:///src/*": "${workspaceFolder}/apps/test-ui/src/*",
-        "/src/*": "${workspaceFolder}/apps/test-ui/src/*",
-        "vite:///../packages/*": "${workspaceFolder}/packages/*",
-        "../packages/*": "${workspaceFolder}/packages/*",
-        "../src/*": "${workspaceFolder}/packages/ui/src/*",
-        "vite://@fs/*": "${workspaceFolder}/*"
+        "@fs${workspaceFolder}/packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "@fs${workspaceFolder}/*": "${workspaceFolder}/*",
+        "/@fs${workspaceFolder}/packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "/@fs${workspaceFolder}/*": "${workspaceFolder}/*",
+        "./packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "./src/*": "${workspaceFolder}/apps/test-ui/src/*"
       }
     },
     {
