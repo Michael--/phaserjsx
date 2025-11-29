@@ -14,6 +14,7 @@ import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import { View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Button variant theme
@@ -26,15 +27,11 @@ export type ButtonVariantTheme = ViewTheme & {
 /**
  * Props for Button component
  */
-export interface ButtonProps extends EffectDefinition {
+export interface ButtonProps extends ViewProps, EffectDefinition {
   /** Button content - can be text, icons, or any JSX */
   children?: ChildrenType
   /** Click handler */
   onClick?: () => void
-  /** Button width */
-  width?: number
-  /** Button height */
-  height?: number
   /** Disabled state */
   disabled?: boolean
   /** Visual variant */

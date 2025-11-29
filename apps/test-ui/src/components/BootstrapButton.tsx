@@ -2,13 +2,13 @@
  * Bootstrap Icon Button wrapper
  * Specialized Button component with Bootstrap Icons support
  */
-import { Button as BaseButton, Text, type ButtonProps as BaseButtonProps } from '@phaserjsx/ui'
+import { Button, Text, type ButtonProps } from '@phaserjsx/ui'
 import { Icon, type IconType } from './BootstrapIcon'
 
 /**
  * Props for BootstrapButton component
  */
-export interface BootstrapButtonProps extends BaseButtonProps {
+export interface BootstrapButtonProps extends ButtonProps {
   /** Button text */
   text?: string
   /** Bootstrap icon type */
@@ -30,18 +30,18 @@ export interface BootstrapButtonProps extends BaseButtonProps {
  * ```
  */
 export function BootstrapButton(props: BootstrapButtonProps) {
-  const { text, icon, ...buttonProps } = props
+  const { text, icon, children, ...buttonProps } = props
 
   // Get iconSize from theme or use default
   const iconSize = 24 // TODO: Get from effective theme
 
-  return (
-    <BaseButton {...buttonProps}>
+  // If children are provided, use them instead of text/icon
+  const content = children ?? (
+    <>
       {icon != null && <Icon type={icon} size={iconSize} />}
       {text != null && <Text text={text} />}
-    </BaseButton>
+    </>
   )
-}
 
-export type ButtonProps = BaseButtonProps
-export const Button = BootstrapButton
+  return <Button {...buttonProps}>{content}</Button>
+}
