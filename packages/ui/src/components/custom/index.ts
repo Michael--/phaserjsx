@@ -5,12 +5,18 @@
 
 export { Button, type ButtonProps } from './Button'
 export { Divider, type DividerProps } from './Divider'
-export { Icon, createIconComponent, useIcon, type IconLoaderFn, type IconProps } from './Icon'
+export {
+  createIconComponent,
+  Icon,
+  useIconPreload,
+  type IconLoaderFn,
+  type IconProps,
+} from './Icon'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
 export {
-  ScrollSlider,
   calculateSliderSize,
+  ScrollSlider,
   type ScrollSliderProps,
   type SliderSize,
 } from './ScrollSlider'

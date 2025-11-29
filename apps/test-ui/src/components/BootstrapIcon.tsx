@@ -2,7 +2,7 @@
  * Bootstrap Icons implementation using the generic Icon system
  * This is a specialized wrapper that provides type-safe Bootstrap Icons
  */
-import { createIconComponent, useIcon as useGenericIcon } from '@phaserjsx/ui'
+import { createIconComponent, useIconPreload } from '@phaserjsx/ui'
 import { iconLoaders } from './icon-loaders.generated'
 import type { IconType } from './icon-types.generated'
 
@@ -73,10 +73,9 @@ export const BootstrapIcon = createIconComponent<IconType>(bootstrapIconLoader)
  * ```
  */
 export function useBootstrapIcon(type: IconType): boolean {
-  return useGenericIcon(type, bootstrapIconLoader)
+  return useIconPreload(type, bootstrapIconLoader)
 }
 
-// Legacy export for backward compatibility
-// TODO: Remove in next major version
+// Default exports for this app - use Bootstrap Icons as the standard Icon
 export const Icon = BootstrapIcon
 export const useIcon = useBootstrapIcon

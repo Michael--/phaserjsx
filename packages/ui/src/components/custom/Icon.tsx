@@ -103,13 +103,13 @@ export function createIconComponent<T extends string>(loader: IconLoaderFn<T>) {
  * @example
  * ```tsx
  * function MyComponent() {
- *   const iconReady = useIcon('check', myIconLoader)
+ *   const iconReady = useIconPreload('check', myIconLoader)
  *
  *   return iconReady ? <Icon type="check" loader={myIconLoader} /> : <Text text="Loading..." />
  * }
  * ```
  */
-export function useIcon<T extends string>(type: T, loader: IconLoaderFn<T>): boolean {
+export function useIconPreload<T extends string>(type: T, loader: IconLoaderFn<T>): boolean {
   const [svg, setSvg] = useState<string | null>(null)
 
   useEffect(() => {
