@@ -3,7 +3,12 @@
  * This is a specialized wrapper that provides type-safe Icons
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { createIconComponent, useIconPreload } from '@phaserjsx/ui'
+import {
+  Icon as GenericIcon,
+  getThemedProps,
+  useIconPreload,
+  type IconProps as GenericIconProps,
+} from '@phaserjsx/ui'
 import { iconLoaders } from './icon-loaders.generated'
 import type { IconType } from './icon-types.generated'
 
@@ -47,7 +52,7 @@ async function iconLoader(type: IconType): Promise<string> {
   return svg
 }
 
-// Module augmentation to add Accordion theme to CustomComponentThemes
+// Module augmentation to add Icon theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
     Icon: {
@@ -57,7 +62,15 @@ declare module '@phaserjsx/ui' {
 }
 
 /**
- * Icon component - strongly typed for Icons
+ * Props for Icon component
+ */
+export interface IconProps extends Omit<GenericIconProps<IconType>, 'loader'> {
+  /** The icon type to load */
+  type: IconType | undefined
+}
+
+/**
+ * Icon component - strongly typed for Icons with theme support
  *
  * @example
  * ```tsx
@@ -65,7 +78,14 @@ declare module '@phaserjsx/ui' {
  * <Icon type="gear" size={32} tint={0xff0000} />
  * ```
  */
-export const Icon = createIconComponent<IconType>(iconLoader)
+export function Icon(props: IconProps) {
+  const { props: themed } = getThemedProps('Icon', undefined, {})
+
+  // Merge themed props with component props (props override theme)
+  const size = props.size ?? themed.size ?? 32
+
+  return <GenericIcon {...props} size={size} loader={iconLoader} />
+}
 
 /**
  * Hook to preload a icon and check if it's ready
