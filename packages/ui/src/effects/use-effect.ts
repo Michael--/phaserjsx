@@ -2,7 +2,12 @@
  * Custom hook for Phaser game object effects (shake, pulse, etc.)
  * Manages multiple concurrent effects with proper cleanup
  */
-import { useEffect, useRef, type RefObject } from '@phaserjsx/ui'
+import { useEffect, useRef } from '../hooks'
+
+/**
+ * Ref object type
+ */
+type RefObject<T> = { current: T }
 
 /**
  * Effect configuration
@@ -934,7 +939,7 @@ export function useGameObjectEffect(ref: RefObject<Phaser.GameObjects.Container 
     const scene = ref.current.scene
     const tweens = scene.tweens.getTweensOf(ref.current)
 
-    tweens.forEach((tween) => {
+    tweens.forEach((tween: Phaser.Tweens.Tween) => {
       if (!tween.isDestroyed()) {
         tween.stop()
         tween.remove()

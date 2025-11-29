@@ -9,6 +9,7 @@ import './jsx-types' // Import JSX type declarations
 registerBuiltins()
 
 export * from './core-types'
+export * from './effects'
 export * from './hooks'
 export * from './hooks-svg'
 export * from './host'

@@ -6,13 +6,16 @@
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
 import type { ChildrenType, ViewProps } from '@phaserjsx/ui'
-import { getThemedProps, NineSlice, useRef, View } from '@phaserjsx/ui'
 import {
   applyEffectByName,
+  getThemedProps,
+  NineSlice,
   resolveEffect,
   useGameObjectEffect,
+  useRef,
+  View,
   type EffectDefinition,
-} from '../hooks'
+} from '@phaserjsx/ui'
 
 // Module augmentation to add Button theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {

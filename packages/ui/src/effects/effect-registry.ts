@@ -39,7 +39,7 @@ import {
   createZoomOutEffect,
   type EffectConfig,
   type EffectFn,
-} from './useGameObjectEffect'
+} from './use-effect'
 
 /**
  * Available effect names

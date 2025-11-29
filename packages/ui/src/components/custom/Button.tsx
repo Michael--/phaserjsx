@@ -3,6 +3,12 @@
  * Generic Button component with variant and size support
  * Icon-agnostic - accepts children or content slots
  */
+import {
+  applyEffectByName,
+  useGameObjectEffect,
+  type EffectConfig,
+  type EffectName,
+} from '../../effects'
 import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
@@ -15,6 +21,8 @@ import { View } from '../index'
 export type ButtonVariantTheme = ViewTheme & {
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
   iconSize?: number
+  effect?: EffectName
+  effectConfig?: EffectConfig
 }
 
 /**
@@ -35,6 +43,10 @@ export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | string
   /** Size variant */
   size?: 'small' | 'medium' | 'large' | string
+  /** Effect name to apply on interaction */
+  effect?: EffectName
+  /** Effect configuration */
+  effectConfig?: EffectConfig
 }
 
 /**
@@ -55,9 +67,23 @@ export interface ButtonProps {
  * ```
  */
 export function Button(props: ButtonProps) {
-  const { children, onClick, disabled, variant, size, width, height, ...restProps } = props
+  const {
+    children,
+    onClick,
+    disabled,
+    variant,
+    size,
+    width,
+    height,
+    effect,
+    effectConfig,
+    ...restProps
+  } = props
   const { props: themed } = getThemedProps('Button', undefined, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
+
+  // Setup effect system
+  const { applyEffect } = useGameObjectEffect(ref)
 
   type ThemeRecord = Record<string, ButtonVariantTheme>
 
@@ -78,6 +104,15 @@ export function Button(props: ButtonProps) {
   const handleTouch =
     !disabled && onClick
       ? () => {
+          // Apply effect from props or theme
+          if (effect) {
+            applyEffectByName(applyEffect, effect, effectConfig)
+          } else {
+            const themedButton = themed as ButtonVariantTheme
+            if (themedButton.effect) {
+              applyEffectByName(applyEffect, themedButton.effect, themedButton.effectConfig)
+            }
+          }
           onClick()
         }
       : undefined

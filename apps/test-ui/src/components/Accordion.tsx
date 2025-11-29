@@ -1,9 +1,12 @@
 import type * as PhaserJSX from '@phaserjsx/ui'
 import {
+  applyEffectByName,
   getThemedProps,
+  resolveEffect,
   Text,
   useEffect,
   useForceRedraw,
+  useGameObjectEffect,
   useRef,
   useSpring,
   useState,
@@ -11,14 +14,9 @@ import {
   View,
   type AnimationConfig,
   type ChildrenType,
+  type EffectDefinition,
   type ViewProps,
 } from '@phaserjsx/ui'
-import {
-  applyEffectByName,
-  resolveEffect,
-  useGameObjectEffect,
-  type EffectDefinition,
-} from '../hooks'
 import { Icon, type IconType } from './BootstrapIcon'
 
 // Module augmentation to add Accordion theme to CustomComponentThemes
