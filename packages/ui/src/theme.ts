@@ -3,228 +3,29 @@
  * Provides type-safe theming with inheritance and component-specific styles
  */
 import type { ColorTokens } from './colors'
-import type {
-  BackgroundProps,
-  LayoutProps,
-  PhaserProps,
-  TextSpecificProps,
-  TransformProps,
-} from './core-props'
 import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
+import type { ComponentThemes, PartialTheme, Theme } from './theme-base'
+import './theme-custom' // Import to activate declaration merging
+import { defaultTheme } from './theme-defaults'
 
-/**
- * Type helper for nested component themes
- * Allows a component theme to include nested themes for child components
- */
-export type NestedComponentThemes = {
-  [K in keyof ComponentThemes]?: Partial<ComponentThemes[K]>
-}
-
-/**
- * Theme definition for View component
- * Includes all visual props that can be themed, plus nested component themes
- */
-export interface ViewTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    Partial<LayoutProps>,
-    Partial<BackgroundProps>,
-    NestedComponentThemes {}
-
-/**
- * Theme definition for Text component
- * Includes all text-specific visual props that can be themed, plus nested component themes
- */
-export interface TextTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    Partial<TextSpecificProps>,
-    NestedComponentThemes {
-  // Legacy: support Phaser's style object directly
-  style?: Phaser.Types.GameObjects.Text.TextStyle
-}
-
-/**
- * Theme definition for NineSlice component
- */
-export interface NineSliceTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
-  texture?: string
-  leftWidth?: number
-  rightWidth?: number
-  topHeight?: number
-  bottomHeight?: number
-}
-
-/**
- * Theme definition for Sprite component (dummy - minimal theme support)
- */
-export interface SpriteTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
-  texture?: string
-  tint?: number
-}
-
-/**
- * Theme definition for Image component (dummy - minimal theme support)
- */
-export interface ImageTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
-  texture?: string
-  tint?: number
-}
-
-/**
- * Theme definition for Graphics component (dummy - minimal theme support)
- */
-export interface GraphicsTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {}
-
-/**
- * Theme definition for TileSprite component (dummy - minimal theme support)
- */
-export interface TileSpriteTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
-  texture?: string
-  tint?: number
-}
-
-/**
- * Built-in component theme definitions
- */
-export interface BuiltInComponentThemes {
-  View: ViewTheme
-  Text: TextTheme
-  NineSlice: NineSliceTheme
-  Sprite: SpriteTheme
-  Image: ImageTheme
-  Graphics: GraphicsTheme
-  TileSprite: TileSpriteTheme
-}
-
-/**
- * Custom component themes can be registered here
- * This allows custom components to extend the theme system
- */
-export interface CustomComponentThemes {
-  // Custom components can extend this interface via module augmentation
-  // or be defined directly here for built-in custom components
-  RadioButton: {
-    selectedColor?: number
-    color?: number
-    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
-    gap?: number
-    size?: number
-    innerSize?: number
-  } & NestedComponentThemes
-  ScrollSlider: {
-    borderColor?: number
-    trackColor?: number
-    thumbColor?: number
-    borderWidth?: number
-    size?: number
-    minThumbSize?: number
-  } & NestedComponentThemes
-}
-
-/**
- * Complete theme definition combining built-in and custom components
- */
-export interface ComponentThemes extends BuiltInComponentThemes, CustomComponentThemes {}
-
-/**
- * Partial theme - allows overriding specific component styles
- */
-export type PartialTheme = {
-  [K in keyof ComponentThemes]?: Partial<ComponentThemes[K]>
-} & {
-  /** Optional color preset configuration */
-  __colorPreset?: {
-    name: string
-    mode?: 'light' | 'dark'
-  }
-}
-
-/**
- * Complete theme with all component styles defined
- * Built-in components are required, custom components are optional
- */
-export type Theme = {
-  [K in keyof BuiltInComponentThemes]: BuiltInComponentThemes[K]
-} & {
-  [K in keyof CustomComponentThemes]?: CustomComponentThemes[K]
-}
-
-/**
- * Default theme values for all built-in components
- */
-export const defaultTheme: Theme = {
-  View: {
-    alpha: 1,
-    visible: true,
-  },
-  Text: {
-    text: '',
-    align: 'left',
-    alpha: 1,
-    visible: true,
-    style: {
-      color: '#ffffff',
-      fontSize: '16px',
-      fontFamily: 'Arial',
-    },
-  },
-  NineSlice: {
-    alpha: 1,
-    visible: true,
-  },
-  Sprite: {
-    alpha: 1,
-    visible: true,
-  },
-  Image: {
-    alpha: 1,
-    visible: true,
-  },
-  Graphics: {
-    alpha: 1,
-    visible: true,
-  },
-  TileSprite: {
-    alpha: 1,
-    visible: true,
-  },
-  RadioButton: {
-    selectedColor: 0x4a9eff,
-    color: 0x333333,
-    gap: 8,
-    size: 16,
-    innerSize: 12,
-    labelStyle: {
-      color: '#ffffff',
-      fontSize: '14px',
-    },
-  },
-  ScrollSlider: {
-    borderColor: 0x666666,
-    trackColor: 0x333333,
-    thumbColor: 0x999999,
-    borderWidth: 1,
-    size: 12,
-    minThumbSize: 20,
-  },
-}
+// Re-export all types and interfaces
+export type {
+  BuiltInComponentThemes,
+  ComponentThemes,
+  CustomComponentThemes,
+  GraphicsTheme,
+  ImageTheme,
+  NestedComponentThemes,
+  NineSliceTheme,
+  PartialTheme,
+  SpriteTheme,
+  TextTheme,
+  Theme,
+  TileSpriteTheme,
+  ViewTheme,
+} from './theme-base'
+export { defaultTheme }
 
 /**
  * Global theme registry
