@@ -186,7 +186,7 @@ export function createAppTheme(
         },
       },
 
-      BootstrapButton: {
+      IconButton: {
         textStyle: {
           color: '#ffffff',
           fontSize: '18px',

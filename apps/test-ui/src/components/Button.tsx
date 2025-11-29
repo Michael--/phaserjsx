@@ -1,8 +1,5 @@
 /**
- * Button component - Re-export of BootstrapButton for backward compatibility
- * @deprecated Import BootstrapButton directly for new code
+ * Button component - Re-export of IconButton for backward compatibility
+ * @deprecated Import IconButton directly for new code
  */
-export {
-  BootstrapButton as Button,
-  type BootstrapButtonProps as ButtonProps,
-} from './BootstrapButton'
+export { IconButton as Button, type IconButtonProps as ButtonProps } from './IconButton'

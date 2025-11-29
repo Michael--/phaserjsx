@@ -1,14 +1,14 @@
 /**
- * Bootstrap Icon Button wrapper
- * Specialized Button component with Bootstrap Icons support
+ * Icon Button wrapper
+ * Specialized Button component with Icons support
  */
 import { Button, getThemedProps, Text, type ButtonProps } from '@phaserjsx/ui'
 import { Icon, type IconType } from './BootstrapIcon'
 
-// Module augmentation to add BootstrapButton theme to CustomComponentThemes
+// Module augmentation to add IconButton theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
   interface CustomComponentThemes {
-    BootstrapButton: {
+    IconButton: {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
       iconSize?: number
       primary?: {
@@ -40,12 +40,12 @@ declare module '@phaserjsx/ui' {
 }
 
 /**
- * Props for BootstrapButton component
+ * Props for IconButton component
  */
-export interface BootstrapButtonProps extends ButtonProps {
+export interface IconButtonProps extends ButtonProps {
   /** Button text */
   text?: string
-  /** Bootstrap icon type */
+  /** icon type */
   icon?: IconType
   /** Icon size (from theme or explicit) */
   iconSize?: number
@@ -54,12 +54,12 @@ export interface BootstrapButtonProps extends ButtonProps {
 }
 
 /**
- * Bootstrap Button component
- * Extends generic Button with Bootstrap Icons support
+ * Icon Button component
+ * Extends generic Button with Icons support
  *
  * @example
  * ```tsx
- * <BootstrapButton
+ * <IconButton
  *   text="Click me"
  *   icon="check"
  *   variant="primary"
@@ -67,11 +67,11 @@ export interface BootstrapButtonProps extends ButtonProps {
  * />
  * ```
  */
-export function BootstrapButton(props: BootstrapButtonProps) {
+export function IconButton(props: IconButtonProps) {
   const { text, icon, children, iconSize, textStyle, variant, size, ...buttonProps } = props
 
   // Get theme values for iconSize and textStyle based on variant/size
-  const { props: themed } = getThemedProps('BootstrapButton', undefined, {})
+  const { props: themed } = getThemedProps('IconButton', undefined, {})
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const themedButton = themed as any
 
