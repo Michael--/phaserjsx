@@ -141,6 +141,7 @@ export function Accordion(props: AccordionProps) {
     <View width={props.width} height={props.height} direction="column" {...themed}>
       {/* Header */}
       <View
+        ref={ref}
         direction="row"
         alignItems="center"
         enableGestures={true}

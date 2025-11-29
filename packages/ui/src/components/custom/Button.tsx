@@ -5,9 +5,9 @@
  */
 import {
   applyEffectByName,
+  resolveEffect,
   useGameObjectEffect,
-  type EffectConfig,
-  type EffectName,
+  type EffectDefinition,
 } from '../../effects'
 import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'
@@ -21,14 +21,12 @@ import { View } from '../index'
 export type ButtonVariantTheme = ViewTheme & {
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
   iconSize?: number
-  effect?: EffectName
-  effectConfig?: EffectConfig
-}
+} & EffectDefinition
 
 /**
  * Props for Button component
  */
-export interface ButtonProps {
+export interface ButtonProps extends EffectDefinition {
   /** Button content - can be text, icons, or any JSX */
   children?: ChildrenType
   /** Click handler */
@@ -43,10 +41,6 @@ export interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | string
   /** Size variant */
   size?: 'small' | 'medium' | 'large' | string
-  /** Effect name to apply on interaction */
-  effect?: EffectName
-  /** Effect configuration */
-  effectConfig?: EffectConfig
 }
 
 /**
@@ -67,18 +61,7 @@ export interface ButtonProps {
  * ```
  */
 export function Button(props: ButtonProps) {
-  const {
-    children,
-    onClick,
-    disabled,
-    variant,
-    size,
-    width,
-    height,
-    effect,
-    effectConfig,
-    ...restProps
-  } = props
+  const { children, onClick, disabled, variant, size, width, height, ...restProps } = props
   const { props: themed } = getThemedProps('Button', undefined, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
 
@@ -104,15 +87,9 @@ export function Button(props: ButtonProps) {
   const handleTouch =
     !disabled && onClick
       ? () => {
-          // Apply effect from props or theme
-          if (effect) {
-            applyEffectByName(applyEffect, effect, effectConfig)
-          } else {
-            const themedButton = themed as ButtonVariantTheme
-            if (themedButton.effect) {
-              applyEffectByName(applyEffect, themedButton.effect, themedButton.effectConfig)
-            }
-          }
+          // Apply effect: props override theme, theme overrides default
+          const resolved = resolveEffect(props, themed as ButtonVariantTheme)
+          applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
           onClick()
         }
       : undefined
@@ -122,6 +99,8 @@ export function Button(props: ButtonProps) {
     disabledColor: _disabledColor,
     textStyle: _textStyle,
     iconSize: _iconSize,
+    effect: _effect,
+    effectConfig: _effectConfig,
     primary: _primary,
     secondary: _secondary,
     outline: _outline,
