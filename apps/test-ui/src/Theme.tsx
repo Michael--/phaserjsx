@@ -154,10 +154,6 @@ export function createAppTheme(
         gap: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        textStyle: {
-          color: '#ffffff',
-          fontSize: '18px',
-        },
         primary: {
           backgroundColor: colors.primary.medium.toNumber(),
           borderColor: colors.primary.dark.toNumber(),
@@ -179,21 +175,51 @@ export function createAppTheme(
         small: {
           padding: 6,
           cornerRadius: 4,
+        },
+        medium: {
+          padding: 8,
+          cornerRadius: 6,
+        },
+        large: {
+          padding: { top: 12, bottom: 12, left: 8, right: 8 },
+          cornerRadius: 8,
+        },
+      },
+
+      BootstrapButton: {
+        textStyle: {
+          color: '#ffffff',
+          fontSize: '18px',
+        },
+        iconSize: 24,
+        primary: {
+          textStyle: {
+            color: '#ffffff',
+          },
+        },
+        secondary: {
+          textStyle: {
+            color: '#ffffff',
+          },
+        },
+        outline: {
+          textStyle: {
+            color: colors.accent.DEFAULT.toString(),
+          },
+        },
+        small: {
           iconSize: 16,
           textStyle: {
             fontSize: '14px',
           },
         },
         medium: {
-          padding: 8,
-          cornerRadius: 6,
+          iconSize: 24,
           textStyle: {
             fontSize: '18px',
           },
         },
         large: {
-          padding: { top: 12, bottom: 12, left: 8, right: 8 },
-          cornerRadius: 8,
           iconSize: 32,
           textStyle: {
             fontSize: '24px',

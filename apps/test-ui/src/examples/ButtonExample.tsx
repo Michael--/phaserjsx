@@ -30,30 +30,9 @@ function Example() {
 
       {/* Size Variants */}
       <ViewLevel3 alignItems="center" direction="row">
-        <Button
-          icon="bricks"
-          text="Small"
-          size="small"
-          width={80}
-          height={30}
-          onClick={() => undefined}
-        />
-        <Button
-          icon="bricks"
-          text="Medium"
-          size="medium"
-          width={120}
-          height={40}
-          onClick={() => undefined}
-        />
-        <Button
-          icon="bricks"
-          text="Large"
-          size="large"
-          width={160}
-          height={50}
-          onClick={() => undefined}
-        />
+        <Button icon="bricks" text="Small" size="small" onClick={() => undefined} />
+        <Button icon="bricks" text="Medium" size="medium" onClick={() => undefined} />
+        <Button icon="bricks" text="Large" size="large" onClick={() => undefined} />
       </ViewLevel3>
 
       {/* With Children */}

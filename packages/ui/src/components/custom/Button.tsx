@@ -19,10 +19,7 @@ import type { ViewProps } from '../view'
 /**
  * Button variant theme
  */
-export type ButtonVariantTheme = ViewTheme & {
-  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-  iconSize?: number
-} & EffectDefinition
+export type ButtonVariantTheme = ViewTheme & EffectDefinition
 
 /**
  * Props for Button component
@@ -65,18 +62,37 @@ export function Button(props: ButtonProps) {
   // Setup effect system
   const { applyEffect } = useGameObjectEffect(ref)
 
-  type ThemeRecord = Record<string, ButtonVariantTheme>
+  // Cast to ButtonVariantTheme for proper access to nested themes
+  const themedButton = themed as unknown as ButtonVariantTheme & {
+    primary?: ButtonVariantTheme
+    secondary?: ButtonVariantTheme
+    outline?: ButtonVariantTheme
+    small?: ButtonVariantTheme
+    medium?: ButtonVariantTheme
+    large?: ButtonVariantTheme
+    disabledColor?: number
+  }
 
   // Merge base theme with variant and size overrides
-  const variantTheme = variant ? { ...themed, ...(themed as ThemeRecord)[variant] } : themed
+  let variantTheme = { ...themedButton }
+  if (variant && themedButton[variant as keyof typeof themedButton]) {
+    const variantOverrides = themedButton[
+      variant as keyof typeof themedButton
+    ] as ButtonVariantTheme
+    variantTheme = { ...variantTheme, ...variantOverrides }
+  }
 
-  const sizeTheme = size ? { ...variantTheme, ...(themed as ThemeRecord)[size] } : variantTheme
+  let sizeTheme = { ...variantTheme }
+  if (size && themedButton[size as keyof typeof themedButton]) {
+    const sizeOverrides = themedButton[size as keyof typeof themedButton] as ButtonVariantTheme
+    sizeTheme = { ...sizeTheme, ...sizeOverrides }
+  }
 
   // Apply disabled state styling
   const effectiveTheme = disabled
     ? {
         ...sizeTheme,
-        backgroundColor: (themed as ThemeRecord).disabledColor ?? sizeTheme?.backgroundColor,
+        backgroundColor: themedButton.disabledColor ?? sizeTheme?.backgroundColor,
         alpha: 0.5,
       }
     : sizeTheme
@@ -94,8 +110,6 @@ export function Button(props: ButtonProps) {
   // Filter out non-View props from theme
   const {
     disabledColor: _disabledColor,
-    textStyle: _textStyle,
-    iconSize: _iconSize,
     effect: _effect,
     effectConfig: _effectConfig,
     primary: _primary,
@@ -105,7 +119,15 @@ export function Button(props: ButtonProps) {
     medium: _medium,
     large: _large,
     ...viewThemeProps
-  } = effectiveTheme as ThemeRecord
+  } = effectiveTheme as ButtonVariantTheme & {
+    disabledColor?: number
+    primary?: unknown
+    secondary?: unknown
+    outline?: unknown
+    small?: unknown
+    medium?: unknown
+    large?: unknown
+  }
 
   return (
     <View
