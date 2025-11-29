@@ -18,6 +18,7 @@ import { GraphicsExample } from './examples/GraphicsExample'
 
 import { ChartTextExample } from './examples/CharTextExample'
 import { ChartTextInputExample } from './examples/CharTextInputExample'
+import { CustomEffectsExample } from './examples/CustomEffectsExample'
 import { ImageExample } from './examples/ImageExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
@@ -66,6 +67,7 @@ export type ExampleKey =
   | 'accordion'
   | 'charText'
   | 'charTextInput'
+  | 'customEffects'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -128,6 +130,7 @@ const groupedExamples: GroupedExamples = {
       springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
       effects: { label: 'Object Effects', component: GameObjectEffectsExample },
       origin: { label: 'Origin View', component: OriginExample },
+      customEffects: { label: 'Custom Effects', component: CustomEffectsExample },
     },
   },
   miscellaneous: {

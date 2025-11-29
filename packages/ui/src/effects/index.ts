@@ -60,8 +60,10 @@ export {
   EFFECT_REGISTRY,
   applyEffectByName,
   resolveEffect,
+  type BuiltInEffectName,
   type EffectDefinition,
   type EffectName,
+  type EffectNameExtensions,
 } from './effect-registry'
 
 // Individual effect creators - tree-shakeable

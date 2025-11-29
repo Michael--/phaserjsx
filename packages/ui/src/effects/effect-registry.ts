@@ -42,9 +42,9 @@ import {
 } from './use-effect'
 
 /**
- * Available effect names
+ * Built-in effect names
  */
-export type EffectName =
+export type BuiltInEffectName =
   | 'none'
   | 'pulse'
   | 'shake'
@@ -66,7 +66,28 @@ export type EffectName =
   | 'float'
   | 'breathe'
   | 'spin'
-  | 'none'
+
+/**
+ * Extension point for custom effect names
+ * Use declaration merging to add custom effects:
+ * @example
+ * ```typescript
+ * declare module '@phaserjsx/ui' {
+ *   interface EffectNameExtensions {
+ *     myCustom: 'myCustom'
+ *   }
+ * }
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface EffectNameExtensions {}
+
+/**
+ * Available effect names (built-in + extensions)
+ */
+export type EffectName =
+  | BuiltInEffectName
+  | (keyof EffectNameExtensions extends never ? never : keyof EffectNameExtensions)
 
 /**
  * Effect configuration with name and config
@@ -79,7 +100,7 @@ export interface EffectDefinition {
 /**
  * Map of effect names to effect functions
  */
-export const EFFECT_REGISTRY: Record<EffectName, EffectFn | null> = {
+export const EFFECT_REGISTRY: Record<BuiltInEffectName, EffectFn | null> = {
   none: createNoneEffect,
   pulse: createPulseEffect,
   shake: createShakeEffect,

@@ -21,6 +21,8 @@ import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
 import { Button, Sidebar } from './components'
 import { Spacer } from './components/Spacer'
+import { registerCustomEffects } from './custom-effects'
+import './custom-effects/types' // Enable custom effect types
 import { ViewLevel2 } from './examples/Helper'
 
 // Set global theme ONCE (safe in function body for SPA)
@@ -103,6 +105,12 @@ function PresetUpdater() {
     )
     themeRegistry.updateGlobalTheme(newTheme)
   }, [colorMode, currentPreset])
+
+  // Register custom effects once
+  useEffect(() => {
+    // Register custom effects once
+    registerCustomEffects()
+  }, [])
 
   return <View />
 }
