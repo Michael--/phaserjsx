@@ -60,12 +60,46 @@ export function generateIpcCode(schema: IpcSchema): string {
 
 ## Project-Specific
 
-- This is a **TypeScript/Electron monorepo**
+- This is a **TypeScript/Phaser.js monorepo**
 - Uses **pnpm** for package management
 - Uses **Vite** for building
 - Uses **Vitest** for testing
-- **electron-ipc** package: Code generator library (publishable)
-- **test-app** package: Electron test environment (private)
+- **@phaserjsx/ui** package: React-like UI library for Phaser (publishable)
+- **test-ui** app: Test/demo environment for UI components (private)
+
+## Theme System - CRITICAL Pattern
+
+**Custom components with nested themes MUST propagate `nestedTheme`:**
+
+```typescript
+export function MyComponent(props: MyProps) {
+  const localTheme = useTheme()
+  const { props: themed, nestedTheme } = getThemedProps('MyComponent', localTheme, {})
+
+  return (
+    <View {...themed} theme={nestedTheme}>  {/* ← CRITICAL: theme={nestedTheme} */}
+      {props.children}
+    </View>
+  )
+}
+```
+
+**Why this matters:**
+
+- Without `theme={nestedTheme}`, child components won't receive nested theme config
+- Example: `Accordion: { Icon: { size: 42 } }` won't work without propagation
+- Child components use `useTheme()` to receive the propagated theme
+- This enables theme hierarchy: Global → Component → Nested → Props
+
+**Pattern for themed child components:**
+
+```typescript
+export function Icon(props: IconProps) {
+  const localTheme = useTheme() // ← Receives propagated nested theme
+  const { props: themed } = getThemedProps('Icon', localTheme, {})
+  // themed.size now contains nested theme value
+}
+```
 
 ## Commits
 
