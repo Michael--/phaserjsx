@@ -572,6 +572,14 @@ export interface GestureProps {
   onTouch?: (data: GestureEventData) => void
 
   /**
+   * Called when pointer up occurs outside the container
+   * Useful for click-outside detection (dropdowns, modals, tooltips)
+   * Only fires if touch duration is within maxTouchDuration
+   * Requires enableGestures: true
+   */
+  onTouchOutside?: (data: GestureEventData) => void
+
+  /**
    * Called during pointer movement - continues even when outside bounds
    * Provides dx/dy deltas for tracking drag operations
    * Includes isInside flag and state ('start' | 'move' | 'end')

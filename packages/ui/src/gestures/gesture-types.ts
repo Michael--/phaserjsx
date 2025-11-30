@@ -122,6 +122,8 @@ export interface GestureEventData {
 export interface GestureCallbacks {
   /** Called on pointer down + up on the same target (click/tap) */
   onTouch?: (data: GestureEventData) => void
+  /** Called when pointer up occurs outside the container (for click-outside detection) */
+  onTouchOutside?: (data: GestureEventData) => void
   /** Called during pointer movement - continues even when outside bounds */
   onTouchMove?: (data: GestureEventData) => void
   /** Called when double tap/click is detected */

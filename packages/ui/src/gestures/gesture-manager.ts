@@ -479,8 +479,9 @@ export class GestureManager {
     )
 
     // Check if pointer is still within the container (basic tap/click detection)
-    // For now, we require pointer up to be inside - could be made configurable
-    if (this.isPointerInContainer(pointer, state)) {
+    const isInside = this.isPointerInContainer(pointer, state)
+
+    if (isInside) {
       // Fire onTouch only if:
       // - Long press wasn't triggered
       // - Touch duration is within acceptable range (not held too long)
@@ -529,6 +530,26 @@ export class GestureManager {
       }
     }
 
+    // Fire onTouchOutside for ALL containers where pointer is outside
+    for (const [container, containerState] of this.containers) {
+      if (!containerState.callbacks.onTouchOutside) continue
+
+      const isInsideContainer = this.isPointerInContainer(pointer, containerState)
+      if (isInsideContainer) continue // Skip if pointer is inside
+
+      // Fire onTouchOutside - no touch duration check needed for outside clicks
+      const localPos = this.getLocalPosition(pointer, container)
+      const data = this.createEventData(
+        pointer,
+        localPos.x,
+        localPos.y,
+        containerState.hitArea.width,
+        containerState.hitArea.height,
+        { isInside: false }
+      )
+      containerState.callbacks.onTouchOutside(data)
+    }
+
     // Reset state
     state.longPressTriggered = false
     state.pointerDownTime = undefined
@@ -543,16 +564,43 @@ export class GestureManager {
   /**
    * Handle pointer up outside canvas (global window events)
    * Ensures touch move 'end' state is sent even when pointer released outside
+   * Also handles onTouchOutside for ALL containers
    */
   private handleGlobalPointerUp(_event: MouseEvent | TouchEvent): void {
     // Use setTimeout to let Phaser's handlePointerUp run first (if inside canvas)
     setTimeout(() => {
-      // If activePointerDown was cleared, handlePointerUp already handled it
-      if (!this.activePointerDown) return
-
-      // Find the active pointer in Phaser
       const pointer = this.scene.input.activePointer
       if (!pointer) return
+
+      // Fire onTouchOutside for ALL containers that have the callback
+      // and where the pointer is NOT inside
+      for (const state of this.containers.values()) {
+        if (!state.callbacks.onTouchOutside) continue
+
+        const isInside = this.isPointerInContainer(pointer, state)
+        if (isInside) continue // Skip if pointer is inside
+
+        // Check if touch duration is valid
+        const touchDuration = state.pointerDownTime ? Date.now() - state.pointerDownTime : 0
+        const isTouchTooLong = touchDuration > state.config.maxTouchDuration
+        const shouldFire = !state.longPressTriggered && !isTouchTooLong
+
+        if (shouldFire) {
+          const localPos = this.getLocalPosition(pointer, state.container)
+          const data = this.createEventData(
+            pointer,
+            localPos.x,
+            localPos.y,
+            state.hitArea.width,
+            state.hitArea.height,
+            { isInside: false }
+          )
+          state.callbacks.onTouchOutside?.(data)
+        }
+      }
+
+      // If no activePointerDown, we're done
+      if (!this.activePointerDown) return
 
       const state = this.containers.get(this.activePointerDown.container)
       if (!state) {

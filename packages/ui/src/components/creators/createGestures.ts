@@ -23,6 +23,7 @@ export function createGestures(
   // Check if any gesture callback is defined
   const hasAnyGesture = !!(
     props.onTouch ||
+    props.onTouchOutside ||
     props.onTouchMove ||
     props.onDoubleTap ||
     props.onLongPress
@@ -64,6 +65,7 @@ export function createGestures(
   // Build callbacks object
   const callbacks: GestureCallbacks = {}
   if (props.onTouch) callbacks.onTouch = props.onTouch
+  if (props.onTouchOutside) callbacks.onTouchOutside = props.onTouchOutside
   if (props.onTouchMove) callbacks.onTouchMove = props.onTouchMove
   if (props.onDoubleTap) callbacks.onDoubleTap = props.onDoubleTap
   if (props.onLongPress) callbacks.onLongPress = props.onLongPress

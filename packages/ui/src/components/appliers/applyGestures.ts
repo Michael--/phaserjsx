@@ -34,8 +34,20 @@ export function applyGesturesProps(
     return
   }
 
-  const hasAnyGesture = !!(next.onTouch || next.onTouchMove || next.onDoubleTap || next.onLongPress)
-  const hadAnyGesture = !!(prev.onTouch || prev.onTouchMove || prev.onDoubleTap || prev.onLongPress)
+  const hasAnyGesture = !!(
+    next.onTouch ||
+    next.onTouchOutside ||
+    next.onTouchMove ||
+    next.onDoubleTap ||
+    next.onLongPress
+  )
+  const hadAnyGesture = !!(
+    prev.onTouch ||
+    prev.onTouchOutside ||
+    prev.onTouchMove ||
+    prev.onDoubleTap ||
+    prev.onLongPress
+  )
 
   // Auto-enable if callbacks present, unless explicitly disabled
   const prevEnabled = hadAnyGesture && prev.enableGestures !== false
@@ -68,6 +80,7 @@ export function applyGesturesProps(
 
     const callbacks: GestureCallbacks = {}
     if (next.onTouch) callbacks.onTouch = next.onTouch
+    if (next.onTouchOutside) callbacks.onTouchOutside = next.onTouchOutside
     if (next.onTouchMove) callbacks.onTouchMove = next.onTouchMove
     if (next.onDoubleTap) callbacks.onDoubleTap = next.onDoubleTap
     if (next.onLongPress) callbacks.onLongPress = next.onLongPress
@@ -91,6 +104,7 @@ export function applyGesturesProps(
     // Update callbacks if any changed
     const callbacksChanged =
       prev.onTouch !== next.onTouch ||
+      prev.onTouchOutside !== next.onTouchOutside ||
       prev.onTouchMove !== next.onTouchMove ||
       prev.onDoubleTap !== next.onDoubleTap ||
       prev.onLongPress !== next.onLongPress
@@ -98,6 +112,7 @@ export function applyGesturesProps(
     if (callbacksChanged) {
       const callbacks: GestureCallbacks = {}
       if (next.onTouch) callbacks.onTouch = next.onTouch
+      if (next.onTouchOutside) callbacks.onTouchOutside = next.onTouchOutside
       if (next.onTouchMove) callbacks.onTouchMove = next.onTouchMove
       if (next.onDoubleTap) callbacks.onDoubleTap = next.onDoubleTap
       if (next.onLongPress) callbacks.onLongPress = next.onLongPress
