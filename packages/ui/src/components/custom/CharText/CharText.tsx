@@ -1,12 +1,9 @@
-import {
-  getThemedProps,
-  useEffect,
-  useRef,
-  useState,
-  View,
-  type GestureEventData,
-} from '@phaserjsx/ui'
-import { useGameObjectEffect } from '../../hooks'
+/** @jsxImportSource ../../.. */
+import type { GestureEventData } from '../../../core-props'
+import { useGameObjectEffect } from '../../../effects'
+import { useEffect, useRef, useState } from '../../../hooks'
+import { getThemedProps } from '../../../theme'
+import { View } from '../../index'
 import type { CharInfo, CharTextAPI, CharTextProps } from './types'
 import {
   breakIntoLines,

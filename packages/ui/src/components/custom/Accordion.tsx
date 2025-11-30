@@ -1,36 +1,16 @@
-import type * as PhaserJSX from '@phaserjsx/ui'
+/** @jsxImportSource ../.. */
+import { useSpring, type AnimationConfig } from '../../animation'
 import {
   applyEffectByName,
-  getThemedProps,
   resolveEffect,
-  Text,
-  useEffect,
-  useForceRedraw,
   useGameObjectEffect,
-  useRef,
-  useSpring,
-  useState,
-  useTheme,
-  View,
-  type AnimationConfig,
-  type ChildrenType,
   type EffectDefinition,
-  type ViewProps,
-} from '@phaserjsx/ui'
-
-// Module augmentation to add Accordion theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    Accordion: {
-      headerStyle?: PhaserJSX.ViewTheme
-      contentStyle?: PhaserJSX.ViewTheme
-      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      animated?: boolean
-      animationConfig?: AnimationConfig
-    } & PhaserJSX.ViewTheme &
-      EffectDefinition
-  }
-}
+} from '../../effects'
+import { useEffect, useForceRedraw, useRef, useState, useTheme } from '../../hooks'
+import { getThemedProps } from '../../theme'
+import type { ChildrenType } from '../../types'
+import { Text, View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Props for Accordion component
@@ -123,7 +103,7 @@ export function Accordion(props: AccordionProps) {
     props.onToggle?.(newState)
 
     // Apply effect: props override theme, theme overrides default
-    const resolved = resolveEffect(props, themed)
+    const resolved = resolveEffect(props, themed as EffectDefinition)
     applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
   }
 

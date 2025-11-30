@@ -1,33 +1,20 @@
+/** @jsxImportSource ../.. */
 /**
  * NineSliceButton - Convenience component for creating buttons with NineSlice backgrounds
  *
  * This component simplifies the creation of scalable buttons by automatically handling
  * the stack layout pattern and inner content positioning.
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
-import type { ViewProps } from '@phaserjsx/ui'
 import {
   applyEffectByName,
-  getThemedProps,
-  NineSlice,
   resolveEffect,
-  useEffect,
   useGameObjectEffect,
-  useRef,
-  useState,
-  View,
   type EffectDefinition,
-} from '@phaserjsx/ui'
-
-// Module augmentation to add Button theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    NineSliceButton: {
-      // default is empty, no extra props
-    } & PhaserJSX.ViewTheme &
-      EffectDefinition
-  }
-}
+} from '../../effects'
+import { useEffect, useRef, useState } from '../../hooks'
+import { getThemedProps } from '../../theme'
+import { NineSlice, View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Props for NineSliceButton component
@@ -212,7 +199,7 @@ export function NineSliceButton(props: NineSliceButtonProps) {
           onClick?.()
 
           // Apply effect: props override theme, theme overrides default
-          const resolved = resolveEffect(props, themed)
+          const resolved = resolveEffect(props, themed as EffectDefinition)
           applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
         }
       : undefined

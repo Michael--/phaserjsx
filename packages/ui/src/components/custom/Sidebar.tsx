@@ -1,29 +1,11 @@
+/** @jsxImportSource ../.. */
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */
-
-import type * as PhaserJSX from '@phaserjsx/ui'
-import type { ViewProps } from '@phaserjsx/ui'
-import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
-
-// Module augmentation to add Sidebar theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    Sidebar: {
-      backgroundColor?: number
-      backgroundAlpha?: number
-      padding?:
-        | number
-        | {
-            top?: number
-            right?: number
-            bottom?: number
-            left?: number
-          }
-      gap?: number
-    } & PhaserJSX.NestedComponentThemes
-  }
-}
+import { useTheme } from '../../hooks'
+import { getThemedProps } from '../../theme'
+import { View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Props for Sidebar component - extends ViewProps for full flexibility

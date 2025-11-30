@@ -1,5 +1,5 @@
-import type * as PhaserJSX from '@phaserjsx/ui'
-import type { EffectDefinition } from '../../hooks'
+import type { EffectDefinition } from '../../../effects/effect-registry'
+import type { ViewProps } from '../../view'
 
 /**
  * Information about a single rendered character
@@ -45,31 +45,10 @@ export interface LineInfo {
   lineIndex: number
 }
 
-// Module augmentation to add CharText theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    CharText: {
-      disabledColor?: number
-      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-      charSpacing?: number
-      cursorColor?: number
-      cursorWidth?: number
-      cursorBlinkSpeed?: number
-      selectionColor?: number
-      selectionAlpha?: number
-      lineHeight?: number
-      wordWrap?: boolean
-    } & PhaserJSX.ViewTheme &
-      EffectDefinition
-  }
-}
-
 /**
  * Props for CharText component
  */
-export interface CharTextProps
-  extends Omit<PhaserJSX.ViewProps, 'children' | 'ref'>,
-    EffectDefinition {
+export interface CharTextProps extends Omit<ViewProps, 'children' | 'ref'>, EffectDefinition {
   /** Ref to the container */
   forwardRef?: (ref: Phaser.GameObjects.Container | null) => void
 

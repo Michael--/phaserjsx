@@ -6,6 +6,7 @@
  * 1. Add the theme definition to the CustomComponentThemes interface below
  * 2. Add the corresponding default values in theme-defaults.ts
  */
+import type { AnimationConfig } from './animation/spring-physics'
 import type { NestedComponentThemes, ViewTheme } from './theme-base'
 
 /**
@@ -41,4 +42,55 @@ export interface CustomComponentThemes {
     medium?: Record<string, unknown>
     large?: Record<string, unknown>
   }
+  Sidebar: {
+    backgroundColor?: number
+    backgroundAlpha?: number
+    padding?:
+      | number
+      | {
+          top?: number
+          right?: number
+          bottom?: number
+          left?: number
+        }
+    gap?: number
+  } & NestedComponentThemes
+  Accordion: ViewTheme & {
+    headerStyle?: ViewTheme
+    contentStyle?: ViewTheme
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    animated?: boolean
+    animationConfig?: AnimationConfig
+    effect?: string
+    effectConfig?: Record<string, unknown>
+  }
+  NineSliceButton: ViewTheme & {
+    effect?: string
+    effectConfig?: Record<string, unknown>
+  }
+  CharText: {
+    disabledColor?: number
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    charSpacing?: number
+    cursorColor?: number
+    cursorWidth?: number
+    cursorBlinkSpeed?: number
+    selectionColor?: number
+    selectionAlpha?: number
+    lineHeight?: number
+    wordWrap?: boolean
+  } & ViewTheme
+  CharTextInput: {
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    charSpacing?: number
+    cursorColor?: number
+    cursorWidth?: number
+    cursorBlinkSpeed?: number
+    selectionColor?: number
+    selectionAlpha?: number
+    lineHeight?: number
+    wordWrap?: boolean
+    focusedBorderColor?: number
+    disabledColor?: number
+  } & ViewTheme
 }

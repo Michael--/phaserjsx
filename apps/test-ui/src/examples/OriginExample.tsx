@@ -1,9 +1,16 @@
 /**
  * Example demonstrating origin-based transforms (rotation and scale)
  */
-import { ScrollView, Text, useEffect, useRef, useThemeTokens, View } from '@phaserjsx/ui'
+import {
+  RefOriginView,
+  ScrollView,
+  Text,
+  useEffect,
+  useRef,
+  useThemeTokens,
+  View,
+} from '@phaserjsx/ui'
 import type Phaser from 'phaser'
-import { RefOriginView } from '../components/RefOriginView'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**

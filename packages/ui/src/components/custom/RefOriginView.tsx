@@ -1,3 +1,4 @@
+/** @jsxImportSource ../.. */
 /**
  * RefOriginView - ref-based component for imperative transforms with custom origin point
  *
@@ -16,9 +17,10 @@
  *   <Text>Rotates around center</Text>
  * </RefOriginView>
  */
-import type { ViewProps, VNode } from '@phaserjsx/ui'
-import { useRef, useState, View } from '@phaserjsx/ui'
 import type Phaser from 'phaser'
+import { useRef, useState, type VNode } from '../../hooks'
+import { View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Extended ViewProps with origin support

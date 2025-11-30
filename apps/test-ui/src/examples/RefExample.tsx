@@ -2,9 +2,17 @@
  * Example demonstrating ref usage to access and manipulate Phaser objects directly
  */
 import type { RefObject } from '@phaserjsx/ui'
-import { ScrollView, Text, useEffect, useRef, useState, useThemeTokens, View } from '@phaserjsx/ui'
+import {
+  RefOriginView,
+  ScrollView,
+  Text,
+  useEffect,
+  useRef,
+  useState,
+  useThemeTokens,
+  View,
+} from '@phaserjsx/ui'
 import Phaser from 'phaser'
-import { RefOriginView } from '../components/RefOriginView'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**

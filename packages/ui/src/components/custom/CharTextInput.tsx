@@ -1,30 +1,8 @@
-import type * as PhaserJSX from '@phaserjsx/ui'
-import { KeyboardInputManager, useEffect, useRef, useState, type ViewProps } from '@phaserjsx/ui'
+/** @jsxImportSource ../.. */
+import { useEffect, useRef, useState } from '../../hooks'
+import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
+import type { ViewProps } from '../view'
 import { CharText, type CharTextAPI } from './CharText'
-
-/**
- * CharTextInput theme configuration
- */
-type CharTextInputTheme = PhaserJSX.ViewTheme & {
-  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
-  charSpacing?: number
-  cursorColor?: number
-  cursorWidth?: number
-  cursorBlinkSpeed?: number
-  selectionColor?: number
-  selectionAlpha?: number
-  lineHeight?: number
-  wordWrap?: boolean
-  focusedBorderColor?: number
-  disabledColor?: number
-}
-
-// Module augmentation
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    CharTextInput: CharTextInputTheme
-  }
-}
 
 /**
  * Props for CharTextInput component

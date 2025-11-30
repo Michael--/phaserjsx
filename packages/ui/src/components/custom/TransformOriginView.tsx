@@ -1,3 +1,4 @@
+/** @jsxImportSource ../.. */
 /**
  * TransformOriginView - declarative transform component with custom origin point
  *
@@ -16,8 +17,9 @@
  *   <View backgroundColor={0xff0000} />
  * </TransformOriginView>
  */
-import type { ViewProps, VNode } from '@phaserjsx/ui'
-import { View } from '@phaserjsx/ui'
+import type { VNode } from '../../hooks'
+import { View } from '../index'
+import type { ViewProps } from '../view'
 
 /**
  * Extended ViewProps with origin support for declarative transforms
