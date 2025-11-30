@@ -20,7 +20,6 @@ import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
 import { Button, Sidebar } from './components'
-import { Checkbox } from './components/Checkbox'
 import { registerCustomEffects } from './custom-effects'
 import './custom-effects/types' // Enable custom effect types
 import { ViewLevel2 } from './examples/Helper'
@@ -156,7 +155,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('accordion')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('checkbox')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
 
@@ -168,11 +167,6 @@ export function App(props: AppProps) {
           <LightDarkModeToggle />
           <JsxStaticBox keys={['*']} />
         </View>
-        <Checkbox
-          label="Checkbox Example"
-          tristate
-          onChange={(state) => console.log('Checkbox:', state)}
-        />
         <PresetSelector />
         <View flex={1} width={'fill'}>
           <ScrollView

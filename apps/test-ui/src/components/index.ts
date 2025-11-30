@@ -23,6 +23,7 @@ export {
 } from '@phaserjsx/ui'
 
 // Test-UI specific components (depend on local icon system)
+export { Checkbox, type CheckboxProps } from './Checkbox'
 export { Icon, useIcon, type IconType } from './Icon'
 export {
   IconButton as Button,

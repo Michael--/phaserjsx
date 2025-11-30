@@ -17,6 +17,7 @@ import { GraphicsExample } from './examples/GraphicsExample'
 
 import { ChartTextExample } from './examples/CharTextExample'
 import { ChartTextInputExample } from './examples/CharTextInputExample'
+import { CheckboxExample } from './examples/CheckboxExample'
 import { CustomEffectsExample } from './examples/CustomEffectsExample'
 import { ImageExample } from './examples/ImageExample'
 import { NineSliceExample } from './examples/NineSliceExample'
@@ -67,6 +68,7 @@ export type ExampleKey =
   | 'charText'
   | 'charTextInput'
   | 'customEffects'
+  | 'checkbox'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -81,6 +83,7 @@ const groupedExamples: GroupedExamples = {
     iconType: 'gear',
     examples: {
       button: { label: 'Button Variants', component: ButtonExample },
+      checkbox: { label: 'Checkbox Component', component: CheckboxExample },
       graphics: { label: 'Graphics Component', component: GraphicsExample },
       image: { label: 'Image Component', component: ImageExample },
       sprite: { label: 'Sprite Component', component: SpriteExample },

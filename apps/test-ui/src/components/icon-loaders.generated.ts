@@ -11,6 +11,7 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'boxes': () => import('bootstrap-icons/icons/boxes.svg' as string),
   'bricks': () => import('bootstrap-icons/icons/bricks.svg' as string),
   'check': () => import('bootstrap-icons/icons/check.svg' as string),
+  'check-square': () => import('bootstrap-icons/icons/check-square.svg' as string),
   'custom-check': () => import('./../custom-icons/custom-check.svg'),
   'dash': () => import('bootstrap-icons/icons/dash.svg' as string),
   'gear': () => import('bootstrap-icons/icons/gear.svg' as string),
