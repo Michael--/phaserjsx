@@ -2,7 +2,7 @@
  * Checkbox component - Selectable option with square indicator and label
  */
 import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
+import { getThemedProps, Text, useState, useTheme, View, type PartialTheme } from '@phaserjsx/ui'
 import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add RadioGroup theme to CustomComponentThemes
@@ -32,6 +32,8 @@ export interface CheckboxProps {
   checked?: CheckedState
   /** Whether to enable tristate mode (unchecked, checked, indeterminate) */
   tristate?: boolean
+  /** Optional theme overrides */
+  theme?: PartialTheme
   /** Callback when checked state changed */
   onChange?: (checked: CheckedState) => void
 }
@@ -42,7 +44,8 @@ export interface CheckboxProps {
  * @returns Checkbox JSX element
  */
 export function Checkbox(props: CheckboxProps) {
-  const { props: themed, nestedTheme } = getThemedProps('Checkbox', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed, nestedTheme } = getThemedProps('Checkbox', localTheme, props.theme ?? {})
   const size = themed.size ?? 32
   const initialChecked = props.checked !== undefined ? props.checked : false
   const [checked, setChecked] = useState<CheckedState>(initialChecked)
