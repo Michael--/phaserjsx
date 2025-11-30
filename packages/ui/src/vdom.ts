@@ -6,7 +6,7 @@ import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
-import { getGestureManager } from './gestures/gesture-manager'
+import { generateMountRootId, getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
@@ -803,5 +803,12 @@ export function mountJSX(
     ;(scene as unknown as { __rootVNode?: VNode }).__rootVNode = vnode
   }
 
-  return mount(parentOrScene, vnode)
+  // Mark root container with unique mount ID for gesture isolation
+  // This ensures different mountJSX calls create separate gesture trees
+  const rootNode = mount(parentOrScene, vnode)
+  if (rootNode instanceof Phaser.GameObjects.Container) {
+    ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
+  }
+
+  return rootNode
 }

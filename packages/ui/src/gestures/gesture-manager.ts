@@ -11,6 +11,17 @@ import type {
 } from './gesture-types'
 import { DEFAULT_GESTURE_CONFIG } from './gesture-types'
 
+// Global counter for unique mount root IDs
+let nextMountRootId = 1
+
+/**
+ * Generate unique mount root ID for mountJSX isolation
+ * @returns Unique root ID
+ */
+export function generateMountRootId(): number {
+  return nextMountRootId++
+}
+
 /**
  * Manager for gesture detection across all containers in a scene
  * Singleton per scene, stored in scene.data
@@ -167,6 +178,45 @@ export class GestureManager {
   }
 
   /**
+   * Get effective depth considering entire parent hierarchy
+   * @param container - Container to calculate depth for
+   * @returns Accumulated depth from container and all parents
+   */
+  private getEffectiveDepth(container: Phaser.GameObjects.Container): number {
+    let depth = container.depth
+    let parent = container.parentContainer
+
+    // Walk up parent chain and accumulate depths
+    while (parent) {
+      depth += parent.depth
+      parent = parent.parentContainer
+    }
+
+    return depth
+  }
+
+  /**
+   * Get mount root ID from container hierarchy
+   * Walks up to find the topmost container with __mountRootId
+   * @param container - Container to check
+   * @returns Mount root ID or 0 if none found
+   */
+  private getRootId(container: Phaser.GameObjects.Container): number {
+    let current: Phaser.GameObjects.Container | null = container
+    let rootId = 0
+
+    while (current) {
+      const id = (current as unknown as { __mountRootId?: number }).__mountRootId
+      if (id !== undefined) {
+        rootId = id
+      }
+      current = current.parentContainer
+    }
+
+    return rootId
+  }
+
+  /**
    * Bubble an event through overlapping containers
    * Iterates all containers at pointer position and calls handler until stopPropagation
    * Sorts containers by their actual display list order (z-index) to respect visual stacking
@@ -189,13 +239,27 @@ export class GestureManager {
       originalIndex,
     }))
 
-    // Sort by display list order (higher index = on top)
-    // This ensures we respect visual z-order, not just registration order
+    // Sort by: 1) mountRootId (higher = on top), 2) effective depth, 3) display list order
+    // This ensures different mountJSX trees are properly isolated
     containersArray.sort((a, b) => {
       const containerA = a.state.container
       const containerB = b.state.container
 
-      // If they share the same parent, compare their indices in the parent's display list
+      // First: Compare mount root IDs (higher = mounted later = on top)
+      const rootIdA = this.getRootId(containerA)
+      const rootIdB = this.getRootId(containerB)
+      if (rootIdA !== rootIdB) {
+        return rootIdB - rootIdA // Higher root ID first
+      }
+
+      // Second: Compare effective depths (accumulated from parent hierarchy)
+      const depthA = this.getEffectiveDepth(containerA)
+      const depthB = this.getEffectiveDepth(containerB)
+      if (depthA !== depthB) {
+        return depthB - depthA // Higher depth first
+      }
+
+      // Third: If they share the same parent, compare their indices in the parent's display list
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)
@@ -262,7 +326,7 @@ export class GestureManager {
     const hitContainers = new Set<Phaser.GameObjects.Container>()
 
     // Find which containers were hit
-    // Sort by display list order (higher index = on top) to respect visual z-order
+    // Sort by: 1) mountRootId, 2) effective depth, 3) display list order
     const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
       state,
       originalIndex,
@@ -271,6 +335,21 @@ export class GestureManager {
       const containerA = a.state.container
       const containerB = b.state.container
 
+      // First: Compare mount root IDs
+      const rootIdA = this.getRootId(containerA)
+      const rootIdB = this.getRootId(containerB)
+      if (rootIdA !== rootIdB) {
+        return rootIdB - rootIdA
+      }
+
+      // Second: Compare effective depths
+      const depthA = this.getEffectiveDepth(containerA)
+      const depthB = this.getEffectiveDepth(containerB)
+      if (depthA !== depthB) {
+        return depthB - depthA
+      }
+
+      // Third: Compare display list indices if same parent
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)
@@ -543,7 +622,7 @@ export class GestureManager {
     if (!hitContainers) return
 
     // Bubble onTouchMove only to containers that were hit at pointer down
-    // Sort by display list order (higher index = on top)
+    // Sort by: 1) mountRootId, 2) effective depth, 3) display list order
     const containersArray = Array.from(this.containers.values()).map((state, originalIndex) => ({
       state,
       originalIndex,
@@ -552,6 +631,21 @@ export class GestureManager {
       const containerA = a.state.container
       const containerB = b.state.container
 
+      // First: Compare mount root IDs
+      const rootIdA = this.getRootId(containerA)
+      const rootIdB = this.getRootId(containerB)
+      if (rootIdA !== rootIdB) {
+        return rootIdB - rootIdA
+      }
+
+      // Second: Compare effective depths
+      const depthA = this.getEffectiveDepth(containerA)
+      const depthB = this.getEffectiveDepth(containerB)
+      if (depthA !== depthB) {
+        return depthB - depthA
+      }
+
+      // Third: Compare display list indices if same parent
       if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
         const indexA = containerA.parentContainer.getIndex(containerA)
         const indexB = containerB.parentContainer.getIndex(containerB)

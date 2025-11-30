@@ -169,6 +169,7 @@ export interface GestureContainerState {
   callbacks: GestureCallbacks
   config: Required<GestureConfig>
   hitArea: Phaser.Geom.Rectangle
+  mountRootId?: number | undefined // Root ID from mountJSX to isolate different mount trees
 
   // State for gesture detection
   lastTapTime?: number | undefined
