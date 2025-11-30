@@ -139,6 +139,7 @@ export function ScrollView(props: ScrollViewProps) {
   const handleTouchMove = (data: GestureEventData) => {
     // Process start and move events, ignore end
     if (data.state === 'end') return
+    data.stopPropagation()
 
     const deltaX = data.dx ?? 0
     const deltaY = data.dy ?? 0

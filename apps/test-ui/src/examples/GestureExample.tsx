@@ -44,6 +44,7 @@ function TouchButton() {
           setLastWasTooLong(true)
           setTimeout(() => setLastWasTooLong(false), 300)
         }
+        data.stopPropagation()
       }}
     >
       <Text text={`Touch/Click: ${touchCount}`} style={tokens?.textStyles.medium} />
@@ -152,8 +153,11 @@ function DragBox() {
         // Handle state transitions
         if (data.state === 'start') {
           setGestureState(true)
-        } else if (data.state === 'end') {
+        }
+        if (data.state === 'end') {
           setGestureState(false)
+        } else {
+          data.stopPropagation()
         }
       }}
     >
