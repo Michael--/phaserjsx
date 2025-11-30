@@ -36,6 +36,17 @@ export default defineIconConfig({
     validate: true, // Warn about icons not in types file
   },
 
+  // Custom patterns for detecting icon usage in theme objects and other contexts
+  // Extends built-in patterns: <Icon type="..." />, themed.xxxIcon ?? '...', icon: '...'
+  // See ICON_CUSTOM_PATTERNS.md for documentation
+  customPatterns: [
+    {
+      name: 'Theme icon properties (bodyIcon, checkedIcon, etc.)',
+      pattern: String.raw`(\w*[Ii]con):\s*['"]([^'"]+)['"]`,
+      captureGroup: 2,
+    },
+  ],
+
   // Exclude patterns when scanning for icon usage
   exclude: ['node_modules', 'dist', '.git'],
 })
