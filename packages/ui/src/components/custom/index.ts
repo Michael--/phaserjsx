@@ -8,6 +8,7 @@ export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'
 export { Divider, type DividerProps } from './Divider'
+export { Dropdown, type DropdownOption, type DropdownProps } from './Dropdown'
 export {
   createIconComponent,
   Icon,

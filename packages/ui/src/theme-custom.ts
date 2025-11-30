@@ -93,4 +93,32 @@ export interface CustomComponentThemes {
     focusedBorderColor?: number
     disabledColor?: number
   } & ViewTheme
+  Dropdown: ViewTheme & {
+    trigger?: ViewTheme
+    triggerHover?: ViewTheme
+    triggerOpen?: ViewTheme
+    triggerDisabled?: ViewTheme
+    arrow?: {
+      color?: number
+      size?: number
+    }
+    overlay?: ViewTheme & {
+      maxHeight?: number
+    }
+    option?: ViewTheme
+    optionHover?: ViewTheme
+    optionSelected?: ViewTheme & {
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    }
+    optionDisabled?: ViewTheme
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    placeholderStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    searchInput?: ViewTheme & {
+      height?: number
+    }
+    animationConfig?: AnimationConfig
+    optionGap?: number
+    effect?: string
+    effectConfig?: Record<string, unknown>
+  }
 }

@@ -125,4 +125,74 @@ export const defaultTheme: Theme = {
       fontFamily: 'Arial',
     },
   },
+  Dropdown: {
+    trigger: {
+      backgroundColor: 0x2a2a2a,
+      borderColor: 0x666666,
+      borderWidth: 1,
+      cornerRadius: 4,
+      padding: { left: 12, right: 12, top: 8, bottom: 8 },
+      minWidth: 200,
+      height: 36,
+    },
+    triggerHover: {
+      borderColor: 0x4a9eff,
+    },
+    triggerOpen: {
+      borderColor: 0x4a9eff,
+      backgroundColor: 0x333333,
+    },
+    triggerDisabled: {
+      backgroundColor: 0x1a1a1a,
+      alpha: 0.5,
+    },
+    arrow: {
+      color: 0xffffff,
+      size: 8,
+    },
+    overlay: {
+      backgroundColor: 0x2a2a2a,
+      borderColor: 0x666666,
+      borderWidth: 1,
+      cornerRadius: 4,
+      maxHeight: 300,
+      padding: 4,
+    },
+    option: {
+      backgroundColor: 0x00000000, // transparent
+      padding: { left: 12, right: 12, top: 8, bottom: 8 },
+      height: 32,
+    },
+    optionHover: {
+      backgroundColor: 0x3a3a3a,
+    },
+    optionSelected: {
+      backgroundColor: 0x4a9eff,
+      textStyle: {
+        color: '#ffffff',
+        fontSize: '14px',
+        fontFamily: 'Arial',
+      },
+    },
+    optionDisabled: {
+      alpha: 0.3,
+    },
+    textStyle: {
+      color: '#ffffff',
+      fontSize: '14px',
+      fontFamily: 'Arial',
+    },
+    placeholderStyle: {
+      color: '#666666',
+      fontSize: '14px',
+      fontFamily: 'Arial',
+    },
+    searchInput: {
+      backgroundColor: 0xaaaaaa,
+      borderColor: 0x666666,
+      height: 32,
+    },
+    animationConfig: 'gentle' as const,
+    optionGap: 2,
+  },
 }

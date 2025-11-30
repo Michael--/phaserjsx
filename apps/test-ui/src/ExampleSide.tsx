@@ -19,6 +19,7 @@ import { ChartTextExample } from './examples/CharTextExample'
 import { ChartTextInputExample } from './examples/CharTextInputExample'
 import { CheckboxExample } from './examples/CheckboxExample'
 import { CustomEffectsExample } from './examples/CustomEffectsExample'
+import { DropdownExample } from './examples/DropdownExample'
 import { ImageExample } from './examples/ImageExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
@@ -69,6 +70,7 @@ export type ExampleKey =
   | 'charTextInput'
   | 'customEffects'
   | 'checkbox'
+  | 'dropdown'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -91,6 +93,7 @@ const groupedExamples: GroupedExamples = {
       accordion: { label: 'Accordion Component', component: AccordionExample },
       charText: { label: 'CharText Component', component: ChartTextExample },
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
+      dropdown: { label: 'Dropdown Component', component: DropdownExample },
     },
   },
   layout: {
