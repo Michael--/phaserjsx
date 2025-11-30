@@ -3,7 +3,7 @@
  */
 
 import type * as PhaserJSX from '@phaserjsx/ui'
-import type { SizeValue, ViewProps } from '@phaserjsx/ui'
+import type { ViewProps } from '@phaserjsx/ui'
 import { getThemedProps, useTheme, View } from '@phaserjsx/ui'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
@@ -26,16 +26,9 @@ declare module '@phaserjsx/ui' {
 }
 
 /**
- * Props for Sidebar component
+ * Props for Sidebar component - extends ViewProps for full flexibility
  */
-export interface SidebarProps {
-  /** Height of the sidebar */
-  height?: SizeValue
-  /** Width of the sidebar */
-  width?: SizeValue
-  /** Children to display in sidebar */
-  children?: ViewProps['children']
-}
+export type SidebarProps = ViewProps
 
 /**
  * Sidebar component - pre-configured container for navigation/options
@@ -48,18 +41,14 @@ export function Sidebar(props: SidebarProps) {
 
   return (
     <View
-      height={props.height}
-      width={props.width}
-      minWidth={props.width}
+      {...props}
       theme={nestedTheme}
-      backgroundColor={themed.backgroundColor}
-      backgroundAlpha={themed.backgroundAlpha}
-      padding={themed.padding}
-      gap={themed.gap}
-      direction="column"
-      alignItems="start"
-    >
-      {props.children}
-    </View>
+      backgroundColor={themed.backgroundColor ?? props.backgroundColor}
+      backgroundAlpha={themed.backgroundAlpha ?? props.backgroundAlpha}
+      padding={themed.padding ?? props.padding}
+      gap={themed.gap ?? props.gap}
+      direction={props.direction ?? 'column'}
+      alignItems={props.alignItems ?? 'start'}
+    />
   )
 }
