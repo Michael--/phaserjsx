@@ -97,7 +97,7 @@ export interface GestureEventData {
   width: number
   /** Height of the container's hit area */
   height: number
-  /** Whether pointer is currently inside the container hit area (only for onTouchMove) */
+  /** Whether pointer is currently inside the container hit area */
   isInside?: boolean
   /** Current state of touch move gesture: 'start' (first move), 'move' (during), 'end' (pointer up) (only for onTouchMove) */
   state?: TouchMoveState

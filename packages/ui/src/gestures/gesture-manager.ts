@@ -394,12 +394,14 @@ export class GestureManager {
           if (state.callbacks.onLongPress) {
             state.longPressTimer = setTimeout(() => {
               if (this.activePointerDown?.container === state.container) {
+                const isInside = this.isPointerInContainer(pointer, state)
                 const data = this.createEventData(
                   pointer,
                   localPos.x,
                   localPos.y,
                   state.hitArea.width,
-                  state.hitArea.height
+                  state.hitArea.height,
+                  { isInside }
                 )
                 state.callbacks.onLongPress?.(data)
 
@@ -487,12 +489,14 @@ export class GestureManager {
       // Bubble onTouch event to parent containers
       if (state.callbacks.onTouch && shouldFireTouch) {
         this.bubbleEvent(pointer, 'onTouch', (targetState, targetLocalPos) => {
+          const isInside = this.isPointerInContainer(pointer, targetState)
           const data = this.createEventData(
             pointer,
             targetLocalPos.x,
             targetLocalPos.y,
             targetState.hitArea.width,
-            targetState.hitArea.height
+            targetState.hitArea.height,
+            { isInside }
           )
           targetState.callbacks.onTouch?.(data)
           return data.isPropagationStopped()
@@ -506,12 +510,14 @@ export class GestureManager {
 
         if (timeSinceLastTap <= state.config.doubleTapDelay) {
           this.bubbleEvent(pointer, 'onDoubleTap', (targetState, targetLocalPos) => {
+            const isInside = this.isPointerInContainer(pointer, targetState)
             const data = this.createEventData(
               pointer,
               targetLocalPos.x,
               targetLocalPos.y,
               targetState.hitArea.width,
-              targetState.hitArea.height
+              targetState.hitArea.height,
+              { isInside }
             )
             targetState.callbacks.onDoubleTap?.(data)
             return data.isPropagationStopped()
