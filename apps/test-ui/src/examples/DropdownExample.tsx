@@ -37,12 +37,66 @@ const iconOptions: DropdownOption[] = [
 ]
 
 /**
- * Large options list for scrolling demo
+ * Large options list for scrolling and filtering demo
  */
-const largeOptions: DropdownOption[] = Array.from({ length: 50 }, (_, i) => ({
-  value: `option-${i}`,
-  label: `Option ${i + 1}`,
-}))
+const largeOptions: DropdownOption[] = [
+  { value: 'apple', label: 'Apple' },
+  { value: 'apricot', label: 'Apricot' },
+  { value: 'avocado', label: 'Avocado' },
+  { value: 'banana', label: 'Banana' },
+  { value: 'blackberry', label: 'Blackberry' },
+  { value: 'blueberry', label: 'Blueberry' },
+  { value: 'cherry', label: 'Cherry' },
+  { value: 'coconut', label: 'Coconut' },
+  { value: 'cranberry', label: 'Cranberry' },
+  { value: 'date', label: 'Date' },
+  { value: 'dragonfruit', label: 'Dragon Fruit' },
+  { value: 'elderberry', label: 'Elderberry' },
+  { value: 'fig', label: 'Fig' },
+  { value: 'grape', label: 'Grape' },
+  { value: 'grapefruit', label: 'Grapefruit' },
+  { value: 'kiwi', label: 'Kiwi' },
+  { value: 'lemon', label: 'Lemon' },
+  { value: 'lime', label: 'Lime' },
+  { value: 'mango', label: 'Mango' },
+  { value: 'melon', label: 'Melon' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'papaya', label: 'Papaya' },
+  { value: 'peach', label: 'Peach' },
+  { value: 'pear', label: 'Pear' },
+  { value: 'pineapple', label: 'Pineapple' },
+  { value: 'plum', label: 'Plum' },
+  { value: 'pomegranate', label: 'Pomegranate' },
+  { value: 'raspberry', label: 'Raspberry' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'tangerine', label: 'Tangerine' },
+  { value: 'watermelon', label: 'Watermelon' },
+  { value: 'almond', label: 'Almond' },
+  { value: 'cashew', label: 'Cashew' },
+  { value: 'chestnut', label: 'Chestnut' },
+  { value: 'hazelnut', label: 'Hazelnut' },
+  { value: 'macadamia', label: 'Macadamia' },
+  { value: 'pecan', label: 'Pecan' },
+  { value: 'pistachio', label: 'Pistachio' },
+  { value: 'walnut', label: 'Walnut' },
+  { value: 'artichoke', label: 'Artichoke' },
+  { value: 'asparagus', label: 'Asparagus' },
+  { value: 'broccoli', label: 'Broccoli' },
+  { value: 'carrot', label: 'Carrot' },
+  { value: 'cauliflower', label: 'Cauliflower' },
+  { value: 'celery', label: 'Celery' },
+  { value: 'cucumber', label: 'Cucumber' },
+  { value: 'eggplant', label: 'Eggplant' },
+  { value: 'garlic', label: 'Garlic' },
+  { value: 'lettuce', label: 'Lettuce' },
+  { value: 'mushroom', label: 'Mushroom' },
+  { value: 'onion', label: 'Onion' },
+  { value: 'pepper', label: 'Pepper' },
+  { value: 'potato', label: 'Potato' },
+  { value: 'spinach', label: 'Spinach' },
+  { value: 'tomato', label: 'Tomato' },
+  { value: 'zucchini', label: 'Zucchini' },
+]
 
 /**
  * Dropdown examples component
@@ -69,7 +123,7 @@ function Example() {
           width={300}
         />
         <Text
-          text={`Selected: ${selected1 || 'None'}`}
+          text={`Selected: ${basicOptions.find((opt) => opt.value === selected1)?.label || 'None'}`}
           style={{ fontSize: '14px', color: '#999' }}
         />
       </View>
@@ -86,7 +140,7 @@ function Example() {
           width={300}
         />
         <Text
-          text={`Selected: ${selected3.length > 0 ? selected3.join(', ') : 'None'}`}
+          text={`Selected: ${selected3.length > 0 ? selected3.map((v) => basicOptions.find((opt) => opt.value === v)?.label).join(', ') : 'None'}`}
           style={{ fontSize: '14px', color: '#999' }}
         />
       </View>
@@ -104,7 +158,7 @@ function Example() {
           maxHeight={200}
         />
         <Text
-          text={`Selected: ${selected2 || 'None'}`}
+          text={`Selected: ${largeOptions.find((opt) => opt.value === selected2)?.label || 'None'}`}
           style={{ fontSize: '14px', color: '#999' }}
         />
       </View>
@@ -121,7 +175,7 @@ function Example() {
           width={300}
         />
         <Text
-          text={`Selected: ${selected4 || 'None'}`}
+          text={`Selected: ${iconOptions.find((opt) => opt.value === selected4)?.label || 'None'}`}
           style={{ fontSize: '14px', color: '#999' }}
         />
       </View>
