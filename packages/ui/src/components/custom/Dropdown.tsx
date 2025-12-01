@@ -16,7 +16,7 @@ import { useForceRedraw, useMemo, useRef, useState, useTheme } from '../../hooks
 import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
-import { Text, View } from '../index'
+import { Graphics, Text, View } from '../index'
 import type { ViewProps } from '../view'
 import { CharTextInput } from './CharTextInput'
 import { ScrollView } from './ScrollView'
@@ -99,32 +99,25 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
 /**
  * Default arrow component - simple Graphics triangle
  */
-function DefaultArrow(props: { color?: number; size?: number; rotation?: number }) {
+function DefaultArrow(props: { color?: number; size?: number }) {
   const color = props.color ?? 0xffffff
   const size = props.size ?? 8
-  const rotation = props.rotation ?? 0
 
   return (
-    <View width={size} height={size} rotation={rotation}>
-      <View
-        width={size}
-        height={size}
-        onReady={(node) => {
-          const graphics = node as Phaser.GameObjects.Graphics
-          if (graphics.clear) {
-            graphics.clear()
-            graphics.fillStyle(color, 1)
-            graphics.beginPath()
-            graphics.moveTo(0, 0)
-            graphics.lineTo(size, 0)
-            graphics.lineTo(size / 2, size)
-            graphics.closePath()
-            graphics.fillPath()
-          }
-        }}
-        headless={true}
-      />
-    </View>
+    <Graphics
+      width={size}
+      height={size}
+      onDraw={(g: Phaser.GameObjects.Graphics) => {
+        g.clear()
+        g.fillStyle(color, 1)
+        g.beginPath()
+        g.moveTo(0, 0)
+        g.lineTo(size, 0)
+        g.lineTo(size / 2, size)
+        g.closePath()
+        g.fillPath()
+      }}
+    />
   )
 }
 
@@ -433,11 +426,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       {props.arrow ? (
         props.arrow
       ) : (
-        <DefaultArrow
-          color={arrowConfig.color ?? 0xffffff}
-          size={arrowConfig.size ?? 8}
-          rotation={arrowRotation.value}
-        />
+        <DefaultArrow color={arrowConfig.color ?? 0xffffff} size={arrowConfig.size ?? 8} />
       )}
     </View>
   )

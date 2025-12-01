@@ -143,7 +143,7 @@ export const defaultTheme: Theme = {
     },
     arrow: {
       color: colors.text.DEFAULT.toNumber(),
-      size: 8,
+      size: 12,
     },
     overlay: {
       backgroundColor: colors.surface.medium.toNumber(),
