@@ -6,7 +6,7 @@
 import type Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
 import { applyEffectByName, useGameObjectEffect, type EffectDefinition } from '../../effects'
-import { useEffect, useMemo, useRef, useState, useTheme } from '../../hooks'
+import { useEffect, useMemo, useRef, useState, useTheme, type VNode } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
@@ -19,7 +19,7 @@ export interface SliderMark {
   /** Value at this mark */
   value: number
   /** Optional label to display */
-  label?: string
+  label?: VNode
   /** Custom style for this mark */
   style?: {
     color?: number
@@ -331,7 +331,10 @@ export function Slider(props: SliderProps) {
                 height={isHorizontal ? markHeight : markWidth}
                 backgroundColor={markColor}
                 theme={nestedTheme}
-              />
+                direction="stack"
+              >
+                {mark.label}
+              </View>
             )
           })}
         </View>
