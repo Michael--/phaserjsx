@@ -439,6 +439,35 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     </View>
   )
 
+  // Render filter input
+  const filterInput = props.isFilterable && (
+    <CharTextInput
+      value={filterQuery}
+      onChange={setFilterQuery}
+      placeholder={props.filterInputPlaceholder ?? 'Filter...'}
+      height={themed.filterInput?.height ?? 32}
+      margin={placement === 'top' ? { top: 8 } : { bottom: 8 }}
+      {...(themed.filterInput ?? {})}
+    />
+  )
+
+  // Render options list
+  const optionsList = (
+    <View flex={1} width={'fill'}>
+      <ScrollView
+        key={`scroll-${filteredOptions.length}-${filterQuery}`}
+        ref={scrollViewRef}
+        showVerticalSlider={isAnimating ? false : 'auto'}
+        height="fill"
+        width="100%"
+      >
+        <View direction="column" gap={themed.optionGap ?? 2} width="100%">
+          {renderedOptions}
+        </View>
+      </ScrollView>
+    </View>
+  )
+
   // Render overlay
   const overlay = (
     <View height={overlayHeight.value} width={overlayPosition.width} overflow="hidden">
@@ -451,32 +480,17 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         depth={1000}
         {...overlayTheme}
       >
-        {/* Filter Input */}
-        {props.isFilterable && (
-          <CharTextInput
-            value={filterQuery}
-            onChange={setFilterQuery}
-            placeholder={props.filterInputPlaceholder ?? 'Filter...'}
-            height={themed.filterInput?.height ?? 32}
-            margin={{ bottom: 8 }}
-            {...(themed.filterInput ?? {})}
-          />
+        {placement === 'top' ? (
+          <>
+            {optionsList}
+            {filterInput}
+          </>
+        ) : (
+          <>
+            {filterInput}
+            {optionsList}
+          </>
         )}
-
-        {/* Options List */}
-        <View flex={1} width={'fill'}>
-          <ScrollView
-            key={`scroll-${filteredOptions.length}-${filterQuery}`}
-            ref={scrollViewRef}
-            showVerticalSlider={isAnimating ? false : 'auto'}
-            height="fill"
-            width="100%"
-          >
-            <View direction="column" gap={themed.optionGap ?? 2} width="100%">
-              {renderedOptions}
-            </View>
-          </ScrollView>
-        </View>
       </View>
     </View>
   )
