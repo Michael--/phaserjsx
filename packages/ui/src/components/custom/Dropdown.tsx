@@ -363,7 +363,8 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       const isSelected = props.multiple
         ? (currentValue as T[]).includes(option.value)
         : currentValue === option.value
-      const isDisabled = option.disabled ?? false
+      const isDisabled =
+        (option.disabled ?? false) || (isAnimating && (props.placement ?? 'bottom') === 'top')
 
       const optionStyle = {
         ...optionTheme,
@@ -409,6 +410,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     themed.optionSelected,
     themed.optionDisabled,
     textStyle,
+    isAnimating,
   ])
 
   const placement = props.placement ?? 'bottom'

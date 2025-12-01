@@ -189,7 +189,7 @@ export const defaultTheme: Theme = {
       borderColor: 0x666666,
       height: 32,
     },
-    animationConfig: 'gentle' as const,
+    animationConfig: 'stiff',
     optionGap: 2,
   },
 }
