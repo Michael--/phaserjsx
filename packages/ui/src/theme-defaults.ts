@@ -163,9 +163,6 @@ export const defaultTheme: Theme = {
       padding: { left: 12, right: 12, top: 8, bottom: 8 },
       height: 32,
     },
-    optionHover: {
-      backgroundColor: 0x3a3a3a,
-    },
     optionSelected: {
       backgroundColor: 0x4a9eff,
       textStyle: {
@@ -187,7 +184,7 @@ export const defaultTheme: Theme = {
       fontSize: '14px',
       fontFamily: 'Arial',
     },
-    searchInput: {
+    filterInput: {
       backgroundColor: 0xaaaaaa,
       borderColor: 0x666666,
       height: 32,

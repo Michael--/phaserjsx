@@ -1,7 +1,7 @@
 /** @jsxImportSource @phaserjsx/ui */
 /**
  * Dropdown/Select component examples
- * Demonstrates single-select, multi-select, searchable, and custom rendering
+ * Demonstrates single-select, multi-select, filterable, and custom rendering
  */
 import {
   Dropdown,
@@ -91,15 +91,15 @@ function Example() {
         />
       </View>
 
-      {/* Searchable Dropdown */}
+      {/* Filterable Dropdown */}
       <View direction="column" gap={8}>
-        <Text text="3. Searchable Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
+        <Text text="3. Filterable Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
         <Dropdown
           options={largeOptions}
           value={selected2}
           onChange={(value) => setSelected2(value as string)}
-          placeholder="Search options..."
-          searchable={true}
+          placeholder="Filter options..."
+          isFilterable={true}
           width={300}
           maxHeight={200}
         />

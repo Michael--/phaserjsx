@@ -106,14 +106,13 @@ export interface CustomComponentThemes {
       maxHeight?: number
     }
     option?: ViewTheme
-    optionHover?: ViewTheme
     optionSelected?: ViewTheme & {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     }
     optionDisabled?: ViewTheme
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     placeholderStyle?: Phaser.Types.GameObjects.Text.TextStyle
-    searchInput?: ViewTheme & {
+    filterInput?: ViewTheme & {
       height?: number
     }
     animationConfig?: AnimationConfig

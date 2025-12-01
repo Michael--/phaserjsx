@@ -1,7 +1,7 @@
 /** @jsxImportSource ../.. */
 /**
  * Dropdown/Select component
- * Provides single and multi-select functionality with keyboard navigation and search
+ * Provides single and multi-select functionality with filtering
  */
 import type Phaser from 'phaser'
 import { useSpring, type AnimationConfig } from '../../animation'
@@ -12,7 +12,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../../effects'
-import { useEffect, useForceRedraw, useRef, useState, useTheme } from '../../hooks'
+import { useForceRedraw, useMemo, useRef, useState, useTheme } from '../../hooks'
 import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
@@ -56,11 +56,11 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
   /** Multi-select mode */
   multiple?: boolean
 
-  /** Enable search/filter */
-  searchable?: boolean
+  /** Enable filter */
+  isFilterable?: boolean
 
-  /** Search placeholder */
-  searchPlaceholder?: string
+  /** Filtering placeholder */
+  filterInputPlaceholder?: string
 
   /** Disabled state */
   disabled?: boolean
@@ -130,7 +130,7 @@ function DefaultArrow(props: { color?: number; size?: number; rotation?: number 
 
 /**
  * Dropdown/Select component
- * Themeable dropdown with single/multi-select, search, and keyboard navigation
+ * Themeable dropdown with single/multi-select, Filtering, and custom rendering
  *
  * @example
  * ```tsx
@@ -145,11 +145,11 @@ function DefaultArrow(props: { color?: number; size?: number; rotation?: number 
  *   placeholder="Select an option"
  * />
  *
- * // Multi-select with search
+ * // Multi-select with filtering
  * <Dropdown
  *   options={options}
  *   multiple={true}
- *   searchable={true}
+ *   isFiltering={true}
  *   value={selectedValues}
  *   onChange={setSelectedValues}
  * />
@@ -164,8 +164,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const [internalValue, setInternalValue] = useState<T | T[]>(
     props.defaultValue ?? (props.multiple ? [] : ('' as T))
   )
-  const [hoveredIndex, setHoveredIndex] = useState(-1)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [filterQuery, setFilterQuery] = useState('')
 
   // Flag to prevent closing on option/overlay clicks
   const shouldIgnoreNextClick = useRef(false)
@@ -176,14 +175,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const scrollViewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(triggerRef)
-
-  // Track scroll position for auto-scroll to hovered item
-  const [scrollPosition, setScrollPosition] = useState({ dx: 0, dy: 0 })
-  const [scrollInfo, setScrollInfo] = useState<{
-    viewportHeight: number
-    contentHeight: number
-    maxScrollY: number
-  } | null>(null)
 
   // Controlled vs uncontrolled
   const isControlled = props.value !== undefined
@@ -199,44 +190,12 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const maxHeight = props.maxHeight ?? overlayTheme.maxHeight ?? 300
   const arrowConfig = themed.arrow ?? {}
 
-  // Filter options based on search
-  const filteredOptions = props.searchable
-    ? props.options.filter((opt) => opt.label.toLowerCase().includes(searchQuery.toLowerCase()))
-    : props.options
-
-  // Update hovered index based on search query
-  useEffect(() => {
-    if (!props.searchable) return
-
-    // When search query changes, find first filtered option in original list
-    if (filteredOptions.length > 0 && filteredOptions[0]) {
-      const firstFilteredOption = filteredOptions[0]
-      const indexInOriginalList = props.options.findIndex(
-        (opt) => opt.value === firstFilteredOption.value
-      )
-      setHoveredIndex(indexInOriginalList >= 0 ? indexInOriginalList : 0)
-    } else {
-      setHoveredIndex(-1)
-    }
-  }, [searchQuery, props.searchable, props.options])
-
-  // Auto-scroll to hovered item
-  useEffect(() => {
-    if (hoveredIndex < 0 || !scrollInfo) return
-
-    const optionHeight = typeof optionTheme.height === 'number' ? optionTheme.height : 40
-    const targetY = hoveredIndex * optionHeight
-    const viewportHeight = scrollInfo.viewportHeight
-
-    // Only scroll if item is outside viewport
-    const currentScrollY = scrollPosition.dy
-    if (targetY < currentScrollY || targetY + optionHeight > currentScrollY + viewportHeight) {
-      // Calculate new scroll position to center the item if possible
-      const idealScrollY = targetY - viewportHeight / 2 + optionHeight / 2
-      const newScrollY = Math.max(0, Math.min(idealScrollY, scrollInfo.maxScrollY))
-      setScrollPosition({ dx: 0, dy: newScrollY })
-    }
-  }, [hoveredIndex, scrollInfo, optionTheme.height, scrollPosition.dy])
+  // Filter options based on filterQuery
+  const filteredOptions = useMemo(() => {
+    return props.isFilterable
+      ? props.options.filter((opt) => opt.label.toLowerCase().includes(filterQuery.toLowerCase()))
+      : props.options
+  }, [props.isFilterable, props.options, filterQuery])
 
   // Get selected options
   const getSelectedOptions = (): DropdownOption<T>[] => {
@@ -277,8 +236,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       setIsOpen(true)
       setOverlayHeight(maxHeight)
       setArrowRotation(Math.PI)
-      setSearchQuery('')
-      setHoveredIndex(-1)
+      setFilterQuery('')
       props.onOpen?.()
 
       // Apply effect
@@ -346,44 +304,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     }
   }
 
-  // Keyboard navigation (only when NOT searchable, to avoid conflicts with CharTextInput)
-  useEffect(() => {
-    if (!isOpen || !containerRef.current || props.searchable) return
-
-    const container = containerRef.current
-    const scene = container.scene
-    const keyboard = scene.input.keyboard
-
-    if (!keyboard) return
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        setHoveredIndex((prev) => Math.min(prev + 1, filteredOptions.length - 1))
-      } else if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        setHoveredIndex((prev) => Math.max(prev - 1, 0))
-      } else if (event.key === 'Enter') {
-        event.preventDefault()
-        if (hoveredIndex >= 0 && hoveredIndex < filteredOptions.length) {
-          const option = filteredOptions[hoveredIndex]
-          if (option && !option.disabled) {
-            handleSelect(option.value)
-          }
-        }
-      } else if (event.key === 'Escape') {
-        event.preventDefault()
-        handleToggle()
-      }
-    }
-
-    keyboard.on('keydown', handleKeyDown)
-
-    return () => {
-      keyboard.off('keydown', handleKeyDown)
-    }
-  }, [isOpen, hoveredIndex, filteredOptions, props.searchable])
-
   // Calculate overlay position and width
   const calculateOverlayPosition = (): { x: number; y: number; width: number } => {
     const triggerContainer = triggerRef.current as GameObjectWithLayout
@@ -446,6 +366,60 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const triggerStyle = getTriggerStyle()
   const overlayPosition = calculateOverlayPosition()
 
+  // Render options list
+  const renderedOptions = useMemo((): ChildrenType => {
+    return filteredOptions.map((option, _index) => {
+      const isSelected = props.multiple
+        ? (currentValue as T[]).includes(option.value)
+        : currentValue === option.value
+      const isDisabled = option.disabled ?? false
+
+      const optionStyle = {
+        ...optionTheme,
+        ...(isSelected ? (themed.optionSelected ?? {}) : {}),
+        ...(isDisabled ? (themed.optionDisabled ?? {}) : {}),
+      }
+
+      return (
+        <View
+          key={String(option.value)}
+          width={'fill'}
+          direction="row"
+          alignItems="center"
+          enableGestures={!isDisabled}
+          onTouch={(data) => {
+            data.stopPropagation()
+            if (!isDisabled) handleSelect(option.value, data)
+          }}
+          {...optionStyle}
+        >
+          {/* Custom render or default */}
+          {props.renderOption ? (
+            props.renderOption(option, isSelected)
+          ) : (
+            <>
+              {option.prefix}
+              <Text
+                text={option.label}
+                style={isSelected ? themed.optionSelected?.textStyle : textStyle}
+              />
+              {option.suffix}
+            </>
+          )}
+        </View>
+      )
+    })
+  }, [
+    filteredOptions,
+    currentValue,
+    props.multiple,
+    props.renderOption,
+    optionTheme,
+    themed.optionSelected,
+    themed.optionDisabled,
+    textStyle,
+  ])
+
   return (
     <View
       ref={containerRef}
@@ -491,78 +465,34 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         depth={1000}
         {...overlayTheme}
       >
-        {/* Search Input */}
-        {props.searchable && (
+        {/* Filter Input */}
+        {props.isFilterable && (
           <CharTextInput
-            value={searchQuery}
-            onChange={setSearchQuery}
-            placeholder={props.searchPlaceholder ?? 'Search...'}
-            height={themed.searchInput?.height ?? 32}
+            value={filterQuery}
+            onChange={setFilterQuery}
+            placeholder={props.filterInputPlaceholder ?? 'Filter...'}
+            height={themed.filterInput?.height ?? 32}
             margin={{ bottom: 8 }}
-            {...(themed.searchInput ?? {})}
+            {...(themed.filterInput ?? {})}
           />
         )}
 
         {/* Options List */}
         <View flex={1} width={'fill'}>
           <ScrollView
+            key={`scroll-${filteredOptions.length}-${filterQuery}`}
             ref={scrollViewRef}
             showVerticalSlider="auto"
             height="fill"
             width="100%"
-            scroll={scrollPosition}
-            onScrollInfoChange={(info) =>
-              setScrollInfo({
-                viewportHeight: info.viewportHeight,
-                contentHeight: info.contentHeight,
-                maxScrollY: info.maxScrollY,
-              })
-            }
           >
-            <View direction="column" gap={themed.optionGap ?? 2} width="100%">
-              {filteredOptions.map((option, index) => {
-                const isSelected = props.multiple
-                  ? (currentValue as T[]).includes(option.value)
-                  : currentValue === option.value
-                const isHovered = index === hoveredIndex
-                const isDisabled = option.disabled ?? false
-
-                const optionStyle = {
-                  ...optionTheme,
-                  ...(isHovered && !isDisabled ? (themed.optionHover ?? {}) : {}),
-                  ...(isSelected ? (themed.optionSelected ?? {}) : {}),
-                  ...(isDisabled ? (themed.optionDisabled ?? {}) : {}),
-                }
-
-                return (
-                  <View
-                    key={String(option.value)}
-                    width={'fill'}
-                    direction="row"
-                    alignItems="center"
-                    enableGestures={!isDisabled}
-                    onTouch={(data) => {
-                      data.stopPropagation()
-                      if (!isDisabled) handleSelect(option.value, data)
-                    }}
-                    {...optionStyle}
-                  >
-                    {/* Custom render or default */}
-                    {props.renderOption ? (
-                      props.renderOption(option, isSelected)
-                    ) : (
-                      <>
-                        {option.prefix}
-                        <Text
-                          text={option.label}
-                          style={isSelected ? themed.optionSelected?.textStyle : textStyle}
-                        />
-                        {option.suffix}
-                      </>
-                    )}
-                  </View>
-                )
-              })}
+            <View
+              // key={`options-list-${filterQuery}`}
+              direction="column"
+              gap={themed.optionGap ?? 2}
+              width="100%"
+            >
+              {renderedOptions}
             </View>
           </ScrollView>
         </View>
