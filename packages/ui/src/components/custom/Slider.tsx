@@ -256,13 +256,15 @@ export function Slider(props: SliderProps) {
     // Clamp visual position to track bounds
     const newPos = Math.max(0, Math.min(trackLength, virtualPosRef.current))
 
-    // Update visual position immediately
-    setCurrentDragPos(newPos)
-
     // Calculate and update value
     const newValue = positionToValue(newPos, trackLength)
     const snappedValue = snap ? snapToStep(newValue) : newValue
     const clampedValue = clampValue(snappedValue)
+
+    // For snapping, update position to snapped position
+    const snappedPercentage = valueToPercentage(clampedValue)
+    const snappedPos = snappedPercentage * trackLength
+    setCurrentDragPos(snap ? snappedPos : newPos)
 
     if (!isControlled) {
       setInternalValue(clampedValue)
