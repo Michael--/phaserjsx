@@ -494,7 +494,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         width={'fill'}
         height={'fill'}
         visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
-        depth={1000}
         {...overlayTheme}
       >
         {placement === 'top' ? (

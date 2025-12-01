@@ -61,7 +61,7 @@ export function createBackground(
       }
     }
 
-    container.add(background)
+    container.addAt(background, 0)
     container.__background = background
     // Mark as background so layout system can skip it
     ;(background as Phaser.GameObjects.Graphics & { __isBackground?: boolean }).__isBackground =

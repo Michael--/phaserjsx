@@ -74,7 +74,7 @@ export function applyBackgroundProps(
         }
       }
 
-      container.add(background)
+      container.addAt(background, 0)
       container.__background = background
       ;(background as Phaser.GameObjects.Graphics & { __isBackground?: boolean }).__isBackground =
         true

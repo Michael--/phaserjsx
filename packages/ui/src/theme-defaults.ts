@@ -159,10 +159,9 @@ export const defaultTheme: Theme = {
     },
     optionSelected: {
       backgroundColor: colors.primary.light.toNumber(),
-      backgroundAlpha: 0.1,
       Text: {
         style: {
-          color: colors.text.lightest.toString(),
+          color: colors.text.darkest.toString(),
           fontSize: '14px',
           fontFamily: 'Arial',
         },
