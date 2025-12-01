@@ -453,7 +453,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         )}
       </View>
 
-      {/* Overlay - always rendered but hidden when closed */}
       <View
         ref={overlayRef}
         direction="column"
@@ -461,7 +460,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         y={overlayPosition.y}
         width={overlayPosition.width}
         height={overlayHeight.value}
-        visible={isOpen}
+        visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
         depth={1000}
         {...overlayTheme}
       >
