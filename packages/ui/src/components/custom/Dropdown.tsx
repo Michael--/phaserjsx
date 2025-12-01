@@ -447,6 +447,9 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       placeholder={props.filterInputPlaceholder ?? 'Filter...'}
       height={themed.filterInput?.height ?? 32}
       margin={placement === 'top' ? { top: 8 } : { bottom: 8 }}
+      onFocus={() => {
+        shouldIgnoreNextClick.current = true
+      }}
       {...(themed.filterInput ?? {})}
     />
   )
