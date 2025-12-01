@@ -69,7 +69,7 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
   maxHeight?: number
 
   /** Position of dropdown (default: 'bottom') */
-  placement?: 'top' | 'bottom' | 'auto'
+  placement?: 'top' | 'bottom'
 
   /** Custom render function for selected value */
   renderValue?: (selected: DropdownOption<T> | DropdownOption<T>[] | null) => ChildrenType
@@ -313,19 +313,10 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     const triggerX = triggerContainer.x ?? 0
     const triggerY = triggerContainer.y ?? 0
 
-    const scene = triggerContainer.scene
-    const sceneHeight = scene.scale.height
-
     const gap = 4
 
     // Auto-placement logic
     let placement = props.placement ?? 'bottom'
-    if (placement === 'auto') {
-      const spaceBelow = sceneHeight - (triggerY + triggerSize.height)
-      const spaceAbove = triggerY
-
-      placement = spaceBelow < maxHeight && spaceAbove > spaceBelow ? 'top' : 'bottom'
-    }
 
     const overlayX = triggerX
     const overlayY =
@@ -420,8 +411,79 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     textStyle,
   ])
 
+  const placement = props.placement ?? 'bottom'
+
+  // Render trigger
+  const trigger = (
+    <View
+      ref={triggerRef}
+      direction="row"
+      alignItems="center"
+      justifyContent="space-between"
+      enableGestures={!props.disabled}
+      onTouch={(data) => handleToggle(data)}
+      {...triggerStyle}
+    >
+      <View flex={1}>{renderSelectedValue()}</View>
+
+      {/* Arrow */}
+      {props.arrow ? (
+        props.arrow
+      ) : (
+        <DefaultArrow
+          color={arrowConfig.color ?? 0xffffff}
+          size={arrowConfig.size ?? 8}
+          rotation={arrowRotation.value}
+        />
+      )}
+    </View>
+  )
+
+  // Render overlay
+  const overlay = (
+    <View height={overlayHeight.value} width={overlayPosition.width} overflow="hidden">
+      <View
+        ref={overlayRef}
+        direction="column"
+        width={'fill'}
+        height={'fill'}
+        visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
+        depth={1000}
+        {...overlayTheme}
+      >
+        {/* Filter Input */}
+        {props.isFilterable && (
+          <CharTextInput
+            value={filterQuery}
+            onChange={setFilterQuery}
+            placeholder={props.filterInputPlaceholder ?? 'Filter...'}
+            height={themed.filterInput?.height ?? 32}
+            margin={{ bottom: 8 }}
+            {...(themed.filterInput ?? {})}
+          />
+        )}
+
+        {/* Options List */}
+        <View flex={1} width={'fill'}>
+          <ScrollView
+            key={`scroll-${filteredOptions.length}-${filterQuery}`}
+            ref={scrollViewRef}
+            showVerticalSlider={isAnimating ? false : 'auto'}
+            height="fill"
+            width="100%"
+          >
+            <View direction="column" gap={themed.optionGap ?? 2} width="100%">
+              {renderedOptions}
+            </View>
+          </ScrollView>
+        </View>
+      </View>
+    </View>
+  )
+
   return (
     <View
+      key={`dropdown-${placement}`}
       ref={containerRef}
       direction="column"
       width={props.width}
@@ -429,68 +491,17 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       enableGestures={true}
       onTouchOutside={handleOutsideClick}
     >
-      {/* Trigger */}
-      <View
-        ref={triggerRef}
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        enableGestures={!props.disabled}
-        onTouch={(data) => handleToggle(data)}
-        {...triggerStyle}
-      >
-        <View flex={1}>{renderSelectedValue()}</View>
-
-        {/* Arrow */}
-        {props.arrow ? (
-          props.arrow
-        ) : (
-          <DefaultArrow
-            color={arrowConfig.color ?? 0xffffff}
-            size={arrowConfig.size ?? 8}
-            rotation={arrowRotation.value}
-          />
-        )}
-      </View>
-
-      <View height={overlayHeight.value} width={overlayPosition.width} overflow="hidden">
-        <View
-          ref={overlayRef}
-          direction="column"
-          width={'fill'}
-          height={'fill'}
-          visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
-          depth={1000}
-          {...overlayTheme}
-        >
-          {/* Filter Input */}
-          {props.isFilterable && (
-            <CharTextInput
-              value={filterQuery}
-              onChange={setFilterQuery}
-              placeholder={props.filterInputPlaceholder ?? 'Filter...'}
-              height={themed.filterInput?.height ?? 32}
-              margin={{ bottom: 8 }}
-              {...(themed.filterInput ?? {})}
-            />
-          )}
-
-          {/* Options List */}
-          <View flex={1} width={'fill'}>
-            <ScrollView
-              key={`scroll-${filteredOptions.length}-${filterQuery}`}
-              ref={scrollViewRef}
-              showVerticalSlider={isAnimating ? false : 'auto'}
-              height="fill"
-              width="100%"
-            >
-              <View direction="column" gap={themed.optionGap ?? 2} width="100%">
-                {renderedOptions}
-              </View>
-            </ScrollView>
-          </View>
-        </View>
-      </View>
+      {placement === 'top' ? (
+        <>
+          {overlay}
+          {trigger}
+        </>
+      ) : (
+        <>
+          {trigger}
+          {overlay}
+        </>
+      )}
     </View>
   )
 }

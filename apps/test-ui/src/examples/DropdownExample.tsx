@@ -201,7 +201,7 @@ function Example() {
         borderColor={0x0}
       >
         <Text
-          text={`6. Auto Placement\n(opens up/down)`}
+          text={`6. Placement options\n(opens up/down)`}
           style={{ fontSize: '18px', color: '#4a9eff' }}
         />
 
@@ -212,7 +212,7 @@ function Example() {
             value={selected5}
             onChange={(value) => setSelected5(value as string)}
             placeholder="Auto placement..."
-            placement="auto"
+            placement="bottom"
           />
         </View>
         <View flex={1}></View>
@@ -222,7 +222,8 @@ function Example() {
             value={selected5}
             onChange={(value) => setSelected5(value as string)}
             placeholder="Auto placement..."
-            placement="auto"
+            placement="top"
+            isFilterable={true}
           />
         </View>
       </View>
