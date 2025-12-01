@@ -159,10 +159,13 @@ export const defaultTheme: Theme = {
     },
     optionSelected: {
       backgroundColor: colors.primary.light.toNumber(),
-      textStyle: {
-        color: colors.text.darkest.toString(),
-        fontSize: '14px',
-        fontFamily: 'Arial',
+      backgroundAlpha: 0.1,
+      Text: {
+        style: {
+          color: colors.text.lightest.toString(),
+          fontSize: '14px',
+          fontFamily: 'Arial',
+        },
       },
     },
     optionDisabled: {

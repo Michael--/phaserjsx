@@ -7,7 +7,7 @@
  * 2. Add the corresponding default values in theme-defaults.ts
  */
 import type { AnimationConfig } from './animation/spring-physics'
-import type { NestedComponentThemes, ViewTheme } from './theme-base'
+import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 
 /**
  * Custom component themes
@@ -107,7 +107,7 @@ export interface CustomComponentThemes {
     }
     option?: ViewTheme
     optionSelected?: ViewTheme & {
-      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      Text?: TextTheme
     }
     optionDisabled?: ViewTheme
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle

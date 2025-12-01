@@ -372,6 +372,9 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         ...(isDisabled ? (themed.optionDisabled ?? {}) : {}),
       }
 
+      // Extract nested theme for selected option (for Text component)
+      const optionNestedTheme = isSelected ? themed.optionSelected : undefined
+
       return (
         <View
           key={String(option.value)}
@@ -383,6 +386,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
             data.stopPropagation()
             if (!isDisabled) handleSelect(option.value, data)
           }}
+          theme={optionNestedTheme}
           {...optionStyle}
         >
           {/* Custom render or default */}
@@ -391,10 +395,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
           ) : (
             <>
               {option.prefix}
-              <Text
-                text={option.label}
-                style={isSelected ? themed.optionSelected?.textStyle : textStyle}
-              />
+              <Text text={option.label} />
               {option.suffix}
             </>
           )}
@@ -466,7 +467,18 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         height="fill"
         width="100%"
       >
-        <View direction="column" gap={themed.optionGap ?? 2} width="100%">
+        <View
+          direction="column"
+          gap={themed.optionGap ?? 2}
+          width="100%"
+          theme={
+            textStyle
+              ? {
+                  Text: { style: textStyle },
+                }
+              : undefined
+          }
+        >
           {renderedOptions}
         </View>
       </ScrollView>
