@@ -1,9 +1,17 @@
 /**
  * Default theme values for all components
  * This file contains the default theme configuration
+ * Uses oceanBlue preset with light mode for consistent, semantic colors
  */
+import { getPresetWithMode } from './colors/color-presets'
+import { createTextStyleTokens } from './design-tokens/design-token-presets'
 import type { Theme } from './theme-base'
 import './theme-custom' // Import to activate declaration merging
+
+// Get oceanBlue preset with light mode
+const preset = getPresetWithMode('oceanBlue', 'light')
+const { colors } = preset
+const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
 
 /**
  * Default theme values for all built-in and custom components
@@ -18,11 +26,7 @@ export const defaultTheme: Theme = {
     align: 'left',
     alpha: 1,
     visible: true,
-    style: {
-      color: '#ffffff',
-      fontSize: '16px',
-      fontFamily: 'Arial',
-    },
+    style: textStyles.DEFAULT,
   },
   NineSlice: {
     alpha: 1,
@@ -45,30 +49,30 @@ export const defaultTheme: Theme = {
     visible: true,
   },
   RadioButton: {
-    selectedColor: 0x4a9eff,
-    color: 0x333333,
+    selectedColor: colors.primary.DEFAULT.toNumber(),
+    color: colors.border.medium.toNumber(),
     gap: 8,
     size: 16,
     innerSize: 12,
     labelStyle: {
-      color: '#ffffff',
+      color: colors.text.DEFAULT.toString(),
       fontSize: '14px',
     },
   },
   ScrollSlider: {
-    borderColor: 0x666666,
-    trackColor: 0x333333,
-    thumbColor: 0x999999,
+    borderColor: colors.border.medium.toNumber(),
+    trackColor: colors.surface.dark.toNumber(),
+    thumbColor: colors.primary.light.toNumber(),
     borderWidth: 1,
     size: 12,
     minThumbSize: 20,
   },
   Button: {
-    disabledColor: 0x666666,
+    disabledColor: colors.border.medium.toNumber(),
     iconSize: 24,
   },
   Sidebar: {
-    backgroundColor: 0x1a1a1a,
+    backgroundColor: colors.surface.light.toNumber(),
     backgroundAlpha: 1,
     padding: 16,
     gap: 8,
@@ -77,58 +81,50 @@ export const defaultTheme: Theme = {
     animated: true,
     animationConfig: { tension: 170, friction: 26 } as const,
     headerStyle: {
-      backgroundColor: 0x2a2a2a,
+      backgroundColor: colors.surface.dark.toNumber(),
       padding: 12,
     },
     contentStyle: {
-      backgroundColor: 0x1a1a1a,
+      backgroundColor: colors.surface.light.toNumber(),
       padding: 12,
     },
     textStyle: {
-      color: '#ffffff',
+      color: colors.text.DEFAULT.toString(),
       fontSize: '16px',
     },
   },
   NineSliceButton: {},
   CharText: {
     charSpacing: 0,
-    cursorColor: 0xffffff,
+    cursorColor: colors.text.DEFAULT.toNumber(),
     cursorWidth: 2,
     cursorBlinkSpeed: 500,
-    selectionColor: 0x4a9eff,
+    selectionColor: colors.primary.DEFAULT.toNumber(),
     selectionAlpha: 0.3,
     lineHeight: 1.2,
     wordWrap: true,
-    textStyle: {
-      color: '#ffffff',
-      fontSize: '16px',
-      fontFamily: 'Arial',
-    },
+    textStyle: textStyles.DEFAULT,
   },
   CharTextInput: {
     charSpacing: 0,
-    cursorColor: 0xffffff,
+    cursorColor: colors.text.DEFAULT.toNumber(),
     cursorWidth: 2,
     cursorBlinkSpeed: 500,
-    selectionColor: 0x4a9eff,
+    selectionColor: colors.primary.DEFAULT.toNumber(),
     selectionAlpha: 0.3,
     lineHeight: 1.2,
     wordWrap: true,
-    focusedBorderColor: 0x4a9eff,
-    backgroundColor: 0x2a2a2a,
-    borderColor: 0x666666,
+    focusedBorderColor: colors.primary.DEFAULT.toNumber(),
+    backgroundColor: colors.surface.medium.toNumber(),
+    borderColor: colors.border.medium.toNumber(),
     borderWidth: 1,
     padding: 8,
-    textStyle: {
-      color: '#ffffff',
-      fontSize: '16px',
-      fontFamily: 'Arial',
-    },
+    textStyle: textStyles.DEFAULT,
   },
   Dropdown: {
     trigger: {
-      backgroundColor: 0x2a2a2a,
-      borderColor: 0x666666,
+      backgroundColor: colors.surface.medium.toNumber(),
+      borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,
       cornerRadius: 4,
       padding: { left: 12, right: 12, top: 8, bottom: 8 },
@@ -136,23 +132,23 @@ export const defaultTheme: Theme = {
       height: 36,
     },
     triggerHover: {
-      borderColor: 0x4a9eff,
+      borderColor: colors.primary.DEFAULT.toNumber(),
     },
     triggerOpen: {
-      borderColor: 0x4a9eff,
-      backgroundColor: 0x333333,
+      borderColor: colors.primary.DEFAULT.toNumber(),
+      backgroundColor: colors.surface.dark.toNumber(),
     },
     triggerDisabled: {
-      backgroundColor: 0x1a1a1a,
+      backgroundColor: colors.surface.light.toNumber(),
       alpha: 0.5,
     },
     arrow: {
-      color: 0xffffff,
+      color: colors.text.DEFAULT.toNumber(),
       size: 8,
     },
     overlay: {
-      backgroundColor: 0x2a2a2a,
-      borderColor: 0x666666,
+      backgroundColor: colors.surface.medium.toNumber(),
+      borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,
       cornerRadius: 4,
       maxHeight: 300,
@@ -164,9 +160,9 @@ export const defaultTheme: Theme = {
       height: 32,
     },
     optionSelected: {
-      backgroundColor: 0x4a9eff,
+      backgroundColor: colors.primary.DEFAULT.toNumber(),
       textStyle: {
-        color: '#ffffff',
+        color: colors.background.lightest.toString(),
         fontSize: '14px',
         fontFamily: 'Arial',
       },
@@ -175,18 +171,18 @@ export const defaultTheme: Theme = {
       alpha: 0.3,
     },
     textStyle: {
-      color: '#ffffff',
+      color: colors.text.DEFAULT.toString(),
       fontSize: '14px',
       fontFamily: 'Arial',
     },
     placeholderStyle: {
-      color: '#666666',
+      color: colors.text.light.toString(),
       fontSize: '14px',
       fontFamily: 'Arial',
     },
     filterInput: {
-      backgroundColor: 0xaaaaaa,
-      borderColor: 0x666666,
+      backgroundColor: colors.surface.lightest.toNumber(),
+      borderColor: colors.border.medium.toNumber(),
       height: 32,
     },
     animationConfig: 'stiff',
