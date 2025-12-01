@@ -25,6 +25,7 @@ import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
+import { SliderExample } from './examples/SliderExample'
 import { SpringAnimationExample } from './examples/SpringAnimationExample'
 import { SpriteExample } from './examples/SpriteExample'
 import { StackExample } from './examples/StackExample'
@@ -71,6 +72,7 @@ export type ExampleKey =
   | 'customEffects'
   | 'checkbox'
   | 'dropdown'
+  | 'slider'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -94,6 +96,7 @@ const groupedExamples: GroupedExamples = {
       charText: { label: 'CharText Component', component: ChartTextExample },
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
       dropdown: { label: 'Dropdown Component', component: DropdownExample },
+      slider: { label: 'Slider Component', component: SliderExample },
     },
   },
   layout: {

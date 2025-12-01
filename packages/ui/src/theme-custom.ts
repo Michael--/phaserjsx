@@ -120,4 +120,32 @@ export interface CustomComponentThemes {
     effect?: string
     effectConfig?: Record<string, unknown>
   }
+  Slider: ViewTheme & {
+    trackColor?: number
+    trackFilledColor?: number
+    trackHeight?: number
+    trackBorderRadius?: number
+    trackLength?: number
+    thumbColor?: number
+    thumbSize?: number
+    thumbBorderColor?: number
+    thumbBorderWidth?: number
+    markColor?: number
+    markHeight?: number
+    markWidth?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labelOffset?: number
+    valueLabel?: {
+      backgroundColor?: number
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      padding?: number | { left?: number; right?: number; top?: number; bottom?: number }
+      cornerRadius?: number
+      offset?: number
+    }
+    disabledAlpha?: number
+    animated?: boolean
+    animationConfig?: AnimationConfig
+    effect?: string
+    effectConfig?: Record<string, unknown>
+  }
 }
