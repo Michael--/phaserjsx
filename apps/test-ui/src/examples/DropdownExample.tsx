@@ -109,103 +109,122 @@ function Example() {
   const [selected5, setSelected5] = useState<string>('')
 
   return (
-    <View direction="column" gap={32} padding={20}>
-      <Text text="Dropdown/Select Examples" style={{ fontSize: '24px', color: '#ffffff' }} />
+    <View direction="row" gap={100}>
+      <View direction="column" gap={32} padding={20}>
+        <Text text="Dropdown/Select Examples" style={{ fontSize: '24px', color: '#ffffff' }} />
 
-      {/* Basic Single Select */}
-      <View direction="column" gap={8}>
-        <Text text="1. Basic Single Select" style={{ fontSize: '18px', color: '#4a9eff' }} />
-        <Dropdown
-          options={basicOptions}
-          value={selected1}
-          onChange={(value) => setSelected1(value as string)}
-          placeholder="Select a fruit..."
-          width={300}
-        />
-        <Text
-          text={`Selected: ${basicOptions.find((opt) => opt.value === selected1)?.label || 'None'}`}
-          style={{ fontSize: '14px', color: '#999' }}
-        />
+        {/* Basic Single Select */}
+        <View direction="column" gap={8}>
+          <Text text="1. Basic Single Select" style={{ fontSize: '18px', color: '#4a9eff' }} />
+          <Dropdown
+            options={basicOptions}
+            value={selected1}
+            onChange={(value) => setSelected1(value as string)}
+            placeholder="Select a fruit..."
+            width={300}
+          />
+          <Text
+            text={`Selected: ${basicOptions.find((opt) => opt.value === selected1)?.label || 'None'}`}
+            style={{ fontSize: '14px', color: '#999' }}
+          />
+        </View>
+
+        {/* Multi-Select */}
+        <View direction="column" gap={8}>
+          <Text text="2. Multi-Select" style={{ fontSize: '18px', color: '#4a9eff' }} />
+          <Dropdown
+            options={basicOptions}
+            value={selected3}
+            onChange={(value) => setSelected3(value as string[])}
+            placeholder="Select multiple fruits..."
+            multiple={true}
+            width={300}
+          />
+          <Text
+            text={`Selected: ${selected3.length > 0 ? selected3.map((v) => basicOptions.find((opt) => opt.value === v)?.label).join(', ') : 'None'}`}
+            style={{ fontSize: '14px', color: '#999' }}
+          />
+        </View>
+
+        {/* Filterable Dropdown */}
+        <View direction="column" gap={8}>
+          <Text text="3. Filterable Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
+          <Dropdown
+            options={largeOptions}
+            value={selected2}
+            onChange={(value) => setSelected2(value as string)}
+            placeholder="Filter options..."
+            isFilterable={true}
+            width={300}
+            maxHeight={200}
+          />
+          <Text
+            text={`Selected: ${largeOptions.find((opt) => opt.value === selected2)?.label || 'None'}`}
+            style={{ fontSize: '14px', color: '#999' }}
+          />
+        </View>
+
+        {/* With Icons */}
+        <View direction="column" gap={8}>
+          <Text text="4. Dropdown with Icons" style={{ fontSize: '18px', color: '#4a9eff' }} />
+          <Dropdown
+            options={iconOptions}
+            value={selected4}
+            onChange={(value) => setSelected4(value as string)}
+            placeholder="Select a page..."
+            arrow={<Icon type="chevron-down" size={16} />}
+            width={300}
+          />
+          <Text
+            text={`Selected: ${iconOptions.find((opt) => opt.value === selected4)?.label || 'None'}`}
+            style={{ fontSize: '14px', color: '#999' }}
+          />
+        </View>
+
+        {/* Disabled State */}
+        <View direction="column" gap={8}>
+          <Text text="5. Disabled Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
+          <Dropdown
+            options={basicOptions}
+            value="apple"
+            placeholder="Disabled dropdown"
+            disabled={true}
+            width={300}
+          />
+        </View>
       </View>
-
-      {/* Multi-Select */}
-      <View direction="column" gap={8}>
-        <Text text="2. Multi-Select" style={{ fontSize: '18px', color: '#4a9eff' }} />
-        <Dropdown
-          options={basicOptions}
-          value={selected3}
-          onChange={(value) => setSelected3(value as string[])}
-          placeholder="Select multiple fruits..."
-          multiple={true}
-          width={300}
-        />
+      <View
+        direction="column"
+        //justifyContent="space-between"
+        alignItems="center"
+        height={500}
+        borderColor={0x0}
+      >
         <Text
-          text={`Selected: ${selected3.length > 0 ? selected3.map((v) => basicOptions.find((opt) => opt.value === v)?.label).join(', ') : 'None'}`}
-          style={{ fontSize: '14px', color: '#999' }}
-        />
-      </View>
-
-      {/* Filterable Dropdown */}
-      <View direction="column" gap={8}>
-        <Text text="3. Filterable Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
-        <Dropdown
-          options={largeOptions}
-          value={selected2}
-          onChange={(value) => setSelected2(value as string)}
-          placeholder="Filter options..."
-          isFilterable={true}
-          width={300}
-          maxHeight={200}
-        />
-        <Text
-          text={`Selected: ${largeOptions.find((opt) => opt.value === selected2)?.label || 'None'}`}
-          style={{ fontSize: '14px', color: '#999' }}
-        />
-      </View>
-
-      {/* With Icons */}
-      <View direction="column" gap={8}>
-        <Text text="4. Dropdown with Icons" style={{ fontSize: '18px', color: '#4a9eff' }} />
-        <Dropdown
-          options={iconOptions}
-          value={selected4}
-          onChange={(value) => setSelected4(value as string)}
-          placeholder="Select a page..."
-          arrow={<Icon type="chevron-down" size={16} />}
-          width={300}
-        />
-        <Text
-          text={`Selected: ${iconOptions.find((opt) => opt.value === selected4)?.label || 'None'}`}
-          style={{ fontSize: '14px', color: '#999' }}
-        />
-      </View>
-
-      {/* Disabled State */}
-      <View direction="column" gap={8}>
-        <Text text="5. Disabled Dropdown" style={{ fontSize: '18px', color: '#4a9eff' }} />
-        <Dropdown
-          options={basicOptions}
-          value="apple"
-          placeholder="Disabled dropdown"
-          disabled={true}
-          width={300}
-        />
-      </View>
-
-      {/* Custom Placement */}
-      <View direction="column" gap={8}>
-        <Text
-          text="6. Auto Placement (opens up/down)"
+          text={`6. Auto Placement\n(opens up/down)`}
           style={{ fontSize: '18px', color: '#4a9eff' }}
         />
-        <Dropdown
-          options={basicOptions}
-          value={selected5}
-          onChange={(value) => setSelected5(value as string)}
-          placeholder="Auto placement..."
-          placement="auto"
-          width={300}
-        />
+
+        {/* Custom Placement */}
+        <View direction="column" gap={8}>
+          <Dropdown
+            options={basicOptions}
+            value={selected5}
+            onChange={(value) => setSelected5(value as string)}
+            placeholder="Auto placement..."
+            placement="auto"
+          />
+        </View>
+        <View flex={1}></View>
+        <View direction="column" gap={8}>
+          <Dropdown
+            options={basicOptions}
+            value={selected5}
+            onChange={(value) => setSelected5(value as string)}
+            placeholder="Auto placement..."
+            placement="auto"
+          />
+        </View>
       </View>
 
       {/* Custom Render */}
