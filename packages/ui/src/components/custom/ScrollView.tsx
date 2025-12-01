@@ -162,7 +162,7 @@ export function ScrollView(props: ScrollViewProps) {
       clearTimeout(timer1)
       clearTimeout(timer2)
     }
-  }, [])
+  }, [showVerticalSliderActual, showHorizontalSliderActual])
 
   return (
     <View visible={visible}>
