@@ -165,6 +165,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     props.defaultValue ?? (props.multiple ? [] : ('' as T))
   )
   const [filterQuery, setFilterQuery] = useState('')
+  const [isAnimating, setIsAnimating] = useState(false)
 
   // Flag to prevent closing on option/overlay clicks
   const shouldIgnoreNextClick = useRef(false)
@@ -212,7 +213,9 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
 
   // Animation for overlay height
   const targetHeight = isOpen ? maxHeight : 0
-  const [overlayHeight, setOverlayHeight] = useSpring(targetHeight, animationConfig)
+  const [overlayHeight, setOverlayHeight] = useSpring(targetHeight, animationConfig, () =>
+    setIsAnimating(false)
+  )
   useForceRedraw(20, overlayHeight)
 
   // Arrow rotation animation
@@ -234,6 +237,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     } else {
       // If closed, open it
       setIsOpen(true)
+      setIsAnimating(true)
       setOverlayHeight(maxHeight)
       setArrowRotation(Math.PI)
       setFilterQuery('')
@@ -248,6 +252,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   // Close dropdown (for click outside)
   const handleClose = () => {
     if (!isOpen) return
+    setIsAnimating(true)
     setIsOpen(false)
     setOverlayHeight(0)
     setArrowRotation(0)
@@ -453,47 +458,42 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         )}
       </View>
 
-      <View
-        ref={overlayRef}
-        direction="column"
-        x={overlayPosition.x}
-        y={overlayPosition.y}
-        width={overlayPosition.width}
-        height={overlayHeight.value}
-        visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
-        depth={1000}
-        {...overlayTheme}
-      >
-        {/* Filter Input */}
-        {props.isFilterable && (
-          <CharTextInput
-            value={filterQuery}
-            onChange={setFilterQuery}
-            placeholder={props.filterInputPlaceholder ?? 'Filter...'}
-            height={themed.filterInput?.height ?? 32}
-            margin={{ bottom: 8 }}
-            {...(themed.filterInput ?? {})}
-          />
-        )}
+      <View height={overlayHeight.value} width={overlayPosition.width} overflow="hidden">
+        <View
+          ref={overlayRef}
+          direction="column"
+          width={'fill'}
+          height={'fill'}
+          visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
+          depth={1000}
+          {...overlayTheme}
+        >
+          {/* Filter Input */}
+          {props.isFilterable && (
+            <CharTextInput
+              value={filterQuery}
+              onChange={setFilterQuery}
+              placeholder={props.filterInputPlaceholder ?? 'Filter...'}
+              height={themed.filterInput?.height ?? 32}
+              margin={{ bottom: 8 }}
+              {...(themed.filterInput ?? {})}
+            />
+          )}
 
-        {/* Options List */}
-        <View flex={1} width={'fill'}>
-          <ScrollView
-            key={`scroll-${filteredOptions.length}-${filterQuery}`}
-            ref={scrollViewRef}
-            showVerticalSlider="auto"
-            height="fill"
-            width="100%"
-          >
-            <View
-              // key={`options-list-${filterQuery}`}
-              direction="column"
-              gap={themed.optionGap ?? 2}
+          {/* Options List */}
+          <View flex={1} width={'fill'}>
+            <ScrollView
+              key={`scroll-${filteredOptions.length}-${filterQuery}`}
+              ref={scrollViewRef}
+              showVerticalSlider={isAnimating ? false : 'auto'}
+              height="fill"
               width="100%"
             >
-              {renderedOptions}
-            </View>
-          </ScrollView>
+              <View direction="column" gap={themed.optionGap ?? 2} width="100%">
+                {renderedOptions}
+              </View>
+            </ScrollView>
+          </View>
         </View>
       </View>
     </View>
