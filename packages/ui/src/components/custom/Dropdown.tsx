@@ -227,8 +227,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const handleToggle = (event?: GestureEventData) => {
     if (props.disabled) return
 
-    console.log('Dropdown handleToggle', event)
-
     event?.stopPropagation()
 
     if (isOpen) {
@@ -263,7 +261,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const handleSelect = (value: T, event?: GestureEventData) => {
     // Stop propagation to prevent closing dropdown when clicking options
     event?.stopPropagation()
-    console.log('Dropdown handleSelect', value, event)
     shouldIgnoreNextClick.current = true
 
     if (props.multiple) {
@@ -296,7 +293,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
 
   // Click outside detection
   const handleOutsideClick = () => {
-    console.log('Dropdown handleOutsideClick')
     // Check and reset flag
     if (shouldIgnoreNextClick.current) {
       shouldIgnoreNextClick.current = false
