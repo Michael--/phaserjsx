@@ -3,9 +3,28 @@
  * Slider component examples
  * Demonstrates horizontal, vertical, marks, custom styling, and disabled states
  */
-import { Graphics, ScrollView, Slider, Text, useState, useTheme, View } from '@phaserjsx/ui'
+import {
+  Graphics,
+  RefOriginView,
+  ScrollView,
+  Slider,
+  Text,
+  useState,
+  useTheme,
+  View,
+  type VNode,
+} from '@phaserjsx/ui'
 import { ViewLevel2 } from './Helper'
 
+function CenterOriginLabel(props: { children: VNode }) {
+  return (
+    <RefOriginView width={0} height={0} originX={0.5} originY={0.5}>
+      <View width={100} height={100} x={-50} y={-30} alignItems="center" justifyContent="center">
+        {props.children}
+      </View>
+    </RefOriginView>
+  )
+}
 /**
  * SliderExample component
  * @returns JSX element
@@ -17,6 +36,7 @@ export function SliderExample() {
   const [fineTune, setFineTune] = useState(5.5)
   const [rangeValue, setRangeValue] = useState(0)
   const localTheme = useTheme()
+  // const { props: themed } = getThemedProps('Slider', localTheme, {})
 
   return (
     <ScrollView width="fill" height="fill" backgroundColor={0xf0f0f0} padding={20}>
@@ -57,25 +77,65 @@ export function SliderExample() {
         </View>
 
         {/* Temperature Slider with Marks */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+        <View
+          width="fill"
+          gap={12}
+          padding={{ left: 30, top: 16, right: 16, bottom: 30 }}
+          backgroundColor={0xffffff}
+          margin={{ bottom: 16 }}
+        >
           <Text text="With Marks and Labels" style={{ fontSize: '18px', color: '#000000' }} />
-          <Slider
-            value={temperature}
-            onChange={setTemperature}
-            min={-10}
-            max={40}
-            step={5}
-            marks={[
-              { value: -10, label: 'Cold' },
-              { value: 0, label: '0°C' },
-              { value: 20, label: 'Room' },
-              { value: 40, label: 'Hot' },
-            ]}
-            snap
-            showValue
-            formatValue={(v: number) => `${v}°C`}
-            trackLength={350}
-          />
+          <View direction="row" gap={75}>
+            <Slider
+              value={temperature}
+              onChange={setTemperature}
+              min={-10}
+              max={40}
+              step={5}
+              marks={[
+                {
+                  value: -10,
+                  label: (
+                    <CenterOriginLabel>
+                      <Text text={'Cold'} style={{ fontSize: '16px', color: '#0000ff' }} />
+                    </CenterOriginLabel>
+                  ),
+                },
+                {
+                  value: 0,
+                  label: (
+                    <CenterOriginLabel>
+                      <Text text={'0°C'} style={{ fontSize: '16px', color: '#5555ff' }} />
+                    </CenterOriginLabel>
+                  ),
+                },
+                {
+                  value: 20,
+                  label: (
+                    <CenterOriginLabel>
+                      <Text text={'Room'} style={{ fontSize: '16px', color: '#0' }} />
+                    </CenterOriginLabel>
+                  ),
+                },
+                {
+                  value: 40,
+                  label: (
+                    <CenterOriginLabel>
+                      <Text text={'Hot'} style={{ fontSize: '16px', color: '#ff0000' }} />
+                    </CenterOriginLabel>
+                  ),
+                },
+              ]}
+              snap
+              //showValue
+              //formatValue={(v: number) => `${v}°C`}
+              trackLength={350}
+            />
+            <Text
+              text={`Temperature: ${temperature}°C`}
+              style={{ fontSize: '20px', color: '#aaaaaa' }}
+            />
+          </View>
         </View>
 
         {/* Auto-Generated Marks */}
