@@ -11,6 +11,7 @@ import {
   useThemeTokens,
   View,
   type DropdownOption,
+  type EdgeInsets,
 } from '@phaserjsx/ui'
 import { Icon } from '../components/Icon'
 import { ViewLevel2 } from './Helper'
@@ -26,14 +27,19 @@ const basicOptions: DropdownOption[] = [
   { value: 'elderberry', label: 'Elderberry' },
 ]
 
+const margin: EdgeInsets = { right: 10 }
 /**
  * Options with icons
  */
 const iconOptions: DropdownOption[] = [
-  { value: 'home', label: 'Home', prefix: <Icon type="house" size={16} /> },
-  { value: 'user', label: 'Profile', prefix: <Icon type="person-circle" size={16} /> },
-  { value: 'settings', label: 'Settings', prefix: <Icon type="gear" size={16} /> },
-  { value: 'mail', label: 'Messages', prefix: <Icon type="envelope" size={16} /> },
+  { value: 'home', label: 'Home', prefix: <Icon type="house" size={16} margin={margin} /> },
+  {
+    value: 'user',
+    label: 'Profile',
+    prefix: <Icon type="person-circle" size={16} margin={margin} />,
+  },
+  { value: 'settings', label: 'Settings', prefix: <Icon type="gear" size={16} margin={margin} /> },
+  { value: 'mail', label: 'Messages', prefix: <Icon type="envelope" size={16} margin={margin} /> },
 ]
 
 /**
@@ -250,7 +256,7 @@ function Example() {
                 text={isSelected ? '✓' : '○'}
                 style={{
                   ...tokens?.textStyles.small,
-                  color: tokens?.colors.primary.DEFAULT.toString() || '#4a9eff',
+                  color: tokens?.colors.primary.DEFAULT.toString() ?? '#4a9eff',
                 }}
               />
               <Text text={option.label} style={tokens?.textStyles.small} />
