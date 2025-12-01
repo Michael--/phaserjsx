@@ -155,14 +155,12 @@ export const defaultTheme: Theme = {
       padding: 4,
     },
     option: {
-      backgroundColor: 0x00000000, // transparent
       padding: { left: 12, right: 12, top: 8, bottom: 8 },
-      height: 32,
     },
     optionSelected: {
-      backgroundColor: colors.primary.DEFAULT.toNumber(),
+      backgroundColor: colors.primary.light.toNumber(),
       textStyle: {
-        color: colors.background.lightest.toString(),
+        color: colors.text.darkest.toString(),
         fontSize: '14px',
         fontFamily: 'Arial',
       },
