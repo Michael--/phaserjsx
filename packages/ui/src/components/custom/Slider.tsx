@@ -4,10 +4,9 @@
  * Provides interactive value selection with horizontal/vertical orientation
  */
 import type Phaser from 'phaser'
-import { useSpring, type AnimationConfig } from '../../animation'
 import type { GestureEventData } from '../../core-props'
 import { applyEffectByName, useGameObjectEffect, type EffectDefinition } from '../../effects'
-import { useEffect, useForceRedraw, useMemo, useRef, useState, useTheme } from '../../hooks'
+import { useEffect, useMemo, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
@@ -83,12 +82,6 @@ export interface SliderProps extends Omit<ViewProps, 'children'>, EffectDefiniti
 
   /** Callback when dragging ends */
   onChangeEnd?: (value: number) => void
-
-  /** Animation config for thumb movement */
-  animationConfig?: AnimationConfig
-
-  /** Enable smooth animation (default: false for direct snapping) */
-  animated?: boolean
 }
 
 /**
@@ -146,8 +139,6 @@ export function Slider(props: SliderProps) {
   const orientation = props.orientation ?? 'horizontal'
   const disabled = props.disabled ?? false
   const snap = props.snap ?? true
-  const animated = props.animated ?? themed.animated ?? false
-  const animationConfig = props.animationConfig ?? themed.animationConfig ?? 'stiff'
 
   const trackLength = props.trackLength ?? themed.trackLength ?? 200
   const trackHeight = themed.trackHeight ?? 6
@@ -198,20 +189,9 @@ export function Slider(props: SliderProps) {
   }, [thumbPositionFromValue])
 
   // Animated thumb position (disabled during drag for responsive control)
-  const [animatedThumbPos] = useSpring(
-    currentDragPos,
-    animated /*&& !isDraggingRef.current*/ ? animationConfig : { tension: 10000, friction: 100 }
-  )
-
-  if (animated /*&& !isDraggingRef.current*/) {
-    useForceRedraw(20, animatedThumbPos)
-  }
 
   // Use animated or direct position
-  const currentThumbPos =
-    animated /*&& !isDraggingRef.current*/ && typeof animatedThumbPos === 'number'
-      ? animatedThumbPos
-      : currentDragPos
+  const currentThumbPos = currentDragPos
 
   // Generate marks if marks={true}
   const marksArray = useMemo<SliderMark[]>(() => {

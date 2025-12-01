@@ -3,16 +3,7 @@
  * Slider component examples
  * Demonstrates horizontal, vertical, marks, custom styling, and disabled states
  */
-import {
-  Graphics,
-  ScrollView,
-  Slider,
-  Text,
-  useState,
-  useTheme,
-  useThemeTokens,
-  View,
-} from '@phaserjsx/ui'
+import { Graphics, ScrollView, Slider, Text, useState, useTheme, View } from '@phaserjsx/ui'
 import { ViewLevel2 } from './Helper'
 
 /**
@@ -25,7 +16,6 @@ export function SliderExample() {
   const [temperature, setTemperature] = useState(20)
   const [fineTune, setFineTune] = useState(5.5)
   const [rangeValue, setRangeValue] = useState(0)
-  const tokens = useThemeTokens()
   const localTheme = useTheme()
 
   return (
@@ -171,20 +161,6 @@ export function SliderExample() {
             showValue
             formatValue={(v: number) => `${v.toFixed(1)}`}
             trackLength={300}
-          />
-        </View>
-
-        {/* Animated Movement */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Animated Movement" style={{ fontSize: '18px', color: '#000000' }} />
-          <Slider
-            defaultValue={25}
-            min={0}
-            max={100}
-            animated
-            animationConfig="gentle"
-            showValue
-            trackLength={250}
           />
         </View>
 
