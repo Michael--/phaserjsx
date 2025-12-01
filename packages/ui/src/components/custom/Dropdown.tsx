@@ -249,7 +249,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
 
   // Close dropdown (for click outside)
   const handleClose = () => {
-    if (!isOpen) return
     setIsAnimating(true)
     setIsOpen(false)
     setOverlayHeight(0)
