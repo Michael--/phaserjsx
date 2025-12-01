@@ -120,29 +120,28 @@ export function applyGesturesProps(
       manager.updateCallbacks(container, callbacks)
     }
 
-    // Update hit area if width/height changed
-    if (prev.width !== next.width || prev.height !== next.height) {
-      // Use __getLayoutSize for actual calculated dimensions
-      const containerWithLayout = container as typeof container & {
-        __getLayoutSize?: () => LayoutSize
-      }
-
-      let width = 100
-      let height = 100
-
-      if (containerWithLayout.__getLayoutSize) {
-        const size = containerWithLayout.__getLayoutSize()
-        width = size.width
-        height = size.height
-      } else {
-        const bounds = container.getBounds()
-        width = bounds.width || 100
-        height = bounds.height || 100
-      }
-
-      const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
-
-      manager.updateHitArea(container, hitArea)
+    // Always update hit area when gestures are enabled
+    // This ensures animated size changes (overlayHeight.value) are reflected
+    // Use __getLayoutSize for actual calculated dimensions
+    const containerWithLayout = container as typeof container & {
+      __getLayoutSize?: () => LayoutSize
     }
+
+    let width = 100
+    let height = 100
+
+    if (containerWithLayout.__getLayoutSize) {
+      const size = containerWithLayout.__getLayoutSize()
+      width = size.width
+      height = size.height
+    } else {
+      const bounds = container.getBounds()
+      width = bounds.width || 100
+      height = bounds.height || 100
+    }
+
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
+
+    manager.updateHitArea(container, hitArea)
   }
 }
