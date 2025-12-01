@@ -128,8 +128,7 @@ export const defaultTheme: Theme = {
       borderWidth: 1,
       cornerRadius: 4,
       padding: { left: 12, right: 12, top: 8, bottom: 8 },
-      minWidth: 200,
-      height: 36,
+      width: 'fill',
     },
     triggerHover: {
       borderColor: colors.primary.DEFAULT.toNumber(),
@@ -160,30 +159,18 @@ export const defaultTheme: Theme = {
     optionSelected: {
       backgroundColor: colors.primary.light.toNumber(),
       Text: {
-        style: {
-          color: colors.text.darkest.toString(),
-          fontSize: '14px',
-          fontFamily: 'Arial',
-        },
+        style: textStyles.DEFAULT,
       },
     },
     optionDisabled: {
       alpha: 0.3,
     },
-    textStyle: {
-      color: colors.text.DEFAULT.toString(),
-      fontSize: '14px',
-      fontFamily: 'Arial',
-    },
-    placeholderStyle: {
-      color: colors.text.light.toString(),
-      fontSize: '14px',
-      fontFamily: 'Arial',
-    },
+    textStyle: textStyles.DEFAULT,
+    placeholderStyle: textStyles.DEFAULT,
     filterInput: {
       backgroundColor: colors.surface.lightest.toNumber(),
       borderColor: colors.border.medium.toNumber(),
-      height: 32,
+      //height: 32,
     },
     animationConfig: 'stiff',
     optionGap: 2,

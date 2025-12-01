@@ -198,14 +198,7 @@ function Example() {
       </View>
       <View gap={10}>
         <Text text={`6. Placement options\n(opens up/down)`} style={tokens?.textStyles.large} />
-        <View
-          direction="column"
-          //justifyContent="space-between"
-          alignItems="center"
-          height={500}
-          borderColor={0x0}
-          padding={10}
-        >
+        <View direction="column" alignItems="center" height={500} width={300} padding={10}>
           {/* Custom Placement */}
           <View direction="column" gap={8}>
             <Dropdown
@@ -224,7 +217,6 @@ function Example() {
               onChange={(value) => setSelected5(value as string)}
               placeholder="Placement..."
               placement="top"
-              isFilterable={true}
             />
           </View>
         </View>
