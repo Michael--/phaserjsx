@@ -4,8 +4,13 @@
  * Renders content in a Portal with backdrop and animations
  * @module components/custom/Modal
  */
+import {
+  createZoomInEffect,
+  createZoomOutEffect,
+  useGameObjectEffect,
+} from '../../effects/use-effect'
 import type { GestureEventData } from '../../gestures/gesture-types'
-import { useEffect, useScene, useState, useTheme } from '../../hooks'
+import { useEffect, useRef, useScene, useState, useTheme } from '../../hooks'
 import { portalRegistry } from '../../portal'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
@@ -48,14 +53,33 @@ export function Modal(props: ModalProps) {
   const viewport = scene ? portalRegistry.getViewportSize(scene) : { width: 800, height: 600 }
 
   // Animation state (0 = hidden, 1 = visible)
-  const [animationProgress, setAnimationProgress] = useState(props.isOpen ? 1 : 0)
+  const [visible, setVisible] = useState(props.isOpen ? 0.5 : 0)
+  const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyEffect, stopEffects } = useGameObjectEffect(viewRef)
 
   // Handle open/close animation
   useEffect(() => {
+    console.log('Modal isOpen changed:', props.isOpen)
     if (props.isOpen) {
-      setAnimationProgress(1)
+      viewRef.current?.setScale(0)
+      setVisible(0.5)
+      setTimeout(() => {
+        viewRef.current?.setVisible(true)
+        applyEffect(createZoomInEffect, { time: 500 })
+        setTimeout(() => {
+          setVisible(1)
+          stopEffects()
+        }, 500)
+      }, 0)
     } else {
-      setAnimationProgress(0)
+      setVisible(0.6)
+      setTimeout(() => {
+        applyEffect(createZoomOutEffect, { time: 500 })
+        setTimeout(() => {
+          setVisible(0)
+          stopEffects()
+        }, 500)
+      }, 0)
     }
   }, [props.isOpen])
 
@@ -74,7 +98,7 @@ export function Modal(props: ModalProps) {
   }, [props.isOpen, closeOnEscape, props.onClose])
 
   // Don't render if not open and animation complete
-  if (!props.isOpen && animationProgress === 0) {
+  if (!props.isOpen && visible === 0) {
     return null
   }
 
@@ -91,25 +115,22 @@ export function Modal(props: ModalProps) {
         width={viewport.width}
         height={viewport.height}
         backgroundColor={themed.backdropColor ?? 0x000000}
-        alpha={(themed.backdropOpacity ?? 0.5) * animationProgress}
+        alpha={themed.backdropOpacity ?? 0.5}
         onTouch={handleBackdropClick}
       />
 
       {/* Content Container (centered) */}
       <View
+        ref={viewRef}
         width={viewport.width}
         height={viewport.height}
         direction="row"
         justifyContent="center"
         alignItems="center"
+        visible={visible > 0.5}
       >
         {/* Content Wrapper (prevents backdrop click) */}
-        <View
-          alpha={animationProgress}
-          scale={0.9 + 0.1 * animationProgress}
-          onTouch={(e: GestureEventData) => e.stopPropagation()}
-          theme={nestedTheme}
-        >
+        <View onTouch={(e: GestureEventData) => e.stopPropagation()} theme={nestedTheme}>
           {props.children}
         </View>
       </View>
