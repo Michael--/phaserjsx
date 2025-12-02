@@ -237,6 +237,10 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       setFilterQuery('')
       props.onOpen?.()
 
+      // Prevent immediate close from outside click detection
+      // Especially important for placement="top" where overlay overlaps trigger
+      shouldIgnoreNextClick.current = true
+
       // Apply effect
       const resolved = resolveEffect(props, themed as EffectDefinition)
       applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
