@@ -176,7 +176,7 @@ export function SliderExample() {
             max={100}
             renderThumb={(_value: number, isDragging: boolean) => (
               <Graphics
-                onDraw={(g) => {
+                onDraw={(g: Phaser.GameObjects.Graphics) => {
                   g.clear()
                   g.fillStyle(0x333333, 1)
                   g.fillRect(-10, -10, 20, 20)
@@ -197,7 +197,7 @@ export function SliderExample() {
             max={100}
             renderTrack={(fillPercentage: number) => (
               <Graphics
-                onDraw={(g) => {
+                onDraw={(g: Phaser.GameObjects.Graphics) => {
                   g.clear()
                   const length = 250
                   const height = localTheme?.Slider?.trackHeight ?? 6
