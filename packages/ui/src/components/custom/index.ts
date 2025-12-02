@@ -28,5 +28,11 @@ export {
 } from './ScrollSlider'
 export { ScrollView, type ScrollInfo, type ScrollViewProps } from './ScrollView'
 export { Sidebar, type SidebarProps } from './Sidebar'
-export { Slider, type SliderMark, type SliderProps } from './Slider'
+export {
+  RangeSlider,
+  Slider,
+  type RangeSliderProps,
+  type SliderMark,
+  type SliderProps,
+} from './Slider'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'

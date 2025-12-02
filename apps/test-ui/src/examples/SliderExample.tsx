@@ -5,6 +5,7 @@
  */
 import {
   Graphics,
+  RangeSlider,
   RefOriginView,
   ScrollView,
   Slider,
@@ -35,6 +36,8 @@ export function SliderExample() {
   const [temperature, setTemperature] = useState(20)
   const [fineTune, setFineTune] = useState(5.5)
   const [rangeValue, setRangeValue] = useState(0)
+  const [priceRange, setPriceRange] = useState<[number, number]>([20, 80])
+  const [timeRange, setTimeRange] = useState<[number, number]>([9, 17])
   const localTheme = useTheme()
   // const { props: themed } = getThemedProps('Slider', localTheme, {})
 
@@ -286,6 +289,129 @@ export function SliderExample() {
             />
           </View>
         </ViewLevel2>
+
+        {/* Reverse Direction Examples */}
+        <Text
+          text="Reverse Direction (right-to-left / bottom-to-top)"
+          style={{ fontSize: '24px', color: '#000000' }}
+          margin={{ top: 20, bottom: 12 }}
+        />
+
+        {/* Horizontal Reversed */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text
+            text="Horizontal Reversed (100 → 0)"
+            style={{ fontSize: '18px', color: '#000000' }}
+          />
+          <Slider defaultValue={30} min={0} max={100} reverse showValue trackLength={300} />
+        </View>
+
+        {/* Vertical Reversed */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text
+            text="Vertical Reversed (top-to-bottom)"
+            style={{ fontSize: '18px', color: '#000000' }}
+          />
+          <Slider
+            orientation="vertical"
+            defaultValue={40}
+            min={0}
+            max={100}
+            reverse
+            showValue
+            trackLength={200}
+          />
+        </View>
+
+        {/* Range Slider Examples */}
+        <Text
+          text="Range Slider (Two Thumbs)"
+          style={{ fontSize: '24px', color: '#000000' }}
+          margin={{ top: 20, bottom: 12 }}
+        />
+
+        {/* Basic Range Slider */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text text="Price Range" style={{ fontSize: '18px', color: '#000000' }} />
+          <RangeSlider
+            value={priceRange}
+            onChange={setPriceRange}
+            min={0}
+            max={100}
+            step={5}
+            showValue
+            formatValue={(v: number) => `$${v}`}
+            trackLength={350}
+          />
+          <Text
+            text={`Selected: $${priceRange[0]} - $${priceRange[1]}`}
+            style={{ fontSize: '14px', color: '#666666' }}
+          />
+        </View>
+
+        {/* Range Slider with Marks */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text text="Time Range (with marks)" style={{ fontSize: '18px', color: '#000000' }} />
+          <RangeSlider
+            value={timeRange}
+            onChange={setTimeRange}
+            min={0}
+            max={24}
+            step={1}
+            marks={true}
+            showValue
+            formatValue={(v: number) => `${v}:00`}
+            trackLength={400}
+          />
+          <Text
+            text={`Working hours: ${timeRange[0]}:00 - ${timeRange[1]}:00`}
+            style={{ fontSize: '14px', color: '#666666' }}
+          />
+        </View>
+
+        {/* Range Slider Reversed */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text text="Range Slider Reversed" style={{ fontSize: '18px', color: '#000000' }} />
+          <RangeSlider
+            defaultValue={[30, 70]}
+            min={0}
+            max={100}
+            reverse
+            showValue
+            trackLength={300}
+          />
+        </View>
+
+        {/* Range Slider with Min Distance */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text
+            text="Range Slider with Min Distance (10)"
+            style={{ fontSize: '18px', color: '#000000' }}
+          />
+          <RangeSlider
+            defaultValue={[40, 60]}
+            min={0}
+            max={100}
+            minDistance={10}
+            showValue
+            trackLength={300}
+          />
+        </View>
+
+        {/* Vertical Range Slider */}
+        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
+          <Text text="Vertical Range Slider" style={{ fontSize: '18px', color: '#000000' }} />
+          <RangeSlider
+            orientation="vertical"
+            defaultValue={[25, 75]}
+            min={0}
+            max={100}
+            step={5}
+            marks={true}
+            showValue
+            trackLength={250}
+          />
+        </View>
       </ViewLevel2>
     </ScrollView>
   )
