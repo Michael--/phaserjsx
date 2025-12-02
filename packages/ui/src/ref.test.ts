@@ -70,7 +70,7 @@ import { registerBuiltins } from './components'
  * @returns Mock scene object
  */
 function createMockScene() {
-  return {
+  const mockScene = {
     sys: {
       queueDepthSort: vi.fn(),
       settings: {
@@ -80,10 +80,14 @@ function createMockScene() {
     add: {
       container: vi.fn(() => ({
         setVisible: vi.fn(),
+        visible: false,
       })),
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any
+  // Make scene self-referential for nested component access
+  mockScene.scene = mockScene
+  return mockScene
 }
 
 describe('ref functionality', () => {

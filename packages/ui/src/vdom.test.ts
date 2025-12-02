@@ -174,7 +174,7 @@ describe('VDOM', () => {
           align: 'left',
           alpha: 1,
           visible: true,
-          style: { color: '#ffffff', fontSize: '16px', fontFamily: 'Arial' },
+          style: { color: '#616161', fontSize: '16px', fontFamily: 'Arial', align: 'left' },
         },
         mockSceneWithSys
       )
