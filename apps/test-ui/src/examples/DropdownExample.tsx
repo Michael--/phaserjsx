@@ -104,166 +104,193 @@ const largeOptions: DropdownOption[] = [
   { value: 'zucchini', label: 'Zucchini' },
 ]
 
-/**
- * Dropdown examples component
- */
-function Example() {
+function BasicSelectExample() {
   const tokens = useThemeTokens()
   const [selected1, setSelected1] = useState<string>('')
-  const [selected2, setSelected2] = useState<string>('')
+
+  /* Basic Single Select */
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Basic Single Select" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={basicOptions}
+        value={selected1}
+        onChange={(value) => setSelected1(value as string)}
+        placeholder="Select a fruit..."
+        width={300}
+      />
+      <Text
+        text={`Selected: ${basicOptions.find((opt) => opt.value === selected1)?.label || 'None'}`}
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </View>
+  )
+}
+
+function MultiSelectExample() {
+  const tokens = useThemeTokens()
   const [selected3, setSelected3] = useState<string[]>([])
+
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Multi-Select" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={basicOptions}
+        value={selected3}
+        onChange={(value) => setSelected3(value as string[])}
+        placeholder="Select multiple fruits..."
+        multiple={true}
+        width={300}
+      />
+      <Text
+        text={`Selected: ${selected3.length > 0 ? selected3.map((v) => basicOptions.find((opt) => opt.value === v)?.label).join(', ') : 'None'}`}
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </View>
+  )
+}
+
+function FilterableSelectExample() {
+  const tokens = useThemeTokens()
+  const [selected2, setSelected2] = useState<string>('')
+
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Filterable Dropdown" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={largeOptions}
+        value={selected2}
+        onChange={(value) => setSelected2(value as string)}
+        placeholder="Filter options..."
+        isFilterable={true}
+        width={300}
+        maxHeight={200}
+      />
+      <Text
+        text={`Selected: ${largeOptions.find((opt) => opt.value === selected2)?.label || 'None'}`}
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </View>
+  )
+}
+
+function CustomRenderIconsExample() {
   const [selected4, setSelected4] = useState<string>('')
+  const tokens = useThemeTokens()
+
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Dropdown with Icons" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={iconOptions}
+        value={selected4}
+        onChange={(value) => setSelected4(value as string)}
+        placeholder="Select a page..."
+        arrow={<Icon type="chevron-down" size={16} />}
+        width={300}
+      />
+      <Text
+        text={`Selected: ${iconOptions.find((opt) => opt.value === selected4)?.label || 'None'}`}
+        style={tokens?.textStyles.small}
+        alpha={0.7}
+      />
+    </View>
+  )
+}
+
+function DisabledExample() {
+  const tokens = useThemeTokens()
+
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Disabled Dropdown" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={basicOptions}
+        value="apple"
+        placeholder="Disabled dropdown"
+        disabled={true}
+        width={300}
+      />
+    </View>
+  )
+}
+
+function PlacementExample() {
+  const tokens = useThemeTokens()
   const [selected5, setSelected5] = useState<string>('')
 
   return (
-    <View direction="row" gap={100}>
-      <View direction="column" gap={32} padding={20}>
-        {/* Basic Single Select */}
+    <View>
+      <Text text={`Placement down`} style={tokens?.textStyles.large} />
+      <View direction="column" height={500} width={300} padding={10}>
+        {/* Custom Placement */}
         <View direction="column" gap={8}>
-          <Text text="1. Basic Single Select" style={tokens?.textStyles.large} />
           <Dropdown
             options={basicOptions}
-            value={selected1}
-            onChange={(value) => setSelected1(value as string)}
-            placeholder="Select a fruit..."
-            width={300}
-          />
-          <Text
-            text={`Selected: ${basicOptions.find((opt) => opt.value === selected1)?.label || 'None'}`}
-            style={tokens?.textStyles.small}
-            alpha={0.7}
+            value={selected5}
+            onChange={(value) => setSelected5(value as string)}
+            placeholder="Placement..."
+            placement="bottom"
           />
         </View>
-
-        {/* Multi-Select */}
+        <View flex={1}></View>
         <View direction="column" gap={8}>
-          <Text text="2. Multi-Select" style={tokens?.textStyles.large} />
           <Dropdown
             options={basicOptions}
-            value={selected3}
-            onChange={(value) => setSelected3(value as string[])}
-            placeholder="Select multiple fruits..."
-            multiple={true}
-            width={300}
-          />
-          <Text
-            text={`Selected: ${selected3.length > 0 ? selected3.map((v) => basicOptions.find((opt) => opt.value === v)?.label).join(', ') : 'None'}`}
-            style={tokens?.textStyles.small}
-            alpha={0.7}
+            value={selected5}
+            onChange={(value) => setSelected5(value as string)}
+            placeholder="Placement..."
+            placement="top"
           />
         </View>
-
-        {/* Filterable Dropdown */}
-        <View direction="column" gap={8}>
-          <Text text="3. Filterable Dropdown" style={tokens?.textStyles.large} />
-          <Dropdown
-            options={largeOptions}
-            value={selected2}
-            onChange={(value) => setSelected2(value as string)}
-            placeholder="Filter options..."
-            isFilterable={true}
-            width={300}
-            maxHeight={200}
-          />
-          <Text
-            text={`Selected: ${largeOptions.find((opt) => opt.value === selected2)?.label || 'None'}`}
-            style={tokens?.textStyles.small}
-            alpha={0.7}
-          />
-        </View>
-
-        {/* With Icons */}
-        <View direction="column" gap={8}>
-          <Text text="4. Dropdown with Icons" style={tokens?.textStyles.large} />
-          <Dropdown
-            options={iconOptions}
-            value={selected4}
-            onChange={(value) => setSelected4(value as string)}
-            placeholder="Select a page..."
-            arrow={<Icon type="chevron-down" size={16} />}
-            width={300}
-          />
-          <Text
-            text={`Selected: ${iconOptions.find((opt) => opt.value === selected4)?.label || 'None'}`}
-            style={tokens?.textStyles.small}
-            alpha={0.7}
-          />
-        </View>
-
-        {/* Disabled State */}
-        <View direction="column" gap={8}>
-          <Text text="5. Disabled Dropdown" style={tokens?.textStyles.large} />
-          <Dropdown
-            options={basicOptions}
-            value="apple"
-            placeholder="Disabled dropdown"
-            disabled={true}
-            width={300}
-          />
-        </View>
+        <Text text={`Placement up`} style={tokens?.textStyles.large} margin={{ top: 10 }} />
       </View>
-      <View gap={10}>
-        <Text text={`6. Placement options\n(opens up/down)`} style={tokens?.textStyles.large} />
-        <View direction="column" alignItems="center" height={500} width={300} padding={10}>
-          {/* Custom Placement */}
-          <View direction="column" gap={8}>
-            <Dropdown
-              options={basicOptions}
-              value={selected5}
-              onChange={(value) => setSelected5(value as string)}
-              placeholder="Placement..."
-              placement="bottom"
-            />
-          </View>
-          <View flex={1}></View>
-          <View direction="column" gap={8}>
-            <Dropdown
-              options={basicOptions}
-              value={selected5}
-              onChange={(value) => setSelected5(value as string)}
-              placeholder="Placement..."
-              placement="top"
-            />
-          </View>
-        </View>
-      </View>
+    </View>
+  )
+}
 
-      {/* Custom Render */}
-      <View direction="column" gap={8}>
-        <Text text="7. Custom Render" style={tokens?.textStyles.large} />
-        <Dropdown
-          options={basicOptions}
-          value={selected1}
-          onChange={(value) => setSelected1(value as string)}
-          placeholder="Custom render..."
-          width={300}
-          renderValue={(selected) => {
-            if (!selected || (Array.isArray(selected) && selected.length === 0)) {
-              return <Text text="🎨 Choose a fruit" style={tokens?.textStyles.small} alpha={0.7} />
-            }
-            const option = Array.isArray(selected) ? selected[0] : selected
-            if (!option) return null
-            return (
-              <View direction="row" gap={8} alignItems="center">
-                <Text text="🍎" style={{ fontSize: '16px' }} />
-                <Text text={option.label} style={tokens?.textStyles.small} />
-              </View>
-            )
-          }}
-          renderOption={(option, isSelected) => (
+function CustomRenderExample() {
+  const tokens = useThemeTokens()
+  const [selected1, setSelected1] = useState<string>('')
+
+  return (
+    <View direction="column" gap={8}>
+      <Text text="Custom Render" style={tokens?.textStyles.large} />
+      <Dropdown
+        options={basicOptions}
+        value={selected1}
+        onChange={(value) => setSelected1(value as string)}
+        placeholder="Custom render..."
+        width={300}
+        renderValue={(selected) => {
+          if (!selected || (Array.isArray(selected) && selected.length === 0)) {
+            return <Text text="🎨 Choose a fruit" style={tokens?.textStyles.small} alpha={0.7} />
+          }
+          const option = Array.isArray(selected) ? selected[0] : selected
+          if (!option) return null
+          return (
             <View direction="row" gap={8} alignItems="center">
-              <Text
-                text={isSelected ? '✓' : '○'}
-                style={{
-                  ...tokens?.textStyles.small,
-                  color: tokens?.colors.primary.DEFAULT.toString() ?? '#4a9eff',
-                }}
-              />
+              <Text text="🍎" style={{ fontSize: '16px' }} />
               <Text text={option.label} style={tokens?.textStyles.small} />
             </View>
-          )}
-        />
-      </View>
+          )
+        }}
+        renderOption={(option, isSelected) => (
+          <View direction="row" gap={8} alignItems="center">
+            <Text
+              text={isSelected ? '✓' : '○'}
+              style={{
+                ...tokens?.textStyles.small,
+                color: tokens?.colors.primary.DEFAULT.toString() ?? '#4a9eff',
+              }}
+            />
+            <Text text={option.label} style={tokens?.textStyles.small} />
+          </View>
+        )}
+      />
     </View>
   )
 }
@@ -276,7 +303,26 @@ export function DropdownExample() {
       <ScrollView>
         <ViewLevel2>
           <Text text="Dropdown/Select Examples" style={tokens?.textStyles.title} />
-          <Example />
+          <View direction="stack" width={1500} height={'fill'} gap={20}>
+            {/* here could be view with any background, meed to draw before dropdown */}
+            {/** this is necessary because of the current situation in the layout system */}
+            <View gap={300}>
+              <View direction="row" gap={20}>
+                <BasicSelectExample />
+                <MultiSelectExample />
+                <FilterableSelectExample />
+                <CustomRenderIconsExample />
+              </View>
+            </View>
+            <View gap={400}>
+              <View />
+              <View direction="row" gap={20}>
+                <DisabledExample />
+                <PlacementExample />
+                <CustomRenderExample />
+              </View>
+            </View>
+          </View>
         </ViewLevel2>
       </ScrollView>
     </View>
