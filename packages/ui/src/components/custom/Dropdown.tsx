@@ -44,6 +44,9 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
   /** Available options */
   options: DropdownOption<T>[]
 
+  /** optional use stack layout, then only the trigger is part of automatic layout, rest as overlay */
+  stackLayout?: boolean
+
   /** Selected value (controlled) */
   value?: T | T[]
 
@@ -502,25 +505,35 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
 
   return (
     <View
-      key={`dropdown-${placement}`}
-      ref={containerRef}
-      direction="column"
-      width={props.width}
-      theme={nestedTheme}
-      enableGestures={true}
-      onTouchOutside={handleOutsideClick}
+      direction={props.stackLayout ? 'stack' : 'column'}
+      width={props.width || 'fill'}
+      height={props.stackLayout ? triggerRef.current?.height : 'auto'}
+      //borderColor={0x00ff00}
+      //borderWidth={14}
     >
-      {placement === 'top' ? (
-        <>
-          {overlay}
-          {trigger}
-        </>
-      ) : (
-        <>
-          {trigger}
-          {overlay}
-        </>
-      )}
+      <View
+        key={`dropdown-${placement}`}
+        ref={containerRef}
+        direction="column"
+        width={props.width}
+        theme={nestedTheme}
+        enableGestures={true}
+        onTouchOutside={handleOutsideClick}
+        borderColor={0x0000ff}
+        borderWidth={2}
+      >
+        {placement === 'top' ? (
+          <>
+            {overlay}
+            {trigger}
+          </>
+        ) : (
+          <>
+            {trigger}
+            {overlay}
+          </>
+        )}
+      </View>
     </View>
   )
 }
