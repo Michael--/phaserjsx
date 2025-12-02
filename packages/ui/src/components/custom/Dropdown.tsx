@@ -508,6 +508,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
       direction={props.stackLayout ? 'stack' : 'column'}
       width={props.width || 'fill'}
       height={props.stackLayout ? triggerRef.current?.height : 'auto'}
+      ref={props.ref}
       //borderColor={0x00ff00}
       //borderWidth={14}
     >
