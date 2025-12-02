@@ -198,6 +198,19 @@ export function useTheme(): PartialTheme | undefined {
 }
 
 /**
+ * Hook to access current Phaser scene
+ * Returns the scene from the render context
+ * @returns Current Phaser scene
+ */
+export function useScene(): Phaser.Scene {
+  const ctx = getCurrent()
+  if (!ctx) throw new Error('useScene must be called within a component')
+
+  const renderContext = getContextFromParent(ctx.parent)
+  return renderContext.scene
+}
+
+/**
  * Effect hook for side effects with cleanup
  * @param fn - Effect function that optionally returns cleanup
  * @param deps - Optional dependency array

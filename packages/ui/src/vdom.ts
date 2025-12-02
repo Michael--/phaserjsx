@@ -273,6 +273,12 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       )
     }
 
+    // Extract scene early for potential null-return handling
+    const scene =
+      parentOrScene instanceof Phaser.Scene
+        ? parentOrScene
+        : (parentOrScene as Phaser.GameObjects.GameObject).scene
+
     const ctx: Ctx = {
       index: 0,
       slots: [],
@@ -294,6 +300,16 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     const rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
+
+    // Handle null/undefined returns (e.g., from Portal component)
+    if (!rendered) {
+      // Component returned null - this is valid (e.g., Portal)
+      ctx.vnode = rendered
+      // Return a dummy container that won't be used
+      const dummyContainer = scene.add.container(0, 0)
+      dummyContainer.visible = false
+      return dummyContainer
+    }
 
     // Propagate theme to rendered VNode
     if (ctx.theme && !rendered.__theme) {
@@ -577,6 +593,13 @@ export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
       const renderedNext = withHooks(ctx, () =>
         (newV.type as (props: unknown) => VNode)(propsWithChildren)
       )
+
+      // Handle null returns (e.g., from Portal component)
+      if (!renderedNext) {
+        ctx.vnode = renderedNext
+        for (const run of ctx.effects) run()
+        return
+      }
 
       // Propagate theme to rendered VNode if not already set
       if (ctx.theme && !renderedNext.__theme) {

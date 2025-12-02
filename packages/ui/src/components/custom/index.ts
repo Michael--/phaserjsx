@@ -17,6 +17,7 @@ export {
   type IconProps,
 } from './Icon'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
+export { Portal, type PortalProps } from './Portal'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'

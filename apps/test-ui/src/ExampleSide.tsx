@@ -23,6 +23,7 @@ import { DropdownExample } from './examples/DropdownExample'
 import { ImageExample } from './examples/ImageExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
+import { PortalExample } from './examples/PortalExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { SliderExample } from './examples/SliderExample'
@@ -75,6 +76,7 @@ export type ExampleKey =
   | 'dropdown'
   | 'slider'
   | 'toggle'
+  | 'portal'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -100,6 +102,7 @@ const groupedExamples: GroupedExamples = {
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
       dropdown: { label: 'Dropdown Component', component: DropdownExample },
       slider: { label: 'Slider Component', component: SliderExample },
+      portal: { label: 'Portal System (Foundation)', component: PortalExample },
     },
   },
   layout: {

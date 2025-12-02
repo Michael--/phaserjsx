@@ -53,6 +53,9 @@ export * from './components'
 // Re-export custom components for convenience
 export * from './components/custom'
 
+// Re-export portal system
+export * from './portal'
+
 // Animation utilities for spring-based transitions
 export * from './animation'
 

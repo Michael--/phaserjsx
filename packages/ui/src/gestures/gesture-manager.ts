@@ -338,6 +338,7 @@ export class GestureManager {
       // First: Compare mount root IDs
       const rootIdA = this.getRootId(containerA)
       const rootIdB = this.getRootId(containerB)
+
       if (rootIdA !== rootIdB) {
         return rootIdB - rootIdA
       }
