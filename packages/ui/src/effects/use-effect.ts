@@ -290,6 +290,58 @@ export const createFadeEffect: EffectFn = (obj, config) => {
 }
 
 /**
+ * Create a fade-in effect (alpha from 0 to original)
+ * @param obj - Game object to fade in
+ * @param config - Effect config (time)
+ */
+export const createFadeInEffect: EffectFn = (obj, config) => {
+  const { time = 400, onComplete: userOnComplete } = config
+
+  const state = getPositionState(obj)
+  incrementEffectCount(obj)
+
+  const scene = obj.scene
+  const targetAlpha = state.originalAlpha
+
+  obj.setAlpha(0)
+
+  scene.tweens.add({
+    targets: obj,
+    alpha: targetAlpha,
+    duration: time,
+    ease: 'Quad.easeOut',
+    onComplete: () => {
+      decrementEffectCount(obj)
+      userOnComplete?.()
+    },
+  })
+}
+
+/**
+ * Create a fade-out effect (alpha from original to 0)
+ * @param obj - Game object to fade out
+ * @param config - Effect config (time)
+ */
+export const createFadeOutEffect: EffectFn = (obj, config) => {
+  const { time = 400, onComplete: userOnComplete } = config
+
+  incrementEffectCount(obj)
+
+  const scene = obj.scene
+
+  scene.tweens.add({
+    targets: obj,
+    alpha: 0,
+    duration: time,
+    ease: 'Quad.easeIn',
+    onComplete: () => {
+      decrementEffectCount(obj)
+      userOnComplete?.()
+    },
+  })
+}
+
+/**
  * Create a bounce effect (elastic bounce feedback)
  * @param obj - Game object to bounce
  * @param config - Effect config (intensity, time)

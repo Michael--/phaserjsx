@@ -5,6 +5,8 @@
  * @module components/custom/Modal
  */
 import {
+  createFadeInEffect,
+  createFadeOutEffect,
   createZoomInEffect,
   createZoomOutEffect,
   useGameObjectEffect,
@@ -57,17 +59,20 @@ export function Modal(props: ModalProps) {
   const backdropRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect, stopEffects } = useGameObjectEffect(viewRef)
+  const { applyEffect: a2 } = useGameObjectEffect(backdropRef)
 
   // Handle open/close animation
   useEffect(() => {
     console.log('Modal isOpen changed:', props.isOpen)
     if (props.isOpen) {
       viewRef.current?.setScale(0)
+      backdropRef.current?.setAlpha(0)
       setVisible(0.5)
       setTimeout(() => {
         viewRef.current?.setVisible(true)
         backdropRef.current?.setVisible(true)
         applyEffect(createZoomInEffect, { time: 500 })
+        a2(createFadeInEffect, { time: 500 })
         setTimeout(() => {
           setVisible(1)
           stopEffects()
@@ -77,6 +82,7 @@ export function Modal(props: ModalProps) {
       setVisible(0.6)
       setTimeout(() => {
         applyEffect(createZoomOutEffect, { time: 500 })
+        a2(createFadeOutEffect, { time: 500 })
         setTimeout(() => {
           setVisible(0)
           stopEffects()

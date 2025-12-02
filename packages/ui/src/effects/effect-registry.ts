@@ -19,6 +19,8 @@ import {
   createBounceEffect,
   createBreatheEffect,
   createFadeEffect,
+  createFadeInEffect,
+  createFadeOutEffect,
   createFlashEffect,
   createFlipInEffect,
   createFlipOutEffect,
@@ -53,6 +55,8 @@ export type BuiltInEffectName =
   | 'flash'
   | 'jello'
   | 'fade'
+  | 'fadeIn'
+  | 'fadeOut'
   | 'wobble'
   | 'tada'
   | 'swing'
@@ -109,6 +113,8 @@ export const EFFECT_REGISTRY: Record<BuiltInEffectName, EffectFn | null> = {
   flash: createFlashEffect,
   jello: createJelloEffect,
   fade: createFadeEffect,
+  fadeIn: createFadeInEffect,
+  fadeOut: createFadeOutEffect,
   wobble: createWobbleEffect,
   tada: createTadaEffect,
   swing: createSwingEffect,
