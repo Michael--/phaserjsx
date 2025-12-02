@@ -11,6 +11,7 @@ import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
 import type { ViewProps } from '../view'
+import { RefOriginView } from './RefOriginView'
 
 /**
  * Slider mark/tick definition
@@ -58,6 +59,9 @@ export interface SliderProps extends Omit<ViewProps, 'children'>, EffectDefiniti
 
   /** Show value label on thumb */
   showValue?: boolean
+
+  /** Value label offset (x, y) relative to thumb - overrides theme */
+  valueLabelOffset?: { x?: number; y?: number }
 
   /** Custom value formatter for label */
   formatValue?: (value: number) => string
@@ -118,6 +122,12 @@ export interface RangeSliderProps extends Omit<ViewProps, 'children'>, EffectDef
   /** Show value labels on thumbs */
   showValue?: boolean
 
+  /** Value label offset for first thumb (x, y) - overrides theme */
+  valueLabelOffset1?: { x?: number; y?: number }
+
+  /** Value label offset for second thumb (x, y) - overrides theme */
+  valueLabelOffset2?: { x?: number; y?: number }
+
   /** Custom value formatter for labels */
   formatValue?: (value: number) => string
 
@@ -163,6 +173,9 @@ interface BaseSliderProps extends Omit<ViewProps, 'children'>, EffectDefinition 
   reverse?: boolean
   disabled?: boolean
   showValue?: boolean
+  valueLabelOffset?: { x?: number; y?: number }
+  valueLabelOffset1?: { x?: number; y?: number }
+  valueLabelOffset2?: { x?: number; y?: number }
   formatValue?: (value: number) => string
   marks?: SliderMark[] | boolean
   snap?: boolean
@@ -468,6 +481,58 @@ function BaseSlider(props: BaseSliderProps) {
 
   const finalAlpha = disabled ? (themed.disabledAlpha ?? 0.4) : (props.alpha ?? 1)
 
+  // Calculate value label offsets with smart defaults for RangeSlider
+  // Labels are centered (origin 0.5, 0.5), so offset is from thumb center
+  const defaultThemeOffset = themed.valueLabel?.offset ?? 8
+  const labelGap = thumbSize + 8 // Gap from thumb edge + small padding
+
+  // For single slider: label follows reverse direction (left if reversed, right if normal)
+  // For range slider: labels on opposite sides (flipped if reversed)
+  const labelOffset1 = {
+    x:
+      props.valueLabelOffset1?.x ??
+      props.valueLabelOffset?.x ??
+      (isRange
+        ? isHorizontal
+          ? reverse
+            ? labelGap
+            : -labelGap
+          : labelGap
+        : isHorizontal
+          ? reverse
+            ? -labelGap
+            : labelGap
+          : labelGap),
+    y:
+      props.valueLabelOffset1?.y ??
+      props.valueLabelOffset?.y ??
+      (isRange
+        ? !isHorizontal
+          ? reverse
+            ? labelGap
+            : -labelGap
+          : -defaultThemeOffset
+        : !isHorizontal
+          ? reverse
+            ? labelGap
+            : -defaultThemeOffset
+          : -defaultThemeOffset),
+  }
+  const labelOffset2 = {
+    x:
+      props.valueLabelOffset2?.x ??
+      (isRange ? (isHorizontal ? (reverse ? -labelGap : labelGap) : labelGap) : labelGap),
+    y:
+      props.valueLabelOffset2?.y ??
+      (isRange
+        ? !isHorizontal
+          ? reverse
+            ? -labelGap
+            : labelGap
+          : -defaultThemeOffset
+        : -defaultThemeOffset),
+  }
+
   // Calculate fill track dimensions
   const fillStartPercentage = isRange ? valueToPercentage(rangeValue[0]) : 0
   const fillEndPercentage = isRange
@@ -587,20 +652,36 @@ function BaseSlider(props: BaseSliderProps) {
           </View>
 
           {props.showValue ? (
-            <View
-              x={thumbSize}
-              y={-(themed.valueLabel?.offset ?? 8)}
-              backgroundColor={themed.valueLabel?.backgroundColor ?? 0x000000}
-              padding={themed.valueLabel?.padding ?? { left: 6, right: 6, top: 4, bottom: 4 }}
-              cornerRadius={themed.valueLabel?.cornerRadius ?? 4}
-              theme={nestedTheme}
+            <RefOriginView
+              x={labelOffset1.x}
+              y={labelOffset1.y}
+              width={0}
+              height={0}
+              originX={0.5}
+              originY={0.5}
             >
-              <Text
-                text={formatValue(thumb1Value)}
-                style={themed.valueLabel?.textStyle ?? { color: '#ffffff', fontSize: '12px' }}
-                theme={nestedTheme}
-              />
-            </View>
+              <View
+                width={100}
+                height={50}
+                x={-50}
+                y={-25}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <View
+                  backgroundColor={themed.valueLabel?.backgroundColor ?? 0x000000}
+                  padding={themed.valueLabel?.padding ?? { left: 6, right: 6, top: 4, bottom: 4 }}
+                  cornerRadius={themed.valueLabel?.cornerRadius ?? 4}
+                  theme={nestedTheme}
+                >
+                  <Text
+                    text={formatValue(thumb1Value)}
+                    style={themed.valueLabel?.textStyle ?? { color: '#ffffff', fontSize: '12px' }}
+                    theme={nestedTheme}
+                  />
+                </View>
+              </View>
+            </RefOriginView>
           ) : null}
         </View>
 
@@ -643,20 +724,36 @@ function BaseSlider(props: BaseSliderProps) {
             </View>
 
             {props.showValue ? (
-              <View
-                x={thumbSize}
-                y={-(themed.valueLabel?.offset ?? 8)}
-                backgroundColor={themed.valueLabel?.backgroundColor ?? 0x000000}
-                padding={themed.valueLabel?.padding ?? { left: 6, right: 6, top: 4, bottom: 4 }}
-                cornerRadius={themed.valueLabel?.cornerRadius ?? 4}
-                theme={nestedTheme}
+              <RefOriginView
+                x={labelOffset2.x}
+                y={labelOffset2.y}
+                width={0}
+                height={0}
+                originX={0.5}
+                originY={0.5}
               >
-                <Text
-                  text={formatValue(thumb2Value)}
-                  style={themed.valueLabel?.textStyle ?? { color: '#ffffff', fontSize: '12px' }}
-                  theme={nestedTheme}
-                />
-              </View>
+                <View
+                  width={100}
+                  height={50}
+                  x={-50}
+                  y={-25}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <View
+                    backgroundColor={themed.valueLabel?.backgroundColor ?? 0x000000}
+                    padding={themed.valueLabel?.padding ?? { left: 6, right: 6, top: 4, bottom: 4 }}
+                    cornerRadius={themed.valueLabel?.cornerRadius ?? 4}
+                    theme={nestedTheme}
+                  >
+                    <Text
+                      text={formatValue(thumb2Value)}
+                      style={themed.valueLabel?.textStyle ?? { color: '#ffffff', fontSize: '12px' }}
+                      theme={nestedTheme}
+                    />
+                  </View>
+                </View>
+              </RefOriginView>
             ) : null}
           </View>
         ) : null}

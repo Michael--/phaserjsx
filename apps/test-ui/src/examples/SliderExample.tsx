@@ -258,6 +258,7 @@ export function SliderExample() {
             <Slider
               orientation="vertical"
               value={volume}
+              showValue
               onChange={(v) => {
                 setVolume(v)
               }}
