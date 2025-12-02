@@ -176,18 +176,29 @@ export const defaultTheme: Theme = {
     optionGap: 2,
   },
   Slider: {
+    // Track styling
     trackColor: colors.surface.dark.toNumber(),
     trackFilledColor: colors.primary.DEFAULT.toNumber(),
     trackHeight: 6,
     trackBorderRadius: 3,
     trackLength: 200,
+    trackHoverColor: colors.surface.medium.toNumber(),
+
+    // Thumb styling
     thumbColor: colors.primary.DEFAULT.toNumber(),
     thumbSize: 20,
     thumbBorderColor: colors.border.light.toNumber(),
     thumbBorderWidth: 2,
+    thumbHoverColor: colors.primary.light.toNumber(),
+    thumbActiveColor: colors.primary.dark.toNumber(),
+    thumbDragScale: 1.1,
+
+    // Marks/Ticks
     markColor: colors.border.medium.toNumber(),
     markHeight: 8,
     markWidth: 2,
+
+    // Value label
     labelStyle: textStyles.small,
     labelOffset: 10,
     valueLabel: {
@@ -197,7 +208,14 @@ export const defaultTheme: Theme = {
       cornerRadius: 4,
       offset: 8,
     },
+
+    // RangeSlider specific
+    minDistance: 0,
+
+    // States
     disabledAlpha: 0.4,
+
+    // Animation & Effects
     animationConfig: { tension: 300, friction: 30 } as const,
   },
 }

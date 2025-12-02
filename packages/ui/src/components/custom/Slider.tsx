@@ -186,9 +186,10 @@ function DefaultThumb(props: {
   borderColor?: number
   borderWidth?: number
   isDragging: boolean
+  dragScale?: number
 }) {
-  const { size, color, borderColor, borderWidth = 0, isDragging } = props
-  const scale = isDragging ? 1.1 : 1.0
+  const { size, color, borderColor, borderWidth = 0, isDragging, dragScale = 1.1 } = props
+  const scale = isDragging ? dragScale : 1.0
 
   return (
     <Graphics
@@ -255,8 +256,8 @@ function BaseSlider(props: BaseSliderProps) {
   const trackRef = useRef<Phaser.GameObjects.Container | null>(null)
   const thumb1Ref = useRef<Phaser.GameObjects.Container | null>(null)
   const thumb2Ref = useRef<Phaser.GameObjects.Container | null>(null)
-  const isDragging1Ref = useRef(false)
-  const isDragging2Ref = useRef(false)
+  const [isDragging1, setIsDragging1] = useState(false)
+  const [isDragging2, setIsDragging2] = useState(false)
   const virtualPos1Ref = useRef(0)
   const virtualPos2Ref = useRef(0)
 
@@ -307,16 +308,16 @@ function BaseSlider(props: BaseSliderProps) {
 
   // Sync drag positions with values when not dragging (controlled component support)
   useEffect(() => {
-    if (!isDragging1Ref.current) {
+    if (!isDragging1) {
       setCurrentDragPos1(thumb1PositionFromValue)
     }
-  }, [thumb1PositionFromValue])
+  }, [thumb1PositionFromValue, isDragging1])
 
   useEffect(() => {
-    if (!isDragging2Ref.current && isRange) {
+    if (!isDragging2 && isRange) {
       setCurrentDragPos2(thumb2PositionFromValue)
     }
-  }, [thumb2PositionFromValue, isRange])
+  }, [thumb2PositionFromValue, isRange, isDragging2])
 
   // Generate marks if marks={true}
   const marksArray = useMemo<SliderMark[]>(() => {
@@ -374,14 +375,15 @@ function BaseSlider(props: BaseSliderProps) {
     data.stopPropagation()
 
     const isThumb1 = thumbIndex === 0
-    const isDraggingRef = isThumb1 ? isDragging1Ref : isDragging2Ref
+    const isDragging = isThumb1 ? isDragging1 : isDragging2
+    const setIsDragging = isThumb1 ? setIsDragging1 : setIsDragging2
     const virtualPosRef = isThumb1 ? virtualPos1Ref : virtualPos2Ref
     const setCurrentDragPos = isThumb1 ? setCurrentDragPos1 : setCurrentDragPos2
     const currentThumbPos = isThumb1 ? currentDragPos1 : currentDragPos2
     const applyEffect = isThumb1 ? applyEffect1 : applyEffect2
 
     if (data.state === 'start') {
-      isDraggingRef.current = true
+      setIsDragging(true)
       virtualPosRef.current = currentThumbPos
 
       if (isRange) {
@@ -393,7 +395,7 @@ function BaseSlider(props: BaseSliderProps) {
     }
 
     if (data.state === 'end') {
-      isDraggingRef.current = false
+      setIsDragging(false)
 
       if (isRange) {
         ;(props.onChangeEnd as ((v: [number, number]) => void) | undefined)?.(rangeValue)
@@ -405,7 +407,7 @@ function BaseSlider(props: BaseSliderProps) {
       return
     }
 
-    if (!isDraggingRef.current) return
+    if (!isDragging) return
 
     // Use frame-to-frame delta
     const delta = orientation === 'horizontal' ? (data.dx ?? 0) : (data.dy ?? 0)
@@ -571,14 +573,15 @@ function BaseSlider(props: BaseSliderProps) {
             theme={nestedTheme}
           >
             {props.renderThumb ? (
-              props.renderThumb(thumb1Value, isDragging1Ref.current, 0)
+              props.renderThumb(thumb1Value, isDragging1, 0)
             ) : (
               <DefaultThumb
                 size={thumbSize}
                 color={themed.thumbColor ?? 0x4dabf7}
                 borderColor={themed.thumbBorderColor ?? 0xffffff}
                 borderWidth={themed.thumbBorderWidth ?? 2}
-                isDragging={isDragging1Ref.current}
+                isDragging={isDragging1}
+                dragScale={themed.thumbDragScale ?? 1.1}
               />
             )}
           </View>
@@ -626,14 +629,15 @@ function BaseSlider(props: BaseSliderProps) {
               theme={nestedTheme}
             >
               {props.renderThumb ? (
-                props.renderThumb(thumb2Value, isDragging2Ref.current, 1)
+                props.renderThumb(thumb2Value, isDragging2, 1)
               ) : (
                 <DefaultThumb
                   size={thumbSize}
                   color={themed.thumbColor ?? 0x4dabf7}
                   borderColor={themed.thumbBorderColor ?? 0xffffff}
                   borderWidth={themed.thumbBorderWidth ?? 2}
-                  isDragging={isDragging2Ref.current}
+                  isDragging={isDragging2}
+                  dragScale={themed.thumbDragScale ?? 1.1}
                 />
               )}
             </View>
