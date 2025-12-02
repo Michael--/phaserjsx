@@ -7,6 +7,7 @@
 export type IconLoaderFn = () => Promise<{ default: string }>
 
 export const iconLoaders: Record<string, IconLoaderFn> = {
+  'bell': () => import('bootstrap-icons/icons/bell.svg' as string),
   'bell-fill': () => import('bootstrap-icons/icons/bell-fill.svg' as string),
   'boxes': () => import('bootstrap-icons/icons/boxes.svg' as string),
   'bricks': () => import('bootstrap-icons/icons/bricks.svg' as string),
@@ -23,9 +24,13 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'grid': () => import('bootstrap-icons/icons/grid.svg' as string),
   'hand-index': () => import('bootstrap-icons/icons/hand-index.svg' as string),
   'house': () => import('bootstrap-icons/icons/house.svg' as string),
+  'moon': () => import('bootstrap-icons/icons/moon.svg' as string),
   'palette': () => import('bootstrap-icons/icons/palette.svg' as string),
   'person-circle': () => import('bootstrap-icons/icons/person-circle.svg' as string),
   'question-circle': () => import('bootstrap-icons/icons/question-circle.svg' as string),
   'square': () => import('bootstrap-icons/icons/square.svg' as string),
   'stars': () => import('bootstrap-icons/icons/stars.svg' as string),
+  'sun': () => import('bootstrap-icons/icons/sun.svg' as string),
+  'toggle-on': () => import('bootstrap-icons/icons/toggle-on.svg' as string),
+  'wifi': () => import('bootstrap-icons/icons/wifi.svg' as string),
 }

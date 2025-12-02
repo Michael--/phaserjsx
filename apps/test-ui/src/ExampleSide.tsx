@@ -32,6 +32,7 @@ import { StackExample } from './examples/StackExample'
 import { TestExample } from './examples/TestExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
+import { ToggleExample } from './examples/ToggleExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -73,6 +74,7 @@ export type ExampleKey =
   | 'checkbox'
   | 'dropdown'
   | 'slider'
+  | 'toggle'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -88,6 +90,7 @@ const groupedExamples: GroupedExamples = {
     examples: {
       button: { label: 'Button Variants', component: ButtonExample },
       checkbox: { label: 'Checkbox Component', component: CheckboxExample },
+      toggle: { label: 'Toggle/Switch Component', component: ToggleExample },
       graphics: { label: 'Graphics Component', component: GraphicsExample },
       image: { label: 'Image Component', component: ImageExample },
       sprite: { label: 'Sprite Component', component: SpriteExample },

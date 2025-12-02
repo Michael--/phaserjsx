@@ -65,7 +65,7 @@
 - ✅ `Checkbox` - Checkbox mit Interaktivität
 - ✅ `RadioButton` / `RadioGroup` - Radio-Buttons
 - ✅ `Dropdown` / `Select` - **IMPLEMENTIERT! 🎉**
-- ❌ `Toggle` / `Switch` - **FEHLT**
+- ✅ `Toggle` / `Switch` - **IMPLEMENTIERT! 🎉**
 
 **Layout & Container:**
 

@@ -218,4 +218,18 @@ export const defaultTheme: Theme = {
     // Animation & Effects
     animationConfig: { tension: 300, friction: 30 } as const,
   },
+  Toggle: {
+    width: 50,
+    height: 28,
+    thumbSize: 24,
+    trackColorOff: colors.surface.dark.toNumber(),
+    trackColorOn: colors.success.DEFAULT.toNumber(),
+    thumbColor: colors.surface.lightest.toNumber(),
+    disabledColor: colors.border.medium.toNumber(),
+    padding: 2,
+    duration: 200,
+    gap: 8,
+    labelStyle: textStyles.DEFAULT,
+    labelPosition: 'right',
+  },
 }

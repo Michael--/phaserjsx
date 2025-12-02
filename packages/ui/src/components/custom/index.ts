@@ -35,4 +35,5 @@ export {
   type SliderMark,
   type SliderProps,
 } from './Slider'
+export { Toggle, type ToggleProps } from './Toggle'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'

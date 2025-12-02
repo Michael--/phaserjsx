@@ -166,4 +166,18 @@ export interface CustomComponentThemes {
     effect?: string
     effectConfig?: Record<string, unknown>
   }
+  Toggle: {
+    width?: number
+    height?: number
+    thumbSize?: number
+    trackColorOff?: number
+    trackColorOn?: number
+    thumbColor?: number
+    disabledColor?: number
+    padding?: number
+    duration?: number
+    gap?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labelPosition?: 'left' | 'right' | 'none'
+  } & NestedComponentThemes
 }
