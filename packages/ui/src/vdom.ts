@@ -501,10 +501,24 @@ export function unmount(vnode: VNode | null | undefined | false): void {
 /**
  * Patches VNode tree with updates
  * @param parent - Parent container or scene
- * @param oldV - Previous VNode
- * @param newV - New VNode
+ * @param oldV - Previous VNode (can be null if previous render returned null)
+ * @param newV - New VNode (can be null if new render returns null)
  */
-export function patchVNode(parent: ParentType, oldV: VNode, newV: VNode) {
+export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode | null) {
+  // Handle null cases (e.g., Modal closing/opening)
+  if (!oldV && !newV) return
+  if (!oldV && newV) {
+    mount(parent, newV)
+    return
+  }
+  if (oldV && !newV) {
+    unmount(oldV)
+    return
+  }
+
+  // Both non-null from here on (TypeScript guard)
+  if (!oldV || !newV) return
+
   // Check if keys differ - if so, unmount old and mount new
   if (oldV.__key !== newV.__key) {
     unmount(oldV)

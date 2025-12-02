@@ -180,4 +180,8 @@ export interface CustomComponentThemes {
     labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
     labelPosition?: 'left' | 'right' | 'none'
   } & NestedComponentThemes
+  Modal: {
+    backdropColor?: number
+    backdropOpacity?: number
+  } & NestedComponentThemes
 }

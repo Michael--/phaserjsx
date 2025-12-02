@@ -232,4 +232,8 @@ export const defaultTheme: Theme = {
     labelStyle: textStyles.DEFAULT,
     labelPosition: 'right',
   },
+  Modal: {
+    backdropColor: 0x000000,
+    backdropOpacity: 0.5,
+  },
 }

@@ -21,6 +21,7 @@ import { CheckboxExample } from './examples/CheckboxExample'
 import { CustomEffectsExample } from './examples/CustomEffectsExample'
 import { DropdownExample } from './examples/DropdownExample'
 import { ImageExample } from './examples/ImageExample'
+import { ModalExample } from './examples/ModalExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { PortalExample } from './examples/PortalExample'
@@ -77,6 +78,7 @@ export type ExampleKey =
   | 'slider'
   | 'toggle'
   | 'portal'
+  | 'modal'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -103,6 +105,7 @@ const groupedExamples: GroupedExamples = {
       dropdown: { label: 'Dropdown Component', component: DropdownExample },
       slider: { label: 'Slider Component', component: SliderExample },
       portal: { label: 'Portal System (Foundation)', component: PortalExample },
+      modal: { label: 'Modal Component', component: ModalExample },
     },
   },
   layout: {

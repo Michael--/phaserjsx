@@ -16,6 +16,7 @@ export {
   type IconLoaderFn,
   type IconProps,
 } from './Icon'
+export { Modal, type ModalProps } from './Modal'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { Portal, type PortalProps } from './Portal'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
