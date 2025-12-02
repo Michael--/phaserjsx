@@ -94,10 +94,17 @@ export function Toggle(props: ToggleProps) {
   const gap = themed.gap ?? 8
   const labelPosition = props.labelPosition ?? themed.labelPosition ?? 'right'
 
+  // Calculate positions
+  const thumbRadius = thumbSize / 2
+  const trackRadius = height / 2
+  const thumbOffsetOff = padding + thumbRadius
+  const thumbOffsetOn = width - padding - thumbRadius
+
   // State
   const initialChecked = props.checked !== undefined ? props.checked : false
   const [checked, setChecked] = useState<boolean>(initialChecked)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [thumbX, setThumbX] = useState<number>(initialChecked ? thumbOffsetOn : thumbOffsetOff)
 
   // Refs
   const trackRef = useRef<Phaser.GameObjects.Graphics | null>(null)
@@ -111,21 +118,14 @@ export function Toggle(props: ToggleProps) {
     }
   }, [props.checked])
 
-  // Calculate positions
-  const thumbRadius = thumbSize / 2
-  const trackRadius = height / 2
-  const thumbOffsetOff = padding + thumbRadius
-  const thumbOffsetOn = width - padding - thumbRadius
-
   /**
    * Animate toggle transition
    */
   const animateToggle = (newChecked: boolean) => {
     const track = trackRef.current
-    const thumb = thumbRef.current
     const container = containerRef.current
 
-    if (!track || !thumb || !container) return
+    if (!track || !container) return
 
     const scene = container.scene
     if (!scene) return
@@ -134,13 +134,21 @@ export function Toggle(props: ToggleProps) {
 
     const endX = newChecked ? thumbOffsetOn : thumbOffsetOff
 
-    // Animate thumb position
-    scene.tweens.add({
-      targets: thumb,
-      x: endX,
+    // Animate thumb position via state
+    const startX = thumbX
+
+    scene.tweens.addCounter({
+      from: 0,
+      to: 1,
       duration,
       ease: 'Cubic.easeOut',
+      onUpdate: (tween: Phaser.Tweens.Tween) => {
+        const progress = tween.getValue() as number
+        const currentX = startX + (endX - startX) * progress
+        setThumbX(currentX)
+      },
       onComplete: () => {
+        setThumbX(endX)
         setIsAnimating(false)
       },
     })
@@ -197,10 +205,6 @@ export function Toggle(props: ToggleProps) {
     g.fillCircle(0, 0, thumbRadius)
   }
 
-  // Initial thumb position
-  const initialThumbX = checked ? thumbOffsetOn : thumbOffsetOff
-  const thumbY = height / 2
-
   // Build toggle element
   const toggleElement = (
     <View
@@ -214,13 +218,13 @@ export function Toggle(props: ToggleProps) {
       {/* Track */}
       <Graphics ref={trackRef} width={width} height={height} onDraw={drawTrack} />
 
-      {/* Thumb */}
+      {/* Thumb - position controlled by state */}
       <Graphics
         ref={thumbRef}
         width={thumbSize}
         height={thumbSize}
-        x={initialThumbX}
-        y={thumbY}
+        x={thumbX}
+        y={height / 2}
         onDraw={drawThumb}
       />
     </View>

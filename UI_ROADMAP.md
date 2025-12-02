@@ -64,8 +64,8 @@
 - ✅ `IconButton` - Button mit Icon
 - ✅ `Checkbox` - Checkbox mit Interaktivität
 - ✅ `RadioButton` / `RadioGroup` - Radio-Buttons
-- ✅ `Dropdown` / `Select` - **IMPLEMENTIERT! 🎉**
-- ✅ `Toggle` / `Switch` - **IMPLEMENTIERT! 🎉**
+- ✅ `Dropdown` - Dropdown/Select Component
+- ✅ `Toggle` / `Switch` - Toggle Component mit smooth Animation
 
 **Layout & Container:**
 
@@ -193,10 +193,10 @@
 
 #### 3. Toggle/Switch Component
 
-- ❌ `Toggle` - iOS-style Switch
-- ❌ Animation (Slide + Fade)
+- ✅ `Toggle` - iOS-style Switch
+- ✅ Animation (Slide + Fade)
 - ❌ Loading State
-- ❌ Disabled State
+- ✅ Disabled State
 - **Aufwand:** 0.5 Tage
 - **Begründung:** Moderne Alternative zu Checkbox
 
