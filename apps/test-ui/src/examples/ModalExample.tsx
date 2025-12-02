@@ -30,7 +30,7 @@ export function ModalExample() {
       {/* Modal 1 - Close on backdrop */}
       <Modal isOpen={isOpen1} onClose={() => setIsOpen1(false)} depth={1000}>
         <View
-          width={400}
+          minWidth={400}
           padding={24}
           gap={16}
           direction="column"
@@ -53,7 +53,7 @@ export function ModalExample() {
         depth={2000}
       >
         <View
-          width={400}
+          minWidth={400}
           padding={24}
           gap={16}
           direction="column"
@@ -74,7 +74,7 @@ export function ModalExample() {
       {/* Modal 3 - No escape close */}
       <Modal isOpen={isOpen3} onClose={() => setIsOpen3(false)} closeOnEscape={false} depth={3000}>
         <View
-          width={400}
+          minWidth={400}
           padding={24}
           gap={16}
           direction="column"

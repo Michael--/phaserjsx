@@ -54,6 +54,7 @@ export function Modal(props: ModalProps) {
 
   // Animation state (0 = hidden, 1 = visible)
   const [visible, setVisible] = useState(props.isOpen ? 0.5 : 0)
+  const backdropRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect, stopEffects } = useGameObjectEffect(viewRef)
 
@@ -65,6 +66,7 @@ export function Modal(props: ModalProps) {
       setVisible(0.5)
       setTimeout(() => {
         viewRef.current?.setVisible(true)
+        backdropRef.current?.setVisible(true)
         applyEffect(createZoomInEffect, { time: 500 })
         setTimeout(() => {
           setVisible(1)
@@ -112,11 +114,13 @@ export function Modal(props: ModalProps) {
     <Portal depth={props.depth ?? 1000}>
       {/* Backdrop */}
       <View
+        ref={backdropRef}
         width={viewport.width}
         height={viewport.height}
         backgroundColor={themed.backdropColor ?? 0x000000}
         alpha={themed.backdropOpacity ?? 0.5}
         onTouch={handleBackdropClick}
+        visible={visible > 0.5}
       />
 
       {/* Content Container (centered) */}
