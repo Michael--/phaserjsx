@@ -11,6 +11,7 @@ import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } fr
 import { host } from './host'
 import { Fragment } from './jsx-runtime'
 import { calculateLayout, type LayoutSize } from './layout/index'
+import { portalRegistry } from './portal'
 import { getRenderContext } from './render-context'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
@@ -831,6 +832,9 @@ export function mountJSX(
   if (scene) {
     const renderContext = getRenderContext(parentOrScene)
     renderContext.setViewport(scene.scale.width, scene.scale.height, scene)
+
+    // Also set viewport for portal system (for Modal centering, etc.)
+    portalRegistry.setViewportSize(scene, scene.scale.width, scene.scale.height)
   }
 
   const vnode: VNode = { type, props, children: [] }

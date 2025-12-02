@@ -13,6 +13,7 @@ class PortalRegistry {
   private portals: Map<string, PortalTree> = new Map()
   private idCounter = 0
   private portalRoots: Map<Phaser.Scene, Phaser.GameObjects.Container> = new Map()
+  private viewportSizes: Map<Phaser.Scene, { width: number; height: number }> = new Map()
 
   /**
    * Generate unique portal ID
@@ -170,6 +171,26 @@ class PortalRegistry {
       portal.container.destroy()
     }
     this.portals.clear()
+  }
+
+  /**
+   * Set viewport size for a scene
+   * Used by Portal system to know screen dimensions for centering
+   * @param scene - Phaser scene
+   * @param width - Viewport width
+   * @param height - Viewport height
+   */
+  setViewportSize(scene: Phaser.Scene, width: number, height: number): void {
+    this.viewportSizes.set(scene, { width, height })
+  }
+
+  /**
+   * Get viewport size for a scene
+   * @param scene - Phaser scene
+   * @returns Viewport size or default 800x600
+   */
+  getViewportSize(scene: Phaser.Scene): { width: number; height: number } {
+    return this.viewportSizes.get(scene) ?? { width: 800, height: 600 }
   }
 
   /**

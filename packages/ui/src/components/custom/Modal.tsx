@@ -5,7 +5,8 @@
  * @module components/custom/Modal
  */
 import type { GestureEventData } from '../../gestures/gesture-types'
-import { useEffect, useState, useTheme } from '../../hooks'
+import { useEffect, useScene, useState, useTheme } from '../../hooks'
+import { portalRegistry } from '../../portal'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { View } from '../index'
@@ -38,9 +39,13 @@ export interface ModalProps {
 export function Modal(props: ModalProps) {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Modal', localTheme, {})
+  const scene = useScene()
 
   const closeOnBackdrop = props.closeOnBackdrop ?? true
   const closeOnEscape = props.closeOnEscape ?? true
+
+  // Get viewport size from portal registry
+  const viewport = scene ? portalRegistry.getViewportSize(scene) : { width: 800, height: 600 }
 
   // Animation state (0 = hidden, 1 = visible)
   const [animationProgress, setAnimationProgress] = useState(props.isOpen ? 1 : 0)
@@ -83,15 +88,21 @@ export function Modal(props: ModalProps) {
     <Portal depth={props.depth ?? 1000}>
       {/* Backdrop */}
       <View
-        width="100%"
-        height="100%"
+        width={viewport.width}
+        height={viewport.height}
         backgroundColor={themed.backdropColor ?? 0x000000}
         alpha={(themed.backdropOpacity ?? 0.5) * animationProgress}
         onTouch={handleBackdropClick}
       />
 
       {/* Content Container (centered) */}
-      <View width="100%" height="100%" direction="row" justifyContent="center" alignItems="center">
+      <View
+        width={viewport.width}
+        height={viewport.height}
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
         {/* Content Wrapper (prevents backdrop click) */}
         <View
           alpha={animationProgress}
