@@ -102,13 +102,6 @@ export const DevConfig = {
      * @default true (in development)
      */
     unnecessaryRemounts: true,
-
-    /**
-     * Minimum number of siblings before key warnings trigger
-     * Single children don't need keys, warnings start at this threshold
-     * @default 2
-     */
-    keyWarningThreshold: 2,
   },
 
   /**

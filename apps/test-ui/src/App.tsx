@@ -68,12 +68,14 @@ function LightDarkModeToggle() {
 function PresetSelector() {
   const pre = getAvailablePresets()
   const btn = pre.map((p) => {
-    return <Button size="small" variant="secondary" text={p} onClick={() => setColorPreset(p)} />
+    return (
+      <Button key={p} size="small" variant="secondary" text={p} onClick={() => setColorPreset(p)} />
+    )
   })
 
   return (
     <View direction="row" gap={10}>
-      {...btn}
+      {btn}
     </View>
   )
 }
