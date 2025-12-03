@@ -274,4 +274,24 @@ export const defaultTheme: Theme = {
     paddingOffset: 0,
     textStyle: textStyles.DEFAULT,
   },
+  Tooltip: {
+    position: 'top',
+    showDelay: 1000,
+    hideDelay: 500,
+    offset: 8,
+    textStyle: {
+      fontSize: '12px',
+      fontFamily: 'Arial',
+      color: colors.text.dark.toString(),
+      backgroundColor: colors.warning.medium.toString(),
+      padding: { x: 2, y: 2 },
+    },
+    cornerRadius: 8,
+    animation: {
+      fadeIn: 200,
+      fadeOut: 200,
+      moveUp: 20,
+      pulse: false,
+    },
+  },
 }

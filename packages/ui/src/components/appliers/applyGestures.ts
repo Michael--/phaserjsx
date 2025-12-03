@@ -39,14 +39,18 @@ export function applyGesturesProps(
     next.onTouchOutside ||
     next.onTouchMove ||
     next.onDoubleTap ||
-    next.onLongPress
+    next.onLongPress ||
+    next.onHoverStart ||
+    next.onHoverEnd
   )
   const hadAnyGesture = !!(
     prev.onTouch ||
     prev.onTouchOutside ||
     prev.onTouchMove ||
     prev.onDoubleTap ||
-    prev.onLongPress
+    prev.onLongPress ||
+    prev.onHoverStart ||
+    prev.onHoverEnd
   )
 
   // Auto-enable if callbacks present, unless explicitly disabled
@@ -84,6 +88,8 @@ export function applyGesturesProps(
     if (next.onTouchMove) callbacks.onTouchMove = next.onTouchMove
     if (next.onDoubleTap) callbacks.onDoubleTap = next.onDoubleTap
     if (next.onLongPress) callbacks.onLongPress = next.onLongPress
+    if (next.onHoverStart) callbacks.onHoverStart = next.onHoverStart
+    if (next.onHoverEnd) callbacks.onHoverEnd = next.onHoverEnd
 
     const config: { longPressDuration?: number; doubleTapDelay?: number } = {}
     if (next.longPressDuration !== undefined) config.longPressDuration = next.longPressDuration
@@ -107,7 +113,9 @@ export function applyGesturesProps(
       prev.onTouchOutside !== next.onTouchOutside ||
       prev.onTouchMove !== next.onTouchMove ||
       prev.onDoubleTap !== next.onDoubleTap ||
-      prev.onLongPress !== next.onLongPress
+      prev.onLongPress !== next.onLongPress ||
+      prev.onHoverStart !== next.onHoverStart ||
+      prev.onHoverEnd !== next.onHoverEnd
 
     if (callbacksChanged) {
       const callbacks: GestureCallbacks = {}
@@ -116,6 +124,8 @@ export function applyGesturesProps(
       if (next.onTouchMove) callbacks.onTouchMove = next.onTouchMove
       if (next.onDoubleTap) callbacks.onDoubleTap = next.onDoubleTap
       if (next.onLongPress) callbacks.onLongPress = next.onLongPress
+      if (next.onHoverStart) callbacks.onHoverStart = next.onHoverStart
+      if (next.onHoverEnd) callbacks.onHoverEnd = next.onHoverEnd
 
       manager.updateCallbacks(container, callbacks)
     }

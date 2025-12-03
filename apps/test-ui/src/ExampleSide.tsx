@@ -37,6 +37,7 @@ import { TestExample } from './examples/TestExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
 import { ToggleExample } from './examples/ToggleExample'
+import { TooltipExample } from './examples/TooltipExample'
 import { WrapTextExample } from './examples/WrapTextExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
@@ -80,6 +81,7 @@ export type ExampleKey =
   | 'dropdown'
   | 'slider'
   | 'toggle'
+  | 'tooltip'
   | 'portal'
   | 'modal'
   | 'dialog'
@@ -110,6 +112,7 @@ const groupedExamples: GroupedExamples = {
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
       dropdown: { label: 'Dropdown Component', component: DropdownExample },
       slider: { label: 'Slider Component', component: SliderExample },
+      tooltip: { label: 'Tooltip Component', component: TooltipExample },
       portal: { label: 'Portal System (Foundation)', component: PortalExample },
       modal: { label: 'Modal Component', component: ModalExample },
       dialog: { label: 'Dialog Component', component: DialogExample },

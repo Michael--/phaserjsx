@@ -8,6 +8,7 @@ import type {
   GestureConfig,
   GestureContainerState,
   GestureEventData,
+  HoverEventData,
 } from './gesture-types'
 import { DEFAULT_GESTURE_CONFIG } from './gesture-types'
 
@@ -43,6 +44,9 @@ export class GestureManager {
 
   // Track which containers were hit during pointer down (for move event filtering)
   private activeContainersForMove = new Map<number, Set<Phaser.GameObjects.Container>>()
+
+  // Track hover state for each container (desktop/mouse only)
+  private hoveredContainers = new Map<Phaser.GameObjects.Container, boolean>()
 
   private isInitialized = false
 
@@ -125,6 +129,9 @@ export class GestureManager {
     if (this.activePointerDown?.container === container) {
       this.activePointerDown = null
     }
+
+    // Clear hover state
+    this.hoveredContainers.delete(container)
   }
 
   /**
@@ -657,7 +664,8 @@ export class GestureManager {
 
   /**
    * Handle global pointer move event
-   * Only notifies containers that were hit during pointer down
+   * Detects hover state changes and notifies containers with onHoverStart/onHoverEnd
+   * Only notifies containers that were hit during pointer down for onTouchMove
    * Bubbles through them until stopPropagation() is called
    */
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
@@ -667,7 +675,10 @@ export class GestureManager {
     const dy = last ? pointer.y - last.y : 0
     this.lastPointerPositions.set(pointer.id, { x: pointer.x, y: pointer.y })
 
-    // Only process if there's an active pointer down
+    // Hover detection for all containers (desktop/mouse only)
+    this.detectHoverChanges(pointer)
+
+    // Only process touch move if there's an active pointer down
     if (!this.activePointerDown || pointer.id !== this.activePointerDown.pointerId) {
       return
     }
@@ -785,6 +796,68 @@ export class GestureManager {
   }
 
   /**
+   * Detect hover state changes for all containers (desktop/mouse only)
+   * Called on every pointer move to update hover state
+   */
+  private detectHoverChanges(pointer: Phaser.Input.Pointer): void {
+    for (const [container, state] of this.containers) {
+      // Skip if container has no hover callbacks
+      if (!state.callbacks.onHoverStart && !state.callbacks.onHoverEnd) {
+        continue
+      }
+
+      // Check if container is active and visible
+      if (!container.active) continue
+
+      const isInside = this.isPointerInContainer(pointer, state)
+      const wasInside = this.hoveredContainers.get(container) ?? false
+
+      // Hover start
+      if (isInside && !wasInside) {
+        this.hoveredContainers.set(container, true)
+        if (state.callbacks.onHoverStart) {
+          const eventData = this.createHoverEventData(pointer, container, state.hitArea)
+          state.callbacks.onHoverStart(eventData)
+        }
+      }
+
+      // Hover end
+      if (!isInside && wasInside) {
+        this.hoveredContainers.set(container, false)
+        if (state.callbacks.onHoverEnd) {
+          const eventData = this.createHoverEventData(pointer, container, state.hitArea)
+          state.callbacks.onHoverEnd(eventData)
+        }
+      }
+    }
+  }
+
+  /**
+   * Create hover event data
+   */
+  private createHoverEventData(
+    pointer: Phaser.Input.Pointer,
+    container: Phaser.GameObjects.Container,
+    hitArea: Phaser.Geom.Rectangle
+  ): HoverEventData {
+    const localPos = this.getLocalPosition(pointer, container)
+
+    let propagationStopped = false
+
+    return {
+      pointer,
+      localX: localPos.x,
+      localY: localPos.y,
+      width: hitArea.width,
+      height: hitArea.height,
+      stopPropagation: () => {
+        propagationStopped = true
+      },
+      isPropagationStopped: () => propagationStopped,
+    }
+  }
+
+  /**
    * Cleanup all resources
    */
   private destroy(): void {
@@ -798,6 +871,7 @@ export class GestureManager {
     this.containers.clear()
     this.lastPointerPositions.clear()
     this.activePointerDown = null
+    this.hoveredContainers.clear()
 
     // Remove event listeners
     if (this.isInitialized) {

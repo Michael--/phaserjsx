@@ -68,6 +68,14 @@ export * from './colors'
 // Design token system - semantic tokens for colors, text styles, spacing, etc.
 export * from './design-tokens'
 
+// Tooltip system - onTooltip property types
+export type {
+  TooltipCallback,
+  TooltipConfig,
+  TooltipNativeAnimation,
+  TooltipPosition,
+} from './tooltip/tooltip-types'
+
 // Viewport context - provides screen dimensions for vw/vh units
 export { viewportRegistry, type ViewportSize } from './viewport-context'
 

@@ -87,7 +87,7 @@
 
 - ✅ `Icon` - SVG-basiertes Icon-System mit Generator
 - ✅ `Modal` / `Dialog`
-- ❌ `Tooltip` - **FEHLT (KRITISCH)**
+- ✅ `Tooltip` - Desktop/mouse hover tooltips
 - ❌ `Popover` - Context Menus - **FEHLT**
 - ❌ `Badge` / `Tag` - Labels & Notifications - **FEHLT**
 - ❌ `ProgressBar` - Loading/Health Bars - **FEHLT**
@@ -108,6 +108,7 @@
 - ✅ Long Press
 - ✅ Drag & Drop
 - ✅ Focus/Blur
+- ✅ Hover (onHoverStart/onHoverEnd) - Desktop/mouse only
 - ✅ Keyboard Input (`KeyboardInputManager`)
 - ✅ DOM Input Integration (`DOMInputElement`)
 

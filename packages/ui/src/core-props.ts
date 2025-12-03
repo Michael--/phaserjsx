@@ -117,6 +117,38 @@ export interface PhaserProps {
    * />
    */
   onReady?: (node: Phaser.GameObjects.GameObject) => void
+
+  /**
+   * Tooltip configuration callback (desktop/mouse only)
+   * Called when hover starts to determine tooltip configuration
+   * Return null/undefined to disable tooltip
+   * Return string as shortcut for { content: string }
+   *
+   * Note: Tooltips only work on desktop/mouse devices, not on touch devices (iPhone, iPad)
+   *
+   * @returns Tooltip configuration, string, or null to disable
+   *
+   * @example
+   * // Simple text tooltip
+   * <Button onTooltip={() => "Click to delete"} />
+   *
+   * // With i18n/translation
+   * <Button onTooltip={() => t('buttons.delete')} />
+   *
+   * // Conditional tooltip
+   * <Button onTooltip={() => isAdmin ? "Admin action" : null} />
+   *
+   * // Full configuration
+   * <Button onTooltip={() => ({
+   *   content: "Delete item",
+   *   position: "top",
+   *   showDelay: 100
+   * })} />
+   *
+   * // From repository/API
+   * <Button onTooltip={() => tooltipRepo.get('delete-btn')} />
+   */
+  onTooltip?: import('./tooltip/tooltip-types').TooltipCallback
 }
 
 /**
@@ -646,4 +678,18 @@ export interface GestureProps {
    * Requires enableGestures: true
    */
   onBlur?: (data: FocusEventData) => void
+
+  /**
+   * Called when pointer enters the container (desktop/mouse only)
+   * Does not work on touch devices (iPhone, iPad)
+   * Requires enableGestures: true
+   */
+  onHoverStart?: (data: import('./gestures/gesture-types').HoverEventData) => void
+
+  /**
+   * Called when pointer exits the container (desktop/mouse only)
+   * Does not work on touch devices (iPhone, iPad)
+   * Requires enableGestures: true
+   */
+  onHoverEnd?: (data: import('./gestures/gesture-types').HoverEventData) => void
 }

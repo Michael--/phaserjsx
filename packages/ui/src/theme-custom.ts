@@ -246,4 +246,27 @@ export interface CustomComponentThemes {
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     minWidth?: number
   } & NestedComponentThemes
+  Tooltip: {
+    /** Preferred position */
+    position?: 'top' | 'bottom' | 'left' | 'right'
+    /** Show delay in ms */
+    showDelay?: number
+    /** Hide delay in ms */
+    hideDelay?: number
+    /** Offset from target */
+    offset?: number
+
+    /** Text style */
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    /** Background corner radius */
+    cornerRadius?: number
+
+    /** Default animation config */
+    animation?: {
+      fadeIn?: number
+      fadeOut?: number
+      moveUp?: number
+      pulse?: boolean
+    }
+  } & NestedComponentThemes
 }

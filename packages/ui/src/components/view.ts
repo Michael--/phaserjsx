@@ -120,6 +120,7 @@ import { applyBackgroundProps } from './appliers/applyBackground'
 import { applyGesturesProps } from './appliers/applyGestures'
 import { applyLayoutProps } from './appliers/applyLayout'
 import { applyPhaserProps } from './appliers/applyPhaser'
+import { applyTooltip } from './appliers/applyTooltip'
 import { applyTransformProps } from './appliers/applyTransform'
 import { createBackground } from './creators/createBackground'
 import { createGestures } from './creators/createGestures'
@@ -217,6 +218,19 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Must be before createGestures so __getLayoutSize is available
   createLayout(container, normalizedProps)
 
+  // Tooltip support - inject hover handlers if onTooltip is present
+  if (normalizedProps.onTooltip) {
+    const handlers = applyTooltip(
+      scene,
+      container,
+      normalizedProps.onTooltip,
+      normalizedProps.onHoverStart,
+      normalizedProps.onHoverEnd
+    )
+    normalizedProps.onHoverStart = handlers.onHoverStart
+    normalizedProps.onHoverEnd = handlers.onHoverEnd
+  }
+
   // Setup gesture system (high-level touch/mouse gestures)
   createGestures(scene, container, normalizedProps)
 
@@ -250,6 +264,23 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
   }
 
   applyBackgroundProps(container, normalizedPrev, normalizedNext)
+
+  // Tooltip support (integrates with gesture system)
+  // Apply before gestures so hover handlers can be injected
+  if (container.scene && container.scene.data) {
+    if (normalizedNext.onTooltip) {
+      const handlers = applyTooltip(
+        container.scene,
+        container,
+        normalizedNext.onTooltip,
+        normalizedNext.onHoverStart,
+        normalizedNext.onHoverEnd
+      )
+      // Inject hover handlers for tooltip
+      normalizedNext.onHoverStart = handlers.onHoverStart
+      normalizedNext.onHoverEnd = handlers.onHoverEnd
+    }
+  }
 
   // Gesture event handlers (high-level touch/mouse gestures)
   // Safety check: ensure container has valid scene before applying gestures

@@ -79,6 +79,33 @@ export interface FocusEventData {
 }
 
 /**
+ * Data passed to hover event handlers (desktop/mouse only)
+ */
+export interface HoverEventData {
+  /** The Phaser pointer that triggered the event */
+  pointer: Phaser.Input.Pointer
+  /** Local X coordinate relative to container origin (0,0) */
+  localX: number
+  /** Local Y coordinate relative to container origin (0,0) */
+  localY: number
+  /** Width of the container's hit area */
+  width: number
+  /** Height of the container's hit area */
+  height: number
+
+  /**
+   * Stop event propagation to parent containers
+   */
+  stopPropagation(): void
+
+  /**
+   * Check if propagation has been stopped
+   * @returns true if stopPropagation() was called
+   */
+  isPropagationStopped(): boolean
+}
+
+/**
  * Data passed to gesture event handlers
  * Supports DOM-style event propagation control
  */
@@ -140,6 +167,10 @@ export interface GestureCallbacks {
   onFocus?: (data: FocusEventData) => void
   /** Called when element loses focus */
   onBlur?: (data: FocusEventData) => void
+  /** Called when pointer enters the container (desktop/mouse only) */
+  onHoverStart?: (data: HoverEventData) => void
+  /** Called when pointer exits the container (desktop/mouse only) */
+  onHoverEnd?: (data: HoverEventData) => void
 }
 
 /**
