@@ -6,6 +6,8 @@ import {
   Text,
   Toggle,
   View,
+  useCallback,
+  useMemo,
   useState,
   useThemeTokens,
 } from '@phaserjsx/ui'
@@ -21,6 +23,30 @@ function Example() {
   const [closeOnEscape, setCloseOnEscape] = useState(true)
   const tokens = useThemeTokens()
 
+  const handleOpen = useCallback(() => setIsOpen(true), [])
+  const handleClose = useCallback(() => setIsOpen(false), [])
+
+  const content = useMemo(
+    () => (
+      <ViewLevel2 minWidth={400} padding={24} gap={16}>
+        <Text text="Modal - View" style={tokens?.textStyles.heading} />
+        <Text text="Close Options:" style={tokens?.textStyles.DEFAULT} />
+        <Text
+          text={`Click backdrop: ${closeOnBackdrop ? 'yes' : 'no'}`}
+          style={tokens?.textStyles.DEFAULT}
+        />
+        <Text
+          text={`Escape key: ${closeOnEscape ? 'yes' : 'no'}`}
+          style={tokens?.textStyles.DEFAULT}
+        />
+        <Button variant="primary" onClick={handleClose}>
+          <Text text="Close" />
+        </Button>
+      </ViewLevel2>
+    ),
+    [tokens, closeOnBackdrop, closeOnEscape, handleClose]
+  )
+
   return (
     <ViewLevel2>
       <Toggle
@@ -31,33 +57,20 @@ function Example() {
       <Toggle checked={closeOnEscape} onChange={setCloseOnEscape} label="Close on Escape Key" />
       {/* Trigger Buttons */}
       <View gap={12} direction="row">
-        <Button variant="primary" onClick={() => setIsOpen(true)} disabled={isOpen}>
+        <Button variant="primary" onClick={handleOpen} disabled={isOpen}>
           <Text text="Open Modal" />
         </Button>
       </View>
 
       {/* Modal definition */}
       <Modal
+        key="example-modal"
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={handleClose}
         closeOnBackdrop={closeOnBackdrop}
         closeOnEscape={closeOnEscape}
       >
-        <ViewLevel2 minWidth={400} padding={24} gap={16}>
-          <Text text="Modal - View" style={tokens?.textStyles.heading} />
-          <Text text="Close Options:" style={tokens?.textStyles.DEFAULT} />
-          <Text
-            text={`Click backdrop: ${closeOnBackdrop ? 'yes' : 'no'}`}
-            style={tokens?.textStyles.DEFAULT}
-          />
-          <Text
-            text={`Escape key: ${closeOnEscape ? 'yes' : 'no'}`}
-            style={tokens?.textStyles.DEFAULT}
-          />
-          <Button variant="primary" onClick={() => setIsOpen(false)}>
-            <Text text="Close" />
-          </Button>
-        </ViewLevel2>
+        {content}
       </Modal>
     </ViewLevel2>
   )

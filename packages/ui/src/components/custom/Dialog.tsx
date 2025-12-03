@@ -16,6 +16,8 @@ import { Modal } from './Modal'
  * Dialog component props
  */
 export interface DialogProps {
+  /** Unique key for VDOM identification */
+  key?: string
   /** Ref to the container */
   forwardRef?: (ref: Phaser.GameObjects.Container | null) => void
   /** Whether dialog is visible */

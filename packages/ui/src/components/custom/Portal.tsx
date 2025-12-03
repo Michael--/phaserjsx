@@ -15,6 +15,8 @@ import { mount } from '../../vdom'
  * Props for Portal component
  */
 export interface PortalProps {
+  /** Unique key for VDOM identification */
+  key?: string
   /** Content to render in portal */
   children: ChildrenType
   /** Z-depth for portal (higher = foreground) */

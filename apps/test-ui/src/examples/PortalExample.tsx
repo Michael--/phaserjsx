@@ -7,6 +7,7 @@ import {
   ScrollView,
   Text,
   Toggle,
+  useCallback,
   useEffect,
   useRedraw,
   useState,
@@ -24,6 +25,18 @@ function Example() {
   const [portal2Clicks, setPortal2Clicks] = useState(0)
   const redraw = useRedraw()
   const tokens = useThemeTokens()
+
+  const handleBackgroundClick = useCallback(() => setBackgroundClicks((c) => c + 1), [])
+  const handlePortal1Click = useCallback(() => setPortal1Clicks((c) => c + 1), [])
+  const handlePortal2Click = useCallback(() => setPortal2Clicks((c) => c + 1), [])
+  const handleToggleAll = useCallback((v: boolean) => {
+    setShowPortal1(v)
+    setShowPortal2(v)
+    setShowPortal3(v)
+  }, [])
+  const handleClosePortal1 = useCallback(() => setShowPortal1(false), [])
+  const handleClosePortal2 = useCallback(() => setShowPortal2(false), [])
+  const handleClosePortal3 = useCallback(() => setShowPortal3(false), [])
 
   // Redraw when portal visibility changes
   useEffect(() => {
@@ -57,11 +70,7 @@ function Example() {
           />
           <Toggle
             checked={showPortal1 && showPortal2 && showPortal3}
-            onChange={(v) => {
-              setShowPortal1(v)
-              setShowPortal2(v)
-              setShowPortal3(v)
-            }}
+            onChange={handleToggleAll}
             label="Show All Portals"
           />
         </ViewLevel2>
@@ -85,7 +94,7 @@ function Example() {
         >
           <View direction="column" gap={10}>
             <Text text="Click Test Area" style={tokens?.textStyles.heading} />
-            <Button onClick={() => setBackgroundClicks((c) => c + 1)}>
+            <Button onClick={handleBackgroundClick}>
               <Text text="Click Background Button" />
             </Button>
           </View>
@@ -112,7 +121,7 @@ function Example() {
 
       {/* Portals */}
       {showPortal1 && (
-        <Portal depth={1000}>
+        <Portal key="portal-1" depth={1000}>
           <ViewLevel2
             x={100}
             y={200}
@@ -123,10 +132,10 @@ function Example() {
             <Text text="Portal 1" style={tokens?.textStyles.heading} />
             <Text text="Depth: 1000" />
             <Text text="This is rendered in a separate tree!" />
-            <Button onClick={() => setPortal1Clicks((c) => c + 1)}>
+            <Button onClick={handlePortal1Click}>
               <Text text="Click Portal 1" />
             </Button>
-            <Button onClick={() => setShowPortal1(false)}>
+            <Button onClick={handleClosePortal1}>
               <Text text="Close" />
             </Button>
           </ViewLevel2>
@@ -134,7 +143,7 @@ function Example() {
       )}
 
       {showPortal2 && (
-        <Portal depth={2000}>
+        <Portal key="portal-2" depth={2000}>
           <ViewLevel2
             x={200}
             y={250}
@@ -146,10 +155,10 @@ function Example() {
             <Text text="Depth: 2000" />
             <Text text="I'm above Portal 1!" />
             <Text text="(Events should NOT pass through)" style={tokens?.textStyles.small} />
-            <Button onClick={() => setPortal2Clicks((c) => c + 1)}>
+            <Button onClick={handlePortal2Click}>
               <Text text="Click Portal 2" />
             </Button>
-            <Button onClick={() => setShowPortal2(false)}>
+            <Button onClick={handleClosePortal2}>
               <Text text="Close" />
             </Button>
           </ViewLevel2>
@@ -157,7 +166,7 @@ function Example() {
       )}
 
       {showPortal3 && (
-        <Portal depth={3000}>
+        <Portal key="portal-3" depth={3000}>
           <ViewLevel2
             x={300}
             y={300}
@@ -169,7 +178,7 @@ function Example() {
             <Text text="Depth: 3000" />
             <Text text="I'm on top of everything!" />
             <Text text="(Auto event-blocking by Portal)" style={tokens?.textStyles.small} />
-            <Button onClick={() => setShowPortal3(false)}>
+            <Button onClick={handleClosePortal3}>
               <Text text="Close" />
             </Button>
           </ViewLevel2>

@@ -23,6 +23,8 @@ import { Portal } from './Portal'
  * Modal component props
  */
 export interface ModalProps {
+  /** Unique key for VDOM identification */
+  key?: string
   /** Whether modal is visible */
   isOpen: boolean
   /** Callback when modal should close */
