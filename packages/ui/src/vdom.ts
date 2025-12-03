@@ -478,6 +478,12 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   attachRef(ref, node)
 
   host.append(parentOrScene, node)
+
+  // Warn about missing keys during initial mount
+  if (vnode.children && vnode.children.length > 0) {
+    warnMissingKeys(vnode, vnode.children)
+  }
+
   vnode.children?.forEach((c, index) => {
     if (!shouldSkipChild(c)) {
       // Type guard: c is VNode at this point

@@ -162,6 +162,22 @@ export function App(props: AppProps) {
   const token = useThemeTokens()
 
   return (
+    <View width={500} height={500}>
+      {Array.from({ length: 42 }).map((_, i) => (
+        <Text text={`${i + 1}`} />
+      ))}
+    </View>
+  )
+
+  return (
+    <View>
+      <Text text="Hello" />
+      <Text text="Hello" />
+      <Text text="Hello" />
+    </View>
+  )
+
+  return (
     <View width={width} height={height} direction="row" justifyContent="start">
       <PresetUpdater />
       <Sidebar height={'100%'} width={400}>
