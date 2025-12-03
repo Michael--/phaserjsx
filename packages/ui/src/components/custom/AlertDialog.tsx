@@ -4,13 +4,13 @@
  * Provides variants with automatic styling and button configuration
  * @module components/custom/AlertDialog
  */
-import { useThemeTokens } from '../../design-tokens/use-theme-tokens'
-import { useEffect, useRef, useState, useTheme } from '../../hooks'
+import { useEffect, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
-import { Text, View } from '../index'
+import { Text } from '../index'
 import { Button } from './Button'
 import { Dialog } from './Dialog'
+import { WrapText } from './WrapText'
 
 /**
  * AlertDialog component props
@@ -124,31 +124,6 @@ export function AlertDialog(props: AlertDialogProps) {
     }
   }, [props.isOpen])
 
-  // Get content width for text wrapping via __getLayoutSize
-  type ContainerWithLayout = Phaser.GameObjects.Container & {
-    __getLayoutSize?: () => { width: number; height: number }
-  }
-  const contentRef = useRef<ContainerWithLayout | null>(null)
-  const [contentWidth, setContentWidth] = useState(0)
-
-  useEffect(() => {
-    // Wait for layout to complete (happens in microtask/next frame)
-    const checkSize = () => {
-      if (contentRef.current?.__getLayoutSize) {
-        const size = contentRef.current.__getLayoutSize()
-        if (size.width > 0 && size.width !== contentWidth) {
-          setContentWidth(size.width)
-        }
-      }
-    }
-
-    // Also check after next frame to catch async layout
-    const rafId = requestAnimationFrame(checkSize)
-    return () => cancelAnimationFrame(rafId)
-  }, [props.isOpen, contentRef.current /*, contentWidth*/])
-
-  const tokens = useThemeTokens()
-
   return (
     <Dialog
       isOpen={props.isOpen}
@@ -172,21 +147,7 @@ export function AlertDialog(props: AlertDialogProps) {
         </>
       }
     >
-      <View ref={contentRef} width={'fill'}>
-        {props.description && (
-          <Text
-            text={props.description}
-            style={
-              contentWidth > 0
-                ? {
-                    ...tokens?.textStyles.DEFAULT,
-                    wordWrap: { useAdvancedWrap: true, width: contentWidth },
-                  }
-                : undefined
-            }
-          />
-        )}
-      </View>
+      {props.description && <WrapText text={props.description} />}
     </Dialog>
   )
 }

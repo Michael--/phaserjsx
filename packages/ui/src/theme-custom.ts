@@ -240,4 +240,10 @@ export interface CustomComponentThemes {
       }
     }
   } & NestedComponentThemes
+  WrapText: {
+    wrap?: boolean
+    paddingOffset?: number
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    minWidth?: number
+  } & NestedComponentThemes
 }

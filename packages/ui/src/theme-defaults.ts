@@ -269,4 +269,9 @@ export const defaultTheme: Theme = {
   AlertDialog: {
     maxWidth: 500,
   },
+  WrapText: {
+    wrap: true,
+    paddingOffset: 0,
+    textStyle: textStyles.DEFAULT,
+  },
 }

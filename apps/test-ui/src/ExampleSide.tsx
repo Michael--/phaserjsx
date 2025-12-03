@@ -37,6 +37,7 @@ import { TestExample } from './examples/TestExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
 import { ToggleExample } from './examples/ToggleExample'
+import { WrapTextExample } from './examples/WrapTextExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
 declare module '@phaserjsx/ui' {
@@ -83,6 +84,7 @@ export type ExampleKey =
   | 'modal'
   | 'dialog'
   | 'alertDialog'
+  | 'wrapText'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -112,6 +114,7 @@ const groupedExamples: GroupedExamples = {
       modal: { label: 'Modal Component', component: ModalExample },
       dialog: { label: 'Dialog Component', component: DialogExample },
       alertDialog: { label: 'AlertDialog Component', component: AlertDialogExample },
+      wrapText: { label: 'WrapText Component', component: WrapTextExample },
     },
   },
   layout: {

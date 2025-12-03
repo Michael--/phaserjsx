@@ -41,3 +41,4 @@ export {
 } from './Slider'
 export { Toggle, type ToggleProps } from './Toggle'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'
+export { WrapText, type WrapTextProps } from './WrapText'
