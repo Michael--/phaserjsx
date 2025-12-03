@@ -110,15 +110,22 @@ export function Modal(props: ModalProps) {
     return null
   }
 
-  const handleBackdropClick = () => {
+  const handleBackdropClick = (e: GestureEventData) => {
+    // Stop propagation to prevent click-through
+    e.stopPropagation()
     if (closeOnBackdrop && props.onClose) {
       props.onClose()
     }
   }
 
+  const handleBackdropMove = (e: GestureEventData) => {
+    // Stop propagation to prevent scrolling through modal
+    e.stopPropagation()
+  }
+
   return (
-    <Portal depth={props.depth ?? 1000}>
-      {/* Backdrop */}
+    <Portal depth={props.depth ?? 1000} blockEvents={false}>
+      {/* Backdrop - blocks all events below */}
       <View
         ref={backdropRef}
         width={viewport.width}
@@ -126,6 +133,7 @@ export function Modal(props: ModalProps) {
         backgroundColor={themed.backdropColor ?? 0x000000}
         alpha={themed.backdropOpacity ?? 0.5}
         onTouch={handleBackdropClick}
+        onTouchMove={handleBackdropMove}
         visible={visible > 0.5}
       />
 

@@ -133,6 +133,22 @@ export function useSpring(
 }
 
 /**
+ * Hook to get current Phaser scene
+ * Must be called from within a component mounted in a Phaser scene
+ * @returns Current Phaser scene
+ * @throws Error if scene not found
+ */
+export function useScene(): Phaser.Scene {
+  const scene = (window as { __phaserScene?: Phaser.Scene }).__phaserScene
+  if (!scene) {
+    throw new Error(
+      'useScene: Phaser scene not found. Must be called from within a PhaserJSX component.'
+    )
+  }
+  return scene
+}
+
+/**
  * Multi-spring animation hook
  * Creates multiple animated signals that share the same configuration
  * @param initialValues - Object with initial values

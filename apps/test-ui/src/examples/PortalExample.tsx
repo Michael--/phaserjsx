@@ -158,6 +158,8 @@ function Example() {
             padding={20}
             direction="column"
             gap={10}
+            onTouch={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             <Text text="Portal 3" style={{ fontSize: 20, fontStyle: 'bold' }} />
             <Text text="Depth: 3000" />

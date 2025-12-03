@@ -5,6 +5,7 @@
  */
 import { getGestureManager } from '../../gestures/gesture-manager'
 import { useEffect, useMemo, useScene } from '../../hooks'
+import { DeferredLayoutQueue } from '../../layout/layout-engine'
 import { portalRegistry } from '../../portal'
 import type { ChildrenType } from '../../types'
 import { mount } from '../../vdom'
@@ -19,6 +20,10 @@ export interface PortalProps {
   depth?: number
   /** Optional custom portal ID */
   id?: string
+  /** Block events (click-through and scrolling) - default: true */
+  blockEvents?: boolean
+  /** Block events for entire screen instead of content bounds - default: false */
+  blockFullScreen?: boolean
 }
 
 /**
@@ -27,14 +32,19 @@ export interface PortalProps {
  *
  * @example
  * ```tsx
- * // Basic portal
+ * // Basic portal (blocks events only in content area)
  * <Portal depth={1000}>
  *   <View>Overlay content</View>
  * </Portal>
  *
- * // Modal backdrop
- * <Portal depth={2000}>
+ * // Full-screen modal backdrop
+ * <Portal depth={2000} blockFullScreen={true}>
  *   <View width="100vw" height="100vh" backgroundColor={0x000000} alpha={0.5} />
+ * </Portal>
+ *
+ * // Non-blocking portal (allows click-through)
+ * <Portal depth={500} blockEvents={false}>
+ *   <View>Info overlay - clickable background</View>
  * </Portal>
  * ```
  */
@@ -42,6 +52,8 @@ export function Portal(props: PortalProps) {
   const portalId = useMemo(() => props.id ?? portalRegistry.generateId(), [props.id])
   const depth = props.depth ?? 1000
   const scene = useScene()
+  const blockEvents = props.blockEvents ?? true
+  const blockFullScreen = props.blockFullScreen ?? false
 
   useEffect(() => {
     // Register portal with depth-based container first
@@ -51,24 +63,6 @@ export function Portal(props: PortalProps) {
       scene,
       { type: 'View', props: {}, children: [] },
       scene.add.container(0, 0)
-    )
-
-    // Register portal container as event blocker to prevent click-through and scrolling
-    // Use full screen hit area to block all events below this portal
-    const gestureManager = getGestureManager(scene)
-    const hitArea = new Phaser.Geom.Rectangle(0, 0, scene.scale.width, scene.scale.height)
-    gestureManager.registerContainer(
-      portalContainer,
-      {
-        // Event blocker: stops propagation to prevent click-through and scrolling
-        onTouch: (e) => {
-          e.stopPropagation()
-        },
-        onTouchMove: (e) => {
-          e.stopPropagation()
-        },
-      },
-      hitArea
     )
 
     // Mount children directly into portal container
@@ -84,12 +78,76 @@ export function Portal(props: PortalProps) {
       }
     }
 
+    // Register event blocker AFTER layout completes (if enabled)
+    // This prevents click-through and scrolling below portal
+    const gestureManager = getGestureManager(scene)
+    if (blockEvents) {
+      DeferredLayoutQueue.defer(() => {
+        let hitArea: Phaser.Geom.Rectangle
+
+        if (blockFullScreen) {
+          // Full screen blocking (for modals)
+          hitArea = new Phaser.Geom.Rectangle(0, 0, scene.scale.width, scene.scale.height)
+        } else {
+          // Content-based blocking - use layout system dimensions
+          const containerWithLayout = portalContainer as {
+            __cachedLayoutSize?: { width: number; height: number }
+            __getLayoutSize?: () => { width: number; height: number }
+          }
+
+          // Priority: __cachedLayoutSize (most reliable) > __getLayoutSize() > getBounds()
+          let width = 0
+          let height = 0
+
+          if (containerWithLayout.__cachedLayoutSize) {
+            width = containerWithLayout.__cachedLayoutSize.width
+            height = containerWithLayout.__cachedLayoutSize.height
+          } else if (containerWithLayout.__getLayoutSize) {
+            const size = containerWithLayout.__getLayoutSize()
+            width = size.width
+            height = size.height
+          } else {
+            const bounds = portalContainer.getBounds()
+            width = bounds.width
+            height = bounds.height
+          }
+
+          hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
+        }
+
+        console.log(
+          'Registering portal event blocker',
+          portalId,
+          hitArea,
+          'at',
+          portalContainer.x,
+          portalContainer.y
+        )
+
+        gestureManager.registerContainer(
+          portalContainer,
+          {
+            // Event blocker: stops propagation to prevent click-through and scrolling
+            onTouch: (e) => {
+              e.stopPropagation()
+            },
+            onTouchMove: (e) => {
+              e.stopPropagation()
+            },
+          },
+          hitArea
+        )
+      })
+    }
+
     // Cleanup on unmount
     return () => {
-      gestureManager.unregisterContainer(portalContainer)
+      if (blockEvents) {
+        gestureManager.unregisterContainer(portalContainer)
+      }
       portalRegistry.unregister(portalId)
     }
-  }, [portalId, depth, scene, props.children])
+  }, [portalId, depth, scene, props.children, blockEvents, blockFullScreen])
 
   // Portal renders nothing in parent tree
   return null
