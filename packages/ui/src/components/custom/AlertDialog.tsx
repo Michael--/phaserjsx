@@ -132,12 +132,21 @@ export function AlertDialog(props: AlertDialogProps) {
     () => (
       <>
         {showCancel && (
-          <Button variant="ghost" onClick={props.onClose} disabled={loading}>
+          <Button
+            variant="ghost"
+            // TODO: find out why immediate close bother the button click animation
+            onClick={() => setTimeout(() => props.onClose?.(), 200)}
+            disabled={loading}
+          >
             <Text text={props.cancelText ?? 'Cancel'} />
           </Button>
         )}
         {props.onConfirm && (
-          <Button variant={buttonVariant} onClick={handleConfirm} disabled={loading}>
+          <Button
+            variant={buttonVariant}
+            onClick={() => setTimeout(() => handleConfirm(), 200)}
+            disabled={loading}
+          >
             <Text text={props.confirmText ?? 'OK'} />
           </Button>
         )}
