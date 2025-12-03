@@ -9,6 +9,8 @@ import { Text, View } from '../index'
  * Props for RadioButton component
  */
 export interface RadioButtonProps {
+  /** Unique key for VDOM identification */
+  key?: string | number | undefined
   /** Label text for the radio button */
   label: string
   /** Whether this radio button is selected */
@@ -31,6 +33,7 @@ export function RadioButton(props: RadioButtonProps) {
 
   return (
     <View
+      key={props.key}
       direction="row"
       alignItems="center"
       enableGestures={true}

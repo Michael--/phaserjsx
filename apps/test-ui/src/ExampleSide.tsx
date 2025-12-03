@@ -184,7 +184,7 @@ export function ExampleSide(props: {
 }) {
   return (
     <>
-      {...Object.entries(groupedExamples).map(([groupKey, group]) => {
+      {Object.entries(groupedExamples).map(([groupKey, group]) => {
         const isOpen = group.examples[props.selectedExample] !== undefined
         return (
           <Accordion
@@ -198,8 +198,9 @@ export function ExampleSide(props: {
             {...(group.iconType && { icon: group.iconType })}
             defaultOpen={isOpen}
           >
-            {...Object.entries(group.examples).map(([value, config]) => (
+            {Object.entries(group.examples).map(([value, config]) => (
               <RadioButton
+                key={value}
                 label={config.label}
                 selected={props.selectedExample === value}
                 onClick={() => props.onChange(value as ExampleKey)}
