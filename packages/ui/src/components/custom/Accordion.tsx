@@ -113,6 +113,7 @@ export function Accordion(props: AccordionProps) {
 
   return (
     <View
+      key={props.key}
       width={props.width}
       height={props.height}
       direction="column"

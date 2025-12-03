@@ -169,6 +169,7 @@ export function AlertDialog(props: AlertDialogProps) {
 
   return (
     <Dialog
+      {...(props.key && { key: props.key })}
       isOpen={props.isOpen}
       onClose={props.onClose}
       title={props.title}

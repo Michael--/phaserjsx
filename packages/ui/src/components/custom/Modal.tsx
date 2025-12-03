@@ -123,7 +123,7 @@ export function Modal(props: ModalProps) {
   }
 
   return (
-    <Portal depth={props.depth ?? 1000} blockEvents={false}>
+    <Portal {...(props.key && { key: props.key })} depth={props.depth ?? 1000} blockEvents={false}>
       {/* Backdrop - blocks all events below */}
       <View
         ref={backdropRef}

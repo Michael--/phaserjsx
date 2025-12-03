@@ -87,6 +87,7 @@ export function Dialog(props: DialogProps) {
 
   return (
     <Modal
+      {...(props.key && { key: props.key })}
       isOpen={props.isOpen}
       onClose={props.onClose}
       closeOnBackdrop={props.closeOnBackdrop}
