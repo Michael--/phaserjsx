@@ -86,7 +86,7 @@
 **Feedback & Overlays:**
 
 - ✅ `Icon` - SVG-basiertes Icon-System mit Generator
-- ❌ `Modal` / `Dialog` - **FEHLT (KRITISCH)**
+- ✅ `Modal` / `Dialog`
 - ❌ `Tooltip` - **FEHLT (KRITISCH)**
 - ❌ `Popover` - Context Menus - **FEHLT**
 - ❌ `Badge` / `Tag` - Labels & Notifications - **FEHLT**
@@ -202,14 +202,14 @@
 
 #### 4. Modal/Dialog System
 
-- ❌ `Modal` - Fullscreen Overlay
+- ✅ `Modal` - Fullscreen Overlay
 - ❌ `Dialog` - Centered Modal
 - ❌ `AlertDialog` - Confirm/Cancel
-- ❌ Portal/Layer System (render außerhalb Tree)
-- ❌ Backdrop (dimmed background)
+- ✅ Portal/Layer System (render außerhalb Tree)
+- ✅ Backdrop (dimmed background)
 - ❌ Focus Trap
-- ❌ ESC-Key zum Schließen
-- ❌ Animation (Fade + Scale)
+- ✅ ESC-Key zum Schließen
+- ✅ Animation (Fade + Scale)
 - **Aufwand:** 2 Tage
 - **Begründung:** Unverzichtbar für UX (Confirmations, Settings, Dialogs)
 
@@ -417,9 +417,9 @@
 2. ✅ **Layout Engine** - Fertig
 3. ✅ **Theme System** - Fertig
 4. ✅ **Basic Components** - Fertig
-5. ❌ **Dropdown/Select** - **BLOCKER**
-6. ❌ **Slider** - **BLOCKER**
-7. ❌ **Toggle** - **BLOCKER**
+5. ✅ **Dropdown/Select** - Fertig
+6. ✅ **Slider** - Fertig
+7. ✅ **Toggle** - Fertig
 8. ❌ **Modal/Dialog** - **BLOCKER**
 9. ❌ **Tooltip** - **BLOCKER**
 
@@ -438,8 +438,8 @@
 
 ### Infrastruktur (Phase 1 - Kritisch)
 
-- ❌ **Portal/Layer System** - Für Modals/Tooltips/Popovers (BLOCKER für Phase 1)
-- ❌ **Z-Index Management** - Automatische Layer-Verwaltung
+- ✅ **Portal/Layer System** - Für Modals/Tooltips/Popovers (BLOCKER für Phase 1)
+- ✅ **Z-Index Management** - Automatische Layer-Verwaltung
 - ❌ **Focus Management System** - Keyboard Navigation
 - ❌ **Accessibility Utilities** - ARIA-like Helpers
 - ❌ **Error Boundaries** - Error-Handling in Komponenten

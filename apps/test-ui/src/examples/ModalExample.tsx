@@ -1,93 +1,78 @@
 /** @jsxImportSource @phaserjsx/ui */
-import { Button, Modal, Text, View, useState } from '@phaserjsx/ui'
+import {
+  Button,
+  Modal,
+  ScrollView,
+  Text,
+  Toggle,
+  View,
+  useState,
+  useThemeTokens,
+} from '@phaserjsx/ui'
+import { SectionHeader, ViewLevel2 } from './Helper'
 
 /**
  * Modal component example
  * Shows backdrop, animations, and close functionality
  */
-export function ModalExample() {
-  const [isOpen1, setIsOpen1] = useState(false)
-  const [isOpen2, setIsOpen2] = useState(false)
-  const [isOpen3, setIsOpen3] = useState(false)
+function Example() {
+  const [isOpen, setIsOpen] = useState(false)
+  const [closeOnBackdrop, setCloseOnBackdrop] = useState(true)
+  const [closeOnEscape, setCloseOnEscape] = useState(true)
+  const tokens = useThemeTokens()
 
   return (
-    <View width="100%" padding={20} gap={16} direction="column">
-      <Text text="Modal Examples" style={{ fontSize: '24px', fontStyle: 'bold' }} />
-
+    <ViewLevel2>
+      <Toggle
+        checked={closeOnBackdrop}
+        onChange={setCloseOnBackdrop}
+        label="Close on Backdrop Click"
+      />
+      <Toggle checked={closeOnEscape} onChange={setCloseOnEscape} label="Close on Escape Key" />
       {/* Trigger Buttons */}
       <View gap={12} direction="row">
-        <Button variant="primary" onClick={() => setIsOpen1(true)}>
-          <Text text="Open Modal 1" />
-        </Button>
-        <Button variant="secondary" onClick={() => setIsOpen2(true)}>
-          <Text text="Open Modal 2" />
-        </Button>
-        <Button variant="outline" onClick={() => setIsOpen3(true)}>
-          <Text text="Open Modal 3" />
+        <Button variant="primary" onClick={() => setIsOpen(true)} disabled={isOpen}>
+          <Text text="Open Modal" />
         </Button>
       </View>
 
-      {/* Modal 1 - Close on backdrop */}
-      <Modal isOpen={isOpen1} onClose={() => setIsOpen1(false)} depth={1000}>
-        <View
-          minWidth={400}
-          padding={24}
-          gap={16}
-          direction="column"
-          backgroundColor={0xffffff}
-          cornerRadius={8}
-        >
-          <Text text="Modal 1 - Default Behavior" style={{ fontSize: '20px', fontStyle: 'bold' }} />
-          <Text text="Click backdrop or press Escape to close" />
-          <Button variant="primary" onClick={() => setIsOpen1(false)}>
-            <Text text="Close" />
-          </Button>
-        </View>
-      </Modal>
-
-      {/* Modal 2 - No backdrop close */}
+      {/* Modal definition */}
       <Modal
-        isOpen={isOpen2}
-        onClose={() => setIsOpen2(false)}
-        closeOnBackdrop={false}
-        depth={2000}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        closeOnBackdrop={closeOnBackdrop}
+        closeOnEscape={closeOnEscape}
       >
-        <View
-          minWidth={400}
-          padding={24}
-          gap={16}
-          direction="column"
-          backgroundColor={0xf0f0f0}
-          cornerRadius={8}
-        >
+        <ViewLevel2 minWidth={400} padding={24} gap={16}>
+          <Text text="Modal - View" style={tokens?.textStyles.heading} />
+          <Text text="Close Options:" style={tokens?.textStyles.DEFAULT} />
           <Text
-            text="Modal 2 - No Backdrop Close"
-            style={{ fontSize: '20px', fontStyle: 'bold' }}
+            text={`Click backdrop: ${closeOnBackdrop ? 'yes' : 'no'}`}
+            style={tokens?.textStyles.DEFAULT}
           />
-          <Text text="Backdrop clicks disabled. Use button or Escape." />
-          <Button variant="secondary" onClick={() => setIsOpen2(false)}>
+          <Text
+            text={`Escape key: ${closeOnEscape ? 'yes' : 'no'}`}
+            style={tokens?.textStyles.DEFAULT}
+          />
+          <Button variant="primary" onClick={() => setIsOpen(false)}>
             <Text text="Close" />
           </Button>
-        </View>
+        </ViewLevel2>
       </Modal>
+    </ViewLevel2>
+  )
+}
 
-      {/* Modal 3 - No escape close */}
-      <Modal isOpen={isOpen3} onClose={() => setIsOpen3(false)} closeOnEscape={false} depth={3000}>
-        <View
-          minWidth={400}
-          padding={24}
-          gap={16}
-          direction="column"
-          backgroundColor={0xe0e0e0}
-          cornerRadius={8}
-        >
-          <Text text="Modal 3 - No Escape Close" style={{ fontSize: '20px', fontStyle: 'bold' }} />
-          <Text text="Escape key disabled. Click backdrop or button." />
-          <Button variant="outline" onClick={() => setIsOpen3(false)}>
-            <Text text="Close" />
-          </Button>
-        </View>
-      </Modal>
-    </View>
+/**
+ * Main Graphics example component
+ */
+export function ModalExample() {
+  return (
+    <ScrollView>
+      <ViewLevel2>
+        <SectionHeader title="Modal Examples" />
+        <Example />
+      </ViewLevel2>
+    </ScrollView>
   )
 }
