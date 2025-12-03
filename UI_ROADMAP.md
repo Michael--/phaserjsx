@@ -203,8 +203,8 @@
 #### 4. Modal/Dialog System
 
 - ✅ `Modal` - Fullscreen Overlay
-- ❌ `Dialog` - Centered Modal
-- ❌ `AlertDialog` - Confirm/Cancel
+- ✅ `Dialog` - Centered Modal
+- ✅ `AlertDialog` - Confirm/Cancel
 - ✅ Portal/Layer System (render außerhalb Tree)
 - ✅ Backdrop (dimmed background)
 - ❌ Focus Trap
