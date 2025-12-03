@@ -5,7 +5,7 @@
 import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
 import type { NodeProps, NodeType } from './core-types'
-import { DebugLogger } from './dev-config'
+import { DebugLogger, DevConfig } from './dev-config'
 import { generateMountRootId, getGestureManager } from './gestures/gesture-manager'
 import { disposeCtx, shouldComponentUpdate, withHooks, type Ctx, type VNode } from './hooks'
 import { host } from './host'
@@ -36,6 +36,100 @@ function shouldSkipChild(child: unknown): boolean {
     }
   }
   return false
+}
+
+/**
+ * Checks if a set of VNode siblings are likely list items that need keys
+ * Heuristics: multiple siblings of same type, or array index patterns
+ * @param children - Array of child VNodes
+ * @returns true if children look like a list that should have keys
+ */
+function looksLikeList(children: (VNode | null | false | undefined)[]): boolean {
+  const validChildren = children.filter((c) => c != null && c !== false) as VNode[]
+  if (validChildren.length < DevConfig.warnings.keyWarningThreshold) return false
+
+  // Check if all children have the same type (strong indicator of list)
+  const types = new Set(validChildren.map((c) => c.type))
+  if (types.size === 1) return true
+
+  // Check if many children are missing keys (50%+ threshold)
+  const missingKeys = validChildren.filter((c) => !c.__key).length
+  return missingKeys / validChildren.length >= 0.5
+}
+
+/**
+ * Warns about missing key props in list-like children
+ * Helps detect performance issues from VDOM reconciliation problems
+ * @param parent - Parent VNode
+ * @param children - Child VNodes to check
+ */
+function warnMissingKeys(parent: VNode, children: (VNode | null | false | undefined)[]): void {
+  if (!DevConfig.warnings.missingKeys) return
+  if (!looksLikeList(children)) return
+
+  const validChildren = children.filter((c) => c != null && c !== false) as VNode[]
+  const withoutKeys = validChildren.filter((c) => !c.__key)
+
+  if (withoutKeys.length === 0) return
+
+  const parentPath = buildComponentPath(parent)
+  const firstChild = withoutKeys[0]
+  if (!firstChild) return
+
+  const childType =
+    typeof firstChild.type === 'string'
+      ? firstChild.type
+      : (firstChild.type as { name?: string })?.name || 'Component'
+
+  console.warn(
+    `[PhaserJSX] Missing key props: ${withoutKeys.length}/${validChildren.length} <${childType}> children in <${parentPath}> don't have keys.\n` +
+      `This can cause:
+` +
+      `  • Unnecessary component recreation instead of updates
+` +
+      `  • State loss in conditional rendering
+` +
+      `  • Performance degradation with lists
+` +
+      `\nAdd unique key props to each child, e.g.:\n` +
+      `  <${childType} key="unique-id" />\n` +
+      `\nTo disable this warning: DevConfig.warnings.missingKeys = false`
+  )
+}
+
+/**
+ * Warns when a component remounts unnecessarily due to key/type mismatch
+ * Helps detect inline JSX creation or callback recreation issues
+ * @param oldV - Previous VNode
+ * @param newV - New VNode
+ */
+function warnUnnecessaryRemount(oldV: VNode, newV: VNode): void {
+  if (!DevConfig.warnings.unnecessaryRemounts) return
+
+  // Only warn for components (not primitives)
+  if (typeof oldV.type !== 'function' && typeof newV.type !== 'function') return
+
+  const oldPath = buildComponentPath(oldV)
+  const reason = oldV.__key !== newV.__key ? 'key changed' : 'type changed'
+
+  console.warn(
+    `[PhaserJSX] Unnecessary remount: <${oldPath}> remounted because ${reason}.\n` +
+      `This often happens when:
+` +
+      `  • JSX elements are created inline: prefix={<Icon />} (create new object every render)
+` +
+      `  • Callbacks are not memoized: onClick={() => handler()} (new function every render)
+` +
+      `\nSolutions:
+` +
+      `  • Memoize JSX: const icon = useMemo(() => <Icon />, [])
+` +
+      `  • Memoize callbacks: const handleClick = useCallback(() => handler(), [])
+` +
+      `  • Add stable key props: key="my-component"
+` +
+      `\nTo disable this warning: DevConfig.warnings.unnecessaryRemounts = false`
+  )
 }
 
 /**
@@ -522,6 +616,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
 
   // Check if keys differ - if so, unmount old and mount new
   if (oldV.__key !== newV.__key) {
+    warnUnnecessaryRemount(oldV, newV)
     unmount(oldV)
     mount(parent, newV)
     return
@@ -687,6 +782,11 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
   const b = newV.children ?? []
   const len = Math.max(a.length, b.length)
   let childrenChanged = false
+
+  // Warn about missing keys in list-like children
+  if (b.length > 0) {
+    warnMissingKeys(newV, b)
+  }
 
   // Check if the container's own layout props changed
   const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)

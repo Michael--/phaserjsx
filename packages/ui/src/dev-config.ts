@@ -85,6 +85,33 @@ export const DevConfig = {
   },
 
   /**
+   * VDOM warnings and development checks
+   * These help catch common mistakes that lead to performance issues
+   */
+  warnings: {
+    /**
+     * Warn when list items (siblings) don't have key props
+     * Similar to React's "Each child in a list should have a unique key prop" warning
+     * @default true (in development)
+     */
+    missingKeys: true,
+
+    /**
+     * Warn when props change causes full remount instead of update
+     * Detects JSX/callback recreation that prevents VDOM optimization
+     * @default true (in development)
+     */
+    unnecessaryRemounts: true,
+
+    /**
+     * Minimum number of siblings before key warnings trigger
+     * Single children don't need keys, warnings start at this threshold
+     * @default 2
+     */
+    keyWarningThreshold: 2,
+  },
+
+  /**
    * Visual debugging aids
    * Runtime-configurable visual settings
    */

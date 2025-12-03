@@ -194,8 +194,8 @@ export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
  * @param deps - Dependency array
  * @returns Memoized callback
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useCallback<T extends (...args: any[]) => any>(fn: T, deps: readonly unknown[]): T {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => fn, deps)
 }
 
