@@ -47,9 +47,10 @@ function shouldSkipChild(child: unknown): boolean {
 function looksLikeList(children: (VNode | null | false | undefined)[]): boolean {
   const validChildren = children.filter((c) => c != null && c !== false) as VNode[]
 
-  // Require at least 5+ children to avoid false positives with static JSX
-  // Small lists (2-4 items) are often static and don't need keys
-  if (validChildren.length < 5) return false
+  // Require at least 10+ children to avoid false positives with static JSX
+  // Smaller lists are often static examples/demos and don't need keys
+  // Real dynamic lists from .map() typically have more items
+  if (validChildren.length < 10) return false
 
   // Check if all children have the same type (strong indicator of list)
   const types = new Set(validChildren.map((c) => c.type))
