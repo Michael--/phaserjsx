@@ -197,6 +197,8 @@ export interface CustomComponentThemes {
         size?: number
         cornerRadius?: number
         backgroundColor?: number
+        borderColor?: number
+        borderWidth?: number
       }
     }
     Content?: ViewTheme & {

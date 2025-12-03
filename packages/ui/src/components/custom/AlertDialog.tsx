@@ -126,7 +126,7 @@ export function AlertDialog(props: AlertDialogProps) {
   return (
     <Dialog
       isOpen={props.isOpen}
-      onClose={props.onClose ?? undefined}
+      onClose={props.onClose}
       title={props.title}
       prefix={prefix}
       maxWidth={themed.maxWidth ?? 400}
@@ -134,7 +134,7 @@ export function AlertDialog(props: AlertDialogProps) {
       actions={
         <>
           {showCancel && (
-            <Button variant="ghost" onClick={props.onClose ?? undefined} disabled={loading}>
+            <Button variant="ghost" onClick={props.onClose} disabled={loading}>
               <Text text={props.cancelText ?? 'Cancel'} />
             </Button>
           )}

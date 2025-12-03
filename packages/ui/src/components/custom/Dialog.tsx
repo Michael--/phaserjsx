@@ -4,6 +4,7 @@
  * Provides consistent layout and styling for dialog patterns
  * @module components/custom/Dialog
  */
+import type { SizeValue } from '@phaserjsx/ui/core-props'
 import type { GestureEventData } from '../../gestures/gesture-types'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
@@ -18,13 +19,13 @@ export interface DialogProps {
   /** Whether dialog is visible */
   isOpen: boolean
   /** Callback when dialog should close */
-  onClose?: () => void
+  onClose?: (() => void) | undefined
   /** Close on backdrop click (default: true) */
-  closeOnBackdrop?: boolean
+  closeOnBackdrop?: boolean | undefined
   /** Close on Escape key (default: true) */
-  closeOnEscape?: boolean
+  closeOnEscape?: boolean | undefined
   /** Portal depth (default: 1000) */
-  depth?: number
+  depth?: number | undefined
 
   /** Dialog title */
   title: string
@@ -33,7 +34,7 @@ export interface DialogProps {
   /** Show close button in header (default: true) */
   showClose?: boolean
   /** Maximum width of dialog (default: 600) */
-  maxWidth?: number | string
+  maxWidth?: SizeValue
 
   /** Dialog content */
   children: ChildrenType
@@ -77,13 +78,13 @@ export function Dialog(props: DialogProps) {
   return (
     <Modal
       isOpen={props.isOpen}
-      onClose={props.onClose ?? undefined}
+      onClose={props.onClose}
       closeOnBackdrop={props.closeOnBackdrop}
       closeOnEscape={props.closeOnEscape}
       depth={props.depth}
     >
       <View
-        maxWidth={typeof maxWidth === 'string' ? maxWidth : maxWidth}
+        maxWidth={maxWidth}
         backgroundColor={themed.backgroundColor ?? 0xffffff}
         cornerRadius={themed.cornerRadius ?? 8}
         padding={0}
@@ -94,7 +95,7 @@ export function Dialog(props: DialogProps) {
         <View direction="column" gap={0}>
           <View
             direction="row"
-            alignItems="center"
+            width={'fill'}
             gap={themed.Header?.gap ?? 12}
             padding={themed.Header?.padding ?? 16}
           >
@@ -115,12 +116,14 @@ export function Dialog(props: DialogProps) {
                 alignItems="center"
                 cornerRadius={themed.Header?.closeButton?.cornerRadius ?? 4}
                 backgroundColor={themed.Header?.closeButton?.backgroundColor}
+                borderColor={themed.Header?.closeButton?.backgroundColor}
+                borderWidth={themed.Header?.closeButton?.borderWidth}
                 onTouch={(e: GestureEventData) => {
                   e.stopPropagation()
                   props.onClose?.()
                 }}
               >
-                {themed.closeIcon ?? <Text text="✕" />}
+                {themed.closeIcon ?? <Text text="X" />}
               </View>
             )}
           </View>

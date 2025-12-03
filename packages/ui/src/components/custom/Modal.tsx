@@ -26,13 +26,13 @@ export interface ModalProps {
   /** Whether modal is visible */
   isOpen: boolean
   /** Callback when modal should close */
-  onClose?: () => void
+  onClose?: (() => void) | undefined
   /** Close on backdrop click (default: true) */
-  closeOnBackdrop?: boolean
+  closeOnBackdrop?: boolean | undefined
   /** Close on Escape key (default: true) */
-  closeOnEscape?: boolean
+  closeOnEscape?: boolean | undefined
   /** Portal depth (default: 1000) */
-  depth?: number
+  depth?: number | undefined
   /** Modal content */
   children?: ChildrenType
 }

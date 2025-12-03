@@ -28,7 +28,7 @@ export interface ButtonProps extends ViewProps, EffectDefinition {
   /** Button content - can be text, icons, or any JSX */
   children?: ChildrenType
   /** Click handler */
-  onClick?: () => void
+  onClick?: (() => void) | undefined
   /** Disabled state */
   disabled?: boolean
   /** Visual variant */
