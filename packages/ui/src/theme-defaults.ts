@@ -236,4 +236,37 @@ export const defaultTheme: Theme = {
     backdropColor: 0x000000,
     backdropOpacity: 0.5,
   },
+  Dialog: {
+    backgroundColor: colors.surface.DEFAULT.toNumber(),
+    borderColor: colors.border.light.toNumber(),
+    borderWidth: 1,
+    cornerRadius: 8,
+    padding: 0,
+    maxWidth: 600,
+    showClose: true,
+    Header: {
+      padding: { left: 24, right: 24, top: 20, bottom: 16 },
+      gap: 12,
+      textStyle: textStyles.heading,
+      closeButton: {
+        size: 32,
+        cornerRadius: 4,
+        backgroundColor: colors.surface.dark.toNumber(),
+        borderColor: colors.border.light.toNumber(),
+        borderWidth: 1,
+      },
+    },
+    Content: {
+      padding: { left: 24, right: 24, top: 16, bottom: 16 },
+      gap: 12,
+    },
+    Actions: {
+      padding: { left: 24, right: 24, top: 16, bottom: 20 },
+      gap: 12,
+      justifyContent: 'end',
+    },
+  },
+  AlertDialog: {
+    maxWidth: 500,
+  },
 }

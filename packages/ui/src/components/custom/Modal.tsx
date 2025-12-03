@@ -63,7 +63,6 @@ export function Modal(props: ModalProps) {
 
   // Handle open/close animation
   useEffect(() => {
-    console.log('Modal isOpen changed:', props.isOpen)
     if (props.isOpen) {
       viewRef.current?.setScale(0)
       backdropRef.current?.setAlpha(0)

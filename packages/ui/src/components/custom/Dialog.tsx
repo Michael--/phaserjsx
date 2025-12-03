@@ -6,7 +6,7 @@
  */
 import type { SizeValue } from '@phaserjsx/ui/core-props'
 import type { GestureEventData } from '../../gestures/gesture-types'
-import { useTheme } from '../../hooks'
+import { useRef, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Text, View } from '../index'
@@ -16,6 +16,8 @@ import { Modal } from './Modal'
  * Dialog component props
  */
 export interface DialogProps {
+  /** Ref to the container */
+  forwardRef?: (ref: Phaser.GameObjects.Container | null) => void
   /** Whether dialog is visible */
   isOpen: boolean
   /** Callback when dialog should close */
@@ -70,10 +72,16 @@ export interface DialogProps {
 export function Dialog(props: DialogProps) {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Dialog', localTheme, {})
+  const internalRef = useRef<Phaser.GameObjects.Container | null>(null)
 
   const showClose = props.showClose ?? themed.showClose ?? true
   const maxWidth = props.maxWidth ?? themed.maxWidth ?? 600
   const prefix = props.prefix ?? themed.prefix
+
+  const refCallback = (ref: Phaser.GameObjects.Container | null) => {
+    internalRef.current = ref
+    props.forwardRef?.(ref)
+  }
 
   return (
     <Modal
@@ -84,6 +92,8 @@ export function Dialog(props: DialogProps) {
       depth={props.depth}
     >
       <View
+        ref={refCallback}
+        width={maxWidth}
         maxWidth={maxWidth}
         backgroundColor={themed.backgroundColor ?? 0xffffff}
         cornerRadius={themed.cornerRadius ?? 8}
@@ -92,10 +102,11 @@ export function Dialog(props: DialogProps) {
         theme={nestedTheme}
       >
         {/* Header */}
-        <View direction="column" gap={0}>
+        <View direction="column" gap={0} width={'fill'}>
           <View
             direction="row"
             width={'fill'}
+            alignItems="center"
             gap={themed.Header?.gap ?? 12}
             padding={themed.Header?.padding ?? 16}
           >
@@ -116,7 +127,7 @@ export function Dialog(props: DialogProps) {
                 alignItems="center"
                 cornerRadius={themed.Header?.closeButton?.cornerRadius ?? 4}
                 backgroundColor={themed.Header?.closeButton?.backgroundColor}
-                borderColor={themed.Header?.closeButton?.backgroundColor}
+                borderColor={themed.Header?.closeButton?.borderColor}
                 borderWidth={themed.Header?.closeButton?.borderWidth}
                 onTouch={(e: GestureEventData) => {
                   e.stopPropagation()
@@ -133,6 +144,7 @@ export function Dialog(props: DialogProps) {
 
         {/* Content */}
         <View
+          width={'fill'}
           padding={themed.Content?.padding ?? 16}
           direction="column"
           gap={themed.Content?.gap ?? 12}
@@ -142,7 +154,7 @@ export function Dialog(props: DialogProps) {
 
         {/* Actions Footer */}
         {props.actions && (
-          <View direction="column" gap={0}>
+          <View direction="column" gap={0} width={'fill'}>
             {/* Actions Divider */}
             <View
               height={1}
