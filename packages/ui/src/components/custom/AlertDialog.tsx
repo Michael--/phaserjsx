@@ -16,6 +16,9 @@ import { WrapText } from './WrapText'
  * AlertDialog component props
  */
 export interface AlertDialogProps {
+  /** Unique key for VDOM identification */
+  key?: string
+
   /** Whether dialog is visible */
   isOpen: boolean
   /** Callback when dialog should close */
