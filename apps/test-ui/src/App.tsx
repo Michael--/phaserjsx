@@ -160,22 +160,17 @@ export function App(props: AppProps) {
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('alertDialog')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
-
+  /*
   return (
     <View width={500} height={500}>
-      {Array.from({ length: 42 }).map((_, i) => (
-        <Text text={`${i + 1}`} />
-      ))}
+      <>
+        {Array.from({ length: 42 }).map((_, i) => (
+          <Text key={i + 1} text={`${i + 1}`} />
+        ))}
+      </>
+      <PresetSelector />
     </View>
-  )
-
-  return (
-    <View>
-      <Text text="Hello" />
-      <Text text="Hello" />
-      <Text text="Hello" />
-    </View>
-  )
+  )*/
 
   return (
     <View width={width} height={height} direction="row" justifyContent="start">
