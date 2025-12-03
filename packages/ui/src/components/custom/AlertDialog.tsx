@@ -156,15 +156,9 @@ export function AlertDialog(props: AlertDialogProps) {
   )
 
   // Memoize content to prevent unnecessary re-renders
-  // Note: initialWidth should match actual content width (dialog maxWidth - content padding)
-  // Dialog Content has 24px left + 24px right padding = 48px total
-  const contentInitialWidth = (themed.maxWidth ?? 400) - 48
   const content = useMemo(
-    () =>
-      props.description ? (
-        <WrapText text={props.description} initialWidth={contentInitialWidth} />
-      ) : null,
-    [props.description, contentInitialWidth]
+    () => (props.description ? <WrapText text={props.description} /> : null),
+    [props.description]
   )
 
   return (

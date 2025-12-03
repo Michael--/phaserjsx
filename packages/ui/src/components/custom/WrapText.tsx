@@ -13,16 +13,13 @@ import { Text, View } from '../index'
  */
 export interface WrapTextProps {
   /** Text content to display */
-  text: string
+  text?: string | undefined
 
   /** Enable/disable automatic wrapping (default: true) */
   wrap?: boolean
 
   /** Padding offset to subtract from container width (default: 0) */
   paddingOffset?: number
-
-  /** Initial width estimate to prevent layout flash (optional) */
-  initialWidth?: number
 
   /** Text style properties */
   style?: Phaser.Types.GameObjects.Text.TextStyle
@@ -106,12 +103,14 @@ export function WrapText(props: WrapTextProps) {
     __getLayoutSize?: () => { width: number; height: number }
   }
   // Start with initialWidth to prevent layout flash
-  const [containerWidth, setContainerWidth] = useState(props.initialWidth ?? 0)
-  const lastWidthRef = useRef(props.initialWidth ?? 0)
+  const [containerWidth, setContainerWidth] = useState(0)
+  const lastWidthRef = useRef(0)
 
   // Use ref callback to detect container mount/changes
   const containerRefCallback = (container: ContainerWithLayout | null) => {
-    if (!container || !wrap) return
+    if (!container || !wrap) {
+      return
+    }
 
     // Check size after layout completes
     const checkSize = () => {
@@ -124,17 +123,16 @@ export function WrapText(props: WrapTextProps) {
           size.width !== containerWidth
         ) {
           lastWidthRef.current = size.width
-          console.log('WrapText detected container width:', containerWidth, size.width)
+          //console.log('WrapText detected container props:', props)
+          //console.log('WrapText detected container cont:', container)
+          //console.log('WrapText detected container width:', containerWidth, size.width)
           setContainerWidth(size.width)
         }
       }
     }
-
-    // Wait for layout to complete (double RAF for async layouts)
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       checkSize()
-      requestAnimationFrame(checkSize)
-    })
+    }, 0)
   }
 
   // Calculate effective text width
