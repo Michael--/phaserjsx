@@ -89,8 +89,9 @@ function warnMissingKeys(parent: VNode, children: (VNode | null | false | undefi
       : (firstChild.type as { name?: string })?.name || 'Component'
 
   console.warn(
-    `[PhaserJSX] Missing key props: ${withoutKeys.length}/${validChildren.length} <${childType}> children in <${parentPath}> don't have keys.\n` +
-      `This can cause:
+    `[PhaserJSX] Missing key props: ${withoutKeys.length}/${validChildren.length} <${childType}> children in <${parentPath}> don't have keys.`
+    /*
+ +    `\nThis can cause:
 ` +
       `  • Unnecessary component recreation instead of updates
 ` +
@@ -101,6 +102,7 @@ function warnMissingKeys(parent: VNode, children: (VNode | null | false | undefi
       `\nAdd unique key props to each child, e.g.:\n` +
       `  <${childType} key="unique-id" />\n` +
       `\nTo disable this warning: DevConfig.warnings.missingKeys = false`
+*/
   )
 }
 
