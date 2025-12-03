@@ -11,7 +11,7 @@ function BasicWrapTextExample() {
   return (
     <ViewLevel3>
       <Text text="Basic Auto-Wrap" style={tokens?.textStyles.heading} />
-      <View maxWidth={300} backgroundColor={0xf0f0f0} padding={16} cornerRadius={8}>
+      <View width={300} maxWidth={300} backgroundColor={0xf0f0f0} padding={16} cornerRadius={8}>
         <WrapText text="This is a long text that will automatically wrap to fit within the container width. No manual configuration needed!" />
       </View>
     </ViewLevel3>
@@ -27,7 +27,7 @@ function StyledWrapTextExample() {
   return (
     <ViewLevel3>
       <Text text="Styled WrapText" style={tokens?.textStyles.heading} />
-      <View maxWidth={400} backgroundColor={0xe3f2fd} padding={20} cornerRadius={8}>
+      <View width={400} backgroundColor={0xe3f2fd} padding={20} cornerRadius={8}>
         <WrapText
           text="This text has custom styling applied. Font size, color, and alignment can all be controlled while maintaining automatic wrapping."
           style={{ fontSize: '18px', color: '#1565c0' }}
@@ -47,7 +47,7 @@ function NarrowContainerExample() {
   return (
     <ViewLevel3>
       <Text text="Narrow Container" style={tokens?.textStyles.heading} />
-      <View maxWidth={200} backgroundColor={0xfff3e0} padding={12} cornerRadius={8}>
+      <View width={200} backgroundColor={0xfff3e0} padding={12} cornerRadius={8}>
         <WrapText text="Even in narrow containers, text wraps gracefully and remains readable." />
       </View>
     </ViewLevel3>
@@ -63,7 +63,7 @@ function WideContainerExample() {
   return (
     <ViewLevel3>
       <Text text="Wide Container" style={tokens?.textStyles.heading} />
-      <View maxWidth={600} backgroundColor={0xe8f5e9} padding={24} cornerRadius={8}>
+      <View width={600} backgroundColor={0xe8f5e9} padding={24} cornerRadius={8}>
         <WrapText
           text="In wider containers, the text can span multiple lines comfortably. This is useful for descriptions, explanations, or any content that needs more breathing room. The wrapping happens automatically based on the available width."
           style={{ fontSize: '16px' }}
@@ -82,7 +82,7 @@ function NoWrapExample() {
   return (
     <ViewLevel3>
       <Text text="Disabled Wrapping" style={tokens?.textStyles.heading} />
-      <View maxWidth={300} backgroundColor={0xfce4ec} padding={16} cornerRadius={8}>
+      <View width={300} backgroundColor={0xfce4ec} padding={16} cornerRadius={8}>
         <WrapText
           text="This text has wrapping disabled and will overflow the container."
           wrap={false}
@@ -102,7 +102,7 @@ function MultipleParagraphsExample() {
     <ViewLevel3>
       <Text text="Multiple Paragraphs" style={tokens?.textStyles.heading} />
       <View
-        maxWidth={500}
+        width={500}
         backgroundColor={0xf3e5f5}
         padding={20}
         cornerRadius={8}
@@ -142,7 +142,7 @@ function PaddingOffsetExample() {
   return (
     <ViewLevel3>
       <Text text="With Padding Offset" style={tokens?.textStyles.heading} />
-      <View maxWidth={400} backgroundColor={0xe0f2f1} padding={24} cornerRadius={8}>
+      <View width={400} backgroundColor={0xe0f2f1} padding={24} cornerRadius={8}>
         <WrapText
           text="This text accounts for the container's padding using paddingOffset, ensuring proper wrapping without overflow."
           paddingOffset={48}

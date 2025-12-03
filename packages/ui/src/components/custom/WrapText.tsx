@@ -47,26 +47,48 @@ export interface WrapTextProps {
  * WrapText component
  * Automatically wraps text based on parent container width
  *
+ * **IMPORTANT:** Parent container MUST have explicit width!
+ * - Use `width={300}` or `width="fill"` on parent
+ * - `maxWidth` alone does NOT work (layout system limitation)
+ *
  * @param props - WrapText props
  * @returns WrapText component
  *
  * @example
  * ```tsx
- * // Simple auto-wrapping
- * <WrapText text="This text will automatically wrap to fit the container width" />
+ * // ✅ CORRECT: Parent with explicit width
+ * <View width={400}>
+ *   <WrapText text="This text will wrap at 400px" />
+ * </View>
+ *
+ * // ✅ CORRECT: Parent with fill (if its parent has size)
+ * <View width="fill">
+ *   <WrapText text="This text wraps to parent width" />
+ * </View>
+ *
+ * // ❌ WRONG: Only maxWidth (text won't wrap correctly)
+ * <View maxWidth={400}>
+ *   <WrapText text="This won't work as expected" />
+ * </View>
  *
  * // With styling
- * <WrapText
- *   text="Styled wrapped text"
- *   style={{ fontSize: '16px', color: '#333' }}
- *   align="center"
- * />
+ * <View width={300}>
+ *   <WrapText
+ *     text="Styled text"
+ *     style={{ fontSize: '16px', color: '#333' }}
+ *     align="center"
+ *   />
+ * </View>
  *
  * // Disable wrapping
- * <WrapText text="Single line text" wrap={false} />
+ * <View width={300}>
+ *   <WrapText text="Single line" wrap={false} />
+ * </View>
  *
- * // With padding offset (e.g., if parent has padding)
- * <WrapText text="Text with offset" paddingOffset={20} />
+ * // With padding offset
+ * <View width={400} padding={24}>
+ *   <WrapText text="Text" paddingOffset={48} />
+ * </View>
  * ```
  */
 export function WrapText(props: WrapTextProps) {
@@ -134,7 +156,7 @@ export function WrapText(props: WrapTextProps) {
   if (props.scale !== undefined) textProps.scale = props.scale
 
   return (
-    <View ref={containerRef} width={'fill'} borderColor={0xffaa44} borderWidth={3}>
+    <View ref={containerRef} width={'fill'}>
       <Text {...textProps} />
     </View>
   )
