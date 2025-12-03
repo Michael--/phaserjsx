@@ -4,6 +4,7 @@
  * @returns App component JSX
  */
 import { createTheme, getPresetWithMode, type PresetName } from '@phaserjsx/ui'
+import { Icon } from './components'
 
 /**
  * Create theme from preset and mode
@@ -240,6 +241,23 @@ export function createAppTheme(
           // padding: 10,
           //gap: 10,
           //cornerRadius: 0,
+        },
+      },
+
+      AlertDialog: {
+        variants: {
+          info: {
+            prefix: <Icon type="info-circle" size={24} />,
+          },
+          warning: {
+            prefix: <Icon type="exclamation-triangle" size={24} />,
+          },
+          destructive: {
+            prefix: <Icon type="trash" size={24} />,
+          },
+          success: {
+            prefix: <Icon type="check-circle" size={24} />,
+          },
         },
       },
     },

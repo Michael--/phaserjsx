@@ -8,6 +8,7 @@
  */
 import type { AnimationConfig } from './animation/spring-physics'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
+import type { ChildrenType } from './types'
 
 /**
  * Custom component themes
@@ -183,5 +184,58 @@ export interface CustomComponentThemes {
   Modal: {
     backdropColor?: number
     backdropOpacity?: number
+  } & NestedComponentThemes
+  Dialog: ViewTheme & {
+    showClose?: boolean
+    maxWidth?: number
+    prefix?: ChildrenType
+    closeIcon?: ChildrenType
+    Header?: ViewTheme & {
+      gap?: number
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      closeButton?: {
+        size?: number
+        cornerRadius?: number
+        backgroundColor?: number
+      }
+    }
+    Content?: ViewTheme & {
+      gap?: number
+    }
+    Actions?: ViewTheme & {
+      gap?: number
+      justifyContent?:
+        | 'start'
+        | 'center'
+        | 'end'
+        | 'space-between'
+        | 'space-around'
+        | 'space-evenly'
+    }
+  }
+  AlertDialog: {
+    maxWidth?: number
+    variants?: {
+      info?: {
+        prefix?: ChildrenType
+        buttonVariant?: string
+        prefixTint?: number
+      }
+      warning?: {
+        prefix?: ChildrenType
+        buttonVariant?: string
+        prefixTint?: number
+      }
+      destructive?: {
+        prefix?: ChildrenType
+        buttonVariant?: string
+        prefixTint?: number
+      }
+      success?: {
+        prefix?: ChildrenType
+        buttonVariant?: string
+        prefixTint?: number
+      }
+    }
   } & NestedComponentThemes
 }

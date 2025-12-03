@@ -3,11 +3,13 @@ import { getThemedProps, RadioButton, Text, View, type VNode } from '@phaserjsx/
 import { Accordion, Icon, type IconType } from './components'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
+import { AlertDialogExample } from './examples/AlertDialogExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
 import { ColorModeExample } from './examples/ColorModeExample'
 import { ConstraintsExample } from './examples/ConstraintsExample'
 import { DesignTokensExample } from './examples/DesignTokensExample'
+import { DialogExample } from './examples/DialogExample'
 import { FlexAdvancedExample } from './examples/FlexAdvancedExample'
 import { FlexExample } from './examples/FlexExample'
 import { FlexGridExample } from './examples/FlexGridExample'
@@ -79,6 +81,8 @@ export type ExampleKey =
   | 'toggle'
   | 'portal'
   | 'modal'
+  | 'dialog'
+  | 'alertDialog'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -106,6 +110,8 @@ const groupedExamples: GroupedExamples = {
       slider: { label: 'Slider Component', component: SliderExample },
       portal: { label: 'Portal System (Foundation)', component: PortalExample },
       modal: { label: 'Modal Component', component: ModalExample },
+      dialog: { label: 'Dialog Component', component: DialogExample },
+      alertDialog: { label: 'AlertDialog Component', component: AlertDialogExample },
     },
   },
   layout: {
