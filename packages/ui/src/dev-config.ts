@@ -94,7 +94,7 @@ export const DevConfig = {
      * Similar to React's "Each child in a list should have a unique key prop" warning
      * @default true (in development)
      */
-    missingKeys: true,
+    missingKeys: false, // temp disable because of detection issues, will re-enable later
 
     /**
      * Warn when props change causes full remount instead of update
