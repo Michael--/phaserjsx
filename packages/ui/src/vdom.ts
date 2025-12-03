@@ -41,16 +41,15 @@ function shouldSkipChild(child: unknown): boolean {
 /**
  * Checks if a set of VNode siblings are likely list items that need keys
  * Heuristics: multiple siblings of same type, or array index patterns
+ * Static children (from jsxs()) are already excluded before this check
  * @param children - Array of child VNodes
  * @returns true if children look like a list that should have keys
  */
 function looksLikeList(children: (VNode | null | false | undefined)[]): boolean {
   const validChildren = children.filter((c) => c != null && c !== false) as VNode[]
 
-  // Require at least 10+ children to avoid false positives with static JSX
-  // Smaller lists are often static examples/demos and don't need keys
-  // Real dynamic lists from .map() typically have more items
-  if (validChildren.length < 10) return false
+  // Require at least 2+ children (single child never needs key)
+  if (validChildren.length < 2) return false
 
   // Check if all children have the same type (strong indicator of list)
   const types = new Set(validChildren.map((c) => c.type))
@@ -69,6 +68,10 @@ function looksLikeList(children: (VNode | null | false | undefined)[]): boolean 
  */
 function warnMissingKeys(parent: VNode, children: (VNode | null | false | undefined)[]): void {
   if (!DevConfig.warnings.missingKeys) return
+
+  // Skip warning if children are marked as static (from jsxs())
+  if (parent.__staticChildren) return
+
   if (!looksLikeList(children)) return
 
   const validChildren = children.filter((c) => c != null && c !== false) as VNode[]

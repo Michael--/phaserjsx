@@ -58,6 +58,7 @@ export type VNode = {
   }
   __memo?: boolean // Opt-out of memoization (false = always re-render)
   __theme?: PartialTheme // Theme override for this VNode and its children
+  __staticChildren?: boolean // True when children are static JSX (not from .map())
 }
 
 /**

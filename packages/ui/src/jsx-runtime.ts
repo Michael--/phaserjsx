@@ -9,7 +9,8 @@ export const Fragment = (props: { children?: VNode | VNode[] | null }): VNodeLik
   props?.children ?? null
 
 /**
- * JSX factory for automatic runtime
+ * JSX factory for automatic runtime (dynamic children)
+ * Used by TypeScript for expressions like {items.map(...)}
  * @param type - Element type (string or component function)
  * @param props - Props including children
  * @param key - Optional key for identity tracking
@@ -43,4 +44,25 @@ export function jsx(
 
   return vnode
 }
-export const jsxs = jsx
+
+/**
+ * JSX factory for static children arrays
+ * Used by TypeScript when children are directly listed in JSX (not via .map())
+ * Marks children as static so VDOM doesn't warn about missing keys
+ * @param type - Element type (string or component function)
+ * @param props - Props including children
+ * @param key - Optional key for identity tracking
+ * @returns VNode object
+ */
+export function jsxs(
+  type: unknown,
+  props: Record<string, unknown> | null,
+  key?: unknown
+): VNodeLike {
+  const vnode = jsx(type, props, key) as VNode
+  // Mark as static children - no key warnings needed
+  if (vnode && typeof vnode === 'object' && 'type' in vnode) {
+    vnode.__staticChildren = true
+  }
+  return vnode
+}

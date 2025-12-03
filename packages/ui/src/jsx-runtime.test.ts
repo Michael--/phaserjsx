@@ -2,7 +2,7 @@
  * Tests for JSX runtime functionality
  * Tests Fragment and jsx functions
  */
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Fragment, jsx, jsxs } from './jsx-runtime'
 
 describe('JSX Runtime', () => {
@@ -47,11 +47,28 @@ describe('JSX Runtime', () => {
   })
 
   describe('jsxs', () => {
-    it('should be the same as jsx', () => {
-      const vnode1 = jsx('div', { id: 'test' })
-      const vnode2 = jsxs('div', { id: 'test' })
+    it('should mark children as static', () => {
+      const vnode = jsxs('div', { id: 'test' })
 
-      expect(vnode1).toEqual(vnode2)
+      expect(vnode).toMatchObject({
+        type: 'div',
+        props: { id: 'test' },
+        children: [],
+        __staticChildren: true,
+      })
+    })
+
+    it('should work like jsx but with static flag', () => {
+      const child1 = jsx('span', { text: 'Hello' })
+      const child2 = jsx('span', { text: 'World' })
+      const vnode = jsxs('div', { id: 'parent', children: [child1, child2] })
+
+      expect(vnode).toMatchObject({
+        type: 'div',
+        props: { id: 'parent' },
+        children: [child1, child2],
+        __staticChildren: true,
+      })
     })
   })
 })
