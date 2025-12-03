@@ -189,6 +189,17 @@ export function useMemo<T>(fn: () => T, deps: readonly unknown[]): T {
 }
 
 /**
+ * Callback memoization hook
+ * @param fn - Callback function to memoize
+ * @param deps - Dependency array
+ * @returns Memoized callback
+ */
+export function useCallback<T extends (...args: any[]) => any>(fn: T, deps: readonly unknown[]): T {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => fn, deps)
+}
+
+/**
  * Hook to access current theme context
  * Returns the theme that was passed down through the VDOM tree
  * @returns Current theme context or undefined if no theme is set

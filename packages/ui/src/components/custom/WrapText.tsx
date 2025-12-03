@@ -4,7 +4,7 @@
  * Eliminates boilerplate for text wrapping by detecting parent dimensions
  * @module components/custom/WrapText
  */
-import { useEffect, useRef, useState, useTheme } from '../../hooks'
+import { useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import { Text, View } from '../index'
 
@@ -20,6 +20,9 @@ export interface WrapTextProps {
 
   /** Padding offset to subtract from container width (default: 0) */
   paddingOffset?: number
+
+  /** Initial width estimate to prevent layout flash (optional) */
+  initialWidth?: number
 
   /** Text style properties */
   style?: Phaser.Types.GameObjects.Text.TextStyle
@@ -102,29 +105,37 @@ export function WrapText(props: WrapTextProps) {
   type ContainerWithLayout = Phaser.GameObjects.Container & {
     __getLayoutSize?: () => { width: number; height: number }
   }
-  const containerRef = useRef<ContainerWithLayout | null>(null)
-  const [containerWidth, setContainerWidth] = useState(0)
+  // Start with initialWidth to prevent layout flash
+  const [containerWidth, setContainerWidth] = useState(props.initialWidth ?? 0)
+  const lastWidthRef = useRef(props.initialWidth ?? 0)
 
-  useEffect(() => {
-    if (!wrap) return
+  // Use ref callback to detect container mount/changes
+  const containerRefCallback = (container: ContainerWithLayout | null) => {
+    if (!container || !wrap) return
 
-    // Check container size after layout completes
+    // Check size after layout completes
     const checkSize = () => {
-      if (containerRef.current?.__getLayoutSize) {
-        const size = containerRef.current.__getLayoutSize()
-        if (size.width > 0 && size.width !== containerWidth) {
+      if (container.__getLayoutSize) {
+        const size = container.__getLayoutSize()
+        // Only update if width actually changed
+        if (
+          size.width > 0 &&
+          size.width !== lastWidthRef.current &&
+          size.width !== containerWidth
+        ) {
+          lastWidthRef.current = size.width
+          console.log('WrapText detected container width:', containerWidth, size.width)
           setContainerWidth(size.width)
         }
       }
     }
 
-    // Try immediately
-    checkSize()
-
-    // Also check after next frame to catch async layout
-    const rafId = requestAnimationFrame(checkSize)
-    return () => cancelAnimationFrame(rafId)
-  }, [wrap, containerRef.current, containerWidth])
+    // Wait for layout to complete (double RAF for async layouts)
+    requestAnimationFrame(() => {
+      checkSize()
+      requestAnimationFrame(checkSize)
+    })
+  }
 
   // Calculate effective text width
   const textWidth = containerWidth > paddingOffset ? containerWidth - paddingOffset : 0
@@ -156,7 +167,7 @@ export function WrapText(props: WrapTextProps) {
   if (props.scale !== undefined) textProps.scale = props.scale
 
   return (
-    <View ref={containerRef} width={'fill'}>
+    <View ref={containerRefCallback} width={'fill'}>
       <Text {...textProps} />
     </View>
   )

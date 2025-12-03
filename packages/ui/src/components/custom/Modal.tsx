@@ -58,7 +58,7 @@ export function Modal(props: ModalProps) {
   const [visible, setVisible] = useState(props.isOpen ? 0.5 : 0)
   const backdropRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const { applyEffect, stopEffects } = useGameObjectEffect(viewRef)
+  const { applyEffect } = useGameObjectEffect(viewRef)
   const { applyEffect: a2 } = useGameObjectEffect(backdropRef)
 
   // Handle open/close animation
@@ -74,7 +74,6 @@ export function Modal(props: ModalProps) {
         a2(createFadeInEffect, { time: 500 })
         setTimeout(() => {
           setVisible(1)
-          stopEffects()
         }, 500)
       }, 0)
     } else {
@@ -84,7 +83,6 @@ export function Modal(props: ModalProps) {
         a2(createFadeOutEffect, { time: 500 })
         setTimeout(() => {
           setVisible(0)
-          stopEffects()
         }, 500)
       }, 0)
     }

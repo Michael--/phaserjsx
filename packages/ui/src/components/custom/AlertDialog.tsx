@@ -4,7 +4,7 @@
  * Provides variants with automatic styling and button configuration
  * @module components/custom/AlertDialog
  */
-import { useEffect, useState, useTheme } from '../../hooks'
+import { useCallback, useEffect, useMemo, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Text } from '../index'
@@ -93,8 +93,8 @@ export function AlertDialog(props: AlertDialogProps) {
   const prefix = props.prefix ?? variantTheme?.prefix
   const buttonVariant = (variantTheme?.buttonVariant as 'primary' | 'danger') ?? 'primary'
 
-  // Handle confirm with async support
-  const handleConfirm = async () => {
+  // Handle confirm with async support (memoized to prevent re-creating on every render)
+  const handleConfirm = useCallback(async () => {
     if (!props.onConfirm) return
 
     try {
@@ -115,7 +115,7 @@ export function AlertDialog(props: AlertDialogProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [props.onConfirm, closeOnConfirm, props.onClose])
 
   // Cleanup loading state when dialog closes
   useEffect(() => {
@@ -123,6 +123,43 @@ export function AlertDialog(props: AlertDialogProps) {
       setIsLoading(false)
     }
   }, [props.isOpen])
+
+  // Memoize actions to prevent unnecessary re-renders
+  const actions = useMemo(
+    () => (
+      <>
+        {showCancel && (
+          <Button variant="ghost" onClick={props.onClose} disabled={loading}>
+            <Text text={props.cancelText ?? 'Cancel'} />
+          </Button>
+        )}
+        {props.onConfirm && (
+          <Button variant={buttonVariant} onClick={handleConfirm} disabled={loading}>
+            <Text text={props.confirmText ?? 'OK'} />
+          </Button>
+        )}
+      </>
+    ),
+    [
+      showCancel,
+      props.onClose,
+      props.cancelText,
+      loading,
+      props.onConfirm,
+      buttonVariant,
+      handleConfirm,
+      props.confirmText,
+    ]
+  )
+
+  // Memoize content to prevent unnecessary re-renders
+  const content = useMemo(
+    () =>
+      props.description ? (
+        <WrapText text={props.description} initialWidth={themed.maxWidth ?? 400} />
+      ) : null,
+    [props.description, themed.maxWidth]
+  )
 
   return (
     <Dialog
@@ -132,22 +169,9 @@ export function AlertDialog(props: AlertDialogProps) {
       prefix={prefix}
       maxWidth={themed.maxWidth ?? 400}
       showClose={true}
-      actions={
-        <>
-          {showCancel && (
-            <Button variant="ghost" onClick={props.onClose} disabled={loading}>
-              <Text text={props.cancelText ?? 'Cancel'} />
-            </Button>
-          )}
-          {props.onConfirm && (
-            <Button variant={buttonVariant} onClick={handleConfirm} disabled={loading}>
-              <Text text={props.confirmText ?? 'OK'} />
-            </Button>
-          )}
-        </>
-      }
+      actions={actions}
     >
-      {props.description && <WrapText text={props.description} />}
+      {content}
     </Dialog>
   )
 }
