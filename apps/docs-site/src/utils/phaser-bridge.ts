@@ -30,6 +30,11 @@ export function createPhaserScene(
       super({ key: 'ExampleScene' })
     }
 
+    preload() {
+      // Preload PhaserJSX logo for background
+      this.load.image('phaser-jsx-logo', '/src/assets/phaser-jsx-logo.png')
+    }
+
     create() {
       // Create background
       if (bgConfig.type !== 'none') {
@@ -107,14 +112,12 @@ export function createPhaserScene(
       const container = this.add.container(this.scale.width / 2, this.scale.height / 2)
       const opacity = config.opacity || 0.1
 
-      // Create simple logo placeholder (circles forming "JSX")
-      const graphics = this.add.graphics()
-      graphics.fillStyle(config.color || 0x4a9eff, opacity)
-      graphics.fillCircle(0, 0, 60)
-      graphics.fillCircle(80, 0, 40)
-      graphics.fillCircle(-80, 0, 40)
+      // Load and display the PhaserJSX logo
+      const logo = this.add.image(0, 0, 'phaser-jsx-logo')
+      logo.setAlpha(opacity)
+      logo.setScale(0.5) // Adjust size as needed
 
-      container.add(graphics)
+      container.add(logo)
       this.background = container
     }
 
