@@ -2,15 +2,21 @@
  * Phaser Bridge - Creates Phaser Scenes from PhaserJSX components
  * This bridges the gap between React (docs UI) and PhaserJSX (examples)
  */
-import { mount } from '@phaserjsx/ui'
+import { mountJSX, type VNode } from '@phaserjsx/ui'
 import Phaser from 'phaser'
+// Import theme setup (initializes global theme)
+import '../theme'
 
 /**
  * Creates a Phaser Scene class that mounts a PhaserJSX component
- * @param component - PhaserJSX component function that returns VNode
+ * @param component - PhaserJSX component function
+ * @param props - Optional props to pass to component
  * @returns Phaser Scene class
  */
-export function createPhaserScene(component: () => unknown) {
+export function createPhaserScene(
+  component: (props: any) => VNode,
+  props?: Record<string, unknown>
+) {
   return class ExampleScene extends Phaser.Scene {
     private container?: Phaser.GameObjects.Container
 
@@ -22,11 +28,13 @@ export function createPhaserScene(component: () => unknown) {
       // Create a container to hold the mounted PhaserJSX components
       this.container = this.add.container(0, 0)
 
-      // Mount PhaserJSX component into the container
-      const vnode = component()
-      if (vnode && typeof vnode === 'object') {
-        mount(this.container, vnode as any)
-      }
+      // Mount PhaserJSX component into the container using mountJSX
+      // This properly handles the component lifecycle and props
+      mountJSX(this.container, component as any, {
+        width: this.scale.width,
+        height: this.scale.height,
+        ...props,
+      })
     }
   }
 }

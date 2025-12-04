@@ -37,6 +37,11 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
       },
+      input: {
+        mouse: true,
+        touch: true,
+        activePointers: 2,
+      },
     })
 
     return () => {
