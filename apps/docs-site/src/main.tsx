@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import { ButtonPage } from './pages/Components/ButtonPage'
+import { SceneBackgroundsPage, TestingPage } from './pages/Guides'
 import { HomePage } from './pages/HomePage'
 
 createRoot(document.getElementById('root')!).render(
@@ -14,6 +15,10 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/" element={<HomePage />} />
       <Route path="/components/button" element={<ButtonPage />} />
 
+      {/* Guides */}
+      <Route path="/guides/testing" element={<TestingPage />} />
+      <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
+
       {/* Placeholder routes */}
       <Route path="/installation" element={<ComingSoonPage />} />
       <Route path="/components/view" element={<ComingSoonPage />} />
@@ -21,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/components/image" element={<ComingSoonPage />} />
       <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/*" element={<ComingSoonPage />} />
+      <Route path="/guides/*" element={<ComingSoonPage />} />
       <Route path="*" element={<ComingSoonPage />} />
     </Routes>
   </BrowserRouter>

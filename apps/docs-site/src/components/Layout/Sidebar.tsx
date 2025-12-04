@@ -32,6 +32,13 @@ const navigation: NavSection[] = [
       { label: 'Slider', path: '/components/slider' },
     ],
   },
+  {
+    title: 'Guides',
+    items: [
+      { label: 'Testing & Development', path: '/guides/testing' },
+      { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
+    ],
+  },
 ]
 
 /**
