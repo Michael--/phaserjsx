@@ -2,7 +2,7 @@
  * Phaser Bridge - Creates Phaser Scenes from PhaserJSX components
  * This bridges the gap between React (docs UI) and PhaserJSX (examples)
  */
-import type { BackgroundConfig } from '@/types/background'
+import type { BackgroundAnimation, BackgroundConfig } from '@/types/background'
 import { DEFAULT_BACKGROUND } from '@/types/background'
 import { mountJSX, type VNode } from '@phaserjsx/ui'
 import Phaser from 'phaser'
@@ -54,6 +54,7 @@ export function createPhaserScene(
      * Create scene background based on configuration
      */
     private createBackground(config: BackgroundConfig) {
+      // Create visual background
       if (config.type === 'grid') {
         this.createGridBackground(config)
       } else if (config.type === 'logo') {
@@ -62,6 +63,11 @@ export function createPhaserScene(
         this.createGradientBackground(config)
       } else if (config.type === 'particles') {
         this.createParticlesBackground(config)
+      }
+
+      // Apply animation if background was created
+      if (this.background && config.animation && config.animation !== 'static') {
+        this.applyAnimation(this.background, config.animation)
       }
     }
 
@@ -91,13 +97,9 @@ export function createPhaserScene(
 
       drawGrid(0, 0)
       this.background = graphics
-
-      // Apply animation
-      if (config.animation === 'lemniscate') {
-        this.animateLemniscate(graphics, drawGrid)
-      } else if (config.animation === 'wave') {
-        this.animateWave(graphics, drawGrid)
-      }
+      // Store redraw function for position-based animations
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(this.background as any).__redrawFn = drawGrid
     }
 
     /**
@@ -116,13 +118,6 @@ export function createPhaserScene(
 
       container.add(graphics)
       this.background = container
-
-      // Apply animation
-      if (config.animation === 'pulse') {
-        this.animatePulse(container)
-      } else if (config.animation === 'rotate') {
-        this.animateRotate(container)
-      }
     }
 
     /**
@@ -174,12 +169,43 @@ export function createPhaserScene(
     }
 
     /**
-     * Animate grid in lemniscate (infinity) pattern
+     * Apply animation to any background object
      */
-    private animateLemniscate(
-      _graphics: Phaser.GameObjects.Graphics,
-      drawFn: (x: number, y: number) => void
+    private applyAnimation(
+      target: Phaser.GameObjects.Graphics | Phaser.GameObjects.Container,
+      animation: BackgroundAnimation
     ) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const redrawFn = (target as any).__redrawFn
+
+      switch (animation) {
+        case 'lemniscate':
+          if (redrawFn) {
+            this.animateLemniscate(redrawFn)
+          } else {
+            this.animatePulse(target)
+          }
+          break
+        case 'wave':
+          if (redrawFn) {
+            this.animateWave(redrawFn)
+          } else {
+            this.animatePulse(target)
+          }
+          break
+        case 'pulse':
+          this.animatePulse(target)
+          break
+        case 'rotate':
+          this.animateRotate(target)
+          break
+      }
+    }
+
+    /**
+     * Animate position in lemniscate (infinity) pattern
+     */
+    private animateLemniscate(drawFn: (x: number, y: number) => void) {
       const amplitude = 30
       const duration = 8000
 
@@ -202,10 +228,7 @@ export function createPhaserScene(
     /**
      * Animate in wave pattern
      */
-    private animateWave(
-      _graphics: Phaser.GameObjects.Graphics,
-      drawFn: (x: number, y: number) => void
-    ) {
+    private animateWave(drawFn: (x: number, y: number) => void) {
       this.backgroundTween = this.tweens.addCounter({
         from: 0,
         to: 40,
@@ -224,7 +247,7 @@ export function createPhaserScene(
     /**
      * Animate pulse effect
      */
-    private animatePulse(target: Phaser.GameObjects.Container) {
+    private animatePulse(target: Phaser.GameObjects.Container | Phaser.GameObjects.Graphics) {
       this.backgroundTween = this.tweens.add({
         targets: target,
         scaleX: 1.1,
@@ -239,7 +262,7 @@ export function createPhaserScene(
     /**
      * Animate rotation
      */
-    private animateRotate(target: Phaser.GameObjects.Container) {
+    private animateRotate(target: Phaser.GameObjects.Container | Phaser.GameObjects.Graphics) {
       this.backgroundTween = this.tweens.add({
         targets: target,
         angle: 360,
