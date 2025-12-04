@@ -216,10 +216,10 @@
 
 #### 5. Tooltip Component
 
-- ❌ `Tooltip` - Hover-Info
-- ❌ Position Logic (top, bottom, left, right, auto)
-- ❌ Arrow/Pointer
-- ❌ Delay Configuration
+- ✅ `Tooltip` - Hover-Info
+- ✅ Position Logic (top, bottom, left, right, auto)
+- ✅ Arrow/Pointer
+- ✅ Delay Configuration
 - ❌ Touch Support (Long Press)
 - **Aufwand:** 1 Tag
 - **Begründung:** Verbessert UX massiv (Erklärungen, Hints)
@@ -421,8 +421,8 @@
 5. ✅ **Dropdown/Select** - Fertig
 6. ✅ **Slider** - Fertig
 7. ✅ **Toggle** - Fertig
-8. ❌ **Modal/Dialog** - **BLOCKER**
-9. ❌ **Tooltip** - **BLOCKER**
+8. ✅ **Modal/Dialog** - Fertig
+9. ✅ **Tooltip** - Fertig
 
 ### Timeline bis Release:
 
@@ -517,10 +517,10 @@
 
 ### Pre-Release (v1.0.0)
 
-- ❌ Phase 1 Komponenten implementiert
-- ❌ Portal/Layer System
+- ✅ Phase 1 Komponenten implementiert
+- ✅ Portal/Layer System
 - ❌ Dokumentation (README + API Docs)
-- ❌ Examples für alle Komponenten
+- ✅ Examples für alle Komponenten
 - ❌ Unit Tests (>80% Coverage)
 - ❌ Performance Benchmarks
 - ❌ Bundle Size Check (<100kb gzipped)
