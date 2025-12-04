@@ -10,7 +10,7 @@ import { Button, Text, View } from '@phaserjsx/ui'
  */
 export function SimpleButtonExample() {
   return (
-    <View padding={20} gap={10} direction="column" backgroundColor={0xaa5500}>
+    <View padding={20} gap={20}>
       <Button onClick={() => console.log('Primary clicked!')}>
         <Text text="Primary Button" />
       </Button>
