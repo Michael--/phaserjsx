@@ -298,6 +298,48 @@ export function FeatureExample() {
 }
 ```
 
+### Component-Specific Patterns
+
+#### Text Component Styling
+
+The `Text` component uses Phaser's `style` prop for visual styling instead of direct props:
+
+```tsx
+// ✅ Correct - Use style object with Phaser format
+<Text text="Hello" style={{ color: '#ffffff', fontSize: '20px' }} />
+
+// ❌ Wrong - Direct props don't exist
+<Text text="Hello" color={0xffffff} fontSize={20} />
+```
+
+**Common Text style properties:**
+
+- `color: '#hexcolor'` - Text color (CSS hex format)
+- `fontSize: '20px'` - Font size (string with unit)
+- `fontFamily: 'Arial'` - Font family
+- `fontStyle: 'bold'` - Font style (bold, italic, etc.)
+- `align: 'center'` - Text alignment
+
+#### Color Format Guidelines
+
+**Background/Border colors** (View, Button, etc.):
+
+```tsx
+<View backgroundColor={0x3498db} borderColor={0xe74c3c} />
+```
+
+- Use hex number format: `0xRRGGBB`
+- Example: `0x3498db` (blue), `0xe74c3c` (red)
+
+**Text colors** (via style prop):
+
+```tsx
+<Text text="Hello" style={{ color: '#3498db' }} />
+```
+
+- Use CSS hex string format: `'#RRGGBB'`
+- Example: `'#3498db'` (blue), `'#e74c3c'` (red)
+
 ## Integration Checklist
 
 After creating documentation files:
@@ -349,9 +391,37 @@ See `Button` component documentation as the canonical reference:
 - `/apps/docs-site/src/examples/button/`
 - `/apps/docs-site/src/pages/Components/ButtonPage.tsx`
 
+## Common Pitfalls & Solutions
+
+### Empty View is Invisible
+
+An empty `<View />` without background or content won't be visible:
+
+```tsx
+// ❌ Invisible - no background, no content
+<View width={200} height={100} />
+
+// ✅ Visible - has background
+<View width={200} height={100} backgroundColor={0x3498db} />
+
+// ✅ Visible - has content
+<View width={200} height={100}>
+  <Text text="Content" />
+</View>
+```
+
+**Documentation tip:** Mention this in component descriptions where applicable, especially for View.
+
+### Text Styling Confusion
+
+Common mistake: trying to use color/fontSize as direct props on Text.
+
+**Solution in docs:** Always show Text with `style` prop in examples, never with direct styling props.
+
 ## Notes
 
 - This structure ensures consistency, maintainability, and great DX
 - Separation of content/examples/pages allows independent updates
 - Type safety via `ComponentDocs` interface catches errors early
 - Progressive disclosure (essential → all props) balances clarity and completeness
+- **View component documentation** provides additional reference for layout-focused components
