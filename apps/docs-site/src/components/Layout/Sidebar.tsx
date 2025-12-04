@@ -27,9 +27,9 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Button', path: '/components/button' },
       { label: 'Dropdown', path: '/components/dropdown' },
-      { label: 'Checkbox', path: '/components/checkbox' },
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
+      { label: 'View', path: '/components/view' },
     ],
   },
   {
