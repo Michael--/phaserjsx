@@ -4,6 +4,7 @@
 /** @jsxImportSource react */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import logoImage from '../../assets/phaser-jsx-logo.png'
 
 /**
  * Site header with navigation and theme toggle
@@ -32,13 +33,29 @@ export function Header() {
         <Link
           to="/"
           style={{
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: darkMode ? '#fff' : '#000',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
             textDecoration: 'none',
           }}
         >
-          PhaserJSX UI
+          <img
+            src={logoImage}
+            alt="PhaserJSX Logo"
+            style={{
+              height: '40px',
+              width: 'auto',
+            }}
+          />
+          <span
+            style={{
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: darkMode ? '#fff' : '#000',
+            }}
+          >
+            PhaserJSX UI
+          </span>
         </Link>
         <nav style={{ display: 'flex', gap: '16px' }}>
           <Link

@@ -7,10 +7,22 @@ import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
 import '@/styles/docs.css'
 import '@/styles/home.css'
+import logoImage from '@/assets/phaser-jsx-logo.png'
 
 export function HomePage() {
   return (
     <DocLayout>
+      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <img
+          src={logoImage}
+          alt="PhaserJSX Logo"
+          style={{
+            height: '120px',
+            width: 'auto',
+            marginBottom: '24px',
+          }}
+        />
+      </div>
       <Hero title="Welcome to PhaserJSX UI">
         A React-like component library for Phaser 3, featuring JSX syntax, hooks, flexbox layout,
         and a complete theme system.
