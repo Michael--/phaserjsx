@@ -2,12 +2,12 @@
  * Home Page
  */
 /** @jsxImportSource react */
+import logoImage from '@/assets/phaser-jsx-logo.png'
 import { Section } from '@/components/Doc'
 import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
 import '@/styles/docs.css'
 import '@/styles/home.css'
-import logoImage from '@/assets/phaser-jsx-logo.png'
 
 export function HomePage() {
   return (

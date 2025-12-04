@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@phaserjsx/ui",
+    "strict": true,
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}

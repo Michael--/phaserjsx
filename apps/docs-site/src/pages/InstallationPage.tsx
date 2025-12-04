@@ -8,6 +8,14 @@ import {
 } from '../components/Doc/Typography'
 import { DocLayout } from '../components/Layout/DocLayout'
 import '../styles/docs.css'
+import basicSceneCode from '../examples-docs/installation/basic-scene.tsx?raw'
+import gameConfigCode from '../examples-docs/installation/game-config.ts?raw'
+import lifecycleCode from '../examples-docs/installation/scene-lifecycle.tsx?raw'
+import multiMountCode from '../examples-docs/installation/multi-mount.tsx?raw'
+import propsCode from '../examples-docs/installation/mount-with-props.tsx?raw'
+import devConfigCode from '../examples-docs/installation/dev-config.ts?raw'
+import inputConfigCode from '../examples-docs/installation/input-config.ts?raw'
+import testCode from '../examples-docs/installation/test-component.tsx?raw'
 
 /**
  * Installation guide for PhaserJSX
@@ -130,42 +138,7 @@ import { View, Text } from '@phaserjsx/ui'
           </DocParagraph>
 
           <CodeBlock language="typescript" title="GameScene.ts">
-            {`/** @jsxImportSource @phaserjsx/ui */
-import Phaser from 'phaser'
-import { mountJSX, View, Text, Button } from '@phaserjsx/ui'
-
-export class GameScene extends Phaser.Scene {
-  constructor() {
-    super({ key: 'GameScene' })
-  }
-
-  create() {
-    // Mount your PhaserJSX component tree
-    mountJSX(this, <MainUI />)
-  }
-}
-
-// Your component using PhaserJSX
-function MainUI() {
-  return (
-    <View
-      width="100vw"
-      height="100vh"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={20}
-    >
-      <Text fontSize={32} fill="#ffffff">
-        Welcome to PhaserJSX!
-      </Text>
-
-      <Button variant="primary" onPress={() => console.log('Clicked!')}>
-        <Text>Get Started</Text>
-      </Button>
-    </View>
-  )
-}`}
+            {basicSceneCode}
           </CodeBlock>
         </div>
 
@@ -205,22 +178,7 @@ function MainUI() {
         <div className="doc-subsection">
           <h3>Complete Phaser Game Config</h3>
           <CodeBlock language="typescript" title="main.ts">
-            {`import Phaser from 'phaser'
-import { GameScene } from './scenes/GameScene'
-
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  width: 1280,
-  height: 720,
-  backgroundColor: '#1a1a2e',
-  scene: [GameScene],
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH
-  }
-}
-
-new Phaser.Game(config)`}
+            {gameConfigCode}
           </CodeBlock>
         </div>
       </DocSection>
@@ -247,21 +205,7 @@ new Phaser.Game(config)`}
             </div>
           </div>
 
-          <CodeBlock language="typescript">
-            {`export class GameScene extends Phaser.Scene {
-  private unmount?: () => void
-
-  create() {
-    // Mount and store unmount function
-    this.unmount = mountJSX(this, <MyUI />)
-  }
-
-  shutdown() {
-    // Manually unmount if needed (usually automatic)
-    this.unmount?.()
-  }
-}`}
-          </CodeBlock>
+          <CodeBlock language="typescript">{lifecycleCode}</CodeBlock>
         </div>
 
         <div className="doc-subsection">
@@ -270,46 +214,21 @@ new Phaser.Game(config)`}
             You can mount multiple component trees in different containers:
           </DocParagraph>
 
-          <CodeBlock language="typescript">
-            {`create() {
-  // Main UI in scene root
-  mountJSX(this, <GameUI />)
-
-  // Separate HUD in a fixed container
-  const hudContainer = this.add.container(0, 0)
-  hudContainer.setScrollFactor(0) // Fixed to camera
-  mountJSX(hudContainer, <HUD />)
-}`}
-          </CodeBlock>
+          <CodeBlock language="typescript">{multiMountCode}</CodeBlock>
         </div>
 
         <div className="doc-subsection">
           <h3>Passing Props</h3>
           <DocParagraph>Pass data from your scene to mounted components:</DocParagraph>
 
-          <CodeBlock language="typescript">
-            {`create() {
-  mountJSX(this, <PlayerUI />, {
-    playerName: 'Hero',
-    level: 5,
-    onPause: () => this.scene.pause()
-  })
-}`}
-          </CodeBlock>
+          <CodeBlock language="typescript">{propsCode}</CodeBlock>
         </div>
 
         <div className="doc-subsection">
           <h3>Development Mode</h3>
           <DocParagraph>Enable development warnings and debugging features:</DocParagraph>
 
-          <CodeBlock language="typescript">
-            {`import { DevConfig } from '@phaserjsx/ui'
-
-// In your game initialization
-DevConfig.enableWarnings = true  // Enable VDOM warnings
-DevConfig.enableKeyWarnings = true  // Warn about missing keys
-DevConfig.enableRemountWarnings = true  // Warn about unnecessary remounts`}
-          </CodeBlock>
+          <CodeBlock language="typescript">{devConfigCode}</CodeBlock>
         </div>
 
         <div className="doc-subsection">
@@ -319,16 +238,7 @@ DevConfig.enableRemountWarnings = true  // Warn about unnecessary remounts`}
             config includes input settings:
           </DocParagraph>
 
-          <CodeBlock language="typescript">
-            {`const config: Phaser.Types.Core.GameConfig = {
-  // ... other config
-  input: {
-    keyboard: true,
-    mouse: true,
-    touch: true
-  }
-}`}
-          </CodeBlock>
+          <CodeBlock language="typescript">{inputConfigCode}</CodeBlock>
         </div>
       </DocSection>
 
@@ -337,38 +247,7 @@ DevConfig.enableRemountWarnings = true  // Warn about unnecessary remounts`}
         <DocParagraph>Create a simple test component to verify everything is working:</DocParagraph>
 
         <CodeBlock language="typescript" title="TestScene.ts">
-          {`/** @jsxImportSource @phaserjsx/ui */
-import Phaser from 'phaser'
-import { mountJSX, View, Text, Button, useState } from '@phaserjsx/ui'
-
-export class TestScene extends Phaser.Scene {
-  create() {
-    mountJSX(this, <TestComponent />)
-  }
-}
-
-function TestComponent() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <View
-      width="100vw"
-      height="100vh"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      gap={20}
-    >
-      <Text fontSize={32} fill="#ffffff">
-        PhaserJSX is working!
-      </Text>
-
-      <Button variant="primary" onPress={() => setCount(count + 1)}>
-        <Text>Clicks: {count}</Text>
-      </Button>
-    </View>
-  )
-}`}
+          {testCode}
         </CodeBlock>
 
         <DocParagraph>

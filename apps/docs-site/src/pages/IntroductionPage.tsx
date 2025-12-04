@@ -7,6 +7,8 @@ import {
   SectionTitle,
 } from '../components/Doc/Typography'
 import { DocLayout } from '../components/Layout/DocLayout'
+import declarativeCode from '../examples-docs/introduction/declarative-example.tsx?raw'
+import imperativeCode from '../examples-docs/introduction/imperative-example.ts?raw'
 import '../styles/docs.css'
 
 /**
@@ -70,43 +72,7 @@ export function IntroductionPage() {
         </div>
 
         <CodeBlock language="typescript" title="Imperative Phaser Example">
-          {`// ❌ Imperative - Manual GameObject management
-class GameScene extends Phaser.Scene {
-  private counter: number = 0
-  private counterText?: Phaser.GameObjects.Text
-  private button?: Phaser.GameObjects.Rectangle
-
-  create() {
-    // Manually create button
-    this.button = this.add.rectangle(400, 300, 200, 60, 0x4a9eff)
-    this.button.setInteractive()
-    this.button.on('pointerdown', () => {
-      this.counter++
-      // Manually update text
-      this.counterText?.setText(\`Count: \${this.counter}\`)
-    })
-
-    // Manually create text
-    const buttonText = this.add.text(400, 300, 'Click me', {
-      fontSize: '20px',
-      color: '#ffffff'
-    })
-    buttonText.setOrigin(0.5)
-
-    // Manually create counter display
-    this.counterText = this.add.text(400, 400, \`Count: \${this.counter}\`, {
-      fontSize: '24px',
-      color: '#ffffff'
-    })
-    this.counterText.setOrigin(0.5)
-  }
-
-  // Need to manually clean up
-  shutdown() {
-    this.button?.destroy()
-    this.counterText?.destroy()
-  }
-}`}
+          {imperativeCode}
         </CodeBlock>
       </DocSection>
 
@@ -120,28 +86,7 @@ class GameScene extends Phaser.Scene {
         </DocParagraph>
 
         <CodeBlock language="typescript" title="Declarative PhaserJSX Example">
-          {`// ✅ Declarative - Automatic GameObject management
-/** @jsxImportSource @phaserjsx/ui */
-import { View, Text, Button, useState } from '@phaserjsx/ui'
-
-function CounterExample() {
-  const [counter, setCounter] = useState(0)
-
-  return (
-    <View flexDirection="column" gap={20} alignItems="center">
-      <Button
-        variant="primary"
-        onPress={() => setCounter(counter + 1)}
-      >
-        <Text>Click me</Text>
-      </Button>
-
-      <Text fontSize={24}>
-        Count: {counter}
-      </Text>
-    </View>
-  )
-}`}
+          {declarativeCode}
         </CodeBlock>
 
         <DocParagraph>Notice how the PhaserJSX version:</DocParagraph>
