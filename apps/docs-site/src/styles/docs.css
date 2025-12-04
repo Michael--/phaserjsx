@@ -1,0 +1,67 @@
+/**
+ * Global documentation styles
+ */
+
+/* Typography */
+.doc-description {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  color: #ccc;
+}
+
+.section-description {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #888;
+  margin-bottom: 16px;
+}
+
+/* Sections */
+.doc-section {
+  margin-top: 48px;
+}
+
+.doc-section:first-of-type {
+  margin-top: 0;
+}
+
+.doc-section h2 {
+  margin: 0 0 16px 0;
+}
+
+/* Code wrapper */
+.code-wrapper {
+  margin-top: 16px;
+}
+
+/* Toggle section */
+.toggle-section {
+  margin-top: 24px;
+}
+
+.toggle-section h3 {
+  margin: 0 0 16px 0;
+}
+
+/* Buttons */
+.toggle-button {
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.toggle-button:hover {
+  background-color: #444;
+}
+
+.toggle-button:active {
+  background-color: #222;
+}

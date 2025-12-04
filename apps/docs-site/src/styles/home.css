@@ -1,0 +1,65 @@
+/**
+ * Home page styles
+ */
+
+.hero {
+  margin-bottom: 48px;
+}
+
+.hero h1 {
+  margin-bottom: 16px;
+}
+
+.feature-list {
+  line-height: 2;
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+.feature-list li {
+  margin-bottom: 8px;
+}
+
+.code-install {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  overflow: auto;
+  margin: 16px 0;
+}
+
+.code-install code {
+  color: #d4d4d4;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.cta-button {
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+  display: inline-block;
+}
+
+.cta-button:hover {
+  opacity: 0.9;
+}
+
+.cta-button-primary {
+  background-color: #61dafb;
+  color: #000;
+}
+
+.cta-button-secondary {
+  background-color: #333;
+  color: #fff;
+}

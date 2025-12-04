@@ -2,68 +2,45 @@
  * Home Page
  */
 /** @jsxImportSource react */
+import { Section } from '@/components/Doc'
+import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
-import { Link } from 'react-router-dom'
+import '@/styles/docs.css'
+import '@/styles/home.css'
 
 export function HomePage() {
   return (
     <DocLayout>
-      <h1>Welcome to PhaserJSX UI</h1>
-      <p style={{ fontSize: '18px', lineHeight: '1.6', marginBottom: '24px' }}>
+      <Hero title="Welcome to PhaserJSX UI">
         A React-like component library for Phaser 3, featuring JSX syntax, hooks, flexbox layout,
         and a complete theme system.
-      </p>
+      </Hero>
 
-      <h2>Features</h2>
-      <ul style={{ lineHeight: '2' }}>
-        <li>✅ React-like DX with JSX + Hooks</li>
-        <li>✅ Flexbox Layout Engine</li>
-        <li>✅ Complete Theme System</li>
-        <li>✅ Spring Physics Animations</li>
-        <li>✅ 30+ Built-in Components</li>
-        <li>✅ TypeScript First</li>
-      </ul>
+      <Section title="Features">
+        <ul className="feature-list">
+          <li>✅ React-like DX with JSX + Hooks</li>
+          <li>✅ Flexbox Layout Engine</li>
+          <li>✅ Complete Theme System</li>
+          <li>✅ Spring Physics Animations</li>
+          <li>✅ 30+ Built-in Components</li>
+          <li>✅ TypeScript First</li>
+        </ul>
+      </Section>
 
-      <h2>Quick Start</h2>
-      <pre
-        style={{
-          backgroundColor: '#1e1e1e',
-          padding: '20px',
-          borderRadius: '8px',
-          overflow: 'auto',
-        }}
-      >
-        <code style={{ color: '#d4d4d4' }}>npm install @phaserjsx/ui</code>
-      </pre>
+      <Section title="Quick Start">
+        <pre className="code-install">
+          <code>npm install @phaserjsx/ui</code>
+        </pre>
+      </Section>
 
-      <h2>Explore</h2>
-      <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-        <Link
-          to="/components/button"
-          style={{
-            padding: '12px 24px',
-            backgroundColor: '#61dafb',
-            color: '#000',
-            textDecoration: 'none',
-            borderRadius: '6px',
-            fontWeight: 'bold',
-          }}
-        >
-          View Components
-        </Link>
-        <Link
-          to="/installation"
-          style={{
-            padding: '12px 24px',
-            backgroundColor: '#333',
-            color: '#fff',
-            textDecoration: 'none',
-            borderRadius: '6px',
-          }}
-        >
-          Installation Guide
-        </Link>
-      </div>
+      <Section title="Explore">
+        <CTAButtons
+          buttons={[
+            { to: '/components/button', text: 'View Components', variant: 'primary' },
+            { to: '/installation', text: 'Installation Guide', variant: 'secondary' },
+          ]}
+        />
+      </Section>
     </DocLayout>
   )
 }

@@ -2,7 +2,7 @@
  * Props table component for API documentation
  */
 /** @jsxImportSource react */
-import type { PropDefinition } from '@/content/button.content'
+import type { PropDefinition } from '@/types/docs'
 import './PropsTable.css'
 
 interface PropsTableProps {
