@@ -34,8 +34,7 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
       backgroundColor: '#2d2d2d',
       scene: sceneFactory(),
       scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH,
+        mode: Phaser.Scale.NONE,
       },
       input: {
         mouse: true,
@@ -57,7 +56,8 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
         border: '1px solid #444',
         borderRadius: '8px',
         overflow: 'hidden',
-        maxWidth: '100%',
+        maxWidth: width,
+        maxHeight: height,
         margin: '20px 0',
       }}
     />
