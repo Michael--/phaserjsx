@@ -122,9 +122,9 @@ export function IconsExample() {
   propsEssential: [
     {
       name: 'variant',
-      type: 'string',
+      type: '"primary" | "secondary" | "outline"',
       default: '"primary"',
-      description: 'Button style variant (primary, secondary, outline)',
+      description: 'Visual style variant',
     },
     {
       name: 'onClick',
@@ -135,21 +135,21 @@ export function IconsExample() {
       name: 'disabled',
       type: 'boolean',
       default: 'false',
-      description: 'Disable button interaction',
+      description: 'Disables interaction and applies disabled styling',
     },
     {
       name: 'children',
       type: 'VNode',
-      description: 'Button content (usually Text or View with Icon)',
+      description: 'Button content (Text, Icon, or View composition)',
     },
   ],
 
   propsComplete: [
     {
       name: 'variant',
-      type: 'string',
+      type: '"primary" | "secondary" | "outline"',
       default: '"primary"',
-      description: 'Button style variant (primary, secondary, outline)',
+      description: 'Visual style variant',
     },
     {
       name: 'onClick',
@@ -160,50 +160,31 @@ export function IconsExample() {
       name: 'disabled',
       type: 'boolean',
       default: 'false',
-      description: 'Disable button interaction',
+      description: 'Disables interaction and applies disabled styling',
+    },
+    {
+      name: 'disabledColor',
+      type: 'number',
+      description: 'Text color when button is disabled (hex number)',
+    },
+    {
+      name: 'textStyle',
+      type: 'TextStyle',
+      description: 'Override default text styling (color, fontSize, fontFamily, etc.)',
     },
     {
       name: 'children',
       type: 'VNode',
-      description: 'Button content (usually Text or View with Icon)',
+      description: 'Button content (Text, Icon, or View composition)',
     },
+  ],
+
+  inherits: [
     {
-      name: 'width',
-      type: 'number',
-      default: 'auto',
-      description: 'Button width in pixels',
-    },
-    {
-      name: 'height',
-      type: 'number',
-      default: 'auto',
-      description: 'Button height in pixels',
-    },
-    {
-      name: 'padding',
-      type: 'number | Padding',
-      description: 'Inner spacing (number or {top, right, bottom, left})',
-    },
-    {
-      name: 'backgroundColor',
-      type: 'number',
-      description: 'Background color (hex number)',
-    },
-    {
-      name: 'cornerRadius',
-      type: 'number',
-      default: '8',
-      description: 'Border radius in pixels',
-    },
-    {
-      name: 'borderWidth',
-      type: 'number',
-      description: 'Border thickness',
-    },
-    {
-      name: 'borderColor',
-      type: 'number',
-      description: 'Border color (hex number)',
+      component: 'View',
+      link: '/components/view',
+      description:
+        'Button extends View and inherits all layout and styling props including width, height, padding, backgroundColor, cornerRadius, borderWidth, borderColor, and more.',
     },
   ],
 }

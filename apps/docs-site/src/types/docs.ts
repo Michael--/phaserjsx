@@ -33,6 +33,18 @@ export interface PropDefinition {
 }
 
 /**
+ * Inherited component reference
+ */
+export interface InheritedComponent {
+  /** Parent component name */
+  component: string
+  /** Link to parent component docs */
+  link: string
+  /** Description of inherited functionality */
+  description: string
+}
+
+/**
  * Complete component documentation structure
  */
 export interface ComponentDocs {
@@ -48,4 +60,6 @@ export interface ComponentDocs {
   propsEssential: PropDefinition[]
   /** All props (complete reference) */
   propsComplete: PropDefinition[]
+  /** Inherited components and their props */
+  inherits?: InheritedComponent[]
 }

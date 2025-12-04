@@ -2,7 +2,7 @@
  * Button Component Documentation Page
  */
 /** @jsxImportSource react */
-import { ExampleSection, PropsTable } from '@/components/Doc'
+import { ExampleSection, InheritedProps, PropsTable } from '@/components/Doc'
 import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import { buttonContent } from '@/content/button.content'
@@ -37,7 +37,7 @@ export function ButtonPage() {
       ))}
 
       <h2 style={{ marginTop: '48px' }}>API Reference</h2>
-      <h3>Props</h3>
+      <h3>Button Props</h3>
       <PropsTable props={buttonContent.propsEssential} />
 
       <button
@@ -53,15 +53,17 @@ export function ButtonPage() {
           fontSize: '14px',
         }}
       >
-        {showAllProps ? '← Show Essential Props Only' : 'Show All Props →'}
+        {showAllProps ? '← Show Essential Props Only' : 'Show All Button Props →'}
       </button>
 
       {showAllProps && (
         <div style={{ marginTop: '24px' }}>
-          <h3>Complete Props Reference</h3>
+          <h3>Complete Button Props</h3>
           <PropsTable props={buttonContent.propsComplete} />
         </div>
       )}
+
+      {buttonContent.inherits && <InheritedProps inherits={buttonContent.inherits} />}
     </DocLayout>
   )
 }

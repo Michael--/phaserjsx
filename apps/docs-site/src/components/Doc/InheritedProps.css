@@ -1,0 +1,56 @@
+.inherited-props {
+  margin-top: 32px;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid #333;
+  border-radius: 8px;
+}
+
+.inherited-props h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #888;
+}
+
+.inherited-item {
+  margin-bottom: 12px;
+}
+
+.inherited-item:last-child {
+  margin-bottom: 0;
+}
+
+.inherited-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.inherited-label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.inherited-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a9eff;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.inherited-link:hover {
+  color: #6bb3ff;
+  text-decoration: underline;
+}
+
+.inherited-description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #aaa;
+}
