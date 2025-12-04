@@ -3,6 +3,7 @@
  * Generic Button component with variant and size support
  * Icon-agnostic - accepts children or content slots
  */
+import type { ViewProps } from '..'
 import {
   applyEffectByName,
   resolveEffect,
@@ -14,27 +15,27 @@ import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import { View } from '../index'
-import type { ViewProps } from '..'
 
 /**
  * Button variant theme
  */
 export type ButtonVariantTheme = ViewTheme & EffectDefinition
-
+export type ButtonVariant = 'primary' | 'secondary' | 'outline'
+export type ButtonSize = 'small' | 'medium' | 'large'
 /**
  * Props for Button component
  */
 export interface ButtonProps extends ViewProps, EffectDefinition {
   /** Button content - can be text, icons, or any JSX */
-  children?: ChildrenType
+  children?: ChildrenType | undefined
   /** Click handler */
   onClick?: (() => void) | undefined
   /** Disabled state */
-  disabled?: boolean
+  disabled?: boolean | undefined
   /** Visual variant */
-  variant?: 'primary' | 'secondary' | 'outline' | string
+  variant?: ButtonVariant | undefined
   /** Size variant */
-  size?: 'small' | 'medium' | 'large' | string
+  size?: ButtonSize | undefined
 }
 
 /**

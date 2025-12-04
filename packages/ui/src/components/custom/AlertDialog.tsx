@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState, useTheme } from '../../hooks
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Text } from '../index'
-import { Button } from './Button'
+import { Button, type ButtonVariant } from './Button'
 import { Dialog } from './Dialog'
 import { WrapText } from './WrapText'
 
@@ -94,7 +94,7 @@ export function AlertDialog(props: AlertDialogProps) {
 
   // Props override theme, theme overrides nothing
   const prefix = props.prefix ?? variantTheme?.prefix
-  const buttonVariant = (variantTheme?.buttonVariant as 'primary' | 'danger') ?? 'primary'
+  const buttonVariant: ButtonVariant | undefined = variantTheme?.buttonVariant
 
   // Handle confirm with async support (memoized to prevent re-creating on every render)
   const handleConfirm = useCallback(async () => {
@@ -133,7 +133,6 @@ export function AlertDialog(props: AlertDialogProps) {
       <>
         {showCancel && (
           <Button
-            variant="ghost"
             // TODO: find out why immediate close bother the button click animation
             onClick={() => setTimeout(() => props.onClose?.(), 200)}
             disabled={loading}

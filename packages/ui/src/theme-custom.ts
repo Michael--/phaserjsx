@@ -7,6 +7,7 @@
  * 2. Add the corresponding default values in theme-defaults.ts
  */
 import type { AnimationConfig } from './animation/spring-physics'
+import type { ButtonVariant } from './components/custom/Button'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
 
@@ -220,22 +221,22 @@ export interface CustomComponentThemes {
     variants?: {
       info?: {
         prefix?: ChildrenType
-        buttonVariant?: string
+        buttonVariant?: ButtonVariant
         prefixTint?: number
       }
       warning?: {
         prefix?: ChildrenType
-        buttonVariant?: string
+        buttonVariant?: ButtonVariant
         prefixTint?: number
       }
       destructive?: {
         prefix?: ChildrenType
-        buttonVariant?: string
+        buttonVariant?: ButtonVariant
         prefixTint?: number
       }
       success?: {
         prefix?: ChildrenType
-        buttonVariant?: string
+        buttonVariant?: ButtonVariant
         prefixTint?: number
       }
     }
