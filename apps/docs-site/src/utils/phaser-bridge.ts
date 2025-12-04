@@ -256,6 +256,10 @@ export function createPhaserScene(
       if (this.backgroundTween) {
         this.backgroundTween.stop()
       }
+      if (this.background) {
+        this.background.destroy()
+      }
+      this.background = undefined
     }
   }
 }
