@@ -3,8 +3,10 @@
  */
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import {
+  EffectsButtonExample,
   IconsButtonExample,
   QuickStartButtonExample,
+  SizingButtonExample,
   StatesButtonExample,
   VariantsButtonExample,
 } from '@/examples/button'
@@ -117,6 +119,77 @@ export function IconsExample() {
   )
 }`,
     },
+    {
+      id: 'sizing',
+      title: 'Sizing & Layout',
+      description: 'Size variants and custom dimensions',
+      component: SizingButtonExample,
+      height: SCENE_SIZES.medium,
+      code: `/** @jsxImportSource @phaserjsx/ui */
+import { Button, Text, View } from '@phaserjsx/ui'
+
+export function SizingExample() {
+  return (
+    <View padding={20} gap={16} justifyContent="center" alignItems="center">
+      {/* Size variants */}
+      <View direction="row" gap={12} alignItems="center">
+        <Button size="small">
+          <Text text="Small" />
+        </Button>
+        <Button size="medium">
+          <Text text="Medium" />
+        </Button>
+        <Button size="large">
+          <Text text="Large" />
+        </Button>
+      </View>
+
+      {/* Custom dimensions */}
+      <Button width={250} height={60}>
+        <Text text="Custom Size (250x60)" />
+      </Button>
+
+      {/* Full width */}
+      <View width={300}>
+        <Button width="fill">
+          <Text text="Full Width Button" />
+        </Button>
+      </View>
+    </View>
+  )
+}`,
+    },
+    {
+      id: 'effects',
+      title: 'Effects',
+      description: 'Phaser-powered hover and click animations',
+      component: EffectsButtonExample,
+      height: SCENE_SIZES.medium,
+      code: `/** @jsxImportSource @phaserjsx/ui */
+import { Button, Text, View } from '@phaserjsx/ui'
+
+export function EffectsExample() {
+  return (
+    <View padding={20} gap={16} justifyContent="center" alignItems="center">
+      <Button effect="tada" effectConfig={{ time: 500 }}>
+        <Text text="Tada Effect" />
+      </Button>
+
+      <Button effect="bounce" effectConfig={{ time: 600 }} variant="secondary">
+        <Text text="Bounce Effect" />
+      </Button>
+
+      <Button effect="pulse" effectConfig={{ time: 800 }} variant="outline">
+        <Text text="Pulse Effect" />
+      </Button>
+
+      <Button effect="fade" effectConfig={{ time: 400 }}>
+        <Text text="Fade Effect" />
+      </Button>
+    </View>
+  )
+}`,
+    },
   ],
 
   propsEssential: [
@@ -136,6 +209,12 @@ export function IconsExample() {
       type: 'boolean',
       default: 'false',
       description: 'Disables interaction and applies disabled styling',
+    },
+    {
+      name: 'size',
+      type: '"small" | "medium" | "large"',
+      default: '"medium"',
+      description: 'Predefined size variant',
     },
     {
       name: 'children',
@@ -161,6 +240,22 @@ export function IconsExample() {
       type: 'boolean',
       default: 'false',
       description: 'Disables interaction and applies disabled styling',
+    },
+    {
+      name: 'size',
+      type: '"small" | "medium" | "large"',
+      default: '"medium"',
+      description: 'Predefined size variant',
+    },
+    {
+      name: 'effect',
+      type: 'string',
+      description: 'Phaser animation effect (tada, bounce, pulse, fade, etc.)',
+    },
+    {
+      name: 'effectConfig',
+      type: 'EffectConfig',
+      description: 'Configuration for the effect (time, scale, etc.)',
     },
     {
       name: 'disabledColor',
