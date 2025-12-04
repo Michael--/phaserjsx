@@ -97,15 +97,14 @@ export function Button(props: ButtonProps) {
       }
     : sizeTheme
 
-  const handleTouch =
-    !disabled && onClick
-      ? () => {
-          // Apply effect: props override theme, theme overrides default
-          const resolved = resolveEffect(props, themed as ButtonVariantTheme)
-          applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
-          onClick()
-        }
-      : undefined
+  const handleTouch = !disabled
+    ? () => {
+        // Apply effect: props override theme, theme overrides default
+        const resolved = resolveEffect(props, themed as ButtonVariantTheme)
+        applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
+        onClick?.()
+      }
+    : undefined
 
   // Filter out non-View props from theme
   const {
