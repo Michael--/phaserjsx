@@ -5,12 +5,14 @@ import { SCENE_SIZES } from '@/constants/scene-sizes'
 import {
   AlignmentViewExample,
   BasicLayoutViewExample,
+  BordersStylingViewExample,
   FlexDirectionViewExample,
   QuickStartViewExample,
 } from '@/examples/view'
 // Import source code as raw strings
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
 import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?raw'
+import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
@@ -55,6 +57,135 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.large,
       code: AlignmentViewExampleRaw,
     },
+    {
+      id: 'borders-styling',
+      title: 'Borders & Styling',
+      description: 'Border width, color, corner radius, and transparency',
+      component: BordersStylingViewExample,
+      height: SCENE_SIZES.large,
+      code: BordersStylingViewExampleRaw,
+    },
+
+    // ========================================
+    // PLANNED EXAMPLES (To be implemented)
+    // ========================================
+
+    // --- BASIC FEATURES (Simple, frequently used) ---
+    // {
+    //   id: 'fill-sizing',
+    //   title: 'Fill Width/Height',
+    //   description: 'Using "fill" to take full available space in parent',
+    //   // Show: width="fill", height="fill", mixed with fixed sizes
+    //   // Useful for: Full-width buttons, flexible panels
+    // },
+
+    // {
+    //   id: 'min-max-constraints',
+    //   title: 'Size Constraints',
+    //   description: 'Min/max width and height for responsive boundaries',
+    //   // Show: minWidth, maxWidth, minHeight, maxHeight
+    //   // Useful for: Responsive cards, flexible containers with limits
+    // },
+
+    // {
+    //   id: 'padding-variations',
+    //   title: 'Padding Variations',
+    //   description: 'Individual padding for each side',
+    //   // Show: paddingTop, paddingRight, paddingBottom, paddingLeft
+    //   // Useful for: Asymmetric spacing, fine-tuned layouts
+    // },
+
+    // {
+    //   id: 'space-around-between',
+    //   title: 'Space Distribution',
+    //   description: 'Space-around and space-between for even distribution',
+    //   // Show: justifyContent="space-around", "space-between"
+    //   // Useful for: Navigation bars, evenly spaced buttons
+    // },
+
+    // {
+    //   id: 'wrap-behavior',
+    //   title: 'Flex Wrap',
+    //   description: 'Wrapping children to next line when space runs out',
+    //   // Show: wrap="wrap" vs "nowrap"
+    //   // Useful for: Tag lists, responsive button groups
+    // },
+
+    // {
+    //   id: 'overflow-hidden',
+    //   title: 'Overflow Control',
+    //   description: 'Clipping content that exceeds container bounds',
+    //   // Show: overflow="hidden" vs "visible"
+    //   // Useful for: Scrollable areas, masked content
+    // },
+
+    // --- INTERMEDIATE FEATURES (More complex use cases) ---
+    // {
+    //   id: 'nested-layouts',
+    //   title: 'Complex Nested Layouts',
+    //   description: 'Building card-like structures with multiple View layers',
+    //   // Show: Header/Body/Footer pattern, sidebar + content
+    //   // Useful for: Cards, panels, split views
+    // },
+
+    // {
+    //   id: 'depth-stacking',
+    //   title: 'Z-Index Stacking',
+    //   description: 'Controlling render order with depth property',
+    //   // Show: depth prop for overlapping elements, tooltips, dropdowns
+    //   // Useful for: Overlays, modals, z-index control
+    // },
+
+    // {
+    //   id: 'position-offset',
+    //   title: 'Position Offsets',
+    //   description: 'Fine-tuning position with x/y offsets',
+    //   // Show: x, y props for manual positioning adjustments
+    //   // Useful for: Pixel-perfect positioning, animations
+    // },
+
+    // {
+    //   id: 'alpha-visibility',
+    //   title: 'Opacity & Visibility',
+    //   description: 'Controlling visibility with alpha and visible props',
+    //   // Show: alpha for fade effects, visible for show/hide
+    //   // Useful for: Fade transitions, conditional rendering
+    // },
+
+    // --- ADVANCED FEATURES (Better documented elsewhere) ---
+    // NOTE: These features should be documented in separate guides:
+
+    // Gestures & Interaction
+    // → Better in: /guides/gestures or /guides/interaction
+    // - enableGestures, onTouch, onTouchMove, onTouchOutside
+    // - onDoubleTap, onLongPress, gesture configuration
+    // Reason: Complex topic, needs dedicated space for patterns
+
+    // Theme Integration
+    // → Better in: /guides/theming
+    // - theme prop, nested themes, component-level styling
+    // - getThemedProps usage, theme inheritance
+    // Reason: Theme system is cross-cutting, needs holistic view
+
+    // Responsive Design
+    // → Better in: /guides/responsive-design
+    // - Viewport units (vw, vh), percentage sizes
+    // - calc() expressions, dynamic sizing strategies
+    // - maxWidth with viewport units for breakpoints
+    // Reason: Responsive patterns span multiple components
+
+    // Layout Patterns
+    // → Better in: /guides/layout-patterns
+    // - Common patterns: Holy Grail, Sidebar, Grid-like structures
+    // - Flexbox equivalents (stretch, flex-grow behavior)
+    // - Centering strategies, sticky footers
+    // Reason: Patterns involve multiple components and techniques
+
+    // Performance Considerations
+    // → Better in: /guides/performance
+    // - When to use headless, layout recalculation triggers
+    // - Nested View overhead, optimization tips
+    // Reason: Performance is a cross-cutting concern
   ],
 
   propsEssential: [
