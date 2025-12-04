@@ -5,7 +5,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@phaserjsx/ui",
     "strict": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,
     "moduleResolution": "bundler",
     "target": "ES2020",
