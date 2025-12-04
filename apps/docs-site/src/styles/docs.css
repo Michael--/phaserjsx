@@ -3,6 +3,27 @@
  */
 
 /* Typography */
+.doc-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 0 0 24px 0;
+  color: #ffffff;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #ffffff;
+}
+
+.doc-paragraph {
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  color: #ccc;
+}
+
 .doc-description {
   font-size: 16px;
   line-height: 1.6;
@@ -28,6 +49,178 @@
 
 .doc-section h2 {
   margin: 0 0 16px 0;
+}
+
+.doc-section h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 32px 0 16px 0;
+  color: #ffffff;
+}
+
+.doc-subsection {
+  margin-top: 32px;
+}
+
+/* Lists */
+.doc-list {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doc-list-item {
+  padding-left: 24px;
+  position: relative;
+  line-height: 1.6;
+  color: #ccc;
+}
+
+.doc-list-item::before {
+  content: '•';
+  position: absolute;
+  left: 8px;
+  color: #4a9eff;
+  font-weight: bold;
+}
+
+.doc-list-item strong {
+  color: #ffffff;
+}
+
+.doc-list-item a {
+  color: #4a9eff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.doc-list-item a:hover {
+  text-decoration: underline;
+}
+
+/* Code blocks */
+.code-block {
+  margin: 24px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1a2e;
+  border: 1px solid #2a2a3e;
+}
+
+.code-block-title {
+  padding: 12px 16px;
+  background: #2a2a3e;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid #3a3a4e;
+}
+
+.code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  background: transparent;
+}
+
+.code-block code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+
+/* Inline code */
+code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9em;
+  padding: 2px 6px;
+  background: #2a2a3e;
+  border-radius: 4px;
+  color: #4a9eff;
+}
+
+/* Info boxes */
+.info-box {
+  margin: 24px 0;
+  padding: 16px 20px;
+  background: rgba(74, 158, 255, 0.1);
+  border-left: 4px solid #4a9eff;
+  border-radius: 4px;
+}
+
+.info-box strong {
+  color: #4a9eff;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.info-box p {
+  margin: 8px 0;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+.info-box .code-block {
+  margin-top: 12px;
+}
+
+.installation-notice {
+  margin: 24px 0;
+  padding: 16px 20px;
+  background: rgba(255, 180, 0, 0.1);
+  border-left: 4px solid #ffb400;
+  border-radius: 4px;
+}
+
+.installation-notice strong {
+  color: #ffb400;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.installation-notice p {
+  margin: 8px 0;
+  color: #ccc;
+  line-height: 1.6;
+}
+
+/* Architecture diagram */
+.architecture-diagram {
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.arch-layer {
+  background: #2a2a3e;
+  padding: 20px 40px;
+  border-radius: 8px;
+  border: 2px solid #4a9eff;
+  text-align: center;
+  min-width: 300px;
+}
+
+.arch-layer strong {
+  display: block;
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.arch-layer span {
+  display: block;
+  font-size: 14px;
+  color: #888;
+}
+
+.arch-arrow {
+  font-size: 32px;
+  color: #4a9eff;
+  margin: 4px 0;
 }
 
 /* Code wrapper */

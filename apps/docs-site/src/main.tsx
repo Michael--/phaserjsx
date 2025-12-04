@@ -6,6 +6,8 @@ import { ComingSoonPage } from './pages/ComingSoonPage'
 import { ButtonPage } from './pages/Components/ButtonPage'
 import { SceneBackgroundsPage, TestingPage } from './pages/Guides'
 import { HomePage } from './pages/HomePage'
+import { InstallationPage } from './pages/InstallationPage'
+import { IntroductionPage } from './pages/IntroductionPage'
 
 createRoot(document.getElementById('root')!).render(
   // Note: StrictMode disabled because Phaser Game instances don't play well
@@ -13,6 +15,8 @@ createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/introduction" element={<IntroductionPage />} />
+      <Route path="/installation" element={<InstallationPage />} />
       <Route path="/components/button" element={<ButtonPage />} />
 
       {/* Guides */}
@@ -20,7 +24,6 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
 
       {/* Placeholder routes */}
-      <Route path="/installation" element={<ComingSoonPage />} />
       <Route path="/components/view" element={<ComingSoonPage />} />
       <Route path="/components/text" element={<ComingSoonPage />} />
       <Route path="/components/image" element={<ComingSoonPage />} />

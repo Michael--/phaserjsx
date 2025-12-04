@@ -18,7 +18,7 @@ const navigation: NavSection[] = [
   {
     title: 'Getting Started',
     items: [
-      { label: 'Introduction', path: '/' },
+      { label: 'Introduction', path: '/introduction' },
       { label: 'Installation', path: '/installation' },
     ],
   },
