@@ -846,16 +846,25 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       // Check if this child has layout-relevant changes
       const childLayoutChanged = hasLayoutPropsChanged(c1, c2)
 
+      // Check if text content changed (text nodes have dynamic sizing)
+      const textContentChanged =
+        c1.props?.text !== c2.props?.text || !equal(c1.props?.style, c2.props?.style)
+
       // Recursively patch the child
       patchVNode(oldV.__node as ParentType, c1, c2)
 
       // Mark as changed if:
       // 1. Layout props changed, OR
-      // 2. Child has dynamic sizing (__getLayoutSize) - content might have changed
+      // 2. Text content changed (affects text dimensions), OR
+      // 3. Child has dynamic sizing (__getLayoutSize) and might have changed
       if (childLayoutChanged) {
+        childrenChanged = true
+      } else if (textContentChanged) {
+        // Text content changed - dimensions likely changed
         childrenChanged = true
       } else if (c1.__node && typeof c1.__node === 'object' && '__getLayoutSize' in c1.__node) {
         // Child has dynamic sizing (e.g., text), assume size might have changed
+        // Note: This is a fallback - should be caught by textContentChanged
         childrenChanged = true
       }
     }
