@@ -157,7 +157,7 @@ export function App(props: AppProps) {
   const width = props.width
   const height = props.height
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('tooltip')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('fx')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
   /*

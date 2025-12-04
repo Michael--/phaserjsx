@@ -22,6 +22,7 @@ import { ChartTextInputExample } from './examples/CharTextInputExample'
 import { CheckboxExample } from './examples/CheckboxExample'
 import { CustomEffectsExample } from './examples/CustomEffectsExample'
 import { DropdownExample } from './examples/DropdownExample'
+import { FXSystemExample } from './examples/FXSystemExample'
 import { ImageExample } from './examples/ImageExample'
 import { ModalExample } from './examples/ModalExample'
 import { NineSliceExample } from './examples/NineSliceExample'
@@ -87,6 +88,7 @@ export type ExampleKey =
   | 'dialog'
   | 'alertDialog'
   | 'wrapText'
+  | 'fx'
 
 type ExampleConfig = { label: string; component: () => VNode }
 
@@ -160,6 +162,7 @@ const groupedExamples: GroupedExamples = {
       effects: { label: 'Object Effects', component: GameObjectEffectsExample },
       origin: { label: 'Origin View', component: OriginExample },
       customEffects: { label: 'Custom Effects', component: CustomEffectsExample },
+      fx: { label: 'FX System', component: FXSystemExample },
     },
   },
   miscellaneous: {

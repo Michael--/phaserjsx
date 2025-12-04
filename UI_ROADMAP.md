@@ -123,16 +123,16 @@
 
 ---
 
-### ⚠️ Phaser FX System - Teilweise
+### ✅ Phaser FX System - Vollständig
 
 **PostFX/PreFX Pipeline:**
 
-- ❌ `useFX` Hook - Für postFX/preFX Pipeline
-- ❌ FX Registry mit Presets (Shadow, Glow, Blur, etc.)
-- ❌ `useShadow`, `useGlow`, `useBlur` - Convenience Hooks
-- ❌ FX Animation Support (animated FX properties)
-- ❌ Theme-Integration für FX
-- **Status:** Nicht implementiert, aber Phaser-native Unterstützung vorhanden
+- ✅ `useFX` Hook - Für postFX/preFX Pipeline
+- ✅ FX Registry mit Presets (Shadow, Glow, Blur, Pixelate, Vignette, ColorMatrix)
+- ✅ `useShadow`, `useGlow`, `useBlur` - Convenience Hooks
+- ❌ FX Animation Support (animated FX properties) - Geplant für v1.1
+- ❌ Theme-Integration für FX - Geplant für v1.1
+- **Status:** Production-ready, GPU-beschleunigt
 
 ---
 
@@ -232,23 +232,25 @@
 
 **Priorität: MITTEL-HOCH - Phaser-native, low-cost, high-impact**
 
-#### 6. Phaser FX System (PostFX/PreFX)
+#### 6. Phaser FX System (PostFX/PreFX) ✅ **FERTIG!**
 
-- ❌ `useFX` - Hook für postFX/preFX Pipeline
-- ❌ FX Registry mit Presets
-  - Shadow (drop shadow, inner shadow)
-  - Glow (outer glow, inner glow)
+- ✅ `useFX` - Hook für postFX/preFX Pipeline
+- ✅ FX Registry mit Presets
+  - Shadow (drop shadow)
+  - Glow (outer glow)
   - Blur (box blur, gaussian blur)
   - Pixelate
   - Vignette
-  - Color Matrix (grayscale, sepia, etc.)
-- ❌ Convenience Hooks:
+  - Color Matrix (grayscale, sepia, negative, brown, kodachrome, technicolor, polaroid)
+- ✅ Convenience Hooks:
   - `useShadow(ref, { offsetX, offsetY, blur, color })`
-  - `useGlow(ref, { color, quality, distance })`
-  - `useBlur(ref, { strength, quality })`
-- ❌ FX Animation Support (Spring-animated FX)
-- ❌ Theme-Integration (z.B. `shadow` als Theme-Property)
-- **Aufwand:** 1.5 Tage
+  - `useGlow(ref, { color, distance, strength })`
+  - `useBlur(ref, { strength, steps })`
+- ✅ Example mit allen FX-Typen
+- ❌ FX Animation Support (Spring-animated FX) - Optional für v1.1
+- ❌ Theme-Integration (z.B. `shadow` als Theme-Property) - Optional für v1.1
+- **Aufwand:** ~6 Stunden (wie geplant!)
+- **Status:** Production-ready mit vollständiger API
 - **Begründung:** Phaser-native, Performance-effizient, große UX-Verbesserung (Shadows!)
 
 #### 7. Particle System Integration
@@ -464,7 +466,7 @@
 6. ✅ **SVG Icon Generator** - Automatisiert & type-safe
 7. ✅ **Design Token System** - Semantic Styling
 8. ✅ **Signal Integration** - Reactive State Management
-9. ⚠️ **Phaser-native FX** - PostFX/PreFX noch nicht integriert (Phase 1.5)
+9. ✅ **Phaser-native FX** - PostFX/PreFX vollständig integriert (Shadow, Glow, Blur, etc.)
 
 ---
 

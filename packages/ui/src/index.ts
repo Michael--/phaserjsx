@@ -10,6 +10,7 @@ registerBuiltins()
 
 export * from './core-types'
 export * from './effects'
+export * from './fx'
 export * from './hooks'
 export * from './hooks-svg'
 export * from './host'
