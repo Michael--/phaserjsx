@@ -16,13 +16,16 @@ function createDocsTheme() {
   )
 }
 
-/**
- * Global theme for all PhaserJSX examples in docs
- */
-export const docsTheme = createDocsTheme()
+// Function to add theme to docs site
+export function addThemeToDocs() {
+  /**
+   * Global theme for all PhaserJSX examples in docs
+   */
+  const docsTheme = createDocsTheme()
 
-// Set global theme ONCE (safe in module scope)
-themeRegistry.updateGlobalTheme(docsTheme)
+  // Set global theme ONCE (safe in module scope)
+  themeRegistry.updateGlobalTheme(docsTheme)
 
-// Initialize color preset
-setColorPreset('oceanBlue')
+  // Initialize color preset
+  setColorPreset('oceanBlue')
+}
