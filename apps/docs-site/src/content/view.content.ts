@@ -52,7 +52,7 @@ export const viewContent: ComponentDocs = {
       title: 'Alignment',
       description: 'Positioning content with justifyContent and alignItems',
       component: AlignmentViewExample,
-      height: SCENE_SIZES.medium,
+      height: SCENE_SIZES.large,
       code: AlignmentViewExampleRaw,
     },
   ],

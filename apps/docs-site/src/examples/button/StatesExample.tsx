@@ -9,7 +9,7 @@ export function StatesButtonExample() {
 
   return (
     <View padding={20} gap={12} justifyContent="center" alignItems="center">
-      <Button onClick={() => setClickCount(clickCount + 1)}>
+      <Button width={'auto'} onClick={() => setClickCount(clickCount + 1)}>
         <Text text={`Clicked ${clickCount} times`} />
       </Button>
 

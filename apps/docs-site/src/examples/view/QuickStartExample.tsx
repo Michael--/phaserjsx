@@ -8,7 +8,7 @@ import { Text, View } from '@phaserjsx/ui'
 export function QuickStartViewExample() {
   return (
     <View padding={20} justifyContent="center" alignItems="center">
-      <View backgroundColor={0x3498db} width={200} height={100} cornerRadius={8}>
+      <View backgroundColor={0x3498db} width={200} height={100} cornerRadius={8} padding={10}>
         <Text text="I'm a View!" style={{ fontSize: '20px', color: '#ffffff' }} />
       </View>
     </View>
