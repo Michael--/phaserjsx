@@ -5,6 +5,7 @@
  * This component simplifies the creation of scalable buttons by automatically handling
  * the stack layout pattern and inner content positioning.
  */
+import type { ViewProps } from '..'
 import {
   applyEffectByName,
   resolveEffect,
@@ -14,7 +15,6 @@ import {
 import { useEffect, useRef, useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import { NineSlice, View } from '../index'
-import type { ViewProps } from '..'
 
 /**
  * Props for NineSliceButton component

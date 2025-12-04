@@ -46,6 +46,5 @@ export function Text(props: TextProps) {
   const { props: themed, nestedTheme } = getThemedProps('Text', localTheme, props as any)
 
   // Cast to any to bypass type checking - the props are correct at runtime
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <text {...(themed as any)} theme={nestedTheme} />
+  return <text {...themed} theme={nestedTheme} />
 }

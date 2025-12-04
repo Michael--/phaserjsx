@@ -55,5 +55,5 @@ export function View(props: ViewProps) {
   const { props: themed, nestedTheme } = getThemedProps('View', localTheme, props)
 
   // Cast to any to bypass type checking - the props are correct at runtime
-  return <view {...(themed as any)} theme={nestedTheme} />
+  return <view {...themed} theme={nestedTheme} />
 }
