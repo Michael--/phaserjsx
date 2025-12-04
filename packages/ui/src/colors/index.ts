@@ -15,7 +15,7 @@ export { alpha, darken, darkenHex, hex, lighten, lightenHex } from './color-util
 export type { HexColorWrapper } from './color-utils'
 
 // Contrast utilities
-export { ensureContrast, getContrastRatio } from './color-utils'
+export { createTextStyle, ensureContrast, getContrastRatio } from './color-utils'
 
 // Presets
 export {

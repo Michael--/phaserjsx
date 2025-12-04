@@ -1,11 +1,14 @@
 /**
  * TooltipExample - Demonstrates onTooltip property on various components
  */
-import { ScrollView, Text } from '@phaserjsx/ui'
+import { createTextStyle, ScrollView, Text, useThemeTokens } from '@phaserjsx/ui'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 function Example() {
+  const tokens = useThemeTokens()
+  const textStyle = createTextStyle(tokens?.textStyles?.small, { fontStyle: 'italic' })
+
   return (
     <ViewLevel2>
       {/* Basic tooltip */}
@@ -124,11 +127,11 @@ function Example() {
       <ViewLevel3 alignItems="center" direction="column">
         <Text
           text="💡 Desktop/mouse only - Tooltips don't work on touch devices"
-          style={{ fontSize: '14px', fontStyle: 'italic' }}
+          style={textStyle}
         />
         <Text
           text="🎨 Native Phaser text with tweens - text only, great performance"
-          style={{ fontSize: '14px', fontStyle: 'italic' }}
+          style={textStyle}
         />
       </ViewLevel3>
     </ViewLevel2>

@@ -3,6 +3,7 @@
  * Provides conversion between formats and color manipulation
  */
 
+import type { TextStyleToken } from '../design-tokens'
 import { HexColor, type RGBColor } from './color-types'
 
 /**
@@ -279,4 +280,24 @@ export function ensureContrast(foreground: number, background: number, minRatio 
   }
 
   return adjusted
+}
+
+/**
+ * Create a TextStyleToken by merging base style with overrides to ensure required properties are set
+ * @param baseStyle
+ * @param overrides
+ * @returns
+ */
+export function createTextStyle(
+  baseStyle: Partial<TextStyleToken> | undefined,
+  overrides: Partial<TextStyleToken>
+): TextStyleToken {
+  const base = baseStyle ?? {}
+  return {
+    fontSize: overrides.fontSize ?? base.fontSize ?? '14px',
+    color: overrides.color ?? base.color ?? '#ffffff',
+    ...(base.fontFamily && { fontFamily: base.fontFamily }),
+    ...(base.align && { align: base.align }),
+    ...overrides,
+  }
 }
