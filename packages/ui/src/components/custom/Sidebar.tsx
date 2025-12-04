@@ -5,7 +5,7 @@
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import { View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 
 /**
  * Props for Sidebar component - extends ViewProps for full flexibility

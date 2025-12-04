@@ -5,7 +5,7 @@
  */
 import { useEffect, useState } from '../../hooks'
 import { useSVGTexture } from '../../hooks-svg'
-import type { ImageProps } from '../image'
+import type { ImageProps } from '..'
 import { Image } from '../index'
 
 /**

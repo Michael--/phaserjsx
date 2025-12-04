@@ -13,9 +13,13 @@ import type {
 /**
  * Type helper for nested component themes
  * Allows a component theme to include nested themes for child components
+ * Excludes lowercase primitives to avoid conflicts with prop names
  */
 export type NestedComponentThemes = {
-  [K in keyof ComponentThemes]?: Partial<ComponentThemes[K]>
+  [K in Exclude<
+    keyof ComponentThemes,
+    'view' | 'text' | 'nineslice' | 'sprite' | 'image' | 'graphics' | 'tilesprite'
+  >]?: Partial<ComponentThemes[K]>
 }
 
 /**
@@ -101,6 +105,15 @@ export interface TileSpriteTheme
  * Built-in component theme definitions
  */
 export interface BuiltInComponentThemes {
+  // Primitives (lowercase) - internal use
+  view: ViewTheme
+  text: TextTheme
+  nineslice: NineSliceTheme
+  sprite: SpriteTheme
+  image: ImageTheme
+  graphics: GraphicsTheme
+  tilesprite: TileSpriteTheme
+  // Public API (uppercase)
   View: ViewTheme
   Text: TextTheme
   NineSlice: NineSliceTheme

@@ -14,7 +14,7 @@ import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import { View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 
 /**
  * Button variant theme

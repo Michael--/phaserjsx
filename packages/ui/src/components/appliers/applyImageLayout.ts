@@ -4,7 +4,7 @@
 import type Phaser from 'phaser'
 import type { LayoutProps } from '../../core-props'
 import type { LayoutSize } from '../../layout/index'
-import type { ImageBaseProps } from '../image'
+import type { ImageBaseProps } from '../primitives/image'
 
 /**
  * Applies layout props and updates layout size provider

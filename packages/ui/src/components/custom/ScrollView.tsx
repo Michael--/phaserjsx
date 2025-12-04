@@ -6,7 +6,7 @@ import type Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
 import { View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
 /**

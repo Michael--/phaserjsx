@@ -17,7 +17,7 @@ import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 import { CharTextInput } from './CharTextInput'
 import { ScrollView } from './ScrollView'
 

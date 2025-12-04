@@ -10,7 +10,7 @@ import { useEffect, useMemo, useRef, useState, useTheme, type VNode } from '../.
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 import { RefOriginView } from './RefOriginView'
 
 /**

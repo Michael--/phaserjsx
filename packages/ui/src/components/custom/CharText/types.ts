@@ -1,5 +1,5 @@
 import type { EffectDefinition } from '../../../effects/effect-registry'
-import type { ViewProps } from '../../view'
+import type { ViewProps } from '../..'
 
 /**
  * Information about a single rendered character

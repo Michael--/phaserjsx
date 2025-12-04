@@ -2,7 +2,7 @@
  * Applier for Image-specific properties
  */
 import type Phaser from 'phaser'
-import type { ImageBaseProps } from '../image'
+import type { ImageBaseProps } from '../primitives/image'
 
 /**
  * Calculates scale factors for fit modes

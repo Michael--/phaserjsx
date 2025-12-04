@@ -1,7 +1,7 @@
 /** @jsxImportSource ../.. */
 import { useEffect, useRef, useState } from '../../hooks'
 import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 import { CharText, type CharTextAPI } from './CharText'
 
 /**

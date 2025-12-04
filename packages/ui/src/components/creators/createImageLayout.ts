@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { LayoutSize } from '../../layout/index'
-import type { ImageBaseProps } from '../image'
+import type { ImageBaseProps } from '../primitives/image'
 
 /**
  * Creates layout infrastructure for an Image component

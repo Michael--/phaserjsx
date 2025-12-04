@@ -112,21 +112,21 @@ import type {
   LayoutProps,
   PhaserProps,
   TransformProps,
-} from '../core-props'
-import { DebugLogger } from '../dev-config'
-import type { HostCreator, HostPatcher } from '../host'
-import type { PropsContainerExtension, PropsDefaultExtension } from '../types'
-import { applyBackgroundProps } from './appliers/applyBackground'
-import { applyGesturesProps } from './appliers/applyGestures'
-import { applyLayoutProps } from './appliers/applyLayout'
-import { applyPhaserProps } from './appliers/applyPhaser'
-import { applyTooltip } from './appliers/applyTooltip'
-import { applyTransformProps } from './appliers/applyTransform'
-import { createBackground } from './creators/createBackground'
-import { createGestures } from './creators/createGestures'
-import { createLayout } from './creators/createLayout'
-import { createPhaser } from './creators/createPhaser'
-import { createTransform } from './creators/createTransform'
+} from '../../core-props'
+import { DebugLogger } from '../../dev-config'
+import type { HostCreator, HostPatcher } from '../../host'
+import type { PropsContainerExtension, PropsDefaultExtension } from '../../types'
+import { applyBackgroundProps } from '../appliers/applyBackground'
+import { applyGesturesProps } from '../appliers/applyGestures'
+import { applyLayoutProps } from '../appliers/applyLayout'
+import { applyPhaserProps } from '../appliers/applyPhaser'
+import { applyTooltip } from '../appliers/applyTooltip'
+import { applyTransformProps } from '../appliers/applyTransform'
+import { createBackground } from '../creators/createBackground'
+import { createGestures } from '../creators/createGestures'
+import { createLayout } from '../creators/createLayout'
+import { createPhaser } from '../creators/createPhaser'
+import { createTransform } from '../creators/createTransform'
 
 /**
  * Normalize background props - apply auto-defaults for alpha and border width

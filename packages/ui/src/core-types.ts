@@ -3,18 +3,27 @@
  * Defines the mapping between node type names and their corresponding Phaser types
  */
 import type Phaser from 'phaser'
-import type { GraphicsBaseProps } from './components/graphics'
-import type { ImageBaseProps } from './components/image'
-import type { NineSliceBaseProps } from './components/nineslice'
-import type { SpriteBaseProps } from './components/sprite'
-import type { TextBaseProps } from './components/text'
-import type { TileSpriteBaseProps } from './components/tilesprite'
-import type { ViewBaseProps } from './components/view'
+import type { GraphicsBaseProps } from './components/primitives/graphics'
+import type { ImageBaseProps } from './components/primitives/image'
+import type { NineSliceBaseProps } from './components/primitives/nineslice'
+import type { SpriteBaseProps } from './components/primitives/sprite'
+import type { TextBaseProps } from './components/primitives/text'
+import type { TileSpriteBaseProps } from './components/primitives/tilesprite'
+import type { ViewBaseProps } from './components/primitives/view'
 
 /**
  * Maps node type names to Phaser GameObject classes
  */
 export interface NodeMap {
+  // Primitives (lowercase) - internal use
+  view: Phaser.GameObjects.Container
+  text: Phaser.GameObjects.Text
+  nineslice: Phaser.GameObjects.NineSlice
+  sprite: Phaser.GameObjects.Sprite
+  image: Phaser.GameObjects.Image
+  graphics: Phaser.GameObjects.Graphics
+  tilesprite: Phaser.GameObjects.TileSprite
+  // Legacy uppercase - backward compatibility
   View: Phaser.GameObjects.Container
   Text: Phaser.GameObjects.Text
   NineSlice: Phaser.GameObjects.NineSlice
@@ -28,6 +37,15 @@ export interface NodeMap {
  * Maps node type names to their props interfaces
  */
 export interface NodePropsMap {
+  // Primitives (lowercase) - internal use
+  view: ViewBaseProps
+  text: TextBaseProps
+  nineslice: NineSliceBaseProps
+  sprite: SpriteBaseProps
+  image: ImageBaseProps
+  graphics: GraphicsBaseProps
+  tilesprite: TileSpriteBaseProps
+  // Legacy uppercase - backward compatibility
   View: ViewBaseProps
   Text: TextBaseProps
   NineSlice: NineSliceBaseProps

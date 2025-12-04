@@ -19,7 +19,7 @@
  */
 import type { VNode } from '../../hooks'
 import { View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 
 /**
  * Extended ViewProps with origin support for declarative transforms

@@ -112,16 +112,16 @@
  * [⚠️] Rotation - Only with headless=true (ignored for layout-aware)
  */
 import type Phaser from 'phaser'
-import type { LayoutProps, PhaserProps, TransformProps } from '../core-props'
-import type { HostCreator, HostPatcher } from '../host'
-import type { PropsDefaultExtension } from '../types'
-import { applyImageProps } from './appliers/applyImage'
-import { applyImageLayout } from './appliers/applyImageLayout'
-import { applyPhaserProps } from './appliers/applyPhaser'
-import { applyTransformProps } from './appliers/applyTransform'
-import { createImageLayout } from './creators/createImageLayout'
-import { createPhaser } from './creators/createPhaser'
-import { createTransform } from './creators/createTransform'
+import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
+import type { HostCreator, HostPatcher } from '../../host'
+import type { PropsDefaultExtension } from '../../types'
+import { applyImageProps } from '../appliers/applyImage'
+import { applyImageLayout } from '../appliers/applyImageLayout'
+import { applyPhaserProps } from '../appliers/applyPhaser'
+import { applyTransformProps } from '../appliers/applyTransform'
+import { createImageLayout } from '../creators/createImageLayout'
+import { createPhaser } from '../creators/createPhaser'
+import { createTransform } from '../creators/createTransform'
 
 /**
  * Base props for Image component

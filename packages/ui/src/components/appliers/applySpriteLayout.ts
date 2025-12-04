@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { LayoutProps } from '../../core-props'
-import type { SpriteBaseProps } from '../sprite'
+import type { SpriteBaseProps } from '../primitives/sprite'
 
 /**
  * Applies layout props and updates layout size provider

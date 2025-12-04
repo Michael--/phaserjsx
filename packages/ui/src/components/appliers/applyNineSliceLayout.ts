@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { LayoutSize } from '../../layout/index'
-import type { NineSliceBaseProps } from '../nineslice'
+import type { NineSliceBaseProps } from '../primitives/nineslice'
 
 /**
  * Applies layout properties for NineSlice components

@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { LayoutProps } from '../../core-props'
-import type { NineSliceSpecificProps } from '../nineslice'
+import type { NineSliceSpecificProps } from '../primitives/nineslice'
 
 /**
  * Applies NineSlice-specific properties (texture, frame, slice dimensions)

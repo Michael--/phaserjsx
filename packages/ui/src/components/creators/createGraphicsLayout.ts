@@ -2,7 +2,7 @@
  * Layout system initialization for Graphics component
  */
 import type Phaser from 'phaser'
-import type { GraphicsBaseProps } from '../graphics'
+import type { GraphicsBaseProps } from '../primitives/graphics'
 
 /**
  * Setup layout system for Graphics component

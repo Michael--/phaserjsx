@@ -3,7 +3,7 @@
  */
 import type Phaser from 'phaser'
 import type { GameObjectWithLayout } from '../../layout/types'
-import type { GraphicsBaseProps } from '../graphics'
+import type { GraphicsBaseProps } from '../primitives/graphics'
 
 /**
  * Apply layout updates for Graphics (width/height changes)

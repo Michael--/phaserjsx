@@ -134,16 +134,16 @@ import type {
   PhaserProps,
   TextSpecificProps,
   TransformProps,
-} from '../core-props'
-import type { HostCreator, HostPatcher } from '../host'
-import type { PropsDefaultExtension } from '../types'
-import { applyPhaserProps } from './appliers/applyPhaser'
-import { applyTextProps } from './appliers/applyText'
-import { applyTextLayout } from './appliers/applyTextLayout'
-import { applyTransformProps } from './appliers/applyTransform'
-import { createPhaser } from './creators/createPhaser'
-import { createTextLayout } from './creators/createTextLayout'
-import { createTransform } from './creators/createTransform'
+} from '../../core-props'
+import type { HostCreator, HostPatcher } from '../../host'
+import type { PropsDefaultExtension } from '../../types'
+import { applyPhaserProps } from '../appliers/applyPhaser'
+import { applyTextProps } from '../appliers/applyText'
+import { applyTextLayout } from '../appliers/applyTextLayout'
+import { applyTransformProps } from '../appliers/applyTransform'
+import { createPhaser } from '../creators/createPhaser'
+import { createTextLayout } from '../creators/createTextLayout'
+import { createTransform } from '../creators/createTransform'
 
 /**
  * Base props for Text - composing shared prop groups

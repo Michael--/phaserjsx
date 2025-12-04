@@ -17,6 +17,39 @@ const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
  * Default theme values for all built-in and custom components
  */
 export const defaultTheme: Theme = {
+  // Primitives (lowercase) - share same defaults as uppercase
+  view: {
+    alpha: 1,
+    visible: true,
+  },
+  text: {
+    text: '',
+    align: 'left',
+    alpha: 1,
+    visible: true,
+    style: textStyles.DEFAULT,
+  },
+  nineslice: {
+    alpha: 1,
+    visible: true,
+  },
+  sprite: {
+    alpha: 1,
+    visible: true,
+  },
+  image: {
+    alpha: 1,
+    visible: true,
+  },
+  graphics: {
+    alpha: 1,
+    visible: true,
+  },
+  tilesprite: {
+    alpha: 1,
+    visible: true,
+  },
+  // Public API (uppercase)
   View: {
     alpha: 1,
     visible: true,

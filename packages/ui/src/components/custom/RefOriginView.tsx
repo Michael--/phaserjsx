@@ -20,7 +20,7 @@
 import type Phaser from 'phaser'
 import { useRef, useState, type VNode } from '../../hooks'
 import { View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 
 /**
  * Extended ViewProps with origin support

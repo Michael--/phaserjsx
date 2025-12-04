@@ -88,16 +88,16 @@
  * [✅] Texture and frame patching
  */
 import type Phaser from 'phaser'
-import type { LayoutProps, PhaserProps, TransformProps } from '../core-props'
-import type { HostCreator, HostPatcher } from '../host'
-import type { PropsDefaultExtension } from '../types'
-import { applyPhaserProps } from './appliers/applyPhaser'
-import { applySpriteProps } from './appliers/applySprite'
-import { applySpriteLayout } from './appliers/applySpriteLayout'
-import { applyTransformProps } from './appliers/applyTransform'
-import { createPhaser } from './creators/createPhaser'
-import { createSpriteLayout } from './creators/createSpriteLayout'
-import { createTransform } from './creators/createTransform'
+import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
+import type { HostCreator, HostPatcher } from '../../host'
+import type { PropsDefaultExtension } from '../../types'
+import { applyPhaserProps } from '../appliers/applyPhaser'
+import { applySpriteProps } from '../appliers/applySprite'
+import { applySpriteLayout } from '../appliers/applySpriteLayout'
+import { applyTransformProps } from '../appliers/applyTransform'
+import { createPhaser } from '../creators/createPhaser'
+import { createSpriteLayout } from '../creators/createSpriteLayout'
+import { createTransform } from '../creators/createTransform'
 
 /**
  * Base props for Sprite component

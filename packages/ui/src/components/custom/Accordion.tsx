@@ -10,7 +10,7 @@ import { useEffect, useForceRedraw, useRef, useState, useTheme } from '../../hoo
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Text, View } from '../index'
-import type { ViewProps } from '../view'
+import type { ViewProps } from '..'
 
 /**
  * Props for Accordion component
