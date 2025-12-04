@@ -3,6 +3,7 @@
  * Renders PhaserJSX examples in an isolated Phaser canvas
  */
 /** @jsxImportSource react */
+import type { BackgroundConfig } from '@/types/background'
 import Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
 
@@ -13,6 +14,8 @@ interface LiveExampleProps {
   width?: number
   /** Canvas height in pixels */
   height?: number
+  /** Optional background configuration */
+  background?: BackgroundConfig
 }
 
 /**

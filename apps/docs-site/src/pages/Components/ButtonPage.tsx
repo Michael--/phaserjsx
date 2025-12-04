@@ -29,8 +29,15 @@ export function ButtonPage() {
       <Section title="Quick Start">
         <SectionDescription>{buttonContent.quickStart.description}</SectionDescription>
         <LiveExample
-          sceneFactory={() => createPhaserScene(buttonContent.quickStart.component)}
+          sceneFactory={() =>
+            createPhaserScene(
+              buttonContent.quickStart.component,
+              undefined,
+              buttonContent.quickStart.background
+            )
+          }
           height={buttonContent.quickStart.height}
+          background={buttonContent.quickStart.background}
         />
         <div className="code-wrapper">
           <CodeBlock language="tsx">{buttonContent.quickStart.code}</CodeBlock>

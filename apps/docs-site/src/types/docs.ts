@@ -20,6 +20,8 @@ export interface ExampleDefinition {
   height: SceneSize
   /** Source code to display */
   code: string
+  /** Optional background configuration */
+  background?: import('./background').BackgroundConfig
 }
 
 /**
