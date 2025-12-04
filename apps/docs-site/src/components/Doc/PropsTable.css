@@ -1,0 +1,32 @@
+.props-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.props-table thead tr {
+  border-bottom: 2px solid #333;
+}
+
+.props-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.props-table tbody tr {
+  border-bottom: 1px solid #333;
+}
+
+.props-table td {
+  padding: 12px;
+  vertical-align: top;
+}
+
+.props-table code {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
