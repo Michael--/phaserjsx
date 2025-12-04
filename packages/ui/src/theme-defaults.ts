@@ -68,7 +68,7 @@ export const defaultTheme: Theme = {
     minThumbSize: 20,
   },
   Button: {
-    disabledColor: colors.border.medium.toNumber(),
+    disabledColor: colors.background.DEFAULT.toNumber(),
     iconSize: 24,
     backgroundColor: colors.primary.DEFAULT.toNumber(),
     backgroundAlpha: 1.0,
