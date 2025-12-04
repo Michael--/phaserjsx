@@ -20,7 +20,7 @@ class MultiMountScene extends Phaser.Scene {
 function GameUI() {
   return (
     <View>
-      <Text>Game UI</Text>
+      <Text text="Game UI" />
     </View>
   )
 }
@@ -28,7 +28,7 @@ function GameUI() {
 function HUD() {
   return (
     <View>
-      <Text>HUD</Text>
+      <Text text="HUD" />
     </View>
   )
 }

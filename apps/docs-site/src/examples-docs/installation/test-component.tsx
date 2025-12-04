@@ -20,15 +20,13 @@ function TestComponent() {
       height="100vh"
       alignItems="center"
       justifyContent="center"
-      flexDirection="column"
+      direction="column"
       gap={20}
     >
-      <Text fontSize={32} fill="#ffffff">
-        PhaserJSX is working!
-      </Text>
+      <Text text="PhaserJSX is working!" style={{ fontSize: '32px', color: '#ffffff' }} />
 
       <Button variant="primary" onClick={() => setCount(count + 1)}>
-        <Text>Clicks: {count}</Text>
+        <Text text={`Clicks: ${count}`} />
       </Button>
     </View>
   )

@@ -22,7 +22,7 @@ class LifecycleScene extends Phaser.Scene {
 function MyUI() {
   return (
     <View>
-      <Text>My UI</Text>
+      <Text text="My UI" />
     </View>
   )
 }

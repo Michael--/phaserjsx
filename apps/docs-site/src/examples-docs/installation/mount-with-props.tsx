@@ -24,9 +24,7 @@ class PropsScene extends Phaser.Scene {
 function PlayerUI(props: PlayerUIProps) {
   return (
     <View>
-      <Text>
-        {props.playerName} - Level {props.level}
-      </Text>
+      <Text text={`${props.playerName} - Level ${props.level}`} />
     </View>
   )
 }

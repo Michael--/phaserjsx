@@ -9,12 +9,12 @@ function CounterExample() {
   const [counter, setCounter] = useState(0)
 
   return (
-    <View flexDirection="column" gap={20} alignItems="center">
+    <View gap={20} alignItems="center">
       <Button variant="primary" onClick={() => setCounter(counter + 1)}>
-        <Text>Click me</Text>
+        <Text text="Click me" />
       </Button>
 
-      <Text fontSize={24}>Count: {counter}</Text>
+      <Text text={`Count: {counter}`} />
     </View>
   )
 }

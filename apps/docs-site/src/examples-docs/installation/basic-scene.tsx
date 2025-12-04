@@ -19,20 +19,11 @@ class GameScene extends Phaser.Scene {
 // Your component using PhaserJSX
 function MainUI() {
   return (
-    <View
-      width="100vw"
-      height="100vh"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={20}
-    >
-      <Text fontSize={32} fill="#ffffff">
-        Welcome to PhaserJSX!
-      </Text>
+    <View width="100vw" height="100vh" alignItems="center" justifyContent="center" gap={20}>
+      <Text text="Welcome to PhaserJSX!" />
 
       <Button variant="primary" onClick={() => console.log('Clicked!')}>
-        <Text>Get Started</Text>
+        <Text text="Get Started" />
       </Button>
     </View>
   )
