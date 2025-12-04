@@ -21,8 +21,13 @@ TypeScript file containing all documentation content using the `ComponentDocs` i
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import {
   QuickStart{Component}Example,
+  Example1{Component}Example,
   // ... other examples
 } from '@/examples/{component}'
+// Import source code as raw strings - CRITICAL for DRY
+import QuickStart{Component}ExampleRaw from '@/examples/{component}/QuickStartExample.tsx?raw'
+import Example1{Component}ExampleRaw from '@/examples/{component}/Example1.tsx?raw'
+// ... import other raw examples
 import type { ComponentDocs } from '@/types/docs'
 
 export const {component}Content: ComponentDocs = {
@@ -35,9 +40,7 @@ export const {component}Content: ComponentDocs = {
     description: 'Most basic usage - minimal example',
     component: QuickStart{Component}Example,
     height: SCENE_SIZES.compact,
-    code: `/** @jsxImportSource @phaserjsx/ui */
-// Minimal working example code here
-`,
+    code: QuickStart{Component}ExampleRaw, // Use raw import - NOT hardcoded string
   },
 
   examples: [
@@ -47,9 +50,7 @@ export const {component}Content: ComponentDocs = {
       description: 'What this example demonstrates',
       component: Example1{Component}Example,
       height: SCENE_SIZES.small,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-// Example code here
-`,
+      code: Example1{Component}ExampleRaw, // Use raw import - NOT hardcoded string
     },
     // More examples in progressive complexity order
   ],
@@ -382,6 +383,7 @@ After creating documentation files:
 - **Progressive Learning:** Start simple, build complexity gradually
 - **Visual Consistency:** Use consistent padding/spacing in examples
 - **Accessibility:** Consider disabled states, keyboard navigation where applicable
+- **DRY Principle:** NEVER duplicate code - use `?raw` imports for code display
 
 ## Reference Implementation
 
@@ -417,6 +419,48 @@ An empty `<View />` without background or content won't be visible:
 Common mistake: trying to use color/fontSize as direct props on Text.
 
 **Solution in docs:** Always show Text with `style` prop in examples, never with direct styling props.
+
+### Code Duplication (CRITICAL)
+
+**NEVER hardcode example code as strings** in `*.content.ts` files. This violates DRY and causes:
+
+- Code drift between displayed code and actual examples
+- Double maintenance burden
+- No TypeScript validation for displayed code
+- Breaking changes not caught by build
+
+**Solution:** Use Vite's `?raw` import suffix:
+
+```typescript
+// ✅ Correct - Single source of truth
+import QuickStartExample from '@/examples/component/QuickStartExample.tsx?raw'
+
+export const content: ComponentDocs = {
+  quickStart: {
+    component: QuickStartExample,
+    code: QuickStartExample, // Same source file
+  },
+}
+
+// ❌ Wrong - Code duplicated in two places
+export const content: ComponentDocs = {
+  quickStart: {
+    component: QuickStartExample,
+    code: `/** @jsxImportSource @phaserjsx/ui */
+    // Duplicated code that will drift...
+    `,
+  },
+}
+```
+
+**Type definitions** (already configured in `src/vite-env.d.ts`):
+
+```typescript
+declare module '*.tsx?raw' {
+  const content: string
+  export default content
+}
+```
 
 ## Notes
 

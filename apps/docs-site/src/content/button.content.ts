@@ -10,6 +10,13 @@ import {
   StatesButtonExample,
   VariantsButtonExample,
 } from '@/examples/button'
+// Import source code as raw strings
+import EffectsButtonExampleRaw from '@/examples/button/EffectsExample.tsx?raw'
+import IconsButtonExampleRaw from '@/examples/button/IconsExample.tsx?raw'
+import QuickStartButtonExampleRaw from '@/examples/button/QuickStartExample.tsx?raw'
+import SizingButtonExampleRaw from '@/examples/button/SizingExample.tsx?raw'
+import StatesButtonExampleRaw from '@/examples/button/StatesExample.tsx?raw'
+import VariantsButtonExampleRaw from '@/examples/button/VariantsExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
 export const buttonContent: ComponentDocs = {
@@ -23,18 +30,7 @@ export const buttonContent: ComponentDocs = {
     description: 'Basic button with click handler',
     component: QuickStartButtonExample,
     height: SCENE_SIZES.compact,
-    code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
-
-export function MyComponent() {
-  return (
-    <View padding={20} justifyContent="center" alignItems="center">
-      <Button onClick={() => console.log('Button clicked!')}>
-        <Text text="Click Me" />
-      </Button>
-    </View>
-  )
-}`,
+    code: QuickStartButtonExampleRaw,
   },
 
   examples: [
@@ -44,26 +40,7 @@ export function MyComponent() {
       description: 'Different visual styles for buttons',
       component: VariantsButtonExample,
       height: SCENE_SIZES.small,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
-
-export function VariantsExample() {
-  return (
-    <View padding={20} gap={12} justifyContent="center" alignItems="center">
-      <Button variant="primary">
-        <Text text="Primary" />
-      </Button>
-
-      <Button variant="secondary">
-        <Text text="Secondary" />
-      </Button>
-
-      <Button variant="outline">
-        <Text text="Outline" />
-      </Button>
-    </View>
-  )
-}`,
+      code: VariantsButtonExampleRaw,
     },
     {
       id: 'states',
@@ -71,24 +48,7 @@ export function VariantsExample() {
       description: 'Interactive states and disabled buttons',
       component: StatesButtonExample,
       height: SCENE_SIZES.small,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View, useState } from '@phaserjsx/ui'
-
-export function StatesExample() {
-  const [clickCount, setClickCount] = useState(0)
-
-  return (
-    <View padding={20} gap={12} justifyContent="center" alignItems="center">
-      <Button onClick={() => setClickCount(clickCount + 1)}>
-        <Text text={\`Clicked \${clickCount} times\`} />
-      </Button>
-
-      <Button disabled>
-        <Text text="Disabled Button" />
-      </Button>
-    </View>
-  )
-}`,
+      code: StatesButtonExampleRaw,
     },
     {
       id: 'icons',
@@ -96,28 +56,7 @@ export function StatesExample() {
       description: 'Combining buttons with icon components',
       component: IconsButtonExample,
       height: SCENE_SIZES.small,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Icon, Text, View } from '@phaserjsx/ui'
-
-export function IconsExample() {
-  return (
-    <View padding={20} gap={12} justifyContent="center" alignItems="center">
-      <Button>
-        <View direction="row" gap={8} alignItems="center">
-          <Icon name="play" size={20} />
-          <Text text="Play" />
-        </View>
-      </Button>
-
-      <Button variant="secondary">
-        <View direction="row" gap={8} alignItems="center">
-          <Icon name="settings" size={20} />
-          <Text text="Settings" />
-        </View>
-      </Button>
-    </View>
-  )
-}`,
+      code: IconsButtonExampleRaw,
     },
     {
       id: 'sizing',
@@ -125,39 +64,7 @@ export function IconsExample() {
       description: 'Size variants and custom dimensions',
       component: SizingButtonExample,
       height: SCENE_SIZES.medium,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
-
-export function SizingExample() {
-  return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
-      {/* Size variants */}
-      <View direction="row" gap={12} alignItems="center">
-        <Button size="small">
-          <Text text="Small" />
-        </Button>
-        <Button size="medium">
-          <Text text="Medium" />
-        </Button>
-        <Button size="large">
-          <Text text="Large" />
-        </Button>
-      </View>
-
-      {/* Custom dimensions */}
-      <Button width={250} height={60}>
-        <Text text="Custom Size (250x60)" />
-      </Button>
-
-      {/* Full width */}
-      <View width={300}>
-        <Button width="fill">
-          <Text text="Full Width Button" />
-        </Button>
-      </View>
-    </View>
-  )
-}`,
+      code: SizingButtonExampleRaw,
     },
     {
       id: 'effects',
@@ -165,30 +72,7 @@ export function SizingExample() {
       description: 'Phaser-powered hover and click animations',
       component: EffectsButtonExample,
       height: SCENE_SIZES.medium,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
-
-export function EffectsExample() {
-  return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
-      <Button effect="tada" effectConfig={{ time: 500 }}>
-        <Text text="Tada Effect" />
-      </Button>
-
-      <Button effect="bounce" effectConfig={{ time: 600 }} variant="secondary">
-        <Text text="Bounce Effect" />
-      </Button>
-
-      <Button effect="pulse" effectConfig={{ time: 800 }} variant="outline">
-        <Text text="Pulse Effect" />
-      </Button>
-
-      <Button effect="fade" effectConfig={{ time: 400 }}>
-        <Text text="Fade Effect" />
-      </Button>
-    </View>
-  )
-}`,
+      code: EffectsButtonExampleRaw,
     },
   ],
 

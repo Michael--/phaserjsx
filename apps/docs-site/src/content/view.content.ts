@@ -8,6 +8,11 @@ import {
   FlexDirectionViewExample,
   QuickStartViewExample,
 } from '@/examples/view'
+// Import source code as raw strings
+import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
+import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?raw'
+import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
+import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
 export const viewContent: ComponentDocs = {
@@ -22,18 +27,7 @@ export const viewContent: ComponentDocs = {
       'Basic View with background color and content. Note: An empty View without background is invisible.',
     component: QuickStartViewExample,
     height: SCENE_SIZES.compact,
-    code: `/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
-
-export function MyComponent() {
-  return (
-    <View padding={20} justifyContent="center" alignItems="center">
-      <View backgroundColor={0x3498db} width={200} height={100} cornerRadius={8}>
-        <Text text="I'm a View!" style={{ fontSize: '20px', color: '#ffffff' }} />
-      </View>
-    </View>
-  )
-}`,
+    code: QuickStartViewExampleRaw,
   },
 
   examples: [
@@ -43,31 +37,7 @@ export function MyComponent() {
       description: 'Dimensions, padding, and nested Views',
       component: BasicLayoutViewExample,
       height: SCENE_SIZES.medium,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
-
-export function BasicLayoutExample() {
-  return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
-      {/* With explicit dimensions */}
-      <View backgroundColor={0xe74c3c} width={150} height={80} padding={10}>
-        <Text text="150x80" style={{ color: '#ffffff' }} />
-      </View>
-
-      {/* With padding */}
-      <View backgroundColor={0x2ecc71} padding={20}>
-        <Text text="Auto-sized with padding" style={{ color: '#ffffff' }} />
-      </View>
-
-      {/* Nested Views */}
-      <View backgroundColor={0x9b59b6} padding={15} cornerRadius={12}>
-        <View backgroundColor={0xecf0f1} padding={10} cornerRadius={8}>
-          <Text text="Nested Views" style={{ color: '#2c3e50' }} />
-        </View>
-      </View>
-    </View>
-  )
-}`,
+      code: BasicLayoutViewExampleRaw,
     },
     {
       id: 'flex-direction',
@@ -75,41 +45,7 @@ export function BasicLayoutExample() {
       description: 'Row and column layouts with gap spacing',
       component: FlexDirectionViewExample,
       height: SCENE_SIZES.medium,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
-
-export function FlexDirectionExample() {
-  return (
-    <View padding={20} gap={24} justifyContent="center" alignItems="center">
-      {/* Column (default) */}
-      <View direction="column" gap={8}>
-        <Text text="Column Layout (default):" style={{ fontSize: '14px', color: '#888888' }} />
-        <View backgroundColor={0x3498db} padding={10}>
-          <Text text="First" style={{ color: '#ffffff' }} />
-        </View>
-        <View backgroundColor={0xe74c3c} padding={10}>
-          <Text text="Second" style={{ color: '#ffffff' }} />
-        </View>
-        <View backgroundColor={0x2ecc71} padding={10}>
-          <Text text="Third" style={{ color: '#ffffff' }} />
-        </View>
-      </View>
-
-      {/* Row */}
-      <View direction="row" gap={8}>
-        <View backgroundColor={0x3498db} padding={10}>
-          <Text text="First" style={{ color: '#ffffff' }} />
-        </View>
-        <View backgroundColor={0xe74c3c} padding={10}>
-          <Text text="Second" style={{ color: '#ffffff' }} />
-        </View>
-        <View backgroundColor={0x2ecc71} padding={10}>
-          <Text text="Third" style={{ color: '#ffffff' }} />
-        </View>
-      </View>
-    </View>
-  )
-}`,
+      code: FlexDirectionViewExampleRaw,
     },
     {
       id: 'alignment',
@@ -117,41 +53,7 @@ export function FlexDirectionExample() {
       description: 'Positioning content with justifyContent and alignItems',
       component: AlignmentViewExample,
       height: SCENE_SIZES.medium,
-      code: `/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
-
-export function AlignmentExample() {
-  const Box = ({ label }: { label: string }) => (
-    <View backgroundColor={0xe74c3c} padding={8} cornerRadius={4}>
-      <Text text={label} style={{ color: '#ffffff', fontSize: '12px' }} />
-    </View>
-  )
-
-  return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
-      {/* Center (default) */}
-      <View width={250} height={80} backgroundColor={0x34495e} justifyContent="center" alignItems="center">
-        <Box label="Center (default)" />
-      </View>
-
-      {/* Flex Start */}
-      <View width={250} height={80} backgroundColor={0x34495e} justifyContent="flex-start" alignItems="flex-start" padding={8}>
-        <Box label="Flex Start" />
-      </View>
-
-      {/* Flex End */}
-      <View width={250} height={80} backgroundColor={0x34495e} justifyContent="flex-end" alignItems="flex-end" padding={8}>
-        <Box label="Flex End" />
-      </View>
-
-      {/* Space Between */}
-      <View direction="row" width={250} height={60} backgroundColor={0x34495e} justifyContent="space-between" alignItems="center" padding={8}>
-        <Box label="Start" />
-        <Box label="End" />
-      </View>
-    </View>
-  )
-}`,
+      code: AlignmentViewExampleRaw,
     },
   ],
 
