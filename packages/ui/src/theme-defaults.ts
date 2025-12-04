@@ -70,6 +70,45 @@ export const defaultTheme: Theme = {
   Button: {
     disabledColor: colors.border.medium.toNumber(),
     iconSize: 24,
+    backgroundColor: colors.primary.DEFAULT.toNumber(),
+    backgroundAlpha: 1.0,
+    borderColor: colors.primary.dark.toNumber(),
+    borderWidth: 1,
+    cornerRadius: 6,
+    padding: 8,
+    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    primary: {
+      backgroundColor: colors.primary.medium.toNumber(),
+      borderColor: colors.primary.dark.toNumber(),
+    },
+    secondary: {
+      backgroundColor: colors.secondary.DEFAULT.toNumber(),
+      borderColor: colors.secondary.dark.toNumber(),
+      effect: 'press',
+      effectConfig: { intensity: 0.9, time: 200 },
+    },
+    outline: {
+      backgroundColor: 0x000000,
+      backgroundAlpha: 0.0,
+      borderColor: colors.accent.DEFAULT.toNumber(),
+      borderWidth: 2,
+      effect: 'flash',
+      effectConfig: { intensity: 1.15, time: 200 },
+    },
+    small: {
+      padding: 6,
+      cornerRadius: 4,
+    },
+    medium: {
+      padding: 8,
+      cornerRadius: 6,
+    },
+    large: {
+      padding: { top: 12, bottom: 12, left: 8, right: 8 },
+      cornerRadius: 8,
+    },
   },
   Sidebar: {
     backgroundColor: colors.surface.light.toNumber(),
