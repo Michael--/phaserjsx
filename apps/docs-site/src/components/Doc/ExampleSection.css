@@ -1,0 +1,24 @@
+.example-section {
+  margin-bottom: 48px;
+}
+
+.example-header {
+  margin-bottom: 16px;
+}
+
+.example-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.example-description {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.example-code {
+  margin-top: 16px;
+}

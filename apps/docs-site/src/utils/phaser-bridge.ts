@@ -14,7 +14,7 @@ import '../theme'
  * @returns Phaser Scene class
  */
 export function createPhaserScene(
-  component: (props: unknown) => VNode,
+  component: (props: Record<string, unknown>) => VNode,
   props?: Record<string, unknown>
 ) {
   return class ExampleScene extends Phaser.Scene {
