@@ -162,14 +162,17 @@ function showTooltip(
   const themeAnim = tooltipTheme.animation || {}
   const anim = config.animation || {}
   const fadeInDuration = anim.fadeIn ?? themeAnim.fadeIn ?? 200
-  const moveUpDistance = anim.moveUp ?? themeAnim.moveUp ?? 0
+  const moveOffset = {
+    dx: anim.move?.dx ?? themeAnim.move?.dx ?? 0,
+    dy: anim.move?.dy ?? themeAnim.move?.dy ?? 0,
+  }
   const pulse = anim.pulse ?? themeAnim.pulse ?? false
   const pulseScale = anim.pulseScale ?? [0.75, 1.25]
 
   // Set initial position (with move offset if enabled)
   tooltipContainer.setPosition(
-    pos.x + textBounds.width / 2,
-    pos.y + textBounds.height / 2 + moveUpDistance
+    pos.x + textBounds.width / 2 - moveOffset.dx,
+    pos.y + textBounds.height / 2 - moveOffset.dy
   )
   tooltipContainer.setAlpha(0)
 
@@ -179,6 +182,7 @@ function showTooltip(
   const fadeTween = scene.tweens.add({
     targets: tooltipContainer,
     alpha: 1,
+    x: pos.x + textBounds.width / 2,
     y: pos.y + textBounds.height / 2,
     duration: fadeInDuration,
     ease: 'Cubic.Out',

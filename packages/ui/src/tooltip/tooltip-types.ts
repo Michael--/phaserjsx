@@ -16,8 +16,8 @@ export interface TooltipNativeAnimation {
   fadeIn?: number
   /** Fade out duration in ms (default: 200) */
   fadeOut?: number
-  /** Move up distance in pixels (default: 0) */
-  moveUp?: number
+  /** Move animation offset in pixels (default: { dx: 0, dy: 0 }) */
+  move?: { dx?: number; dy?: number }
   /** Pulse/scale animation (default: false) */
   pulse?: boolean
   /** Scale range for pulse [from, to] (default: [0.75, 1.25]) */

@@ -290,7 +290,7 @@ export const defaultTheme: Theme = {
     animation: {
       fadeIn: 200,
       fadeOut: 200,
-      moveUp: 20,
+      move: { dx: 0, dy: -20 },
       pulse: false,
     },
   },

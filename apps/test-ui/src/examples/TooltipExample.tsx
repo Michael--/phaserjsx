@@ -17,14 +17,18 @@ function Example() {
       <ViewLevel3 alignItems="center" direction="row">
         <Button
           text="Top"
-          onTooltip={() => ({ content: 'Top tooltip', position: 'top', animation: { moveUp: 0 } })}
+          onTooltip={() => ({
+            content: 'Top tooltip',
+            position: 'top',
+            animation: { move: { dx: 0, dy: -20 } },
+          })}
         />
         <Button
           text="Bottom"
           onTooltip={() => ({
             content: 'Bottom tooltip',
             position: 'bottom',
-            animation: { moveUp: 0 },
+            animation: { move: { dx: 0, dy: 20 } },
           })}
         />
         <Button
@@ -32,7 +36,7 @@ function Example() {
           onTooltip={() => ({
             content: 'Left tooltip',
             position: 'left',
-            animation: { moveUp: 0 },
+            animation: { move: { dx: -20, dy: 0 } },
           })}
         />
         <Button
@@ -40,7 +44,7 @@ function Example() {
           onTooltip={() => ({
             content: 'Right tooltip',
             position: 'right',
-            animation: { moveUp: 0 },
+            animation: { move: { dx: 20, dy: 0 } },
           })}
         />
       </ViewLevel3>
@@ -78,14 +82,14 @@ function Example() {
           text="Fade in"
           onTooltip={() => ({
             content: 'Fading in...',
-            animation: { fadeIn: 500, moveUp: 0 },
+            animation: { fadeIn: 500, move: { dx: 0, dy: 0 } },
           })}
         />
         <Button
           text="Move up"
           onTooltip={() => ({
             content: 'Moving up!',
-            animation: { fadeIn: 200, moveUp: 10 },
+            animation: { fadeIn: 200, move: { dx: 0, dy: -10 } },
           })}
         />
         <Button

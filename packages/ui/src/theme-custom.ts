@@ -265,7 +265,7 @@ export interface CustomComponentThemes {
     animation?: {
       fadeIn?: number
       fadeOut?: number
-      moveUp?: number
+      move?: { dx?: number; dy?: number }
       pulse?: boolean
     }
   } & NestedComponentThemes
