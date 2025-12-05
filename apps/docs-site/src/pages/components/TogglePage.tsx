@@ -29,7 +29,7 @@ export function TogglePage() {
       <DocDescription>{toggleContent.description}</DocDescription>
 
       {/* Quick Start */}
-      <Section id={toggleContent.quickStart.id} title={toggleContent.quickStart.title}>
+      <Section title={toggleContent.quickStart.title}>
         <SectionDescription>{toggleContent.quickStart.description}</SectionDescription>
         <LiveExample
           sceneFactory={() => createPhaserScene(toggleContent.quickStart.component)}
@@ -40,7 +40,7 @@ export function TogglePage() {
 
       {/* Examples */}
       {toggleContent.examples.map((example) => (
-        <Section key={example.id} id={example.id} title={example.title}>
+        <Section key={example.id} title={example.title}>
           <SectionDescription>{example.description}</SectionDescription>
           <LiveExample
             sceneFactory={() => createPhaserScene(example.component)}
@@ -51,14 +51,17 @@ export function TogglePage() {
       ))}
 
       {/* Props Reference */}
-      <Section id="props" title="Props Reference">
+      <Section title="Props Reference">
         <SectionDescription>
           Toggle component properties for controlling behavior, appearance, and state management.
         </SectionDescription>
 
-        <ToggleButton active={showAllProps} onClick={() => setShowAllProps(!showAllProps)}>
-          {showAllProps ? 'Show Essential Props' : 'Show All Props'}
-        </ToggleButton>
+        <ToggleButton
+          isActive={showAllProps}
+          onClick={() => setShowAllProps(!showAllProps)}
+          activeText="← Show Essential Props Only"
+          inactiveText="Show All Props →"
+        />
 
         <PropsTable
           props={showAllProps ? toggleContent.propsComplete : toggleContent.propsEssential}
