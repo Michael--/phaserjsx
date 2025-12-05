@@ -39,7 +39,7 @@ const navigation: NavSection[] = [
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
       { label: 'RadioButton', path: '/components/radiobutton' },
-      { label: '🚧 Dropdown', path: '/components/dropdown' },
+      { label: 'Dropdown', path: '/components/dropdown' },
     ],
   },
   {

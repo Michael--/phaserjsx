@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
 import { buttonContent } from './content/button.content'
+import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { sliderContent } from './content/slider.content'
 import { toggleContent } from './content/toggle.content'
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
         path="/components/radiobutton"
         element={<ComponentPage content={radiobuttonContent} />}
       />
+      <Route path="/components/dropdown" element={<ComponentPage content={dropdownContent} />} />
       <Route
         path="/components/view"
         element={
