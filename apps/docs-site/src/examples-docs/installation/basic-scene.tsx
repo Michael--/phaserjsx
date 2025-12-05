@@ -12,7 +12,7 @@ class GameScene extends Phaser.Scene {
 
   create() {
     // Mount your PhaserJSX component tree
-    mountJSX(this, MainUI, {})
+    mountJSX(this, MainUI, { width: this.scale.width, height: this.scale.height })
   }
 }
 

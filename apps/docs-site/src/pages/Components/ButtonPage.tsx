@@ -32,7 +32,6 @@ export function ButtonPage() {
           sceneFactory={() =>
             createPhaserScene(
               buttonContent.quickStart.component,
-              undefined,
               buttonContent.quickStart.background
             )
           }

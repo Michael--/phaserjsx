@@ -14,6 +14,8 @@ interface PlayerUIProps {
 class PropsScene extends Phaser.Scene {
   create() {
     mountJSX(this, PlayerUI, {
+      width: this.scale.width,
+      height: this.scale.height,
       playerName: 'Hero',
       level: 5,
       onPause: () => this.scene.pause(),

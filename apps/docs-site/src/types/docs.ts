@@ -15,7 +15,7 @@ export interface ExampleDefinition {
   /** Brief description */
   description: string
   /** PhaserJSX component function */
-  component: (props: Record<string, unknown>) => VNode
+  component: () => VNode
   /** Scene height (use SCENE_SIZES or custom number) */
   height: SceneSize
   /** Source code to display */

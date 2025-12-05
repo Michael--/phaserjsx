@@ -26,7 +26,7 @@ export function ExampleSection({ example, showCode = true }: ExampleSectionProps
       </div>
 
       <LiveExample
-        sceneFactory={() => createPhaserScene(example.component, undefined, example.background)}
+        sceneFactory={() => createPhaserScene(example.component, example.background)}
         height={example.height}
         background={example.background}
       />

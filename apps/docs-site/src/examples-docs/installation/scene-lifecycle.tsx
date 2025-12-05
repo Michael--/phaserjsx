@@ -10,7 +10,7 @@ class LifecycleScene extends Phaser.Scene {
 
   create() {
     // Mount and store root node
-    this.rootNode = mountJSX(this, MyUI, {})
+    this.rootNode = mountJSX(this, MyUI, { width: this.scale.width, height: this.scale.height })
   }
 
   shutdown() {

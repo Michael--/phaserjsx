@@ -5,8 +5,8 @@
 import { DocDescription, PropsTable, Section, SectionDescription } from '@/components/Doc'
 import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
-import '@/styles/docs.css'
 import { BackgroundDemoComponent } from '@/examples/demos/BackgroundDemo'
+import '@/styles/docs.css'
 import { createPhaserScene } from '@/utils/phaser-bridge'
 import { useState } from 'react'
 
@@ -114,9 +114,7 @@ export function SceneBackgroundsPage() {
 
         <LiveExample
           key={`${selectedType}-${selectedAnimation}`}
-          sceneFactory={() =>
-            createPhaserScene(BackgroundDemoComponent, undefined, backgroundConfig)
-          }
+          sceneFactory={() => createPhaserScene(BackgroundDemoComponent, backgroundConfig)}
           height={300}
           background={backgroundConfig}
         />

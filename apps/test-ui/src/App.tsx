@@ -36,14 +36,6 @@ setColorPreset('oceanBlue')
 // DevPresets.debugVDOM()
 
 /**
- * Props for the root App component
- * Includes MountProps (width, height) automatically provided by mountJSX
- */
-export interface AppProps extends MountProps {
-  // No additional props needed
-}
-
-/**
  * Color mode toggle button
  */
 function LightDarkModeToggle() {
@@ -152,27 +144,13 @@ function JsxStaticBox(props: { keys: string[] }) {
   return <Button size="small" variant="outline" text="JSX Static" onClick={run} />
 }
 
-export function App(props: AppProps) {
-  const width = props.width
-  const height = props.height
-
+export function App(props: MountProps) {
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('fx')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
-  /*
-  return (
-    <View width={500} height={500}>
-      <>
-        {Array.from({ length: 42 }).map((_, i) => (
-          <Text key={i + 1} text={`${i + 1}`} />
-        ))}
-      </>
-      <PresetSelector />
-    </View>
-  )*/
 
   return (
-    <View width={width} height={height} direction="row" justifyContent="start">
+    <View direction="row" justifyContent="start" height={'100%'} width={'100%'}>
       <PresetUpdater />
       <Sidebar height={'100%'} width={400}>
         <View direction="row" gap={10}>
@@ -226,7 +204,7 @@ export function App(props: AppProps) {
           padding={{ left: 12, right: 12, top: 5, bottom: 5 }}
         >
           <Text text={`Demo: ${selectedDemo}`} style={token?.textStyles.small} />
-          <Text text={`Screen: ${width} x ${height}`} style={token?.textStyles.small} />
+          <Text text={`Screen: ${props.width} x ${props.height}`} style={token?.textStyles.small} />
         </View>
       </View>
     </View>
@@ -242,7 +220,7 @@ const demoMode = {
 
 export type DemoMode = keyof typeof demoMode
 
-export interface SwitcherProps extends AppProps {
+export interface SwitcherProps extends MountProps {
   /** Initial demo mode */
   demoMode: DemoMode
   /** Callback when demo mode switched */
@@ -256,7 +234,7 @@ export function Switcher(props: SwitcherProps) {
   }))
 
   return (
-    <View width={props.width} height={props.height} direction="stack">
+    <View direction="stack">
       <View width={'fill'} height={'fill'} justifyContent="center" alignItems="end" padding={10}>
         <ViewLevel2 alignItems="center">
           <Text text="Select" />

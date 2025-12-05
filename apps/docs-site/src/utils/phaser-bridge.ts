@@ -10,15 +10,10 @@ import Phaser from 'phaser'
 /**
  * Creates a Phaser Scene class that mounts a PhaserJSX component
  * @param component - PhaserJSX component function
- * @param props - Optional props to pass to component
  * @param background - Optional background configuration
  * @returns Phaser Scene class
  */
-export function createPhaserScene(
-  component: (props: Record<string, unknown>) => VNode,
-  props?: Record<string, unknown>,
-  background?: BackgroundConfig
-) {
+export function createPhaserScene(component: () => VNode, background?: BackgroundConfig) {
   const bgConfig = background || DEFAULT_BACKGROUND
 
   return class ExampleScene extends Phaser.Scene {
@@ -46,11 +41,7 @@ export function createPhaserScene(
 
       // Mount PhaserJSX component with automatic SceneWrapper for percentage-based sizing
       // The new mountJSX API requires width/height and automatically wraps components
-      mountJSX(this.container, component, {
-        width: this.scale.width,
-        height: this.scale.height,
-        ...props,
-      })
+      mountJSX(this.container, component, { width: this.scale.width, height: this.scale.height })
     }
 
     /**

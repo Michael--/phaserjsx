@@ -35,11 +35,7 @@ export function ViewPage() {
         <SectionDescription>{viewContent.quickStart.description}</SectionDescription>
         <LiveExample
           sceneFactory={() =>
-            createPhaserScene(
-              viewContent.quickStart.component,
-              undefined,
-              viewContent.quickStart.background
-            )
+            createPhaserScene(viewContent.quickStart.component, viewContent.quickStart.background)
           }
           height={viewContent.quickStart.height}
           background={viewContent.quickStart.background}

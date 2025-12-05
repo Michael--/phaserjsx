@@ -7,7 +7,7 @@ import Phaser from 'phaser'
 
 class TestScene extends Phaser.Scene {
   create() {
-    mountJSX(this, TestComponent, {})
+    mountJSX(this, TestComponent, { width: this.scale.width, height: this.scale.height })
   }
 }
 
