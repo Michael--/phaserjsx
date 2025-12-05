@@ -894,8 +894,21 @@ export class GestureManager {
    * Bubbles to all containers under the pointer
    */
   private handleWheel(event: WheelEvent): void {
+    // Guard: Check if manager is destroyed or scene is invalid
+    if (this.isDestroyed || !this.scene || !this.scene.input) {
+      return
+    }
+
     // Get active pointer and update its position from the wheel event
-    const pointer = this.scene.input.activePointer
+    // Wrap in try-catch as activePointer getter can throw during scene destruction
+    let pointer: Phaser.Input.Pointer | null = null
+    try {
+      pointer = this.scene.input.activePointer
+    } catch (error) {
+      // Scene is being destroyed, silently ignore
+      return
+    }
+
     if (!pointer) return
 
     // Update pointer position from wheel event (it might not be at correct position)
