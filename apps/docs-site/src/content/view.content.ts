@@ -11,6 +11,7 @@ import {
   MinMaxConstraintsViewExample,
   PaddingVariationsViewExample,
   QuickStartViewExample,
+  SpaceDistributionViewExample,
 } from '@/examples/view'
 // Import source code as raw strings
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
@@ -21,6 +22,7 @@ import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.ts
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
 import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
+import SpaceDistributionViewExampleRaw from '@/examples/view/SpaceDistributionExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
 export const viewContent: ComponentDocs = {
@@ -95,19 +97,19 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.medium,
       code: PaddingVariationsViewExampleRaw,
     },
+    {
+      id: 'space-distribution',
+      title: 'Space Distribution',
+      description: 'space-between, space-around, and space-evenly for even distribution',
+      component: SpaceDistributionViewExample,
+      height: SCENE_SIZES.large,
+      code: SpaceDistributionViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // {
-    //   id: 'space-around-between',
-    //   title: 'Space Distribution',
-    //   description: 'Space-around and space-between for even distribution',
-    //   // Show: justifyContent="space-around", "space-between"
-    //   // Useful for: Navigation bars, evenly spaced buttons
-    // },
 
     // {
     //   id: 'wrap-behavior',
