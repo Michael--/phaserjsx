@@ -62,7 +62,7 @@ export const viewContent: ComponentDocs = {
       title: 'Borders & Styling',
       description: 'Border width, color, corner radius, and transparency',
       component: BordersStylingViewExample,
-      height: SCENE_SIZES.large,
+      height: SCENE_SIZES.medium,
       code: BordersStylingViewExampleRaw,
     },
 

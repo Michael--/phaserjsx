@@ -6,13 +6,22 @@ import { Text, View } from '@phaserjsx/ui'
 
 export function BordersStylingViewExample() {
   return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
+    <View
+      width={798}
+      height={298}
+      borderColor={0xff0000}
+      padding={20}
+      gap={16}
+      justifyContent="center"
+      alignItems="center"
+      flexWrap="wrap"
+    >
       {/* Basic border */}
       <View
         backgroundColor={0xecf0f1}
         borderWidth={2}
         borderColor={0x3498db}
-        width={200}
+        width={250}
         height={60}
         padding={10}
       >
@@ -20,8 +29,19 @@ export function BordersStylingViewExample() {
       </View>
 
       {/* Rounded corners */}
-      <View backgroundColor={0x3498db} cornerRadius={12} width={200} height={60} padding={10}>
+      <View backgroundColor={0x3498db} cornerRadius={12} width={250} height={60} padding={10}>
         <Text text="Rounded corners" style={{ color: '#ffffff' }} />
+      </View>
+
+      {/* Rounded corners async */}
+      <View
+        backgroundColor={0x3498db}
+        cornerRadius={{ tl: 10, bl: 0, tr: 20, br: 30 }}
+        width={250}
+        height={60}
+        padding={10}
+      >
+        <Text text="Rounded async" style={{ color: '#ffffff' }} />
       </View>
 
       {/* Border + Rounded */}
@@ -30,7 +50,7 @@ export function BordersStylingViewExample() {
         borderWidth={3}
         borderColor={0xe74c3c}
         cornerRadius={20}
-        width={200}
+        width={250}
         height={60}
         padding={10}
       >
@@ -38,18 +58,18 @@ export function BordersStylingViewExample() {
       </View>
 
       {/* Alpha transparency */}
-      <View backgroundColor={0x9b59b6} backgroundAlpha={0.5} width={200} height={60} padding={10}>
+      <View backgroundColor={0x9b59b6} backgroundAlpha={0.5} width={250} height={60} padding={10}>
         <Text text="50% transparent bg" style={{ color: '#ffffff' }} />
       </View>
 
       {/* Border with alpha */}
       <View
         backgroundColor={0xecf0f1}
-        borderWidth={4}
+        borderWidth={10}
         borderColor={0x2ecc71}
         borderAlpha={0.3}
         cornerRadius={8}
-        width={200}
+        width={250}
         height={60}
         padding={10}
       >
