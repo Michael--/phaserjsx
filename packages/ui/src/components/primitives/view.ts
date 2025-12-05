@@ -89,7 +89,6 @@
  *
  * 10. Known Limitations:
  *     - Background Graphics cannot be independently positioned/rotated
- *     - Overflow masking doesn't support rounded corners (Phaser limitation)
  *     - Nested View layout recalculations can be expensive (use sparingly)
  *     - Gesture system requires scene pointer plugin (auto-enabled)
  *

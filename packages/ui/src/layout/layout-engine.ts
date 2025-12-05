@@ -303,7 +303,27 @@ function updateMaskWorldPosition(
 
     // Draw rectangle in local space (will be transformed by graphics properties)
     // Expand by 1px on each side to prevent edge artifacts
-    maskGraphics.fillRect(-1, -1, width + 2, height + 2)
+    const expandedWidth = width + 2
+    const expandedHeight = height + 2
+
+    // Check if mask has cornerRadius metadata
+    const maskWithRadius = maskGraphics as Phaser.GameObjects.Graphics & {
+      __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+    }
+    const cornerRadius = maskWithRadius.__cornerRadius
+
+    if (cornerRadius !== undefined && cornerRadius !== 0) {
+      // Use rounded rectangle for mask
+      if (typeof cornerRadius === 'number') {
+        maskGraphics.fillRoundedRect(-1, -1, expandedWidth, expandedHeight, cornerRadius)
+      } else {
+        // Handle individual corner radii
+        maskGraphics.fillRoundedRect(-1, -1, expandedWidth, expandedHeight, cornerRadius)
+      }
+    } else {
+      // Standard rectangular mask
+      maskGraphics.fillRect(-1, -1, expandedWidth, expandedHeight)
+    }
 
     //console.log('Updated overflow mask position:')
   }
@@ -360,19 +380,32 @@ function updateMaskWorldPosition(
  */
 function applyOverflowMask(
   container: Phaser.GameObjects.Container,
-  containerProps: LayoutProps,
+  containerProps: LayoutProps & {
+    cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+  },
   width: number,
   height: number
 ): void {
   const extendedContainer = container as typeof container & {
-    __overflowMask?: Phaser.GameObjects.Graphics | undefined
+    __overflowMask?:
+      | (Phaser.GameObjects.Graphics & {
+          __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+        })
+      | undefined
   }
 
   if (containerProps.overflow === 'hidden') {
     // Create or update mask
     if (!extendedContainer.__overflowMask) {
-      const maskGraphics = container.scene.add.graphics()
+      const maskGraphics = container.scene.add.graphics() as Phaser.GameObjects.Graphics & {
+        __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
+      }
       extendedContainer.__overflowMask = maskGraphics
+
+      // Store cornerRadius for use in updateMaskWorldPosition
+      if (containerProps.cornerRadius !== undefined) {
+        maskGraphics.__cornerRadius = containerProps.cornerRadius
+      }
 
       // DO NOT add as child - mask needs to be independent for Phaser's mask system
       // Phaser containers with masks cannot have masked children (Phaser limitation)
