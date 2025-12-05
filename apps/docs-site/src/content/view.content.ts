@@ -12,6 +12,7 @@ import {
   PaddingVariationsViewExample,
   QuickStartViewExample,
   SpaceDistributionViewExample,
+  WrapBehaviorViewExample,
 } from '@/examples/view'
 // Import source code as raw strings
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
@@ -23,6 +24,7 @@ import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsEx
 import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import SpaceDistributionViewExampleRaw from '@/examples/view/SpaceDistributionExample.tsx?raw'
+import WrapBehaviorViewExampleRaw from '@/examples/view/WrapBehaviorExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
 export const viewContent: ComponentDocs = {
@@ -105,19 +107,19 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.large,
       code: SpaceDistributionViewExampleRaw,
     },
+    {
+      id: 'wrap-behavior',
+      title: 'Flex Wrap',
+      description: 'Wrapping children to next line with flexWrap',
+      component: WrapBehaviorViewExample,
+      height: SCENE_SIZES.large,
+      code: WrapBehaviorViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // {
-    //   id: 'wrap-behavior',
-    //   title: 'Flex Wrap',
-    //   description: 'Wrapping children to next line when space runs out',
-    //   // Show: wrap="wrap" vs "nowrap"
-    //   // Useful for: Tag lists, responsive button groups
-    // },
 
     // {
     //   id: 'overflow-hidden',
