@@ -7,9 +7,8 @@ import { Text, View } from '@phaserjsx/ui'
 export function BordersStylingViewExample() {
   return (
     <View
-      width={798}
-      height={298}
-      borderColor={0xff0000}
+      width={'fill'}
+      height={'fill'}
       padding={20}
       gap={16}
       justifyContent="center"
