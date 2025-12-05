@@ -54,15 +54,40 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
 
   return (
     <div
-      ref={containerRef}
       style={{
-        boxShadow: '0 0 0 3px #444',
-        borderRadius: '8px',
-        overflow: 'hidden',
+        position: 'relative',
         maxWidth: width,
-        maxHeight: height,
         margin: '20px 0',
       }}
-    />
+    >
+      <div
+        ref={containerRef}
+        style={{
+          boxShadow: '0 0 0 3px #444',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          maxWidth: width,
+          maxHeight: height,
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#444',
+          color: '#fff',
+          padding: '2px 12px',
+          borderRadius: '4px',
+          fontStyle: 'italic',
+          fontSize: '12px',
+          fontWeight: 500,
+          letterSpacing: '0.5px',
+        }}
+      >
+        Phaser JSX
+      </div>
+    </div>
   )
 }
