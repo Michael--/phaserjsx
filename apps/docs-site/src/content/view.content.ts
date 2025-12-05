@@ -9,6 +9,7 @@ import {
   FillSizingViewExample,
   FlexDirectionViewExample,
   MinMaxConstraintsViewExample,
+  PaddingVariationsViewExample,
   QuickStartViewExample,
 } from '@/examples/view'
 // Import source code as raw strings
@@ -18,6 +19,7 @@ import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
+import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
@@ -85,19 +87,19 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.medium,
       code: MinMaxConstraintsViewExampleRaw,
     },
+    {
+      id: 'padding-variations',
+      title: 'Padding Variations',
+      description: 'Individual padding for each side using EdgeInsets syntax',
+      component: PaddingVariationsViewExample,
+      height: SCENE_SIZES.medium,
+      code: PaddingVariationsViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // {
-    //   id: 'padding-variations',
-    //   title: 'Padding Variations',
-    //   description: 'Individual padding for each side',
-    //   // Show: paddingTop, paddingRight, paddingBottom, paddingLeft
-    //   // Useful for: Asymmetric spacing, fine-tuned layouts
-    // },
 
     // {
     //   id: 'space-around-between',
