@@ -35,6 +35,7 @@ export type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __getLayoutSize?: () => LayoutSize
   __cachedLayoutSize?: LayoutSize
   __originalGetLayoutSize?: () => LayoutSize
+  visible?: boolean
   x?: number
   y?: number
   width?: number

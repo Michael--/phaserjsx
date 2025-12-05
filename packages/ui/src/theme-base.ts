@@ -42,6 +42,7 @@ export interface TextTheme
     Partial<PhaserProps>,
     Partial<TextSpecificProps>,
     NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
   // Legacy: support Phaser's style object directly
   style?: Phaser.Types.GameObjects.Text.TextStyle
 }
@@ -53,6 +54,7 @@ export interface NineSliceTheme
   extends Partial<TransformProps>,
     Partial<PhaserProps>,
     NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
   texture?: string
   leftWidth?: number
   rightWidth?: number
@@ -67,6 +69,7 @@ export interface SpriteTheme
   extends Partial<TransformProps>,
     Partial<PhaserProps>,
     NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
 }
@@ -78,6 +81,7 @@ export interface ImageTheme
   extends Partial<TransformProps>,
     Partial<PhaserProps>,
     NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
 }
@@ -88,7 +92,9 @@ export interface ImageTheme
 export interface GraphicsTheme
   extends Partial<TransformProps>,
     Partial<PhaserProps>,
-    NestedComponentThemes {}
+    NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
+}
 
 /**
  * Theme definition for TileSprite component (dummy - minimal theme support)
@@ -97,6 +103,7 @@ export interface TileSpriteTheme
   extends Partial<TransformProps>,
     Partial<PhaserProps>,
     NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
 }

@@ -31,6 +31,7 @@ export {
 
 // Export gesture types explicitly for better IDE support
 export type {
+  Display,
   FlexBasisValue,
   FocusEventData,
   GestureEventData,

@@ -59,6 +59,14 @@ export type FlexBasisValue =
   | `calc(${string})`
 
 /**
+ * Display mode for visibility control
+ * - 'visible': Rendered and takes up layout space (default)
+ * - 'invisible': Not rendered but takes up layout space (like CSS visibility: hidden)
+ * - 'none': Not rendered and does not take up layout space (like CSS display: none)
+ */
+export type Display = 'visible' | 'invisible' | 'none'
+
+/**
  * Transform properties - geometric transformations (position, rotation, scale)
  */
 export interface TransformProps {
@@ -95,13 +103,6 @@ export interface PhaserProps {
    * </View>
    */
   depth?: number
-
-  /**
-   * Visibility of the game object
-   * - true: Object is rendered (default)
-   * - false: Object is hidden but still exists in scene
-   */
-  visible?: boolean
 
   /**
    * Callback invoked when GameObject is created and fully initialized
@@ -244,6 +245,19 @@ export function normalizeGap(value: number | GapInsets | undefined): {
  * Layout properties - sizing, spacing, and layout participation
  */
 export interface LayoutProps {
+  /**
+   * Visibility and layout participation
+   * - true / 'visible': Rendered and takes layout space (default)
+   * - false / 'invisible': Not rendered but takes layout space (like CSS visibility: hidden)
+   * - 'none': Not rendered and no layout space (like CSS display: none)
+   *
+   * @example
+   * <View visible={true}>Always visible</View>
+   * <View visible={false}>Hidden but occupies space</View>
+   * <View visible="none">Hidden and no space</View>
+   */
+  visible?: boolean | Display
+
   /**
    * If true, object is rendered but excluded from layout calculations
    * Use for decorative elements, sprites, particles, or absolute-positioned objects

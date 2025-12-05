@@ -17,6 +17,14 @@ export function isLayoutChild(child: GameObjectWithLayout): boolean {
   // Skip background graphics (special role - defines container dimensions)
   if (child.__isBackground) return false
 
+  // Check display mode from __layoutProps (visible prop)
+  const displayMode = child.__layoutProps?.visible
+
+  // Skip children with visible="none" - they don't take up space (like CSS display: none)
+  // Note: visible=false / "invisible" still occupies space (like CSS visibility: hidden)
+  // Note: alpha=0 is different - it renders transparent but still occupies space
+  if (displayMode === 'none') return false
+
   // Require __getLayoutSize for layout participation
   // Note: Headless objects still participate, they just report size 0
   return typeof child.__getLayoutSize === 'function'

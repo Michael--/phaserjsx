@@ -26,7 +26,7 @@ export function createLayout(
   },
   props: Partial<LayoutProps & BackgroundProps & TransformProps>
 ): void {
-  // Attach layout props for layout calculations
+  // Attach layout props for layout calculations (includes visible for display control)
   container.__layoutProps = props as LayoutProps & BackgroundProps & TransformProps
 
   // Attach dynamic size provider

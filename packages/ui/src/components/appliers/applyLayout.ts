@@ -154,7 +154,7 @@ export function applyLayoutProps(
   prev: Partial<LayoutProps & BackgroundProps>,
   next: Partial<LayoutProps & BackgroundProps>
 ): void {
-  // Update stored layout props
+  // Update stored layout props (includes visible for display control)
   node.__layoutProps = next as LayoutProps & BackgroundProps
 
   // IMPORTANT: We only recalculate if container's own props changed
