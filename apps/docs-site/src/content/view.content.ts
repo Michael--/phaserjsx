@@ -8,6 +8,7 @@ import {
   BordersStylingViewExample,
   FillSizingViewExample,
   FlexDirectionViewExample,
+  MinMaxConstraintsViewExample,
   QuickStartViewExample,
 } from '@/examples/view'
 // Import source code as raw strings
@@ -16,6 +17,7 @@ import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?ra
 import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.tsx?raw'
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
+import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
@@ -72,23 +74,22 @@ export const viewContent: ComponentDocs = {
       title: 'Fill Width/Height',
       description: 'Using "fill" to take full available space in parent',
       component: FillSizingViewExample,
-      height: SCENE_SIZES.xl,
+      height: SCENE_SIZES.large,
       code: FillSizingViewExampleRaw,
     },
-
+    {
+      id: 'min-max-constraints',
+      title: 'Size Constraints',
+      description: 'Min/max width and height for responsive boundaries',
+      component: MinMaxConstraintsViewExample,
+      height: SCENE_SIZES.medium,
+      code: MinMaxConstraintsViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // {
-    //   id: 'min-max-constraints',
-    //   title: 'Size Constraints',
-    //   description: 'Min/max width and height for responsive boundaries',
-    //   // Show: minWidth, maxWidth, minHeight, maxHeight
-    //   // Useful for: Responsive cards, flexible containers with limits
-    // },
 
     // {
     //   id: 'padding-variations',

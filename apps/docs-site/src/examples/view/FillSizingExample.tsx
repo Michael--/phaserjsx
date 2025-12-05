@@ -6,7 +6,15 @@ import { Text, View } from '@phaserjsx/ui'
 
 export function FillSizingViewExample() {
   return (
-    <View padding={20} gap={16} justifyContent="center" alignItems="center">
+    <View
+      padding={20}
+      gap={16}
+      justifyContent="center"
+      alignItems="center"
+      width="fill"
+      height="fill"
+      flexWrap="wrap"
+    >
       {/* Container with fixed width */}
       <View width={300} backgroundColor={0x95a5a6} padding={8} gap={8}>
         <Text text="Container: 300px wide" style={{ color: '#ffffff', fontSize: '12px' }} />
