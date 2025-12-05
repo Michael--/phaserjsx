@@ -20,61 +20,96 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Introduction', path: '/introduction' },
       { label: 'Installation', path: '/installation' },
+      { label: 'Quick Start', path: '/quick-start' },
     ],
   },
   {
-    title: 'Components',
+    title: 'Layout Components',
     items: [
-      { label: 'Button', path: '/components/button' }, // done so far
-      { label: 'Dropdown', path: '/components/dropdown' },
+      { label: 'View', path: '/components/view' },
+      { label: 'ScrollView', path: '/components/scroll-view' },
+      { label: 'Portal', path: '/components/portal' },
+      { label: 'Divider', path: '/components/divider' },
+    ],
+  },
+  {
+    title: 'Form Controls',
+    items: [
+      { label: 'Button', path: '/components/button' },
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
-      { label: 'View', path: '/components/view' }, // done so far
-      // add more if needed
+      { label: 'RadioButton', path: '/components/radio-button' },
+      { label: 'RadioGroup', path: '/components/radio-group' },
+      { label: 'Dropdown', path: '/components/dropdown' },
     ],
   },
   {
-    // Gestures & Interaction
-    // → Better in: /guides/gestures or /guides/interaction
-    // - enableGestures, onTouch, onTouchMove, onTouchOutside
-    // - onDoubleTap, onLongPress, gesture configuration
-    // Reason: Complex topic, needs dedicated space for patterns
-
-    // Theme Integration
-    // → Better in: /guides/theming
-    // - theme prop, nested themes, component-level styling
-    // - getThemedProps usage, theme inheritance
-    // Reason: Theme system is cross-cutting, needs holistic view
-
-    // Responsive Design
-    // → Better in: /guides/responsive-design
-    // - Viewport units (vw, vh), percentage sizes
-    // - calc() expressions, dynamic sizing strategies
-    // - maxWidth with viewport units for breakpoints
-    // Reason: Responsive patterns span multiple components
-
-    // Layout Patterns
-    // → Better in: /guides/layout-patterns
-    // - Common patterns: Holy Grail, Sidebar, Grid-like structures
-    // - Flexbox equivalents (stretch, flex-grow behavior)
-    // - Centering strategies, sticky footers
-    // Reason: Patterns involve multiple components and techniques
-
-    // Performance Considerations
-    // → Better in: /guides/performance
-    // - When to use headless, layout recalculation triggers
-    // - Nested View overhead, optimization tips
-    // Reason: Performance is a cross-cutting concern
-
+    title: 'Text & Content',
+    items: [
+      { label: 'Text', path: '/components/text' },
+      { label: 'WrapText', path: '/components/wrap-text' },
+      { label: 'CharText', path: '/components/char-text' },
+      { label: 'CharTextInput', path: '/components/char-text-input' },
+    ],
+  },
+  {
+    title: 'Overlays & Dialogs',
+    items: [
+      { label: 'Modal', path: '/components/modal' },
+      { label: 'Dialog', path: '/components/dialog' },
+      { label: 'AlertDialog', path: '/components/alert-dialog' },
+      { label: 'Sidebar', path: '/components/sidebar' },
+      { label: 'Accordion', path: '/components/accordion' },
+    ],
+  },
+  {
+    title: 'Primitives',
+    items: [
+      { label: 'Image', path: '/components/image' },
+      { label: 'Sprite', path: '/components/sprite' },
+      { label: 'Graphics', path: '/components/graphics' },
+      { label: 'NineSlice', path: '/components/nineslice' },
+      { label: 'TileSprite', path: '/components/tilesprite' },
+    ],
+  },
+  {
+    title: 'Advanced',
+    items: [
+      { label: 'NineSliceButton', path: '/components/nineslice-button' },
+      { label: 'ScrollSlider', path: '/components/scroll-slider' },
+      { label: 'RefOriginView', path: '/components/ref-origin-view' },
+      { label: 'TransformOriginView', path: '/components/transform-origin-view' },
+    ],
+  },
+  {
+    title: 'Icon System',
+    items: [
+      { label: 'Icon Component', path: '/icons/component' },
+      { label: 'Icon Generator', path: '/icons/generator' },
+      { label: 'Vite Plugin', path: '/icons/vite-plugin' },
+      { label: 'Configuration', path: '/icons/configuration' },
+    ],
+  },
+  {
     title: 'Guides',
     items: [
-      { label: 'Testing & Development', path: '/guides/testing' },
       { label: 'Gestures & Interaction', path: '/guides/gestures' },
-      { label: 'Theme Integration', path: '/guides/theming' },
+      { label: 'Theme System', path: '/guides/theming' },
       { label: 'Responsive Design', path: '/guides/responsive-design' },
       { label: 'Layout Patterns', path: '/guides/layout-patterns' },
-      { label: 'Performance Considerations', path: '/guides/performance' },
+      { label: 'Effects & Animations', path: '/guides/effects' },
+      { label: 'Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
+      { label: 'Testing & Development', path: '/guides/testing' },
+    ],
+  },
+  {
+    title: 'API Reference',
+    items: [
+      { label: 'Hooks', path: '/api/hooks' },
+      { label: 'Core Props', path: '/api/core-props' },
+      { label: 'Theme Types', path: '/api/theme-types' },
+      { label: 'Effect Registry', path: '/api/effects' },
     ],
   },
 ]
