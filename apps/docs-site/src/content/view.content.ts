@@ -9,6 +9,7 @@ import {
   FillSizingViewExample,
   FlexDirectionViewExample,
   MinMaxConstraintsViewExample,
+  NestedLayoutsViewExample,
   OverflowControlViewExample,
   PaddingVariationsViewExample,
   QuickStartViewExample,
@@ -22,6 +23,7 @@ import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
+import NestedLayoutsViewExampleRaw from '@/examples/view/NestedLayoutsExample.tsx?raw'
 import OverflowControlViewExampleRaw from '@/examples/view/OverflowControlExample.tsx?raw'
 import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
@@ -125,6 +127,14 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.large,
       code: OverflowControlViewExampleRaw,
     },
+    {
+      id: 'nested-layouts',
+      title: 'Complex Nested Layouts',
+      description: 'Building card-like structures with multiple View layers',
+      component: NestedLayoutsViewExample,
+      height: SCENE_SIZES.xl,
+      code: NestedLayoutsViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
@@ -132,13 +142,6 @@ export const viewContent: ComponentDocs = {
     // --- BASIC FEATURES (Simple, frequently used) ---
 
     // --- INTERMEDIATE FEATURES (More complex use cases) ---
-    // {
-    //   id: 'nested-layouts',
-    //   title: 'Complex Nested Layouts',
-    //   description: 'Building card-like structures with multiple View layers',
-    //   // Show: Header/Body/Footer pattern, sidebar + content
-    //   // Useful for: Cards, panels, split views
-    // },
 
     // {
     //   id: 'depth-stacking',
