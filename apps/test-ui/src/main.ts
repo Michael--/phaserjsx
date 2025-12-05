@@ -161,7 +161,7 @@ class MainScene extends Phaser.Scene {
       width: this.scale.width,
       height: this.scale.height,
       demoMode: demo,
-      onSwitch: (mode) => {
+      onSwitch: (mode: DemoMode) => {
         console.log('Switched demo mode to:', mode)
         demo = mode
         this.scene.restart()

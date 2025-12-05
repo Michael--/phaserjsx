@@ -43,6 +43,10 @@ export function registerBuiltins() {
   register('Image', { create: imageCreator, patch: imagePatcher })
   register('Graphics', { create: graphicsCreator, patch: graphicsPatcher })
   register('TileSprite', { create: tileSpriteCreator, patch: tileSpritePatcher })
+
+  // Register internal SceneWrapper component (for mountJSX auto-sizing)
+  // SceneWrapper is a function component, not a primitive, so it doesn't need creators
+  // It will be handled by the function component path in mount()
 }
 
 // Re-export layout types

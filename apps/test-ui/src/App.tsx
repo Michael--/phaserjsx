@@ -14,6 +14,7 @@ import {
   useState,
   useThemeTokens,
   View,
+  type MountProps,
   type RadioGroupOption,
 } from '@phaserjsx/ui'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
@@ -36,12 +37,10 @@ setColorPreset('oceanBlue')
 
 /**
  * Props for the root App component
+ * Includes MountProps (width, height) automatically provided by mountJSX
  */
-export interface AppProps {
-  /** Screen width in pixels */
-  width: number
-  /** Screen height in pixels */
-  height: number
+export interface AppProps extends MountProps {
+  // No additional props needed
 }
 
 /**

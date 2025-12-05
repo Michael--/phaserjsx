@@ -4,6 +4,7 @@
  */
 import equal from 'fast-deep-equal'
 import Phaser from 'phaser'
+import { SceneWrapper } from './components/internal/SceneWrapper'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger, DevConfig } from './dev-config'
 import { generateMountRootId, getGestureManager } from './gestures/gesture-manager'
@@ -17,6 +18,25 @@ import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
 
 export type VNodeLike = VNode | VNode[] | null
+
+/**
+ * Base props that mountJSX requires for scene dimensions
+ * Provides viewport size for percentage-based sizing
+ */
+export interface MountProps {
+  /** Scene/container width in pixels */
+  width: number
+  /** Scene/container height in pixels */
+  height: number
+  /** Disable automatic SceneWrapper (default: false) */
+  disableAutoSize?: boolean
+}
+
+/**
+ * Combined props type: MountProps + Component-specific props
+ * Use this for type-safe mountJSX calls
+ */
+export type MountComponentProps<P = Record<string, never>> = MountProps & P
 
 /**
  * Checks if a child should be skipped during mounting
@@ -924,30 +944,34 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
 }
 
 /**
- * Mounts a component by type and props (convenience wrapper around mount)
+ * Mounts a component by type and props
+ * Automatically wraps component in SceneWrapper unless disableAutoSize is true
  * @param parentOrScene - Phaser scene or parent container
  * @param type - Component type (function or string)
- * @param props - Component props
+ * @param props - Component props including width and height
  * @returns Created Phaser GameObject
  */
 
 export function mountJSX<T extends NodeType>(
   parentOrScene: ParentType,
   type: T,
-  props: NodeProps<T>
+  props: MountComponentProps<NodeProps<T>>
 ): Phaser.GameObjects.GameObject
 
-export function mountJSX<P>(
+export function mountJSX<P = Record<string, never>>(
   parentOrScene: ParentType,
-  type: (props: P) => VNode,
-  props: P
+  type: (props: P & MountProps) => VNode,
+  props: MountComponentProps<P>
 ): Phaser.GameObjects.GameObject
 
 export function mountJSX(
   parentOrScene: ParentType,
   type: NodeType | ((props: unknown) => VNode),
-  props: Record<string, unknown> = {}
+  props: MountProps & Record<string, unknown> = { width: 0, height: 0 }
 ): Phaser.GameObjects.GameObject {
+  // Extract MountProps and component props
+  const { width, height, disableAutoSize = false, ...componentProps } = props
+
   // Extract scene and set viewport dimensions
   const scene =
     parentOrScene instanceof Phaser.Scene
@@ -956,13 +980,36 @@ export function mountJSX(
 
   if (scene) {
     const renderContext = getRenderContext(parentOrScene)
-    renderContext.setViewport(scene.scale.width, scene.scale.height, scene)
+    renderContext.setViewport(width, height, scene)
 
     // Also set viewport for portal system (for Modal centering, etc.)
-    portalRegistry.setViewportSize(scene, scene.scale.width, scene.scale.height)
+    portalRegistry.setViewportSize(scene, width, height)
   }
 
-  const vnode: VNode = { type, props, children: [] }
+  // Create VNode with or without SceneWrapper
+  let vnode: VNode
+
+  if (disableAutoSize) {
+    // Without wrapper: mount component directly (legacy behavior)
+    vnode = { type, props: { ...componentProps, width, height }, children: [] }
+  } else {
+    // With wrapper (DEFAULT): use SceneWrapper for percentage-based sizing
+    const componentVNode: VNode = {
+      type,
+      props: componentProps,
+      children: [],
+    }
+
+    vnode = {
+      type: SceneWrapper,
+      props: {
+        width,
+        height,
+        children: componentVNode,
+      },
+      children: [],
+    }
+  }
 
   // Store root VNode on the scene for debug access (non-intrusive)
   if (scene) {
