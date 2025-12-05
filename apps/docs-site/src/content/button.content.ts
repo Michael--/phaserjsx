@@ -81,29 +81,31 @@ export const buttonContent: ComponentDocs = {
       name: 'variant',
       type: '"primary" | "secondary" | "outline"',
       default: '"primary"',
-      description: 'Visual style variant',
+      description: 'Visual style variant - determines color scheme and appearance',
     },
     {
       name: 'onClick',
       type: '() => void',
-      description: 'Click event handler',
+      description: 'Click/tap event handler - called after effect animation completes',
     },
     {
       name: 'disabled',
       type: 'boolean',
       default: 'false',
-      description: 'Disables interaction and applies disabled styling',
+      description:
+        'Disables interaction (no gestures), reduces opacity to 0.5, applies disabled color',
     },
     {
       name: 'size',
       type: '"small" | "medium" | "large"',
       default: '"medium"',
-      description: 'Predefined size variant',
+      description:
+        'Predefined size variant - controls padding, font size, and dimensions via theme',
     },
     {
       name: 'children',
-      type: 'VNode',
-      description: 'Button content (Text, Icon, or View composition)',
+      type: 'VNode | VNode[]',
+      description: 'Button content - Text, Icon, or any combination in a row layout',
     },
   ],
 
@@ -112,49 +114,56 @@ export const buttonContent: ComponentDocs = {
       name: 'variant',
       type: '"primary" | "secondary" | "outline"',
       default: '"primary"',
-      description: 'Visual style variant',
-    },
-    {
-      name: 'onClick',
-      type: '() => void',
-      description: 'Click event handler',
-    },
-    {
-      name: 'disabled',
-      type: 'boolean',
-      default: 'false',
-      description: 'Disables interaction and applies disabled styling',
+      description: 'Visual style variant - determines color scheme and appearance from theme',
     },
     {
       name: 'size',
       type: '"small" | "medium" | "large"',
       default: '"medium"',
-      description: 'Predefined size variant',
+      description:
+        'Predefined size variant - controls padding, font size, and dimensions via theme',
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Disables interaction (enableGestures=false), sets alpha=0.5, applies disabledColor from theme',
+    },
+    {
+      name: 'onClick',
+      type: '() => void',
+      description:
+        'Click/tap event handler - triggered after effect animation (ignored when disabled)',
     },
     {
       name: 'effect',
-      type: 'string',
-      description: 'Phaser animation effect (tada, bounce, pulse, fade, etc.)',
+      type: 'EffectName',
+      description:
+        'Animation effect: "pulse", "bounce", "shake", "press", "flash", "jello", "fade", "wobble", "tada", "swing", "wiggle", "slideIn", "slideOut", "zoomIn", "zoomOut", "flipIn", "flipOut", "float", "breathe", "spin"',
     },
     {
       name: 'effectConfig',
       type: 'EffectConfig',
-      description: 'Configuration for the effect (time, scale, etc.)',
+      description:
+        'Effect configuration: { time?, scale?, distance?, rotation?, alpha?, etc. } - varies per effect',
     },
     {
-      name: 'disabledColor',
-      type: 'number',
-      description: 'Text color when button is disabled (hex number)',
+      name: 'width',
+      type: 'SizeValue',
+      description:
+        'Button width - overrides theme size (number, "fill", "auto", percentage, viewport, calc)',
     },
     {
-      name: 'textStyle',
-      type: 'TextStyle',
-      description: 'Override default text styling (color, fontSize, fontFamily, etc.)',
+      name: 'height',
+      type: 'SizeValue',
+      description:
+        'Button height - overrides theme size (number, "fill", "auto", percentage, viewport, calc)',
     },
     {
       name: 'children',
-      type: 'VNode',
-      description: 'Button content (Text, Icon, or View composition)',
+      type: 'VNode | VNode[]',
+      description: 'Button content - rendered in row layout with center alignment',
     },
   ],
 
