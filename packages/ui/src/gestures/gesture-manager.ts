@@ -591,11 +591,23 @@ export class GestureManager {
       this.pendingTimeouts.delete(timerId)
 
       // Guard: Check if manager is destroyed or scene is invalid
-      if (this.isDestroyed || !this.scene || !this.scene.input || !this.scene.input.activePointer)
+      if (this.isDestroyed || !this.scene || !this.scene.input) {
         return
+      }
 
-      const pointer = this.scene.input.activePointer
-      if (!pointer) return
+      // CRITICAL: activePointer is a getter that can throw if scene is being destroyed
+      // Wrap in try-catch to handle race condition during scene destruction
+      let pointer: Phaser.Input.Pointer | null = null
+      try {
+        pointer = this.scene.input.activePointer
+      } catch (error) {
+        // Scene is being destroyed, silently ignore
+        return
+      }
+
+      if (!pointer) {
+        return
+      }
 
       // Fire onTouchOutside for ALL containers that have the callback
       // and where the pointer is NOT inside
@@ -976,6 +988,11 @@ export class GestureManager {
    * Cleanup all resources
    */
   private destroy(): void {
+    console.log('[GestureManager] destroy() called', {
+      pendingTimeouts: this.pendingTimeouts.size,
+      containers: this.containers.size,
+    })
+
     // Mark as destroyed to prevent any pending callbacks from executing
     this.isDestroyed = true
 
