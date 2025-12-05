@@ -105,7 +105,7 @@ function DestructiveVariantExample() {
   return (
     <ViewLevel3>
       <Text text="Destructive Variant" style={tokens?.textStyles.heading} />
-      <Button variant="danger" onClick={handleOpen}>
+      <Button onClick={handleOpen}>
         <Text text="Delete Item" />
       </Button>
       {deleted && <Text text="✓ Item deleted!" style={{ color: '#f44336' }} key="deleted-msg" />}

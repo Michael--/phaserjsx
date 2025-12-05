@@ -112,7 +112,7 @@ function DialogWithActionsExample() {
   const actions = useMemo(
     () => (
       <>
-        <Button variant="ghost" onClick={handleClose}>
+        <Button onClick={handleClose}>
           <Text text="Cancel" />
         </Button>
         <Button variant="primary" onClick={handleSave}>

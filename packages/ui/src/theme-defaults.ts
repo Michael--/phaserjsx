@@ -24,7 +24,6 @@ export const defaultTheme: Theme = {
   },
   text: {
     text: '',
-    align: 'left',
     alpha: 1,
     visible: true,
     style: textStyles.DEFAULT,
@@ -56,7 +55,6 @@ export const defaultTheme: Theme = {
   },
   Text: {
     text: '',
-    align: 'left',
     alpha: 1,
     visible: true,
     style: textStyles.DEFAULT,

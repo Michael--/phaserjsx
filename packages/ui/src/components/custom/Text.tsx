@@ -34,9 +34,7 @@ export interface TextProps
  *
  * @example
  * ```tsx
- * <Text text="Hello World" color="#ffffff" fontSize={24} />
- * <Text text="Label" fontFamily="Arial" fontStyle="bold" />
- * <Text text="+100" headless={true} /> // Floating text
+ * <Text text="Hello World" />
  * ```
  */
 export function Text(props: TextProps) {

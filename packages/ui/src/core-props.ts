@@ -575,8 +575,6 @@ export interface BackgroundProps {
  */
 export interface TextSpecificProps {
   text: string | undefined
-  fontStyle?: string
-  align?: 'left' | 'center' | 'right'
   /**
    * Maximum width for text wrapping
    * Supports all SizeValue formats (pixels, percentage, viewport units, calc)
