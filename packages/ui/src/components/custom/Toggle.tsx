@@ -81,24 +81,35 @@ export function Toggle(props: ToggleProps) {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Toggle', localTheme, props.theme ?? {})
 
-  // Theme values with defaults
-  const width = themed.width ?? 50
-  const height = themed.height ?? 28
-  const thumbSize = themed.thumbSize ?? 24
-  const trackColorOff = themed.trackColorOff ?? 0x999999
-  const trackColorOn = themed.trackColorOn ?? 0x4caf50
-  const thumbColor = themed.thumbColor ?? 0xffffff
-  const disabledColor = themed.disabledColor ?? 0x666666
-  const padding = themed.padding ?? 2
-  const duration = themed.duration ?? 200
+  // Theme values with defaults - use refs for values used in closures
+  const width = useRef(themed.width ?? 50)
+  const height = useRef(themed.height ?? 28)
+  const thumbSize = useRef(themed.thumbSize ?? 24)
+  const trackColorOff = useRef(themed.trackColorOff ?? 0x999999)
+  const trackColorOn = useRef(themed.trackColorOn ?? 0x4caf50)
+  const thumbColor = useRef(themed.thumbColor ?? 0xffffff)
+  const disabledColor = useRef(themed.disabledColor ?? 0x666666)
+  const padding = useRef(themed.padding ?? 2)
+  const duration = useRef(themed.duration ?? 200)
   const gap = themed.gap ?? 8
   const labelPosition = props.labelPosition ?? themed.labelPosition ?? 'right'
 
+  // Update refs when theme changes
+  width.current = themed.width ?? 50
+  height.current = themed.height ?? 28
+  thumbSize.current = themed.thumbSize ?? 24
+  trackColorOff.current = themed.trackColorOff ?? 0x999999
+  trackColorOn.current = themed.trackColorOn ?? 0x4caf50
+  thumbColor.current = themed.thumbColor ?? 0xffffff
+  disabledColor.current = themed.disabledColor ?? 0x666666
+  padding.current = themed.padding ?? 2
+  duration.current = themed.duration ?? 200
+
   // Calculate positions
-  const thumbRadius = thumbSize / 2
-  const trackRadius = height / 2
-  const thumbOffsetOff = padding + thumbRadius
-  const thumbOffsetOn = width - padding - thumbRadius
+  const thumbRadius = thumbSize.current / 2
+  const trackRadius = height.current / 2
+  const thumbOffsetOff = padding.current + thumbRadius
+  const thumbOffsetOn = width.current - padding.current - thumbRadius
 
   // State
   const initialChecked = props.checked !== undefined ? props.checked : false
@@ -116,7 +127,7 @@ export function Toggle(props: ToggleProps) {
     if (props.checked !== undefined && props.checked !== checked) {
       animateToggle(props.checked)
     }
-  }, [props.checked])
+  }, [props.checked, checked])
 
   /**
    * Animate toggle transition
@@ -137,10 +148,12 @@ export function Toggle(props: ToggleProps) {
     // Animate thumb position via state
     const startX = thumbX
 
+    console.log('Duration:', duration.current)
+
     scene.tweens.addCounter({
       from: 0,
       to: 1,
-      duration,
+      duration: duration.current,
       ease: 'Cubic.easeOut',
       onUpdate: (tween: Phaser.Tweens.Tween) => {
         const progress = tween.getValue() as number
@@ -154,21 +167,21 @@ export function Toggle(props: ToggleProps) {
     })
 
     // Animate track color
-    const startColor = checked ? trackColorOn : trackColorOff
-    const endColor = newChecked ? trackColorOn : trackColorOff
+    const startColor = checked ? trackColorOn.current : trackColorOff.current
+    const endColor = newChecked ? trackColorOn.current : trackColorOff.current
 
     scene.tweens.add({
       targets: { value: 0 },
       value: 1,
-      duration,
+      duration: duration.current,
       ease: 'Cubic.easeOut',
       onUpdate: (tween: Phaser.Tweens.Tween) => {
         const progress = (tween.getValue() as number) ?? 0
         const currentColor = interpolateColor(startColor, endColor, progress)
 
         track.clear()
-        track.fillStyle(props.disabled ? disabledColor : currentColor, 1)
-        track.fillRoundedRect(0, 0, width, height, trackRadius)
+        track.fillStyle(props.disabled ? disabledColor.current : currentColor, 1)
+        track.fillRoundedRect(0, 0, width.current, height.current, trackRadius)
       },
     })
 
@@ -191,9 +204,13 @@ export function Toggle(props: ToggleProps) {
    */
   const drawTrack = (g: Phaser.GameObjects.Graphics) => {
     g.clear()
-    const color = props.disabled ? disabledColor : checked ? trackColorOn : trackColorOff
+    const color = props.disabled
+      ? disabledColor.current
+      : checked
+        ? trackColorOn.current
+        : trackColorOff.current
     g.fillStyle(color, 1)
-    g.fillRoundedRect(0, 0, width, height, trackRadius)
+    g.fillRoundedRect(0, 0, width.current, height.current, trackRadius)
   }
 
   /**
@@ -201,7 +218,7 @@ export function Toggle(props: ToggleProps) {
    */
   const drawThumb = (g: Phaser.GameObjects.Graphics) => {
     g.clear()
-    g.fillStyle(thumbColor, 1)
+    g.fillStyle(thumbColor.current, 1)
     g.fillCircle(0, 0, thumbRadius)
   }
 
@@ -209,22 +226,22 @@ export function Toggle(props: ToggleProps) {
   const toggleElement = (
     <View
       direction="stack"
-      width={width}
-      height={height}
+      width={width.current}
+      height={height.current}
       enableGestures={!props.disabled}
       onTouch={handleClick}
       alpha={props.disabled ? 0.5 : 1}
     >
       {/* Track */}
-      <Graphics ref={trackRef} width={width} height={height} onDraw={drawTrack} />
+      <Graphics ref={trackRef} width={width.current} height={height.current} onDraw={drawTrack} />
 
       {/* Thumb - position controlled by state */}
       <Graphics
         ref={thumbRef}
-        width={thumbSize}
-        height={thumbSize}
+        width={thumbSize.current}
+        height={thumbSize.current}
         x={thumbX}
-        y={height / 2}
+        y={height.current / 2}
         onDraw={drawThumb}
       />
     </View>
