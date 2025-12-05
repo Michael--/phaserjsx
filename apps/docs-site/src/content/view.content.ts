@@ -6,6 +6,7 @@ import {
   AlignmentViewExample,
   BasicLayoutViewExample,
   BordersStylingViewExample,
+  FillSizingViewExample,
   FlexDirectionViewExample,
   QuickStartViewExample,
 } from '@/examples/view'
@@ -13,6 +14,7 @@ import {
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
 import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?raw'
 import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.tsx?raw'
+import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
@@ -65,19 +67,20 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.medium,
       code: BordersStylingViewExampleRaw,
     },
+    {
+      id: 'fill-sizing',
+      title: 'Fill Width/Height',
+      description: 'Using "fill" to take full available space in parent',
+      component: FillSizingViewExample,
+      height: SCENE_SIZES.xl,
+      code: FillSizingViewExampleRaw,
+    },
 
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-    // {
-    //   id: 'fill-sizing',
-    //   title: 'Fill Width/Height',
-    //   description: 'Using "fill" to take full available space in parent',
-    //   // Show: width="fill", height="fill", mixed with fixed sizes
-    //   // Useful for: Full-width buttons, flexible panels
-    // },
 
     // {
     //   id: 'min-max-constraints',
