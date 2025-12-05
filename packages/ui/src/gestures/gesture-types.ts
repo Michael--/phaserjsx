@@ -106,6 +106,48 @@ export interface HoverEventData {
 }
 
 /**
+ * Data passed to wheel event handlers (desktop/mouse only)
+ */
+export interface WheelEventData {
+  /** The Phaser pointer at the time of the wheel event */
+  pointer: Phaser.Input.Pointer
+  /** Local X coordinate relative to container origin (0,0) */
+  localX: number
+  /** Local Y coordinate relative to container origin (0,0) */
+  localY: number
+  /** Wheel scroll delta X (horizontal scrolling) */
+  deltaX: number
+  /** Wheel scroll delta Y (vertical scrolling) */
+  deltaY: number
+  /** Wheel scroll delta Z (some mice) */
+  deltaZ: number
+  /** Delta mode: 0 = pixels, 1 = lines, 2 = pages */
+  deltaMode: number
+  /** Width of the container's hit area */
+  width: number
+  /** Height of the container's hit area */
+  height: number
+  /** Original DOM wheel event */
+  originalEvent: WheelEvent
+
+  /**
+   * Stop event propagation to parent containers
+   */
+  stopPropagation(): void
+
+  /**
+   * Check if propagation has been stopped
+   * @returns true if stopPropagation() was called
+   */
+  isPropagationStopped(): boolean
+
+  /**
+   * Prevent default browser behavior (e.g., page scroll)
+   */
+  preventDefault(): void
+}
+
+/**
  * Data passed to gesture event handlers
  * Supports DOM-style event propagation control
  */
@@ -171,6 +213,8 @@ export interface GestureCallbacks {
   onHoverStart?: (data: HoverEventData) => void
   /** Called when pointer exits the container (desktop/mouse only) */
   onHoverEnd?: (data: HoverEventData) => void
+  /** Called when mouse wheel is scrolled over container (desktop/mouse only) */
+  onWheel?: (data: WheelEventData) => void
 }
 
 /**

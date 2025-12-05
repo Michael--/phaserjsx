@@ -10,10 +10,18 @@ import type {
   InputEventData,
   KeyboardEventData,
   TouchMoveState,
+  WheelEventData,
 } from './gestures/gesture-types'
 
 // Re-export for public API
-export type { FocusEventData, GestureEventData, InputEventData, KeyboardEventData, TouchMoveState }
+export type {
+  FocusEventData,
+  GestureEventData,
+  InputEventData,
+  KeyboardEventData,
+  TouchMoveState,
+  WheelEventData,
+}
 
 /**
  * Valid CSS-like size values with type safety
@@ -690,4 +698,12 @@ export interface GestureProps {
    * Requires enableGestures: true
    */
   onHoverEnd?: (data: import('./gestures/gesture-types').HoverEventData) => void
+
+  /**
+   * Called when mouse wheel is scrolled over container (desktop/mouse only)
+   * Does not work on touch devices (iPhone, iPad)
+   * Provides deltaX/deltaY for scroll amounts
+   * Requires enableGestures: true
+   */
+  onWheel?: (data: WheelEventData) => void
 }

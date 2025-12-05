@@ -9,6 +9,7 @@ import type {
   GestureContainerState,
   GestureEventData,
   HoverEventData,
+  WheelEventData,
 } from './gesture-types'
 import { DEFAULT_GESTURE_CONFIG } from './gesture-types'
 
@@ -75,6 +76,11 @@ export class GestureManager {
     this.handleGlobalPointerUp = this.handleGlobalPointerUp.bind(this)
     window.addEventListener('mouseup', this.handleGlobalPointerUp)
     window.addEventListener('touchend', this.handleGlobalPointerUp)
+
+    // Handle mouse wheel events (desktop only)
+    // Use window instead of canvas to ensure we catch all wheel events
+    this.handleWheel = this.handleWheel.bind(this)
+    window.addEventListener('wheel', this.handleWheel, { passive: false })
 
     // Cleanup on scene shutdown
     this.scene.events.once('shutdown', this.destroy, this)
@@ -861,6 +867,101 @@ export class GestureManager {
   }
 
   /**
+   * Handle mouse wheel event
+   * Bubbles to all containers under the pointer
+   */
+  private handleWheel(event: WheelEvent): void {
+    // Get active pointer and update its position from the wheel event
+    const pointer = this.scene.input.activePointer
+    if (!pointer) return
+
+    // Update pointer position from wheel event (it might not be at correct position)
+    const canvas = this.scene.game.canvas
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    pointer.x = (event.clientX - rect.left) * scaleX
+    pointer.y = (event.clientY - rect.top) * scaleY
+
+    // Find all containers under the pointer
+    const containersUnderPointer: Array<{
+      state: GestureContainerState
+      originalIndex: number
+    }> = []
+
+    Array.from(this.containers.values()).forEach((state, originalIndex) => {
+      if (!state.callbacks.onWheel) return
+
+      const isInside = this.isPointerInContainer(pointer, state)
+      if (isInside) {
+        containersUnderPointer.push({ state, originalIndex })
+      }
+    })
+
+    // Sort by z-order (same logic as other events)
+    containersUnderPointer.sort((a, b) => {
+      const containerA = a.state.container
+      const containerB = b.state.container
+
+      // First: Compare mount root IDs
+      const rootIdA = this.getRootId(containerA)
+      const rootIdB = this.getRootId(containerB)
+      if (rootIdA !== rootIdB) {
+        return rootIdB - rootIdA
+      }
+
+      // Second: Compare effective depths
+      const depthA = this.getEffectiveDepth(containerA)
+      const depthB = this.getEffectiveDepth(containerB)
+      if (depthA !== depthB) {
+        return depthB - depthA
+      }
+
+      // Third: Compare display list indices if same parent
+      if (containerA.parentContainer === containerB.parentContainer && containerA.parentContainer) {
+        const indexA = containerA.parentContainer.getIndex(containerA)
+        const indexB = containerB.parentContainer.getIndex(containerB)
+        const diff = indexB - indexA
+        if (diff !== 0) return diff
+      }
+
+      return b.originalIndex - a.originalIndex
+    })
+
+    // Bubble wheel event through containers
+    for (const { state } of containersUnderPointer) {
+      const localPos = this.getLocalPosition(pointer, state.container)
+
+      let propagationStopped = false
+
+      const wheelData: WheelEventData = {
+        pointer,
+        localX: localPos.x,
+        localY: localPos.y,
+        deltaX: event.deltaX,
+        deltaY: event.deltaY,
+        deltaZ: event.deltaZ,
+        deltaMode: event.deltaMode,
+        width: state.hitArea.width,
+        height: state.hitArea.height,
+        originalEvent: event,
+        stopPropagation: () => {
+          propagationStopped = true
+        },
+        isPropagationStopped: () => propagationStopped,
+        preventDefault: () => {
+          event.preventDefault()
+        },
+      }
+
+      state.callbacks.onWheel?.(wheelData)
+
+      // Stop bubbling if propagation was stopped
+      if (propagationStopped) break
+    }
+  }
+
+  /**
    * Cleanup all resources
    */
   private destroy(): void {
@@ -885,6 +986,9 @@ export class GestureManager {
       // Remove global window event listeners
       window.removeEventListener('mouseup', this.handleGlobalPointerUp)
       window.removeEventListener('touchend', this.handleGlobalPointerUp)
+
+      // Remove wheel event listener
+      window.removeEventListener('wheel', this.handleWheel)
     }
 
     this.isInitialized = false

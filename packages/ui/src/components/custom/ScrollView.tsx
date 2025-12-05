@@ -3,10 +3,10 @@
  * ScrollView component providing a scrollable area with optional sliders
  */
 import type Phaser from 'phaser'
-import type { GestureEventData } from '../../core-props'
+import type { ViewProps } from '..'
+import type { GestureEventData, WheelEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
 import { View } from '../index'
-import type { ViewProps } from '..'
 import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
 /**
@@ -147,6 +147,14 @@ export function ScrollView(props: ScrollViewProps) {
     calc(deltaX, deltaY)
   }
 
+  const handleWheel = (data: WheelEventData) => {
+    data.stopPropagation()
+    data.preventDefault()
+
+    // Invert deltaY for natural scroll direction (positive = scroll down)
+    calc(-data.deltaX, -data.deltaY)
+  }
+
   // Force redraw after mount to ensure dimensions are calculated
   // and show content after that to avoid visual glitches
   const redraw = useRedraw()
@@ -176,6 +184,7 @@ export function ScrollView(props: ScrollViewProps) {
             //backgroundColor={0x0000ff}
             //backgroundAlpha={0.3}
             onTouchMove={handleTouchMove}
+            onWheel={handleWheel}
             overflow="hidden"
             direction="stack"
           >

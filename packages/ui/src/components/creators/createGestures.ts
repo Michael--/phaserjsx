@@ -26,7 +26,10 @@ export function createGestures(
     props.onTouchOutside ||
     props.onTouchMove ||
     props.onDoubleTap ||
-    props.onLongPress
+    props.onLongPress ||
+    props.onHoverStart ||
+    props.onHoverEnd ||
+    props.onWheel
   )
 
   // Auto-enable gestures if callbacks are provided, unless explicitly disabled
@@ -69,6 +72,9 @@ export function createGestures(
   if (props.onTouchMove) callbacks.onTouchMove = props.onTouchMove
   if (props.onDoubleTap) callbacks.onDoubleTap = props.onDoubleTap
   if (props.onLongPress) callbacks.onLongPress = props.onLongPress
+  if (props.onHoverStart) callbacks.onHoverStart = props.onHoverStart
+  if (props.onHoverEnd) callbacks.onHoverEnd = props.onHoverEnd
+  if (props.onWheel) callbacks.onWheel = props.onWheel
 
   // Build config (only include defined values)
   const config: { longPressDuration?: number; doubleTapDelay?: number; maxTouchDuration?: number } =
