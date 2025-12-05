@@ -2,19 +2,15 @@
  * Toggle Component Documentation Content
  */
 import { SCENE_SIZES } from '@/constants/scene-sizes'
-import { AnimationToggleExample } from '@/examples/toggle/AnimationExample'
 import { ControlledToggleExample } from '@/examples/toggle/ControlledExample'
-import { LabelPositionToggleExample } from '@/examples/toggle/LabelPositionExample'
-import { QuickStartToggleExample } from '@/examples/toggle/QuickStartExample'
-import { StatesToggleExample } from '@/examples/toggle/StatesExample'
-import { ThemingToggleExample } from '@/examples/toggle/ThemingExample'
-import type { ComponentDocs } from '@/types/docs'
-import AnimationToggleExampleCode from '@/examples/toggle/AnimationExample.tsx?raw'
 import ControlledToggleExampleCode from '@/examples/toggle/ControlledExample.tsx?raw'
+import { LabelPositionToggleExample } from '@/examples/toggle/LabelPositionExample'
 import LabelPositionToggleExampleCode from '@/examples/toggle/LabelPositionExample.tsx?raw'
+import { QuickStartToggleExample } from '@/examples/toggle/QuickStartExample'
 import QuickStartToggleExampleCode from '@/examples/toggle/QuickStartExample.tsx?raw'
+import { StatesToggleExample } from '@/examples/toggle/StatesExample'
 import StatesToggleExampleCode from '@/examples/toggle/StatesExample.tsx?raw'
-import ThemingToggleExampleCode from '@/examples/toggle/ThemingExample.tsx?raw'
+import type { ComponentDocs } from '@/types/docs'
 
 /**
  * Toggle component documentation configuration
@@ -52,28 +48,12 @@ export const toggleContent: ComponentDocs = {
       code: StatesToggleExampleCode,
     },
     {
-      id: 'animation',
-      title: 'Animation Duration',
-      description: 'Control animation speed with custom duration values.',
-      component: AnimationToggleExample,
-      height: SCENE_SIZES.large,
-      code: AnimationToggleExampleCode,
-    },
-    {
       id: 'controlled',
       title: 'Controlled Mode',
       description: 'Manage toggle state externally with controlled/uncontrolled patterns.',
       component: ControlledToggleExample,
       height: SCENE_SIZES.large,
       code: ControlledToggleExampleCode,
-    },
-    {
-      id: 'theming',
-      title: 'Custom Theming',
-      description: 'Customize colors, sizes, and appearance with theme overrides.',
-      component: ThemingToggleExample,
-      height: SCENE_SIZES.large,
-      code: ThemingToggleExampleCode,
     },
   ],
 
@@ -147,13 +127,6 @@ export const toggleContent: ComponentDocs = {
       type: 'VNode',
       default: undefined,
       description: 'Element to render after the toggle (e.g., icon).',
-    },
-    {
-      name: 'theme',
-      type: 'PartialTheme',
-      default: undefined,
-      description:
-        'Theme overrides for Toggle appearance. Available theme keys: width (50), height (28), thumbSize (24), trackColorOff, trackColorOn, thumbColor, disabledColor, padding (2), duration (200ms), gap (8), labelStyle, labelPosition.',
     },
   ],
 }
