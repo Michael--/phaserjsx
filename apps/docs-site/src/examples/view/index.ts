@@ -2,6 +2,7 @@
  * View examples index
  */
 export { AlignmentViewExample } from './AlignmentExample'
+export { AlphaVisibilityViewExample } from './AlphaVisibilityExample'
 export { BasicLayoutViewExample } from './BasicLayoutExample'
 export { BordersStylingViewExample } from './BordersStylingExample'
 export { DepthStackingViewExample } from './DepthStackingExample'

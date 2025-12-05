@@ -4,6 +4,7 @@
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import {
   AlignmentViewExample,
+  AlphaVisibilityViewExample,
   BasicLayoutViewExample,
   BordersStylingViewExample,
   DepthStackingViewExample,
@@ -19,6 +20,7 @@ import {
 } from '@/examples/view'
 // Import source code as raw strings
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
+import AlphaVisibilityViewExampleRaw from '@/examples/view/AlphaVisibilityExample.tsx?raw'
 import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?raw'
 import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.tsx?raw'
 import DepthStackingViewExampleRaw from '@/examples/view/DepthStackingExample.tsx?raw'
@@ -145,6 +147,14 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.xl,
       code: DepthStackingViewExampleRaw,
     },
+    {
+      id: 'alpha-visibility',
+      title: 'Opacity & Visibility',
+      description: 'Controlling visibility with alpha and visible props',
+      component: AlphaVisibilityViewExample,
+      height: SCENE_SIZES.xl,
+      code: AlphaVisibilityViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
@@ -152,22 +162,6 @@ export const viewContent: ComponentDocs = {
     // --- BASIC FEATURES (Simple, frequently used) ---
 
     // --- INTERMEDIATE FEATURES (More complex use cases) ---
-
-    // {
-    //   id: 'position-offset',
-    //   title: 'Position Offsets',
-    //   description: 'Fine-tuning position with x/y offsets',
-    //   // Show: x, y props for manual positioning adjustments
-    //   // Useful for: Pixel-perfect positioning, animations
-    // },
-
-    // {
-    //   id: 'alpha-visibility',
-    //   title: 'Opacity & Visibility',
-    //   description: 'Controlling visibility with alpha and visible props',
-    //   // Show: alpha for fade effects, visible for show/hide
-    //   // Useful for: Fade transitions, conditional rendering
-    // },
 
     // --- ADVANCED FEATURES (Better documented elsewhere) ---
     // NOTE: These features should be documented in separate guides:
