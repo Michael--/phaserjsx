@@ -4,6 +4,7 @@
 export { AlignmentViewExample } from './AlignmentExample'
 export { BasicLayoutViewExample } from './BasicLayoutExample'
 export { BordersStylingViewExample } from './BordersStylingExample'
+export { DepthStackingViewExample } from './DepthStackingExample'
 export { FillSizingViewExample } from './FillSizingExample'
 export { FlexDirectionViewExample } from './FlexDirectionExample'
 export { MinMaxConstraintsViewExample } from './MinMaxConstraintsExample'

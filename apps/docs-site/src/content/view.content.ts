@@ -6,6 +6,7 @@ import {
   AlignmentViewExample,
   BasicLayoutViewExample,
   BordersStylingViewExample,
+  DepthStackingViewExample,
   FillSizingViewExample,
   FlexDirectionViewExample,
   MinMaxConstraintsViewExample,
@@ -20,6 +21,7 @@ import {
 import AlignmentViewExampleRaw from '@/examples/view/AlignmentExample.tsx?raw'
 import BasicLayoutViewExampleRaw from '@/examples/view/BasicLayoutExample.tsx?raw'
 import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.tsx?raw'
+import DepthStackingViewExampleRaw from '@/examples/view/DepthStackingExample.tsx?raw'
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
@@ -135,6 +137,14 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.xl,
       code: NestedLayoutsViewExampleRaw,
     },
+    {
+      id: 'depth-stacking',
+      title: 'Z-Index Stacking',
+      description: 'Controlling render order with depth property for overlays and modals',
+      component: DepthStackingViewExample,
+      height: SCENE_SIZES.xl,
+      code: DepthStackingViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
@@ -142,14 +152,6 @@ export const viewContent: ComponentDocs = {
     // --- BASIC FEATURES (Simple, frequently used) ---
 
     // --- INTERMEDIATE FEATURES (More complex use cases) ---
-
-    // {
-    //   id: 'depth-stacking',
-    //   title: 'Z-Index Stacking',
-    //   description: 'Controlling render order with depth property',
-    //   // Show: depth prop for overlapping elements, tooltips, dropdowns
-    //   // Useful for: Overlays, modals, z-index control
-    // },
 
     // {
     //   id: 'position-offset',
