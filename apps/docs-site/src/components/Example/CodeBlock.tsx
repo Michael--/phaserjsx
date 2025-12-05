@@ -56,6 +56,7 @@ export function CodeBlock({ children, language = 'tsx' }: CodeBlockProps) {
           margin: 0,
           padding: '20px',
           overflow: 'auto',
+          maxHeight: '500px',
           color: '#d4d4d4',
           fontSize: '14px',
           fontFamily: 'Consolas, Monaco, monospace',
