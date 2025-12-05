@@ -155,48 +155,6 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.xl,
       code: AlphaVisibilityViewExampleRaw,
     },
-    // ========================================
-    // PLANNED EXAMPLES (To be implemented)
-    // ========================================
-
-    // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // --- INTERMEDIATE FEATURES (More complex use cases) ---
-
-    // --- ADVANCED FEATURES (Better documented elsewhere) ---
-    // NOTE: These features should be documented in separate guides:
-
-    // Gestures & Interaction
-    // → Better in: /guides/gestures or /guides/interaction
-    // - enableGestures, onTouch, onTouchMove, onTouchOutside
-    // - onDoubleTap, onLongPress, gesture configuration
-    // Reason: Complex topic, needs dedicated space for patterns
-
-    // Theme Integration
-    // → Better in: /guides/theming
-    // - theme prop, nested themes, component-level styling
-    // - getThemedProps usage, theme inheritance
-    // Reason: Theme system is cross-cutting, needs holistic view
-
-    // Responsive Design
-    // → Better in: /guides/responsive-design
-    // - Viewport units (vw, vh), percentage sizes
-    // - calc() expressions, dynamic sizing strategies
-    // - maxWidth with viewport units for breakpoints
-    // Reason: Responsive patterns span multiple components
-
-    // Layout Patterns
-    // → Better in: /guides/layout-patterns
-    // - Common patterns: Holy Grail, Sidebar, Grid-like structures
-    // - Flexbox equivalents (stretch, flex-grow behavior)
-    // - Centering strategies, sticky footers
-    // Reason: Patterns involve multiple components and techniques
-
-    // Performance Considerations
-    // → Better in: /guides/performance
-    // - When to use headless, layout recalculation triggers
-    // - Nested View overhead, optimization tips
-    // Reason: Performance is a cross-cutting concern
   ],
 
   propsEssential: [

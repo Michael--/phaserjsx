@@ -25,17 +25,55 @@ const navigation: NavSection[] = [
   {
     title: 'Components',
     items: [
-      { label: 'Button', path: '/components/button' },
+      { label: 'Button', path: '/components/button' }, // done so far
       { label: 'Dropdown', path: '/components/dropdown' },
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
-      { label: 'View', path: '/components/view' },
+      { label: 'View', path: '/components/view' }, // done so far
+      // add more if needed
     ],
   },
   {
+    // Gestures & Interaction
+    // → Better in: /guides/gestures or /guides/interaction
+    // - enableGestures, onTouch, onTouchMove, onTouchOutside
+    // - onDoubleTap, onLongPress, gesture configuration
+    // Reason: Complex topic, needs dedicated space for patterns
+
+    // Theme Integration
+    // → Better in: /guides/theming
+    // - theme prop, nested themes, component-level styling
+    // - getThemedProps usage, theme inheritance
+    // Reason: Theme system is cross-cutting, needs holistic view
+
+    // Responsive Design
+    // → Better in: /guides/responsive-design
+    // - Viewport units (vw, vh), percentage sizes
+    // - calc() expressions, dynamic sizing strategies
+    // - maxWidth with viewport units for breakpoints
+    // Reason: Responsive patterns span multiple components
+
+    // Layout Patterns
+    // → Better in: /guides/layout-patterns
+    // - Common patterns: Holy Grail, Sidebar, Grid-like structures
+    // - Flexbox equivalents (stretch, flex-grow behavior)
+    // - Centering strategies, sticky footers
+    // Reason: Patterns involve multiple components and techniques
+
+    // Performance Considerations
+    // → Better in: /guides/performance
+    // - When to use headless, layout recalculation triggers
+    // - Nested View overhead, optimization tips
+    // Reason: Performance is a cross-cutting concern
+
     title: 'Guides',
     items: [
       { label: 'Testing & Development', path: '/guides/testing' },
+      { label: 'Gestures & Interaction', path: '/guides/gestures' },
+      { label: 'Theme Integration', path: '/guides/theming' },
+      { label: 'Responsive Design', path: '/guides/responsive-design' },
+      { label: 'Layout Patterns', path: '/guides/layout-patterns' },
+      { label: 'Performance Considerations', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
     ],
   },
