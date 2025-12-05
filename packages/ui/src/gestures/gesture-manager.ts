@@ -49,7 +49,11 @@ export class GestureManager {
   // Track hover state for each container (desktop/mouse only)
   private hoveredContainers = new Map<Phaser.GameObjects.Container, boolean>()
 
+  // Track pending setTimeout timers for cleanup
+  private pendingTimeouts = new Set<number>()
+
   private isInitialized = false
+  private isDestroyed = false
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
@@ -582,9 +586,13 @@ export class GestureManager {
    */
   private handleGlobalPointerUp(_event: MouseEvent | TouchEvent): void {
     // Use setTimeout to let Phaser's handlePointerUp run first (if inside canvas)
-    setTimeout(() => {
-      // Guard: Check if scene and input still exist (scene might be destroyed)
-      if (!this.scene || !this.scene.input || !this.scene.input.activePointer) return
+    const timerId = window.setTimeout(() => {
+      // Remove timer from tracking
+      this.pendingTimeouts.delete(timerId)
+
+      // Guard: Check if manager is destroyed or scene is invalid
+      if (this.isDestroyed || !this.scene || !this.scene.input || !this.scene.input.activePointer)
+        return
 
       const pointer = this.scene.input.activePointer
       if (!pointer) return
@@ -669,6 +677,9 @@ export class GestureManager {
       // Clear active containers for this pointer
       this.activeContainersForMove.delete(pointer.id)
     }, 0)
+
+    // Track this timer for cleanup
+    this.pendingTimeouts.add(timerId)
   }
 
   /**
@@ -965,7 +976,16 @@ export class GestureManager {
    * Cleanup all resources
    */
   private destroy(): void {
-    // Clear all timers
+    // Mark as destroyed to prevent any pending callbacks from executing
+    this.isDestroyed = true
+
+    // Clear all pending setTimeout timers
+    for (const timerId of this.pendingTimeouts) {
+      clearTimeout(timerId)
+    }
+    this.pendingTimeouts.clear()
+
+    // Clear all container timers
     for (const state of this.containers.values()) {
       if (state.longPressTimer) {
         clearTimeout(state.longPressTimer)
