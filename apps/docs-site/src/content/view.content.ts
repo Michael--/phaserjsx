@@ -9,6 +9,7 @@ import {
   FillSizingViewExample,
   FlexDirectionViewExample,
   MinMaxConstraintsViewExample,
+  OverflowControlViewExample,
   PaddingVariationsViewExample,
   QuickStartViewExample,
   SpaceDistributionViewExample,
@@ -21,6 +22,7 @@ import BordersStylingViewExampleRaw from '@/examples/view/BordersStylingExample.
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
+import OverflowControlViewExampleRaw from '@/examples/view/OverflowControlExample.tsx?raw'
 import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
 import QuickStartViewExampleRaw from '@/examples/view/QuickStartExample.tsx?raw'
 import SpaceDistributionViewExampleRaw from '@/examples/view/SpaceDistributionExample.tsx?raw'
@@ -115,19 +117,19 @@ export const viewContent: ComponentDocs = {
       height: SCENE_SIZES.large,
       code: WrapBehaviorViewExampleRaw,
     },
+    {
+      id: 'overflow-control',
+      title: 'Overflow Control',
+      description: 'Clipping content that exceeds container bounds',
+      component: OverflowControlViewExample,
+      height: SCENE_SIZES.large,
+      code: OverflowControlViewExampleRaw,
+    },
     // ========================================
     // PLANNED EXAMPLES (To be implemented)
     // ========================================
 
     // --- BASIC FEATURES (Simple, frequently used) ---
-
-    // {
-    //   id: 'overflow-hidden',
-    //   title: 'Overflow Control',
-    //   description: 'Clipping content that exceeds container bounds',
-    //   // Show: overflow="hidden" vs "visible"
-    //   // Useful for: Scrollable areas, masked content
-    // },
 
     // --- INTERMEDIATE FEATURES (More complex use cases) ---
     // {
