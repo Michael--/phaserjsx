@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import { ButtonPage } from './pages/Components/ButtonPage'
+import { TogglePage } from './pages/components/TogglePage'
 import { ViewPage } from './pages/Components/ViewPage'
 import { SceneBackgroundsPage, TestingPage } from './pages/Guides'
 import { HomePage } from './pages/HomePage'
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/introduction" element={<IntroductionPage />} />
       <Route path="/installation" element={<InstallationPage />} />
       <Route path="/components/button" element={<ButtonPage />} />
+      <Route path="/components/toggle" element={<TogglePage />} />
       <Route path="/components/view" element={<ViewPage />} />
 
       {/* Guides */}

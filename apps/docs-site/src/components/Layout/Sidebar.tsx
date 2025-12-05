@@ -36,7 +36,7 @@ const navigation: NavSection[] = [
     title: 'Form Controls',
     items: [
       { label: 'Button', path: '/components/button' },
-      { label: '🚧 Toggle', path: '/components/toggle' },
+      { label: 'Toggle', path: '/components/toggle' },
       { label: '🚧 Slider', path: '/components/slider' },
       { label: '🚧 RadioButton', path: '/components/radio-button' },
       { label: '🚧 RadioGroup', path: '/components/radio-group' },
