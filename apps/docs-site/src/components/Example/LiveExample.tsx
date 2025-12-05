@@ -56,7 +56,7 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
     <div
       ref={containerRef}
       style={{
-        border: '1px solid #444',
+        boxShadow: '0 0 0 3px #444',
         borderRadius: '8px',
         overflow: 'hidden',
         maxWidth: width,
