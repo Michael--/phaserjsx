@@ -1,11 +1,12 @@
 /** @jsxImportSource react */
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ComponentPage } from './components/ComponentPage'
+import { buttonContent } from './content/button.content'
+import { toggleContent } from './content/toggle.content'
+import { viewContent } from './content/view.content'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
-import { ButtonPage } from './pages/Components/ButtonPage'
-import { TogglePage } from './pages/Components/TogglePage'
-import { ViewPage } from './pages/Components/ViewPage'
 import { SceneBackgroundsPage, TestingPage } from './pages/Guides'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
@@ -19,9 +20,23 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/" element={<HomePage />} />
       <Route path="/introduction" element={<IntroductionPage />} />
       <Route path="/installation" element={<InstallationPage />} />
-      <Route path="/components/button" element={<ButtonPage />} />
-      <Route path="/components/toggle" element={<TogglePage />} />
-      <Route path="/components/view" element={<ViewPage />} />
+      <Route path="/components/button" element={<ComponentPage content={buttonContent} />} />
+      <Route path="/components/toggle" element={<ComponentPage content={toggleContent} />} />
+      <Route
+        path="/components/view"
+        element={
+          <ComponentPage
+            content={viewContent}
+            infoBox={
+              <div className="info-box">
+                <strong>Important:</strong> An empty View without a background color is invisible.
+                Always add either a <code>backgroundColor</code> or child content to make your Views
+                visible.
+              </div>
+            }
+          />
+        }
+      />
 
       {/* Guides */}
       <Route path="/guides/testing" element={<TestingPage />} />
