@@ -4,17 +4,23 @@
 /** @jsxImportSource @phaserjsx/ui */
 import { Text, View } from '@phaserjsx/ui'
 
+function Box({ color }: { color: number }) {
+  return <View backgroundColor={color} width={40} height={40} />
+}
+
+function BoxRow() {
+  return (
+    <>
+      <Box color={0x3498db} />
+      <Box color={0xe74c3c} />
+      <Box color={0x2ecc71} />
+    </>
+  )
+}
+
 export function SpaceDistributionViewExample() {
   return (
-    <View
-      width={'fill'}
-      height={'fill'}
-      padding={20}
-      gap={24}
-      direction="column"
-      justifyContent="start"
-      alignItems="stretch"
-    >
+    <View direction="row" width={'fill'} height={'fill'} padding={20} gap={24} flexWrap="wrap">
       <View direction="column" gap={8}>
         <Text text="justifyContent='space-between'" style={{ color: '#ffffff' }} />
         <View
@@ -22,12 +28,9 @@ export function SpaceDistributionViewExample() {
           padding={10}
           direction="row"
           justifyContent="space-between"
-          width={400}
-          height={80}
+          width={300}
         >
-          <View backgroundColor={0x3498db} width={60} height={60} />
-          <View backgroundColor={0xe74c3c} width={60} height={60} />
-          <View backgroundColor={0x2ecc71} width={60} height={60} />
+          <BoxRow />
         </View>
       </View>
 
@@ -38,12 +41,9 @@ export function SpaceDistributionViewExample() {
           padding={10}
           direction="row"
           justifyContent="space-around"
-          width={400}
-          height={80}
+          width={300}
         >
-          <View backgroundColor={0x3498db} width={60} height={60} />
-          <View backgroundColor={0xe74c3c} width={60} height={60} />
-          <View backgroundColor={0x2ecc71} width={60} height={60} />
+          <BoxRow />
         </View>
       </View>
 
@@ -54,15 +54,11 @@ export function SpaceDistributionViewExample() {
           padding={10}
           direction="row"
           justifyContent="space-evenly"
-          width={400}
-          height={80}
+          width={300}
         >
-          <View backgroundColor={0x3498db} width={60} height={60} />
-          <View backgroundColor={0xe74c3c} width={60} height={60} />
-          <View backgroundColor={0x2ecc71} width={60} height={60} />
+          <BoxRow />
         </View>
       </View>
-
       <View direction="column" gap={8}>
         <Text text="Vertical: space-between" style={{ color: '#ffffff' }} />
         <View
@@ -70,12 +66,9 @@ export function SpaceDistributionViewExample() {
           padding={10}
           direction="column"
           justifyContent="space-between"
-          width={120}
           height={220}
         >
-          <View backgroundColor={0x9b59b6} width={100} height={40} />
-          <View backgroundColor={0xf39c12} width={100} height={40} />
-          <View backgroundColor={0x1abc9c} width={100} height={40} />
+          <BoxRow />
         </View>
       </View>
     </View>
