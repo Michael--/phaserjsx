@@ -47,10 +47,16 @@ export function createPhaserScene(
 
       // Mount PhaserJSX component wrapped in SceneWrapper to provide dimensions
       // This allows child components to use percentage-based widths/heights
+      // Pass component as VNode (not called directly) so hooks context is set up properly
+      const componentVNode = {
+        type: component,
+        props: props || {},
+      }
+
       mountJSX(this.container, SceneWrapper, {
         width: this.scale.width,
         height: this.scale.height,
-        children: component(props || {}),
+        children: componentVNode,
       })
     }
 
