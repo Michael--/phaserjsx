@@ -244,6 +244,7 @@ const LAYOUT_PROPS = [
   'justifyContent',
   'alignItems',
   'overflow',
+  'visible', // visible="none" removes element from layout (like CSS display: none)
 ] as const
 
 /**

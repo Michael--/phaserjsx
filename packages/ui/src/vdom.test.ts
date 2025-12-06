@@ -11,6 +11,7 @@ vi.mock('./host', () => ({
     append: vi.fn(),
     remove: vi.fn(),
     layout: vi.fn(),
+    patch: vi.fn(),
   },
 }))
 
@@ -171,13 +172,73 @@ describe('VDOM', () => {
         'Text',
         {
           text: 'new',
-          align: 'left',
           alpha: 1,
           visible: true,
           style: { color: '#616161', fontSize: '16px', fontFamily: 'Arial', align: 'left' },
         },
         mockSceneWithSys
       )
+    })
+
+    it('should properly cleanup VDOM when using visible="none"', () => {
+      const mockSceneWithSys = { sys: {} }
+      const oldVNode = createElement('View', { visible: true }, [
+        createElement('View', { key: 'child1' }),
+        createElement('View', { key: 'child2', visible: true }),
+      ])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.__node = { id: 'parent', parentContainer: mockSceneWithSys, list: [] } as any
+      oldVNode.__parent = mockSceneWithSys
+
+      // Mount children
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.children![0].__node = { id: 'child1' } as any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.children![1].__node = { id: 'child2' } as any
+
+      // Change child2 to visible="none"
+      const newVNode = createElement('View', { visible: true }, [
+        createElement('View', { key: 'child1' }),
+        createElement('View', { key: 'child2', visible: 'none' }),
+      ])
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      patchVNode(mockSceneWithSys as any, oldVNode, newVNode)
+
+      // With visible="none", the child should still exist in VDOM
+      // but should be marked as not visible in Phaser
+      expect(vi.mocked(host.patch)).toHaveBeenCalled()
+    })
+
+    it('should properly cleanup VDOM when using conditional rendering', () => {
+      const mockSceneWithSys = { sys: {} }
+      const oldVNode = createElement('View', { visible: true }, [
+        createElement('View', { key: 'child1' }),
+        createElement('View', { key: 'child2' }),
+      ])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.__node = { id: 'parent', parentContainer: mockSceneWithSys, list: [] } as any
+      oldVNode.__parent = mockSceneWithSys
+
+      // Mount children with proper parent references
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.children![0].__node = { id: 'child1' } as any
+      oldVNode.children![0].__parent = oldVNode.__node
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      oldVNode.children![1].__node = { id: 'child2' } as any
+      oldVNode.children![1].__parent = oldVNode.__node
+
+      // Remove child2 via conditional rendering
+      const newVNode = createElement('View', { visible: true }, [
+        createElement('View', { key: 'child1' }),
+      ])
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      patchVNode(mockSceneWithSys as any, oldVNode, newVNode)
+
+      // Child should be unmounted and removed from VDOM
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect(vi.mocked(host.remove)).toHaveBeenCalledWith(oldVNode.__node, { id: 'child2' })
     })
   })
 })
