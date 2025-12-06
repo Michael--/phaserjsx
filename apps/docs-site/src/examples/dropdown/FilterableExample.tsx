@@ -35,14 +35,7 @@ export function FilterableDropdownExample() {
   const [selected, setSelected] = useState<string>('')
 
   return (
-    <View
-      width={'fill'}
-      height={'fill'}
-      padding={20}
-      direction="stack"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <View width={'fill'} height={'fill'} padding={20} justifyContent="start" alignItems="center">
       <View direction="column" gap={12} alignItems="center">
         <Text text="Filterable Dropdown" style={{ color: '#ffffff', fontSize: '14px' }} />
         <Text text="Type to filter options" style={{ color: '#95a5a6', fontSize: '11px' }} />

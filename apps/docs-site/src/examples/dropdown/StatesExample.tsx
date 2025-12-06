@@ -20,7 +20,6 @@ export function StatesDropdownExample() {
       height={'fill'}
       padding={20}
       gap={32}
-      direction="stack"
       justifyContent="space-between"
       alignItems="center"
     >

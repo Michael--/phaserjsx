@@ -22,9 +22,9 @@ export function MultiSelectDropdownExample() {
       height={'fill'}
       padding={20}
       gap={32}
-      direction="stack"
       justifyContent="center"
-      alignItems="center"
+      alignItems="start"
+      direction="row"
     >
       <View direction="column" gap={12} alignItems="center">
         <Text text="Single Select" style={{ color: '#ffffff', fontSize: '14px' }} />
@@ -34,6 +34,7 @@ export function MultiSelectDropdownExample() {
           onChange={(value) => setSingleSelect(value as string)}
           placeholder="Select one..."
           width={250}
+          maxHeight={200}
         />
         <Text
           text={`Selected: ${options.find((o) => o.value === singleSelect)?.label || 'None'}`}
@@ -50,6 +51,7 @@ export function MultiSelectDropdownExample() {
           placeholder="Select multiple..."
           multiple={true}
           width={250}
+          maxHeight={200}
         />
         <Text
           text={`Selected: ${multiSelect.length > 0 ? multiSelect.join(', ') : 'None'}`}
