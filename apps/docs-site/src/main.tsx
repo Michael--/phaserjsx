@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
+import { chartextinputContent } from './content/chartextinput.content'
 import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { sliderContent } from './content/slider.content'
@@ -58,10 +59,13 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
       <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />
       <Route path="/components/chartext" element={<ComponentPage content={chartextContent} />} />
+      <Route
+        path="/components/chartextinput"
+        element={<ComponentPage content={chartextinputContent} />}
+      />
 
       {/* Placeholder routes */}
       <Route path="/components/image" element={<ComingSoonPage />} />
-      <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/*" element={<ComingSoonPage />} />
       <Route path="/guides/*" element={<ComingSoonPage />} />

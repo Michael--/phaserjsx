@@ -48,7 +48,7 @@ const navigation: NavSection[] = [
       { label: 'Text', path: '/components/text' },
       { label: 'WrapText', path: '/components/wraptext' },
       { label: 'CharText', path: '/components/chartext' },
-      { label: '🚧 CharTextInput', path: '/components/char-text-input' },
+      { label: 'CharTextInput', path: '/components/chartextinput' },
     ],
   },
   {
