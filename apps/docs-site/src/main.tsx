@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
 import { buttonContent } from './content/button.content'
+import { chartextContent } from './content/chartext.content'
 import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { sliderContent } from './content/slider.content'
@@ -56,6 +57,7 @@ createRoot(document.getElementById('root')!).render(
 
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
       <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />
+      <Route path="/components/chartext" element={<ComponentPage content={chartextContent} />} />
 
       {/* Placeholder routes */}
       <Route path="/components/image" element={<ComingSoonPage />} />
