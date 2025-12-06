@@ -45,7 +45,7 @@ const navigation: NavSection[] = [
   {
     title: 'Text & Content',
     items: [
-      { label: '🚧 Text', path: '/components/text' },
+      { label: 'Text', path: '/components/text' },
       { label: '🚧 WrapText', path: '/components/wrap-text' },
       { label: '🚧 CharText', path: '/components/char-text' },
       { label: '🚧 CharTextInput', path: '/components/char-text-input' },

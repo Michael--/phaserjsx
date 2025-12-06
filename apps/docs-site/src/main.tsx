@@ -6,6 +6,7 @@ import { buttonContent } from './content/button.content'
 import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { sliderContent } from './content/slider.content'
+import { textContent } from './content/text.content'
 import { toggleContent } from './content/toggle.content'
 import { viewContent } from './content/view.content'
 import './index.css'
@@ -52,9 +53,11 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/testing" element={<TestingPage />} />
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
 
+      <Route path="/components/text" element={<ComponentPage content={textContent} />} />
+
       {/* Placeholder routes */}
-      <Route path="/components/text" element={<ComingSoonPage />} />
       <Route path="/components/image" element={<ComingSoonPage />} />
+      <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/*" element={<ComingSoonPage />} />
       <Route path="/guides/*" element={<ComingSoonPage />} />

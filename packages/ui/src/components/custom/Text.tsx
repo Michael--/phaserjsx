@@ -14,14 +14,12 @@ import type { ChildrenType, PropsDefaultExtension } from '../../types'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface TextProps
-  extends TransformProps,
+  extends Omit<TransformProps, 'scaleX' | 'scaleY' | 'scale' | 'rotation'>,
     PhaserProps,
     TextSpecificProps,
     PropsDefaultExtension<Phaser.GameObjects.Text> {
   /** Children are not supported for Text component */
   children?: ChildrenType
-  /** Headless flag - if true, text doesn't participate in layout */
-  headless?: boolean
   /** Margin for layout system */
   margin?: EdgeInsets
   /** Legacy Phaser style object */
