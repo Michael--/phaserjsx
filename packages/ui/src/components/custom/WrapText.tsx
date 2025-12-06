@@ -6,41 +6,14 @@
  */
 import { useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
-import { Text, View } from '../index'
+import { Text, View, type TextProps } from '../index'
 
 /**
  * WrapText component props
  */
-export interface WrapTextProps {
-  /** Text content to display */
-  text?: string | undefined
-
+export interface WrapTextProps extends TextProps {
   /** Enable/disable automatic wrapping (default: true) */
   wrap?: boolean
-
-  /** Padding offset to subtract from container width (default: 0) */
-  paddingOffset?: number
-
-  /** Text style properties */
-  style?: Phaser.Types.GameObjects.Text.TextStyle
-
-  /** Text alignment (convenience prop) */
-  align?: 'left' | 'center' | 'right'
-
-  /** Text alpha/opacity */
-  alpha?: number
-
-  /** Text visibility */
-  visible?: boolean
-
-  /** Additional transform props */
-  x?: number
-  y?: number
-  rotation?: number
-  scale?: number
-
-  /** Margin around text */
-  margin?: number
 }
 
 /**
@@ -96,7 +69,7 @@ export function WrapText(props: WrapTextProps) {
   const { props: themed } = getThemedProps('WrapText', localTheme, {})
 
   const wrap = props.wrap ?? themed.wrap ?? true
-  const paddingOffset = props.paddingOffset ?? themed.paddingOffset ?? 0
+  const paddingOffset = themed.paddingOffset ?? 0
 
   // Get parent container width for text wrapping
   type ContainerWithLayout = Phaser.GameObjects.Container & {
@@ -156,13 +129,13 @@ export function WrapText(props: WrapTextProps) {
   // Build Text props conditionally to satisfy exactOptionalPropertyTypes
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const textProps: any = { text: props.text, style: finalStyle }
-  if (props.align !== undefined) textProps.align = props.align
+  //if (props.align !== undefined) textProps.align = props.align
   if (props.alpha !== undefined) textProps.alpha = props.alpha
-  if (props.visible !== undefined) textProps.visible = props.visible
+  //if (props.visible !== undefined) textProps.visible = props.visible
   if (props.x !== undefined) textProps.x = props.x
   if (props.y !== undefined) textProps.y = props.y
-  if (props.rotation !== undefined) textProps.rotation = props.rotation
-  if (props.scale !== undefined) textProps.scale = props.scale
+  //if (props.rotation !== undefined) textProps.rotation = props.rotation
+  //if (props.scale !== undefined) textProps.scale = props.scale
 
   return (
     <View ref={containerRefCallback} width={'fill'}>

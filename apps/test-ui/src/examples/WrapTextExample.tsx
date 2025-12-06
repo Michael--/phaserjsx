@@ -31,7 +31,6 @@ function StyledWrapTextExample() {
         <WrapText
           text="This text has custom styling applied. Font size, color, and alignment can all be controlled while maintaining automatic wrapping."
           style={{ fontSize: '18px', color: '#1565c0' }}
-          align="center"
         />
       </View>
     </ViewLevel3>
@@ -143,10 +142,7 @@ function PaddingOffsetExample() {
     <ViewLevel3>
       <Text text="With Padding Offset" style={tokens?.textStyles.heading} />
       <View width={400} backgroundColor={0xe0f2f1} padding={24} cornerRadius={8}>
-        <WrapText
-          text="This text accounts for the container's padding using paddingOffset, ensuring proper wrapping without overflow."
-          paddingOffset={48}
-        />
+        <WrapText text="This text accounts for the container's padding using paddingOffset, ensuring proper wrapping without overflow." />
       </View>
     </ViewLevel3>
   )
