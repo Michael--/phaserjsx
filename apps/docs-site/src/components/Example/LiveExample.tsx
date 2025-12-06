@@ -44,6 +44,7 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
         touch: true,
         activePointers: 2,
       },
+      disableContextMenu: true,
     })
 
     return () => {
