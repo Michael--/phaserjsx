@@ -9,6 +9,7 @@ import { sliderContent } from './content/slider.content'
 import { textContent } from './content/text.content'
 import { toggleContent } from './content/toggle.content'
 import { viewContent } from './content/view.content'
+import { wraptextContent } from './content/wraptext.content'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import { BestPracticesPage, SceneBackgroundsPage, TestingPage } from './pages/Guides'
@@ -54,6 +55,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
 
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
+      <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />
 
       {/* Placeholder routes */}
       <Route path="/components/image" element={<ComingSoonPage />} />
