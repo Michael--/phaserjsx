@@ -4,6 +4,8 @@
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import { CustomizationCharTextInputExample } from '@/examples/chartextinput/CustomizationExample'
 import CustomizationCharTextInputExampleCode from '@/examples/chartextinput/CustomizationExample.tsx?raw'
+import { DebugCharTextInputExample } from '@/examples/chartextinput/DebugExample'
+import DebugCharTextInputExampleCode from '@/examples/chartextinput/DebugExample.tsx?raw'
 import { MultilineCharTextInputExample } from '@/examples/chartextinput/MultilineExample'
 import MultilineCharTextInputExampleCode from '@/examples/chartextinput/MultilineExample.tsx?raw'
 import { QuickStartCharTextInputExample } from '@/examples/chartextinput/QuickStartExample'
@@ -18,7 +20,7 @@ import type { ComponentDocs } from '@/types/docs'
 export const chartextinputContent: ComponentDocs = {
   title: 'CharTextInput',
   description:
-    'A fully functional text input component built on CharText, providing native-like text editing without HTML inputs. Features include cursor positioning, text selection, keyboard shortcuts (Ctrl/Cmd+A, Home/End, Shift+Arrow), and multi-line support. Note: Copy/paste functionality is planned but not yet implemented.',
+    'A fully functional text input component built on CharText, providing native-like text editing using an invisible HTML input overlay. Features include cursor positioning, text selection, keyboard shortcuts (Ctrl/Cmd+A, Home/End, Shift+Arrow), and multi-line support. ⚠️ Note: If input is not responding to clicks, the invisible HTML overlay may be mispositioned - use debugHtmlInput={true} to visualize it. Copy/paste functionality is planned but not yet implemented.',
 
   quickStart: {
     id: 'quick-start',
@@ -53,6 +55,15 @@ export const chartextinputContent: ComponentDocs = {
       component: CustomizationCharTextInputExample,
       height: SCENE_SIZES.xl,
       code: CustomizationCharTextInputExampleCode,
+    },
+    {
+      id: 'debug',
+      title: 'Debug Mode',
+      description:
+        'Visualize the invisible HTML input overlay. Use debugHtmlInput={true} to troubleshoot positioning issues.',
+      component: DebugCharTextInputExample,
+      height: SCENE_SIZES.large,
+      code: DebugCharTextInputExampleCode,
     },
   ],
 
