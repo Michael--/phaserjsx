@@ -22,6 +22,7 @@ export function StylesTextExample() {
           shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true },
         }}
       />
+      <Text text="Alpha 50%" alpha={0.5} style={{ fontSize: '18px', backgroundColor: '#2196f3' }} />
     </View>
   )
 }
