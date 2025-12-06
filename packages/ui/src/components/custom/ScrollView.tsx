@@ -75,8 +75,10 @@ export function ScrollView(props: ScrollViewProps) {
   const contentHeight = Math.max(contentRef.current?.height ?? 0, viewportHeight)
   const contentWidth = Math.max(contentRef.current?.width ?? 0, viewportWidth)
 
-  const needsVerticalScroll = contentHeight > viewportHeight
-  const needsHorizontalScroll = contentWidth > viewportWidth
+  // Use epsilon threshold to avoid floating-point precision issues
+  const epsilon = 0.5
+  const needsVerticalScroll = contentHeight > viewportHeight + epsilon
+  const needsHorizontalScroll = contentWidth > viewportWidth + epsilon
 
   const showVerticalSliderActual =
     showVerticalSlider === true || (needsVerticalScroll && showVerticalSlider === 'auto')
@@ -194,7 +196,7 @@ export function ScrollView(props: ScrollViewProps) {
             </View>
           </View>
           {/* Horizontal slider at the bottom */}
-          {showHorizontalSliderActual && (
+          <View visible={showHorizontalSliderActual ? true : 'none'}>
             <ScrollSlider
               direction="horizontal"
               size={props.sliderSize}
@@ -203,33 +205,31 @@ export function ScrollView(props: ScrollViewProps) {
               contentSize={contentWidth}
               onScroll={handleHorizontalScroll}
             />
-          )}
+          </View>
         </View>
 
         {/* Vertical slider on the right */}
-        {showVerticalSliderActual && (
-          <View height={'100%'} direction="column">
-            <View flex={1}>
-              <ScrollSlider
-                direction="vertical"
-                size={props.sliderSize}
-                scrollPosition={scroll.dy}
-                viewportSize={viewportHeight}
-                contentSize={contentHeight}
-                onScroll={handleVerticalScroll}
-              />
-            </View>
-            {showHorizontalSliderActual && (
-              // Placeholder corner for potential icon - matches slider dimensions
-              <View
-                width={sliderSize}
-                height={sliderSize}
-                //backgroundAlpha={0.3}
-                //backgroundColor={0xff0000}
-              />
-            )}
+        <View height={'100%'} direction="column" visible={showVerticalSliderActual ? true : 'none'}>
+          <View flex={1}>
+            <ScrollSlider
+              direction="vertical"
+              size={props.sliderSize}
+              scrollPosition={scroll.dy}
+              viewportSize={viewportHeight}
+              contentSize={contentHeight}
+              onScroll={handleVerticalScroll}
+            />
           </View>
-        )}
+          {showHorizontalSliderActual && (
+            // Placeholder corner for potential icon - matches slider dimensions
+            <View
+              width={sliderSize}
+              height={sliderSize}
+              //backgroundAlpha={0.3}
+              //backgroundColor={0xff0000}
+            />
+          )}
+        </View>
       </View>
     </View>
   )

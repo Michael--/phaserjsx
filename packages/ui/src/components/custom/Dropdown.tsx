@@ -4,6 +4,7 @@
  * Provides single and multi-select functionality with filtering
  */
 import type Phaser from 'phaser'
+import type { ViewProps } from '..'
 import { useSpring, type AnimationConfig } from '../../animation'
 import type { GestureEventData } from '../../core-props'
 import {
@@ -17,7 +18,6 @@ import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import { Graphics, Text, View } from '../index'
-import type { ViewProps } from '..'
 import { CharTextInput } from './CharTextInput'
 import { ScrollView } from './ScrollView'
 
@@ -524,8 +524,8 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         theme={nestedTheme}
         enableGestures={true}
         onTouchOutside={handleOutsideClick}
-        borderColor={0x0000ff}
-        borderWidth={2}
+        //borderColor={0x0000ff}
+        //borderWidth={2}
       >
         {placement === 'top' ? (
           <>
