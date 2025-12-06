@@ -144,16 +144,16 @@ function JsxStaticBox(props: { keys: string[] }) {
   return <Button size="small" variant="outline" text="JSX Static" onClick={run} />
 }
 
-const vdomDebug = false
+const visibilityDebug = true
 
 /**
- * VDOMDebug - Test component for VDOM behavior with visibility and conditional rendering
+ * Test component for VDOM behavior with visibility and conditional rendering
  * Tests:
  * 1. visible="none" vs conditional rendering behavior
  * 2. Parent layout recalculation when child visibility changes
  * 3. VDOM cleanup verification
  */
-export function VDOMDebug() {
+export function VisibilityExample() {
   const [test, setTest] = useState(0)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -168,7 +168,17 @@ export function VDOMDebug() {
     <View padding={20} gap={20}>
       <Text text={`Test cycle: ${test} (${isOdd ? 'ODD' : 'EVEN'})`} />
       <View gap={20} direction="row">
-        {/* Test 1: visible="none" - Child should toggle visibility, parent should re-layout */}
+        {/* Test 1: visible=false - Child should toggle visibility, but stay took place */}
+        <View borderColor={0xff0000} padding={10} gap={10} direction="column">
+          <Text text={`Test 1: visible=${isOdd}`} style={{ fontSize: '12px' }} />
+          <Text
+            text={`Parent should unchanged: ${isOdd ? 'VISIBLE' : 'HIDDEN'}`}
+            style={{ fontSize: '10px', color: '#888888' }}
+          />
+          <View width={100} height={20} backgroundColor={0xff00ff} visible={isOdd} />
+        </View>
+
+        {/* Test 2: visible="none" - Child should toggle visibility, parent should re-layout */}
         <View borderColor={0xff0000} padding={10} gap={10} direction="column">
           <Text
             text={`Test 1: visible=${isOdd ? 'true' : "'none'"}`}
@@ -186,7 +196,7 @@ export function VDOMDebug() {
           />
         </View>
 
-        {/* Test 2: Conditional rendering - Child should be added/removed from VDOM */}
+        {/* Test 3: Conditional rendering - Child should be added/removed from VDOM */}
         <View borderColor={0x00ff00} padding={10} gap={10} direction="column">
           <Text
             text={`Test 2: Conditional {${isOdd ? 'true' : 'false'} && <View>}`}
@@ -204,8 +214,8 @@ export function VDOMDebug() {
 }
 
 export function App(props: MountProps) {
-  if (vdomDebug) {
-    return <VDOMDebug />
+  if (visibilityDebug) {
+    return <VisibilityExample />
   }
 
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('fx')

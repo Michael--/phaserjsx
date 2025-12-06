@@ -10,7 +10,7 @@ import { toggleContent } from './content/toggle.content'
 import { viewContent } from './content/view.content'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
-import { SceneBackgroundsPage, TestingPage } from './pages/Guides'
+import { BestPracticesPage, SceneBackgroundsPage, TestingPage } from './pages/Guides'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
@@ -48,6 +48,7 @@ createRoot(document.getElementById('root')!).render(
       />
 
       {/* Guides */}
+      <Route path="/guides/best-practices" element={<BestPracticesPage />} />
       <Route path="/guides/testing" element={<TestingPage />} />
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
 

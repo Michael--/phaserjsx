@@ -92,6 +92,7 @@ const navigation: NavSection[] = [
   {
     title: 'Guides',
     items: [
+      { label: 'Best Practices', path: '/guides/best-practices' },
       { label: '🚧 Gestures & Interaction', path: '/guides/gestures' },
       { label: '🚧 Theme System', path: '/guides/theming' },
       { label: '🚧 Responsive Design', path: '/guides/responsive-design' },
