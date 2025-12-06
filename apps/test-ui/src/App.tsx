@@ -144,7 +144,7 @@ function JsxStaticBox(props: { keys: string[] }) {
   return <Button size="small" variant="outline" text="JSX Static" onClick={run} />
 }
 
-const visibilityDebug = true
+const visibilityDebug = false
 
 /**
  * Test component for VDOM behavior with visibility and conditional rendering
