@@ -29,7 +29,7 @@ const navigation: NavSection[] = [
       { label: 'View', path: '/components/view' },
       { label: 'ScrollView', path: '/components/scroll-view' },
       { label: '🚧 Portal', path: '/components/portal' },
-      { label: '🚧 Divider', path: '/components/divider' },
+      { label: 'Divider', path: '/components/divider' },
     ],
   },
   {

@@ -5,6 +5,7 @@ import { ComponentPage } from './components/ComponentPage'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
+import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { scrollviewContent } from './content/scrollview.content'
@@ -55,6 +56,7 @@ createRoot(document.getElementById('root')!).render(
         path="/components/scroll-view"
         element={<ComponentPage content={scrollviewContent} />}
       />
+      <Route path="/components/divider" element={<ComponentPage content={dividerContent} />} />
 
       {/* Guides */}
       <Route path="/guides/best-practices" element={<BestPracticesPage />} />
