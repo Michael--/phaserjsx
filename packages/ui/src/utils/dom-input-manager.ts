@@ -231,15 +231,10 @@ export class DOMInputElement {
     const worldX = worldTransform.tx
     const worldY = worldTransform.ty
 
-    // Get fixed container dimensions from layout props instead of bounds
-    // This prevents size from changing based on content
-    const layoutProps = (
-      this.container as typeof this.container & {
-        __layoutProps?: { width?: number; height?: number }
-      }
-    ).__layoutProps
-    const containerWidth = layoutProps?.width ?? 200
-    const containerHeight = layoutProps?.height ?? 40
+    // Get container dimensions - prefer actual computed size over layoutProps
+    // This ensures minHeight, maxHeight, and other constraints are respected
+    const containerWidth = this.container.width ?? 200
+    const containerHeight = this.container.height ?? 40
 
     // Calculate position relative to canvas
     const scale = this.scene.game.scale
