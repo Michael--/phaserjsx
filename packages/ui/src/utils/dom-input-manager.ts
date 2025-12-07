@@ -45,8 +45,16 @@ export class DOMInputElement {
   private input: HTMLInputElement
   private container: Phaser.GameObjects.Container
   private scene: Phaser.Scene
-  private updateBound: () => void
+  private scrollHandler: () => void
+  private resizeHandler: () => void
+  private throttledScrollHandler: () => void
+  private throttledResizeHandler: () => void
+  private intersectionObserver: IntersectionObserver | null = null
   private isDestroyed = false
+  private lastValues = { left: 0, top: 0, width: 0, height: 0 }
+  private counter = 0
+  private scrollThrottleTimeout: number | null = null
+  private resizeThrottleTimeout: number | null = null
 
   constructor(container: Phaser.GameObjects.Container, config: DOMInputConfig = {}) {
     this.container = container
@@ -92,19 +100,38 @@ export class DOMInputElement {
     }
 
     if (config.onFocus) {
-      this.input.addEventListener('focus', config.onFocus)
+      this.input.addEventListener('focus', (e) => {
+        config.onFocus?.(e)
+      })
     }
 
     if (config.onBlur) {
-      this.input.addEventListener('blur', config.onBlur)
+      this.input.addEventListener('blur', (e) => {
+        config.onBlur?.(e)
+      })
     }
 
     // Initial position update
     this.updatePosition()
 
-    // Bind update function for continuous positioning
-    this.updateBound = this.updatePosition.bind(this)
-    this.scene.events.on('postupdate', this.updateBound)
+    // Bind handlers for page scrolling and resizing
+    this.scrollHandler = this.updatePosition.bind(this)
+    this.resizeHandler = this.updatePosition.bind(this)
+
+    // Throttled handlers to limit update frequency
+    this.throttledScrollHandler = this.throttle(this.scrollHandler, 20) // ~50fps max
+    this.throttledResizeHandler = this.throttle(this.resizeHandler, 20) // ~50fps max
+
+    // Setup event listeners immediately (always active)
+    // Use capture phase to catch scroll events from any scrollable ancestor
+    document.addEventListener('scroll', this.throttledScrollHandler, {
+      passive: true,
+      capture: true,
+    })
+    window.addEventListener('resize', this.throttledResizeHandler, { passive: true })
+
+    // Setup IntersectionObserver to detect when canvas moves in viewport
+    this.setupIntersectionObserver()
 
     // Cleanup on container destroy
     this.container.once('destroy', () => {
@@ -115,6 +142,42 @@ export class DOMInputElement {
     this.scene.events.once('shutdown', () => {
       this.destroy()
     })
+  }
+
+  /**
+   * Setup IntersectionObserver to detect canvas position changes
+   */
+  private setupIntersectionObserver(): void {
+    const canvas = this.scene.game.canvas
+
+    this.intersectionObserver = new IntersectionObserver(
+      () => {
+        // Canvas moved in viewport, update position
+        this.updatePosition()
+      },
+      {
+        threshold: [0, 0.1, 0.5, 0.9, 1.0], // Trigger on various visibility changes
+      }
+    )
+
+    this.intersectionObserver.observe(canvas)
+  }
+
+  /**
+   * Throttle function to limit call frequency
+   * @param func - Function to throttle
+   * @param delay - Minimum delay between calls in ms
+   * @returns Throttled function
+   */
+  private throttle(func: () => void, delay: number): () => void {
+    let timeoutId: number | null = null
+    return () => {
+      if (timeoutId !== null) return
+      timeoutId = window.setTimeout(() => {
+        func()
+        timeoutId = null
+      }, delay)
+    }
   }
 
   /**
@@ -183,17 +246,38 @@ export class DOMInputElement {
     const zoom = this.scene.cameras.main.zoom
 
     // Calculate position and size with proper scaling
-    const left = canvasRect.left + worldX * zoom * scale.displayScale.x
-    const top = canvasRect.top + worldY * zoom * scale.displayScale.y
-    const width = containerWidth * zoom * scale.displayScale.x
-    const height = containerHeight * zoom * scale.displayScale.y
+    const left = Math.round(canvasRect.left + worldX * zoom * scale.displayScale.x)
+    const top = Math.round(canvasRect.top + worldY * zoom * scale.displayScale.y)
+    const width = Math.round(containerWidth * zoom * scale.displayScale.x)
+    const height = Math.round(containerHeight * zoom * scale.displayScale.y)
+    this.counter++
+
+    // apply only if changed to minimize layout thrashing
+    if (
+      this.lastValues.left === left &&
+      this.lastValues.top === top &&
+      this.lastValues.width === width &&
+      this.lastValues.height === height
+    ) {
+      return
+    }
+    this.lastValues = { left, top, width, height }
+
+    /* // Debug output for testing purposes
+    console.log('[DOMInputElement] Updating position', {
+      counter: this.counter,
+      left,
+      top,
+      width,
+      height,
+    })
+    */
 
     // Apply position and size
     this.input.style.left = `${left}px`
     this.input.style.top = `${top}px`
     this.input.style.width = `${width}px`
     this.input.style.height = `${height}px`
-    this.input.style.lineHeight = `${height}px`
   }
 
   /**
@@ -271,8 +355,23 @@ export class DOMInputElement {
     if (this.isDestroyed) return
     this.isDestroyed = true
 
-    // Remove event listener
-    this.scene.events.off('postupdate', this.updateBound)
+    // Clear any pending throttle timeouts
+    if (this.scrollThrottleTimeout !== null) {
+      clearTimeout(this.scrollThrottleTimeout)
+    }
+    if (this.resizeThrottleTimeout !== null) {
+      clearTimeout(this.resizeThrottleTimeout)
+    }
+
+    // Disconnect IntersectionObserver
+    if (this.intersectionObserver) {
+      this.intersectionObserver.disconnect()
+      this.intersectionObserver = null
+    }
+
+    // Remove event listeners
+    document.removeEventListener('scroll', this.throttledScrollHandler, { capture: true })
+    window.removeEventListener('resize', this.throttledResizeHandler)
 
     // Remove from DOM
     if (this.input.parentElement) {

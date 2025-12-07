@@ -128,7 +128,7 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current = new KeyboardInputManager(container, {
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
-      debug: props.debugHtmlInput,
+      debug: props.debugHtmlInput ?? true,
       onInput: (_value, _event) => {
         // Ignored - we handle all input via onKeyDown
       },
