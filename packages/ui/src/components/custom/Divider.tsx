@@ -3,6 +3,7 @@
  * Divider component - Simple visual separator
  * Test component to validate TSX support in packages/ui
  */
+import type { SizeValue } from '@phaserjsx/ui/core-props'
 import { View } from '../index'
 
 /**
@@ -12,11 +13,11 @@ export interface DividerProps {
   /** Orientation of the divider */
   orientation?: 'horizontal' | 'vertical'
   /** Thickness of the divider line */
-  thickness?: number
+  thickness?: SizeValue | undefined
   /** Color of the divider */
   color?: number
   /** Length of the divider (defaults to 100%) */
-  length?: number
+  length?: SizeValue | undefined
 }
 
 /**

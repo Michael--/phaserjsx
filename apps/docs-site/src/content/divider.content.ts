@@ -65,7 +65,7 @@ export const dividerContent: ComponentDocs = {
     },
     {
       name: 'thickness',
-      type: 'number',
+      type: 'SizeValue',
       default: '1',
       description: 'Thickness of the divider line in pixels',
     },
@@ -77,7 +77,7 @@ export const dividerContent: ComponentDocs = {
     },
     {
       name: 'length',
-      type: 'number',
+      type: 'SizeValue',
       default: 'undefined',
       description: 'Length of the divider. Defaults to 100% if not specified',
     },
