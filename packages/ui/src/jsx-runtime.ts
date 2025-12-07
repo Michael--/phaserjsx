@@ -22,7 +22,9 @@ export function jsx(
   key?: unknown
 ): VNodeLike {
   const { children, expand, proportion, theme, ...rest } = props ?? {}
-  const kids = children == null ? [] : Array.isArray(children) ? children : [children]
+  // Flatten children arrays deeply to support {arrayVariable} in JSX
+  const kids =
+    children == null ? [] : Array.isArray(children) ? children.flat(Infinity) : [children]
   const vnode: VNode = { type, props: rest, children: kids }
 
   // Extract key

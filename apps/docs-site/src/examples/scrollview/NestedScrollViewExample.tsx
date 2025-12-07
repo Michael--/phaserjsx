@@ -113,7 +113,7 @@ export function NestedScrollViewExample() {
             </View>
 
             {/* More content to make outer scroll work */}
-            {...Array.from({ length: 5 }, (_, i) => (
+            {Array.from({ length: 5 }, (_, i) => (
               <View key={i} padding={16} backgroundColor={0xffffff} cornerRadius={8} minHeight={80}>
                 <Text
                   text={`Additional Card ${i + 1}`}

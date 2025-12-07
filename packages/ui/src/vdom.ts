@@ -39,6 +39,19 @@ export interface MountProps {
 export type MountComponentProps<P = Record<string, never>> = MountProps & P
 
 /**
+ * Flattens nested arrays iteratively (performance optimized)
+ * Handles arrays that weren't flattened by jsx-runtime (e.g., from Fragment)
+ * @param children - Array that may contain nested arrays
+ * @returns Flattened array
+ */
+function flattenChildren(
+  children: (VNode | null | false | undefined)[] | undefined
+): (VNode | null | false | undefined)[] {
+  if (!children) return []
+  return children.flat(Infinity) as (VNode | null | false | undefined)[]
+}
+
+/**
  * Checks if a child should be skipped during mounting
  * Filters out falsy values, empty strings, and whitespace-only strings
  * @param child - Child to check
@@ -364,7 +377,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   if (vnode.type === Fragment) {
     // Mount all children directly to parent
     let firstNode: Phaser.GameObjects.GameObject | undefined
-    vnode.children?.forEach((c) => {
+    const flatChildren = flattenChildren(vnode.children)
+    flatChildren.forEach((c) => {
       if (!shouldSkipChild(c)) {
         // Type guard: c is VNode at this point
         const child = c as VNode
@@ -503,12 +517,15 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
   host.append(parentOrScene, node)
 
+  // Flatten children to support nested arrays
+  const flatChildren = flattenChildren(vnode.children)
+
   // Warn about missing keys during initial mount
-  if (vnode.children && vnode.children.length > 0) {
-    warnMissingKeys(vnode, vnode.children)
+  if (flatChildren.length > 0) {
+    warnMissingKeys(vnode, flatChildren)
   }
 
-  vnode.children?.forEach((c, index) => {
+  flatChildren.forEach((c, index) => {
     if (!shouldSkipChild(c)) {
       // Type guard: c is VNode at this point
       const child = c as VNode
@@ -599,7 +616,8 @@ export function unmount(vnode: VNode | null | undefined | false): void {
 
   // Fragment - just unmount children
   if (vnode.type === Fragment) {
-    vnode.children?.forEach(unmount)
+    const flatChildren = flattenChildren(vnode.children)
+    flatChildren.forEach(unmount)
     return
   }
 
@@ -619,7 +637,8 @@ export function unmount(vnode: VNode | null | undefined | false): void {
   attachRef(ref, null)
 
   // Clean up children FIRST (before removing from parent)
-  vnode.children?.forEach(unmount)
+  const flatChildren = flattenChildren(vnode.children)
+  flatChildren.forEach(unmount)
   // Then remove from parent/scene
   const parent = vnode.__parent
   if (parent) host.remove(parent as ParentType, vnode.__node as Phaser.GameObjects.GameObject)
@@ -666,8 +685,8 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       oldV.__theme = newV.__theme
     }
 
-    const a = oldV.children ?? []
-    const b = newV.children ?? []
+    const a = flattenChildren(oldV.children)
+    const b = flattenChildren(newV.children)
     const len = Math.max(a.length, b.length)
     for (let i = 0; i < len; i++) {
       const c1 = a[i]
@@ -815,8 +834,8 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   host.patch(nodeType, oldV.__node as any, oldThemedProps, newThemedProps)
 
-  const a = oldV.children ?? []
-  const b = newV.children ?? []
+  const a = flattenChildren(oldV.children)
+  const b = flattenChildren(newV.children)
   const len = Math.max(a.length, b.length)
   let childrenChanged = false
 
