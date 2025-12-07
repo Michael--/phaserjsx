@@ -76,6 +76,13 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
  * CharTextInput component - text input using CharText for rendering
  * @param props - CharTextInput properties
  * @returns CharTextInput JSX element
+ *
+ * TODO: For multiline mode with height constraints, consider wrapping CharText
+ * in a ScrollView component. This would provide:
+ * - Automatic scrolling when content exceeds available height
+ * - Better UX for long text input
+ * - No need for maxLines clipping
+ * - Scroll-to-cursor behavior on input
  */
 export function CharTextInput(props: CharTextInputProps) {
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -128,7 +135,7 @@ export function CharTextInput(props: CharTextInputProps) {
     inputManagerRef.current = new KeyboardInputManager(container, {
       ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
       ...(props.disabled !== undefined && { disabled: props.disabled }),
-      debug: props.debugHtmlInput ?? true,
+      debug: props.debugHtmlInput ?? false,
       onInput: (_value, _event) => {
         // Ignored - we handle all input via onKeyDown
       },

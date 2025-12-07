@@ -284,6 +284,9 @@ export function CharText(props: CharTextProps) {
 
       if (multiline) {
         // Multi-line layout
+        // TODO: Consider wrapping in ScrollView for better overflow handling
+        // when content exceeds available height. This would allow scrolling
+        // through long text instead of clipping at maxLines.
         lines = breakIntoLines(
           displayedText,
           scene,
@@ -359,8 +362,17 @@ export function CharText(props: CharTextProps) {
 
       // Calculate total dimensions
       const calculatedWidth = lines.length > 0 ? Math.max(...lines.map((l) => l.width)) : 0
-      const lastLine = lines[lines.length - 1]
-      const calculatedHeight = lines.length > 0 && lastLine ? lastLine.y + lastLine.height : 0
+
+      // Calculate height: last line Y position + actual character height (not lineHeight multiplied)
+      // This ensures the container height exactly fits the content without extra spacing after last line
+      let calculatedHeight = 0
+      if (lines.length > 0) {
+        const lastLine = lines[lines.length - 1]
+        if (lastLine) {
+          // Height is Y position of last line + its character height
+          calculatedHeight = lastLine.y + lastLine.height
+        }
+      }
 
       // Update state
       setChars(allChars)

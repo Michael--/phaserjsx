@@ -20,7 +20,8 @@ import type { ComponentDocs } from '@/types/docs'
 export const chartextinputContent: ComponentDocs = {
   title: 'CharTextInput',
   description:
-    'A fully functional text input component built on CharText, providing native-like text editing using an invisible HTML input overlay. Features include cursor positioning, text selection, keyboard shortcuts (Ctrl/Cmd+A, Home/End, Shift+Arrow), and multi-line support. ⚠️ Note: If input is not responding to clicks, the invisible HTML overlay may be mispositioned - use debugHtmlInput={true} to visualize it. Copy/paste functionality is planned but not yet implemented.',
+    'A fully functional text input component built on CharText, providing native-like text editing using an invisible HTML input overlay. Features include cursor positioning, text selection, keyboard shortcuts (Ctrl/Cmd+A, Home/End, Shift+Arrow), and multi-line support. ⚠️ Note: If input is not responding to clicks, the invisible HTML overlay may be mispositioned - use debugHtmlInput={true} to visualize it. Copy/paste functionality is planned but not yet implemented.' +
+    ' Multi-line mode currently uses maxLines to limit height; for better UX with scrolling, consider wrapping CharText in a ScrollView (planned enhancement).',
 
   quickStart: {
     id: 'quick-start',

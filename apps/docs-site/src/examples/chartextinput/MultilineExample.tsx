@@ -13,7 +13,6 @@ export function MultilineCharTextInputExample() {
         <Text text="Multi-line Input" style={{ fontSize: '14px', color: '#666' }} />
         <CharTextInput
           value={value}
-          debugHtmlInput
           onChange={setValue}
           multiline={true}
           maxLines={5}
