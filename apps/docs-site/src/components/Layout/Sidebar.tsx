@@ -28,9 +28,12 @@ const navigation: NavSection[] = [
     items: [
       { label: 'View', path: '/components/view' },
       { label: 'ScrollView', path: '/components/scroll-view' },
-      { label: '🚧 Portal', path: '/components/portal' },
       { label: 'Divider', path: '/components/divider' },
     ],
+  },
+  {
+    title: 'Advanced Composition',
+    items: [{ label: '🚧 Portal', path: '/components/portal' }],
   },
   {
     title: 'Form Controls',
