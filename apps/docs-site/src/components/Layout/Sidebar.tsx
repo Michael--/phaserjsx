@@ -33,7 +33,7 @@ const navigation: NavSection[] = [
   },
   {
     title: 'Advanced Composition',
-    items: [{ label: '🚧 Portal', path: '/components/portal' }],
+    items: [{ label: 'Portal', path: '/components/portal' }],
   },
   {
     title: 'Form Controls',
