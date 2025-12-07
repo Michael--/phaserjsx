@@ -7,6 +7,7 @@ import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
 import { dropdownContent } from './content/dropdown.content'
 import { radiobuttonContent } from './content/radiobutton.content'
+import { scrollviewContent } from './content/scrollview.content'
 import { sliderContent } from './content/slider.content'
 import { textContent } from './content/text.content'
 import { toggleContent } from './content/toggle.content'
@@ -49,6 +50,10 @@ createRoot(document.getElementById('root')!).render(
             }
           />
         }
+      />
+      <Route
+        path="/components/scroll-view"
+        element={<ComponentPage content={scrollviewContent} />}
       />
 
       {/* Guides */}
