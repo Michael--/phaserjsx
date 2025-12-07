@@ -73,12 +73,8 @@ export class DOMInputElement {
       Object.assign(this.input.style, config.styles)
     }
 
-    // Add to DOM
-    const canvas = this.scene.game.canvas
-    const parent = canvas.parentElement
-    if (parent) {
-      parent.appendChild(this.input)
-    }
+    // Add to DOM - use document.body for absolute positioning
+    document.body.appendChild(this.input)
 
     // Setup event listeners
     if (config.onInput) {

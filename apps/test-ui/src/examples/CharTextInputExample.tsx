@@ -29,6 +29,7 @@ function Example() {
         <ViewLevel4>
           <Text text="Basic CharTextInput:" />
           <CharTextInput
+            debugHtmlInput
             value={inputValue}
             onChange={(value) => setInputValue(value)}
             maxWidth={300}

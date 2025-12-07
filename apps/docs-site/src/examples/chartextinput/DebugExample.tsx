@@ -24,8 +24,8 @@ export function DebugCharTextInputExample() {
         cornerRadius={4}
       />
       <Text text={`Value: "${value}"`} style={{ fontSize: '14px', color: '#666' }} />
-      <View direction="column" gap={8} padding={16} backgroundColor={0xf0f0f0} cornerRadius={4}>
-        <Text text="Expected behavior:" style={{ fontSize: '12px', fontWeight: 'bold' }} />
+      <View direction="column" gap={8} padding={16} backgroundColor={0xa0a0a0} cornerRadius={4}>
+        <Text text="Expected behavior:" style={{ fontSize: '12px', fontStyle: 'bold' }} />
         <Text text="• Red dashed border should overlay input" style={{ fontSize: '11px' }} />
         <Text text="• HTML input should match position/size" style={{ fontSize: '11px' }} />
         <Text text="• Click HTML overlay to focus" style={{ fontSize: '11px' }} />

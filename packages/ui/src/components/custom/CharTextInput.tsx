@@ -1,7 +1,7 @@
 /** @jsxImportSource ../.. */
-import { useEffect, useRef, useState } from '../../hooks'
-import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
 import type { ViewProps } from '..'
+import { useEffect, useRedraw, useRef, useState } from '../../hooks'
+import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
 import { CharText, type CharTextAPI } from './CharText'
 
 /**
@@ -105,6 +105,17 @@ export function CharTextInput(props: CharTextInputProps) {
   // Calculate selection start/end from anchor and cursor
   const selectionStart = selectionAnchor >= 0 ? Math.min(selectionAnchor, cursorPosition) : -1
   const selectionEnd = selectionAnchor >= 0 ? Math.max(selectionAnchor, cursorPosition) : -1
+
+  const redraw = useRedraw()
+
+  useEffect(() => {
+    // Force multiple redraws to ensure container dimensions are properly calculated
+    // First redraw after initial mount to have containerRef set and html input created
+    const timer = setTimeout(() => redraw(), 0)
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [containerRef.current])
 
   /**
    * Setup keyboard input manager
