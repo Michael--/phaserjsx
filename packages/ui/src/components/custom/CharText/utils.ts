@@ -31,7 +31,8 @@ export const breakIntoLines = (
 
     // Check for explicit line break
     if (char === '\n') {
-      // Finish current line
+      // Finish current line without adding the newline character itself
+      // The newline serves as a line terminator, not a visible character
       lines.push(createLineInfo(currentLine, currentLineIndex, charSpacing))
       currentLine = []
       currentLineIndex++

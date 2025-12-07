@@ -142,6 +142,8 @@ export function CharTextInput(props: CharTextInputProps) {
             // Insert newline
             event.preventDefault()
             handleCharacterInput('\n')
+            // Force immediate redraw to show cursor on new line
+            redraw()
           }
         } else if (event.key === 'Backspace') {
           handleBackspace(event)
@@ -233,6 +235,14 @@ export function CharTextInput(props: CharTextInputProps) {
       return
     }
 
+    // Check if newline would exceed maxLines (multiline mode)
+    if (props.multiline && char === '\n' && props.maxLines !== undefined) {
+      const lineCount = newValue.split('\n').length
+      if (lineCount > props.maxLines) {
+        return
+      }
+    }
+
     // Check if character fits (single-line only)
     if (!props.multiline && charTextApiRef.current) {
       // For selection replacement, we need to check if the char fits at the selection start
@@ -243,8 +253,13 @@ export function CharTextInput(props: CharTextInputProps) {
     }
 
     updateValue(newValue)
+
+    // Update cursor position in both state and ref for immediate effect
     setCursorPosition(newCursorPos)
+    refCursorPosition.current = newCursorPos
+
     setSelectionAnchor(-1)
+    refSelectionAnchor.current = -1
   }
 
   /**

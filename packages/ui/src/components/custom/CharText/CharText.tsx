@@ -432,11 +432,35 @@ export function CharText(props: CharTextProps) {
         }
       }
 
+      // Check if cursor is after a newline character in the text
+      const charBeforeCursorInText =
+        clampedPosition > 0 ? displayedText.charAt(clampedPosition - 1) : null
+      const isAfterNewline = charBeforeCursorInText === '\n'
+
       // Position cursor based on the character before it
       if (charBeforeCursor) {
-        // Cursor goes after this character
-        cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
-        cursorY = startY + charBeforeCursor.y
+        if (isAfterNewline) {
+          // Cursor should be at start of next line
+          const nextLineIndex = charBeforeCursor.lineIndex + 1
+
+          // Find first char of next line
+          const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
+
+          if (firstCharOfNextLine) {
+            // Next line has content
+            cursorX = startX + firstCharOfNextLine.x
+            cursorY = startY + firstCharOfNextLine.y
+          } else {
+            // Empty line after newline - cursor at start of virtual next line
+            cursorX = startX
+            const lineHeightPx = charBeforeCursor.height * lineHeight
+            cursorY = startY + charBeforeCursor.y + lineHeightPx
+          }
+        } else {
+          // Normal character - cursor goes after it
+          cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
+          cursorY = startY + charBeforeCursor.y
+        }
       } else if (chars.length > 0 && chars[0]) {
         // Cursor at position 0 (before first char)
         const firstChar = chars[0]
@@ -448,9 +472,21 @@ export function CharText(props: CharTextProps) {
         cursorY = startY
       }
 
-      // Get cursor height from character before cursor
+      // Get cursor height
       let cursorHeight = 20
-      if (charBeforeCursor) {
+      if (isAfterNewline) {
+        // For newline, use height of next line if it exists
+        const nextLineIndex = charBeforeCursor ? charBeforeCursor.lineIndex + 1 : 0
+        const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
+        if (firstCharOfNextLine) {
+          cursorHeight = firstCharOfNextLine.height
+        } else if (charBeforeCursor) {
+          // Use height from current line, not doubled
+          cursorHeight = charBeforeCursor.height
+        } else if (chars.length > 0 && chars[0]) {
+          cursorHeight = chars[0].height
+        }
+      } else if (charBeforeCursor) {
         cursorHeight = charBeforeCursor.height
       } else if (chars.length > 0 && chars[0]) {
         cursorHeight = chars[0].height
