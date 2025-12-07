@@ -8,8 +8,6 @@ import {
   Text,
   Toggle,
   useCallback,
-  useEffect,
-  useRedraw,
   useState,
   useThemeTokens,
   View,
@@ -23,7 +21,6 @@ function Example() {
   const [backgroundClicks, setBackgroundClicks] = useState(0)
   const [portal1Clicks, setPortal1Clicks] = useState(0)
   const [portal2Clicks, setPortal2Clicks] = useState(0)
-  const redraw = useRedraw()
   const tokens = useThemeTokens()
 
   const handleBackgroundClick = useCallback(() => setBackgroundClicks((c) => c + 1), [])
@@ -37,11 +34,6 @@ function Example() {
   const handleClosePortal1 = useCallback(() => setShowPortal1(false), [])
   const handleClosePortal2 = useCallback(() => setShowPortal2(false), [])
   const handleClosePortal3 = useCallback(() => setShowPortal3(false), [])
-
-  // Redraw when portal visibility changes
-  useEffect(() => {
-    redraw()
-  }, [showPortal1, showPortal2, showPortal3])
 
   return (
     <ViewLevel2 direction="column" padding={10} width={1500}>

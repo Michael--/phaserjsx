@@ -2,19 +2,12 @@
  * Portal Event Blocking Example - Control click-through behavior
  */
 /** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, useEffect, useRedraw, useState, View } from '@phaserjsx/ui'
+import { Portal, Text, View, useState } from '@phaserjsx/ui'
 
 export function EventBlockingExample() {
   const [showBlocking, setShowBlocking] = useState(false)
   const [showNonBlocking, setShowNonBlocking] = useState(false)
   const [clickCount, setClickCount] = useState(0)
-  const redraw = useRedraw()
-
-  // Redraw when portal visibility changes
-  useEffect(() => {
-    redraw()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showBlocking, showNonBlocking])
 
   return (
     <View width={'fill'} height={'fill'} padding={20}>

@@ -445,6 +445,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     if (!rendered) {
       // Component returned null - this is valid (e.g., Portal)
       ctx.vnode = rendered
+      // IMPORTANT: Run effects even if component returns null (e.g., Portal needs useEffect)
+      for (const run of ctx.effects) run()
       // Return a dummy container that won't be used
       const dummyContainer = scene.add.container(0, 0)
       dummyContainer.visible = false

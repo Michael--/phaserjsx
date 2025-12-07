@@ -2,17 +2,10 @@
  * Portal Modal Pattern Example - Building a simple modal with Portal
  */
 /** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, useEffect, useRedraw, useState, View, WrapText } from '@phaserjsx/ui'
+import { Portal, Text, View, WrapText, useState } from '@phaserjsx/ui'
 
 export function ModalPatternExample() {
   const [isOpen, setIsOpen] = useState(false)
-  const redraw = useRedraw()
-
-  // Redraw when portal visibility changes
-  useEffect(() => {
-    redraw()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen])
 
   return (
     <View width={'fill'} height={'fill'} padding={20}>
