@@ -86,10 +86,10 @@ const navigation: NavSection[] = [
   {
     title: 'Icon System',
     items: [
-      { label: '🚧 Icon Component', path: '/icons/component' },
+      { label: '🚧 Configuration', path: '/icons/configuration' },
       { label: '🚧 Icon Generator', path: '/icons/generator' },
       { label: '🚧 Vite Plugin', path: '/icons/vite-plugin' },
-      { label: '🚧 Configuration', path: '/icons/configuration' },
+      { label: '🚧 Icon Component', path: '/icons/component' },
     ],
   },
   {
