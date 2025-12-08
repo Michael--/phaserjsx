@@ -5,6 +5,30 @@
 import type Phaser from 'phaser'
 
 /**
+ * Preprocesses SVG string to ensure tinting works correctly
+ * Replaces fill="currentColor" and other color fills with white (#FFFFFF)
+ * This allows Phaser's tint to work multiplicatively (white × tint = tint color)
+ * @param svg - Raw SVG string
+ * @returns Preprocessed SVG string with white fills
+ */
+function preprocessSvgForTinting(svg: string): string {
+  return (
+    svg
+      // Replace fill="currentColor" with fill="#FFFFFF"
+      .replace(/fill="currentColor"/gi, 'fill="#FFFFFF"')
+      // Replace fill='currentColor' with fill='#FFFFFF'
+      .replace(/fill='currentColor'/gi, "fill='#FFFFFF'")
+      // Replace fill:currentColor in style attributes
+      .replace(/fill:\s*currentColor/gi, 'fill: #FFFFFF')
+      // Replace black fills (common fallback)
+      .replace(/fill="#000000"/gi, 'fill="#FFFFFF"')
+      .replace(/fill="#000"/gi, 'fill="#FFFFFF"')
+      .replace(/fill='#000000'/gi, "fill='#FFFFFF'")
+      .replace(/fill='#000'/gi, "fill='#FFFFFF'")
+  )
+}
+
+/**
  * Converts an SVG (string or URL) into a Phaser texture
  *
  * Supports multiple input formats:
@@ -44,8 +68,9 @@ export async function svgToTexture(
 
   // Detect input type: raw SVG string or URL
   if (trimmed.startsWith('<svg')) {
-    // Raw SVG string - create blob URL
-    const blob = new Blob([trimmed], { type: 'image/svg+xml' })
+    // Raw SVG string - preprocess for tinting, then create blob URL
+    const processedSvg = preprocessSvgForTinting(trimmed)
+    const blob = new Blob([processedSvg], { type: 'image/svg+xml' })
     finalUrl = URL.createObjectURL(blob)
     shouldRevokeUrl = true
   } else {
