@@ -6,7 +6,7 @@ import type { PropDefinition } from '@/types/docs'
 import './PropsTable.css'
 
 interface PropsTableProps {
-  props: PropDefinition[]
+  props: PropDefinition[] | undefined
 }
 
 /**
@@ -25,7 +25,7 @@ export function PropsTable({ props }: PropsTableProps) {
         </tr>
       </thead>
       <tbody>
-        {props.map((prop) => (
+        {props?.map((prop) => (
           <tr key={prop.name}>
             <td>
               <code>{prop.name}</code>
