@@ -101,7 +101,7 @@ export const DevConfig = {
      * Detects JSX/callback recreation that prevents VDOM optimization
      * @default true (in development)
      */
-    unnecessaryRemounts: true,
+    unnecessaryRemounts: false,
   },
 
   /**
