@@ -179,6 +179,8 @@ export function AlertDialog(props: AlertDialogProps) {
       maxWidth={themed.maxWidth ?? 400}
       showClose={true}
       actions={actions}
+      closeOnBackdrop={false}
+      closeOnEscape={false}
     >
       {content}
     </Dialog>
