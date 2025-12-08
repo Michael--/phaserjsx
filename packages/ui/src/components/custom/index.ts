@@ -12,8 +12,8 @@ export { Dialog, type DialogProps } from './Dialog'
 export { Divider, type DividerProps } from './Divider'
 export { Dropdown, type DropdownOption, type DropdownProps } from './Dropdown'
 export {
-  Icon,
   createIconComponent,
+  Icon,
   useIconPreload,
   type IconLoaderFn,
   type IconProps,
@@ -25,8 +25,8 @@ export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'
 export {
-  ScrollSlider,
   calculateSliderSize,
+  ScrollSlider,
   type ScrollSliderProps,
   type SliderSize,
 } from './ScrollSlider'

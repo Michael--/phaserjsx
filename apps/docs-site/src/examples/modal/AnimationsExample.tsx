@@ -34,7 +34,7 @@ export function AnimationsExample() {
         </View>
       </View>
 
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal show={isOpen} onClosed={() => setIsOpen(false)}>
         <View
           width={400}
           height={300}

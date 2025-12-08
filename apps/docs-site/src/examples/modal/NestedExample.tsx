@@ -34,7 +34,7 @@ export function NestedExample() {
       </View>
 
       {/* Main Modal */}
-      <Modal isOpen={mainModal} onClose={() => setMainModal(false)} depth={1000}>
+      <Modal show={mainModal} onClosed={() => setMainModal(false)} depth={1000}>
         <View
           width={400}
           height={280}
@@ -80,7 +80,7 @@ export function NestedExample() {
       </Modal>
 
       {/* Confirmation Modal (higher depth) */}
-      <Modal isOpen={confirmModal} onClose={() => setConfirmModal(false)} depth={1500}>
+      <Modal show={confirmModal} onClosed={() => setConfirmModal(false)} depth={1500}>
         <View
           width={350}
           height={220}

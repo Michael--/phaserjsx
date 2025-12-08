@@ -4,6 +4,7 @@
 import {
   Divider,
   getAvailablePresets,
+  Modal,
   RadioGroup,
   ScrollView,
   setColorPreset,
@@ -14,6 +15,7 @@ import {
   useState,
   useThemeTokens,
   View,
+  WrapText,
   type MountProps,
   type RadioGroupOption,
 } from '@phaserjsx/ui'
@@ -144,7 +146,63 @@ function JsxStaticBox(props: { keys: string[] }) {
   return <Button size="small" variant="outline" text="JSX Static" onClick={run} />
 }
 
+const testMe = false
+
+export function QuickStartExample() {
+  const [show, setShow] = useState(false)
+  console.log('QuickStartExample render, show=', show)
+
+  return (
+    <View width={'fill'} height={'fill'} padding={20}>
+      <View direction="column" gap={16}>
+        <Text text="Modal Component" style={{ fontSize: '18px', fontStyle: 'bold' }} />
+
+        <View
+          padding={16}
+          backgroundColor={0x3b82f6}
+          cornerRadius={8}
+          onTouch={() => setShow(!show)}
+        >
+          <Text text="Open Modal" style={{ fontSize: '16px', color: '#fff' }} />
+        </View>
+
+        <Text
+          text="Click to open a modal with backdrop and animations"
+          style={{ fontSize: '14px', color: '#666' }}
+        />
+      </View>
+
+      <Modal show={show} onClosed={() => setShow(false)}>
+        <View
+          width={400}
+          height={250}
+          backgroundColor={0xffffff}
+          cornerRadius={16}
+          padding={24}
+          direction="column"
+          gap={16}
+        >
+          <Text text="Modal Title" style={{ fontSize: '20px', color: '#111' }} />
+          <WrapText
+            text="This is a basic modal with a backdrop. Click outside or press Escape to close."
+            style={{ fontSize: '14px', color: '#666' }}
+          />
+          <View flex={1} />
+
+          <Button onClick={() => setShow(false)}>
+            <Text text="Close" style={{ fontSize: '14px', color: '#fff' }} />
+          </Button>
+        </View>
+      </Modal>
+    </View>
+  )
+}
+
 export function App(props: MountProps) {
+  if (testMe) {
+    return <QuickStartExample />
+  }
+
   const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('fx')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()

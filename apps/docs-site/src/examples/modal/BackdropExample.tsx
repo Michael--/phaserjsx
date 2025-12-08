@@ -40,7 +40,7 @@ export function BackdropExample() {
       </View>
 
       {/* Modal that closes on backdrop click */}
-      <Modal isOpen={blockingModal} onClose={() => setBlockingModal(false)} closeOnBackdrop={true}>
+      <Modal show={blockingModal} onClosed={() => setBlockingModal(false)} closeOnBackdrop={true}>
         <View
           width={350}
           height={200}
@@ -65,8 +65,8 @@ export function BackdropExample() {
 
       {/* Modal that doesn't close on backdrop click */}
       <Modal
-        isOpen={nonBlockingModal}
-        onClose={() => setNonBlockingModal(false)}
+        show={nonBlockingModal}
+        onClosed={() => setNonBlockingModal(false)}
         closeOnBackdrop={false}
       >
         <View

@@ -5,7 +5,6 @@ import {
   ScrollView,
   Text,
   Toggle,
-  View,
   useCallback,
   useMemo,
   useState,
@@ -56,17 +55,15 @@ function Example() {
       />
       <Toggle checked={closeOnEscape} onChange={setCloseOnEscape} label="Close on Escape Key" />
       {/* Trigger Buttons */}
-      <View gap={12} direction="row">
-        <Button variant="primary" onClick={handleOpen} disabled={isOpen}>
-          <Text text="Open Modal" />
-        </Button>
-      </View>
+      <Button variant="primary" onClick={handleOpen}>
+        <Text text="Open Modal" />
+      </Button>
 
       {/* Modal definition */}
       <Modal
         key="example-modal"
-        isOpen={isOpen}
-        onClose={handleClose}
+        show={isOpen}
+        onClosed={handleClose}
         closeOnBackdrop={closeOnBackdrop}
         closeOnEscape={closeOnEscape}
       >
