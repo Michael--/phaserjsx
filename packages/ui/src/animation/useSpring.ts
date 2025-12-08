@@ -52,13 +52,26 @@ export function useSpring(
     valueSignal.current = animatedSignal(initialValue)
   }
 
+  // Get scene from render context (DURING RENDER, while getCurrent() is available)
+  const ctx = getCurrent() as { parent: ParentType } | null
+  const scene = ctx
+    ? ctx.parent instanceof Phaser.Scene
+      ? ctx.parent
+      : (ctx.parent as Phaser.GameObjects.GameObject).scene
+    : null
+
   // Physics state
   const state = useRef<SpringState>({ value: initialValue, velocity: 0 })
   const target = useRef<Signal<number>>({ value: initialValue } as Signal<number>)
   const physics = useRef(new SpringPhysics(resolvedConfig))
   const updateListenerRef = useRef<((time: number, delta: number) => void) | null>(null)
-  const sceneRef = useRef<Phaser.Scene | null>(null)
+  const sceneRef = useRef<Phaser.Scene | null>(scene)
   const wasAtRest = useRef<boolean>(true) // Track if previously at rest
+
+  // Update scene ref if it changes (shouldn't happen, but defensive)
+  if (scene && sceneRef.current !== scene) {
+    sceneRef.current = scene
+  }
 
   // Setter function - stable reference across renders
   const setValue = (newTarget: number | ((prev: number) => number)) => {
@@ -67,23 +80,11 @@ export function useSpring(
   }
 
   useEffect(() => {
-    // Get scene from render context (isolated per mount point)
-    const ctx = getCurrent() as { parent: ParentType } | null
-    if (!ctx) {
-      console.warn('useSpring: Hook context not available')
-      return
-    }
-    const scene =
-      ctx.parent instanceof Phaser.Scene
-        ? ctx.parent
-        : (ctx.parent as Phaser.GameObjects.GameObject).scene
-
+    const scene = sceneRef.current
     if (!scene) {
       console.warn('useSpring: Phaser scene not found in context')
       return
     }
-
-    sceneRef.current = scene
 
     // Physics update loop
     const updateListener = (_time: number, delta: number) => {
@@ -191,25 +192,26 @@ export function useSprings<T extends Record<string, number>>(
     }
   })
 
+  // Get scene from render context (DURING RENDER, while getCurrent() is available)
+  const ctx = getCurrent() as { parent: ParentType } | null
+  const scene = ctx
+    ? ctx.parent instanceof Phaser.Scene
+      ? ctx.parent
+      : (ctx.parent as Phaser.GameObjects.GameObject).scene
+    : null
+
+  // Update scene ref if it changes (shouldn't happen, but defensive)
+  if (scene && sceneRef.current !== scene) {
+    sceneRef.current = scene
+  }
+
   // Setup physics update loop
   useEffect(() => {
-    // Get scene from render context (isolated per mount point)
-    const ctx = getCurrent() as { parent: ParentType } | null
-    if (!ctx) {
-      console.warn('useSprings: Hook context not available')
-      return
-    }
-    const scene =
-      ctx.parent instanceof Phaser.Scene
-        ? ctx.parent
-        : (ctx.parent as Phaser.GameObjects.GameObject).scene
-
+    const scene = sceneRef.current
     if (!scene) {
       console.warn('useSprings: Phaser scene not found in context')
       return
     }
-
-    sceneRef.current = scene
 
     const updateListener = (_time: number, delta: number) => {
       const deltaSeconds = delta / 1000
