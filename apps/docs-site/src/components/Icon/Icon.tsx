@@ -1,8 +1,8 @@
+/** @jsxImportSource @phaserjsx/ui */
 /**
  * Icon component for docs-site using Bootstrap Icons
  * Type-safe icon loading with automatic tree-shaking
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
 import {
   Icon as GenericIcon,
   getThemedProps,
@@ -14,15 +14,6 @@ import { iconLoader } from './iconLoader'
 
 // Re-export the IconType for convenience
 export type { IconType }
-
-// Module augmentation to add Icon theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
-  interface CustomComponentThemes {
-    Icon: {
-      size?: number
-    } & PhaserJSX.ViewTheme
-  }
-}
 
 /**
  * Props for Icon component

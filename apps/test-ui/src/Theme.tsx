@@ -112,9 +112,9 @@ export function createAppTheme(
         disabledColor: colors.border.dark.toNumber(),
       },
 
-      Icon: {
-        size: 24,
-      },
+      //Icon: {
+      //  size: 24,
+      //},
 
       Accordion: {
         effect: 'wobble',

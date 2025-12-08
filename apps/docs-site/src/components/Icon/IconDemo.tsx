@@ -1,3 +1,4 @@
+/** @jsxImportSource @phaserjsx/ui */
 /**
  * Quick demo of Icon component in docs-site
  * Shows a simple icon to verify the system works

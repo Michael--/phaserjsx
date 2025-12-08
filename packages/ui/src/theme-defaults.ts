@@ -22,6 +22,9 @@ export const defaultTheme: Theme = {
     alpha: 1,
     visible: true,
   },
+  Icon: {
+    size: 24,
+  },
   text: {
     text: '',
     alpha: 1,

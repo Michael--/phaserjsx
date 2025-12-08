@@ -2,6 +2,7 @@
  * Base theme type definitions
  * This file contains the core theme system types and interfaces
  */
+import type { IconProps } from './components/custom'
 import type {
   BackgroundProps,
   LayoutProps,
@@ -108,6 +109,11 @@ export interface TileSpriteTheme
   tint?: number
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface IconTheme extends Partial<IconProps> {
+  // No additional theme props for Icon yet
+}
+
 /**
  * Built-in component theme definitions
  */
@@ -128,6 +134,7 @@ export interface BuiltInComponentThemes {
   Image: ImageTheme
   Graphics: GraphicsTheme
   TileSprite: TileSpriteTheme
+  Icon: IconTheme
 }
 
 /**
