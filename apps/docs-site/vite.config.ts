@@ -1,13 +1,32 @@
+import { iconGeneratorPlugin } from '@phaserjsx/ui/vite-plugin-icons'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    iconGeneratorPlugin({
+      configPath: './icon-generator.config.ts',
+    }) as any, // Type workaround for multiple Vite versions
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Split bootstrap icons into separate chunks for better tree-shaking
+          if (id.includes('bootstrap-icons/icons/')) {
+            const iconName = id.match(/icons\/([^.]+)\.svg/)?.[1]
+            return iconName ? `icons/${iconName}` : undefined
+          }
+        },
+      },
     },
   },
 })

@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc -b && tsc -p src/examples-docs/tsconfig.json --noEmit",
-    "typecheck:examples": "tsc -p src/examples-docs/tsconfig.json --noEmit"
+    "typecheck:examples": "tsc -p src/examples-docs/tsconfig.json --noEmit",
+    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -17,7 +18,8 @@
     "react-router": "^7.1.1",
     "react-router-dom": "^7.1.1",
     "phaser": "^3.87.0",
-    "@phaserjsx/ui": "workspace:*"
+    "@phaserjsx/ui": "workspace:*",
+    "bootstrap-icons": "^1.13.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

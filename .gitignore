@@ -45,5 +45,8 @@ yarn-error.log*
 .turbo/
 .eslintcache
 
+# Icon system generated files
+**/icon-types.generated.ts
+**/icon-loaders.generated.ts
 
 prompt.txt
