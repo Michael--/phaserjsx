@@ -58,7 +58,7 @@ const navigation: NavSection[] = [
     title: 'Overlays & Dialogs',
     items: [
       { label: 'Modal', path: '/components/modal' },
-      { label: '🚧 Dialog', path: '/components/dialog' },
+      { label: 'Dialog', path: '/components/dialog' },
       { label: '🚧 AlertDialog', path: '/components/alert-dialog' },
       { label: '🚧 Sidebar', path: '/components/sidebar' },
       { label: '🚧 Accordion', path: '/components/accordion' },

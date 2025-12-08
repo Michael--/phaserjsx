@@ -5,6 +5,7 @@ import { ComponentPage } from './components/ComponentPage'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
+import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
 import { modalContent } from './content/modal.content'
@@ -61,6 +62,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/components/divider" element={<ComponentPage content={dividerContent} />} />
       <Route path="/components/portal" element={<ComponentPage content={portalContent} />} />
       <Route path="/components/modal" element={<ComponentPage content={modalContent} />} />
+      <Route path="/components/dialog" element={<ComponentPage content={dialogContent} />} />
 
       {/* Guides */}
       <Route path="/guides/best-practices" element={<BestPracticesPage />} />
