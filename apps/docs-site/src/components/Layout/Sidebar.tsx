@@ -69,13 +69,13 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Icon', path: '/components/icon' },
       { label: 'Image', path: '/components/image' },
+      { label: 'Graphics', path: '/components/graphics' },
     ],
   },
   {
     title: 'Primitives',
     items: [
       { label: '🚧 Sprite', path: '/components/sprite' },
-      { label: '🚧 Graphics', path: '/components/graphics' },
       { label: '🚧 NineSlice', path: '/components/nineslice' },
       { label: '🚧 TileSprite', path: '/components/tilesprite' },
     ],

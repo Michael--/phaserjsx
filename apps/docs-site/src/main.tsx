@@ -9,6 +9,7 @@ import { chartextinputContent } from './content/chartextinput.content'
 import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
+import { graphicsContent } from './content/graphics.content'
 import { iconContent } from './content/icon.content'
 import { imageContent } from './content/image.content'
 import { modalContent } from './content/modal.content'
@@ -101,6 +102,9 @@ createRoot(document.getElementById('root')!).render(
 
       {/* Image Component */}
       <Route path="/components/image" element={<ComponentPage content={imageContent} />} />
+
+      {/* Graphics Component */}
+      <Route path="/components/graphics" element={<ComponentPage content={graphicsContent} />} />
 
       {/* Placeholder routes */}
       <Route path="/components/*" element={<ComingSoonPage />} />
