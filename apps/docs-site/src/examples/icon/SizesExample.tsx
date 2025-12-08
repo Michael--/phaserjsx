@@ -7,7 +7,7 @@ import { Text, View } from '@phaserjsx/ui'
 
 export function SizesIconExample() {
   return (
-    <View padding={20} gap={30}>
+    <View width={'100%'} height="100%" padding={20} gap={30} flexWrap="wrap">
       <View direction="column" alignItems="center" gap={10}>
         <Text text="Small (16px)" />
         <Icon type="check" size={16} />

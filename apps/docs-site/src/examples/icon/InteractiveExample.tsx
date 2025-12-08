@@ -7,7 +7,7 @@ import { useState, View } from '@phaserjsx/ui'
 
 export function InteractiveIconExample() {
   const [favorite, setFavorite] = useState(false)
-  const [likes, setLikes] = useState(0)
+  const [likes, setLikes] = useState(false)
 
   return (
     <View padding={20} gap={30} alignItems="center">
@@ -16,9 +16,9 @@ export function InteractiveIconExample() {
         <Icon type={'star'} size={48} tint={0xffffff} visible={favorite ? 'none' : true} />
       </View>
 
-      <View enableGestures onTouch={() => setLikes(likes + 1)}>
-        <Icon type={'heart-fill'} size={48} tint={0xef4444} visible={likes > 0 ? true : 'none'} />
-        <Icon type={'heart'} size={48} tint={0xffffff} visible={likes > 0 ? 'none' : true} />
+      <View enableGestures onTouch={() => setLikes(!likes)}>
+        <Icon type={'heart-fill'} size={48} tint={0xef4444} visible={likes ? true : 'none'} />
+        <Icon type={'heart'} size={48} tint={0xffffff} visible={likes ? 'none' : true} />
       </View>
 
       <View direction="row" gap={15}>

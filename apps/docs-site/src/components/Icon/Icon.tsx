@@ -35,10 +35,8 @@ async function iconLoader(type: IconType): Promise<string> {
   // Check cache first
   const cached = iconCache.get(type)
   if (cached) {
-    console.log('Using cached icon for', type)
     return cached
   }
-  console.log('Loading icon for', type)
 
   // Get loader function from generated registry
   const loader = iconLoaders[type]

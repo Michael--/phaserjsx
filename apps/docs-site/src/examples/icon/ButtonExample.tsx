@@ -22,7 +22,7 @@ export function ButtonIconExample() {
         </View>
       </Button>
 
-      <Button variant="outline" onClick={() => console.log('Download clicked')}>
+      <Button onClick={() => console.log('Download clicked')}>
         <View direction="row" gap={8} alignItems="center">
           <Icon type="download" size={20} />
           <Text text="Download" />
