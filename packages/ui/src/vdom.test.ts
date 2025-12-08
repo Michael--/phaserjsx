@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /**
  * Tests for VDOM functionality
  * Tests mount, unmount, patchVNode, and createElement
@@ -237,7 +238,7 @@ describe('VDOM', () => {
       patchVNode(mockSceneWithSys as any, oldVNode, newVNode)
 
       // Child should be unmounted and removed from VDOM
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       expect(vi.mocked(host.remove)).toHaveBeenCalledWith(oldVNode.__node, { id: 'child2' })
     })
   })

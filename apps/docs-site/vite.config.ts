@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     iconGeneratorPlugin({
       configPath: './icon-generator.config.ts',
-    }) as any, // Type workaround for multiple Vite versions
+    }) as never, // Type workaround for multiple Vite versions
   ],
   resolve: {
     alias: {

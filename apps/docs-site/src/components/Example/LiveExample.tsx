@@ -70,6 +70,7 @@ export function LiveExample({
       gameRef.current?.destroy(true)
       gameRef.current = null
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sceneFactory, width, height])
 
   return (

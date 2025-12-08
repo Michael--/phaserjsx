@@ -600,6 +600,7 @@ export class GestureManager {
       let pointer: Phaser.Input.Pointer | null = null
       try {
         pointer = this.scene.input.activePointer
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         // Scene is being destroyed, silently ignore
         return
@@ -904,6 +905,7 @@ export class GestureManager {
     let pointer: Phaser.Input.Pointer | null = null
     try {
       pointer = this.scene.input.activePointer
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Scene is being destroyed, silently ignore
       return
