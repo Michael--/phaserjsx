@@ -84,15 +84,6 @@ const navigation: NavSection[] = [
     ],
   },
   {
-    title: 'Icon System',
-    items: [
-      { label: '🚧 Configuration', path: '/icons/configuration' },
-      { label: '🚧 Icon Generator', path: '/icons/generator' },
-      { label: '🚧 Vite Plugin', path: '/icons/vite-plugin' },
-      { label: '🚧 Icon Component', path: '/icons/component' },
-    ],
-  },
-  {
     title: 'Guides',
     items: [
       { label: 'Best Practices', path: '/guides/best-practices' },
@@ -104,6 +95,15 @@ const navigation: NavSection[] = [
       { label: '🚧 Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
       { label: 'Testing & Development', path: '/guides/testing' },
+    ],
+  },
+  {
+    title: 'Icon System',
+    items: [
+      { label: 'Overview', path: '/guides/icon-system' },
+      { label: 'Generator Config', path: '/guides/icon-generator-config' },
+      { label: 'Custom Component', path: '/guides/custom-icon-component' },
+      { label: 'Custom SVG Icons', path: '/guides/custom-svg-icons' },
     ],
   },
   {

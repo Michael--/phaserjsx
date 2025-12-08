@@ -20,7 +20,15 @@ import { viewContent } from './content/view.content'
 import { wraptextContent } from './content/wraptext.content'
 import './index.css'
 import { ComingSoonPage } from './pages/ComingSoonPage'
-import { BestPracticesPage, SceneBackgroundsPage, TestingPage } from './pages/Guides'
+import {
+  BestPracticesPage,
+  CustomIconComponentPage,
+  CustomSvgIconsPage,
+  IconGeneratorConfigPage,
+  IconSystemPage,
+  SceneBackgroundsPage,
+  TestingPage,
+} from './pages/Guides'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
@@ -73,6 +81,10 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/best-practices" element={<BestPracticesPage />} />
       <Route path="/guides/testing" element={<TestingPage />} />
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
+      <Route path="/guides/icon-system" element={<IconSystemPage />} />
+      <Route path="/guides/icon-generator-config" element={<IconGeneratorConfigPage />} />
+      <Route path="/guides/custom-icon-component" element={<CustomIconComponentPage />} />
+      <Route path="/guides/custom-svg-icons" element={<CustomSvgIconsPage />} />
 
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
       <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />
