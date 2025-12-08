@@ -18,13 +18,13 @@ import QuickStartExampleRaw from '@/examples/modal/QuickStartExample.tsx?raw'
 export const modalContent: ComponentDocs = {
   title: 'Modal',
   description:
-    'A convenient overlay component built on top of Portal that provides backdrop, animations, and keyboard handling. Modal automatically centers content, manages z-depth, and provides smooth zoom/fade animations for professional-looking overlays.',
+    'A convenient overlay component built on top of Portal that provides backdrop, animations, and keyboard handling. Modal automatically centers content, manages z-depth, and provides smooth fade animations for professional-looking overlays. Includes state machine for proper animation sequencing.',
 
   quickStart: {
     id: 'quick-start',
     title: 'Quick Start',
     description:
-      'Basic modal with backdrop and built-in animations. Closes on backdrop click or Escape key.',
+      'Basic modal with backdrop and built-in animations. Control visibility with the show prop. Use onRequestClose to handle backdrop/Escape close requests.',
     component: QuickStartExample,
     height: SCENE_SIZES.medium,
     code: QuickStartExampleRaw,
@@ -44,7 +44,7 @@ export const modalContent: ComponentDocs = {
       id: 'animations',
       title: 'Built-in Animations',
       description:
-        'Modal includes smooth zoom and fade animations with 500ms duration, no configuration needed',
+        'Modal includes smooth fade animations with 500ms duration. Customize with viewOpenEffect and viewCloseEffect props.',
       component: AnimationsExample,
       height: SCENE_SIZES.medium,
       code: AnimationsExampleRaw,
@@ -62,20 +62,33 @@ export const modalContent: ComponentDocs = {
 
   propsEssential: [
     {
-      name: 'isOpen',
+      name: 'show',
       type: 'boolean',
       default: 'required',
       description: 'Controls whether the modal is visible',
     },
     {
-      name: 'onClose',
+      name: 'onRequestClose',
       type: '() => void',
       default: 'undefined',
-      description: 'Callback function called when modal should close',
+      description:
+        'Callback when modal requests to close (via backdrop click or Escape key). Parent should set show=false.',
+    },
+    {
+      name: 'onOpen',
+      type: '() => void',
+      default: 'undefined',
+      description: 'Callback when modal opening animation starts',
+    },
+    {
+      name: 'onClosed',
+      type: '() => void',
+      default: 'undefined',
+      description: 'Callback when modal closing animation completes and modal is fully hidden',
     },
     {
       name: 'children',
-      type: 'ReactNode',
+      type: 'ChildrenType',
       default: 'undefined',
       description: 'Content to display in the modal',
     },
@@ -83,19 +96,31 @@ export const modalContent: ComponentDocs = {
       name: 'closeOnBackdrop',
       type: 'boolean',
       default: 'true',
-      description: 'Whether clicking the backdrop closes the modal',
+      description: 'Whether clicking the backdrop triggers onRequestClose',
     },
     {
       name: 'closeOnEscape',
       type: 'boolean',
       default: 'true',
-      description: 'Whether pressing Escape closes the modal',
+      description: 'Whether pressing Escape triggers onRequestClose',
     },
     {
       name: 'depth',
       type: 'number',
       default: '1000',
       description: 'Portal depth for z-ordering. Higher values appear on top.',
+    },
+    {
+      name: 'viewOpenEffect',
+      type: 'EffectFn',
+      default: 'fade in',
+      description: 'Custom effect for modal content opening animation',
+    },
+    {
+      name: 'viewCloseEffect',
+      type: 'EffectFn',
+      default: 'fade out',
+      description: 'Custom effect for modal content closing animation',
     },
   ],
 
