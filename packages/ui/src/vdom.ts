@@ -365,14 +365,6 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     return dummy as Phaser.GameObjects.GameObject
   }
 
-  // Set global scene reference for animation hooks
-  const sceneForGlobal = (parentOrScene as { sys?: unknown }).sys
-    ? (parentOrScene as Phaser.Scene)
-    : ((parentOrScene as { scene?: unknown }).scene as Phaser.Scene)
-  if (sceneForGlobal) {
-    ;(window as { __phaserScene?: Phaser.Scene }).__phaserScene = sceneForGlobal
-  }
-
   // Fragment - mount children directly without creating a container
   if (vnode.type === Fragment) {
     // Mount all children directly to parent

@@ -13,8 +13,9 @@ type Cleanup = void | (() => void)
 /**
  * Get current hook context from active render
  * Must be called during component render
+ * @returns Current context or null if not in render
  */
-function getCurrent(): Ctx | null {
+export function getCurrent(): Ctx | null {
   // This is a bit tricky: we need to get the context from somewhere
   // Since we removed the global CURRENT, we need a way to access it
   // The solution: store it in a module-level variable that's managed by withHooks

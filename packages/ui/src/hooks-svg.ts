@@ -1,9 +1,10 @@
 /**
- * SVG Texture Hooks - Global texture management for SVG-based images
- * Uses global textureRegistry since Phaser's TextureManager is global per game
+ * SVG Texture Hooks - Per-scene texture management for SVG-based images
+ * Each Phaser Scene maintains its own texture registry for isolation
  */
-import type Phaser from 'phaser'
-import { useEffect, useMemo, useState } from './hooks'
+import Phaser from 'phaser'
+import { getCurrent, useEffect, useMemo, useState } from './hooks'
+import type { ParentType } from './types'
 import { textureRegistry } from './utils/texture-registry'
 
 /**
@@ -30,8 +31,8 @@ export interface SVGTextureConfig {
  * releaseSVGTexture('icon-bell')
  * ```
  */
-export function releaseSVGTexture(key: string): void {
-  textureRegistry.releaseTexture(key)
+export function releaseSVGTexture(scene: Phaser.Scene, key: string): void {
+  textureRegistry.releaseTexture(scene, key)
 }
 
 /**
@@ -48,9 +49,9 @@ export function releaseSVGTexture(key: string): void {
  * releaseSVGTextures(['icon-bell', 'icon-settings', 'icon-user'])
  * ```
  */
-export function releaseSVGTextures(keys: string[]): void {
+export function releaseSVGTextures(scene: Phaser.Scene, keys: string[]): void {
   for (const key of keys) {
-    textureRegistry.releaseTexture(key)
+    textureRegistry.releaseTexture(scene, key)
   }
 }
 
@@ -100,20 +101,22 @@ export function useSVGTexture(
 ): boolean {
   const [ready, setReady] = useState(false)
 
-  // Get scene from window global (set by mountJSX)
-  const scene = (window as { __phaserScene?: Phaser.Scene }).__phaserScene
+  // Get scene from render context (isolated per mount point)
+  const ctx = (getCurrent() as unknown as { parent: ParentType }) || {}
+  const scene =
+    ctx.parent instanceof Phaser.Scene
+      ? ctx.parent
+      : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
 
   useEffect(() => {
     if (!scene) return
 
-    textureRegistry.setScene(scene)
-
     let cancelled = false
     setReady(false)
 
-    // Request texture (with reference counting)
+    // Request texture (with reference counting per scene)
     textureRegistry
-      .requestTexture({ key, svg, width, height })
+      .requestTexture(scene, { key, svg, width, height })
       .then(() => {
         if (!cancelled) {
           setReady(true)
@@ -126,7 +129,7 @@ export function useSVGTexture(
     // Cleanup: release texture reference
     return () => {
       cancelled = true
-      // textureRegistry.releaseTexture(key)
+      // textureRegistry.releaseTexture(scene, key)
     }
   }, [scene, key, svg, width, height])
 
@@ -162,8 +165,12 @@ export function useSVGTexture(
 export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
   const [ready, setReady] = useState(false)
 
-  // Get scene from window global (set by mountJSX)
-  const scene = (window as { __phaserScene?: Phaser.Scene }).__phaserScene
+  // Get scene from render context (isolated per mount point)
+  const ctx = (getCurrent() as unknown as { parent: ParentType }) || {}
+  const scene =
+    ctx.parent instanceof Phaser.Scene
+      ? ctx.parent
+      : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
 
   // Create stable key from configs to detect changes
   const configKey = useMemo(
@@ -174,16 +181,14 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
   useEffect(() => {
     if (!scene || configs.length === 0) return
 
-    textureRegistry.setScene(scene)
-
     let cancelled = false
     setReady(false)
 
-    // Request all textures (with reference counting)
+    // Request all textures (with reference counting per scene)
     const loadSequentially = async () => {
       for (const config of configs) {
         if (cancelled) break
-        await textureRegistry.requestTexture({
+        await textureRegistry.requestTexture(scene, {
           key: config.key,
           svg: config.svg,
           width: config.width ?? 32,

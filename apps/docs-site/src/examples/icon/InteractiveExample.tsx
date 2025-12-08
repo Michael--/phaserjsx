@@ -12,19 +12,13 @@ export function InteractiveIconExample() {
   return (
     <View padding={20} gap={30} alignItems="center">
       <View enableGestures onTouch={() => setFavorite(!favorite)}>
-        <Icon
-          type={favorite ? 'star-fill' : 'star'}
-          size={48}
-          tint={favorite ? 0xffd700 : 0xffffff}
-        />
+        <Icon type={'star-fill'} size={48} tint={0xffd700} visible={favorite ? true : 'none'} />
+        <Icon type={'star'} size={48} tint={0xffffff} visible={favorite ? 'none' : true} />
       </View>
 
       <View enableGestures onTouch={() => setLikes(likes + 1)}>
-        <Icon
-          type={likes > 0 ? 'heart-fill' : 'heart'}
-          size={48}
-          tint={likes > 0 ? 0xef4444 : 0xffffff}
-        />
+        <Icon type={'heart-fill'} size={48} tint={0xef4444} visible={likes > 0 ? true : 'none'} />
+        <Icon type={'heart'} size={48} tint={0xffffff} visible={likes > 0 ? 'none' : true} />
       </View>
 
       <View direction="row" gap={15}>

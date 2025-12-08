@@ -3,8 +3,9 @@
  * Provides physics-based animations using signals for direct updates
  */
 import { computed, type Signal } from '@preact/signals-core'
-import type Phaser from 'phaser'
-import { useEffect, useRef } from '../hooks'
+import Phaser from 'phaser'
+import { getCurrent, useEffect, useRef } from '../hooks'
+import type { ParentType } from '../types'
 import { animatedSignal, type AnimatedSignal } from './animated-signal'
 import {
   SPRING_PRESETS,
@@ -66,10 +67,16 @@ export function useSpring(
   }
 
   useEffect(() => {
-    // Get scene from component context via parent reference
-    // We need to access the parent Phaser container/scene
-    // For now, we'll use a workaround by accessing window.__phaserScene
-    const scene = (window as { __phaserScene?: Phaser.Scene }).__phaserScene
+    // Get scene from render context (isolated per mount point)
+    const ctx = getCurrent() as { parent: ParentType } | null
+    if (!ctx) {
+      console.warn('useSpring: Hook context not available')
+      return
+    }
+    const scene =
+      ctx.parent instanceof Phaser.Scene
+        ? ctx.parent
+        : (ctx.parent as Phaser.GameObjects.GameObject).scene
 
     if (!scene) {
       console.warn('useSpring: Phaser scene not found in context')
@@ -186,7 +193,17 @@ export function useSprings<T extends Record<string, number>>(
 
   // Setup physics update loop
   useEffect(() => {
-    const scene = (window as { __phaserScene?: Phaser.Scene }).__phaserScene
+    // Get scene from render context (isolated per mount point)
+    const ctx = getCurrent() as { parent: ParentType } | null
+    if (!ctx) {
+      console.warn('useSprings: Hook context not available')
+      return
+    }
+    const scene =
+      ctx.parent instanceof Phaser.Scene
+        ? ctx.parent
+        : (ctx.parent as Phaser.GameObjects.GameObject).scene
+
     if (!scene) {
       console.warn('useSprings: Phaser scene not found in context')
       return

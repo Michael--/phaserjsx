@@ -443,9 +443,9 @@ export async function generateLoaders(
   // Generate loaders from the mapping
   const loaderEntries = Array.from(iconSourceMap.entries()).map(([icon, { path, isPackage }]) => {
     if (isPackage) {
-      return `  '${icon}': () => import('${path}' as string),`
+      return `  '${icon}': () => import('${path}?raw'),`
     } else {
-      return `  '${icon}': () => import('${path}'),`
+      return `  '${icon}': () => import('${path}?raw'),`
     }
   })
 
