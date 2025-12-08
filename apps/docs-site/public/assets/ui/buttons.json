@@ -1,0 +1,225 @@
+{
+  "textures": [
+    {
+      "image": "buttons.png",
+      "format": "RGBA8888",
+      "size": {
+        "w": 192,
+        "h": 48
+      },
+      "scale": 1,
+      "frames": [
+        {
+          "filename": "ButtonWhite",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 192,
+            "h": 48
+          },
+          "spriteSourceSize": {
+            "x": 1,
+            "y": 1,
+            "w": 192,
+            "h": 48
+          },
+          "frame": {
+            "x": 1,
+            "y": 1,
+            "w": 192,
+            "h": 48
+          }
+        },
+        {
+          "filename": "ButtonRoundGreen",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 251,
+            "h": 102
+          },
+          "spriteSourceSize": {
+            "x": 5,
+            "y": 53,
+            "w": 251,
+            "h": 102
+          },
+          "frame": {
+            "x": 5,
+            "y": 53,
+            "w": 251,
+            "h": 102
+          }
+        },
+        {
+          "filename": "ButtonRoundRed",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 251,
+            "h": 102
+          },
+          "spriteSourceSize": {
+            "x": 4,
+            "y": 158,
+            "w": 251,
+            "h": 102
+          },
+          "frame": {
+            "x": 4,
+            "y": 158,
+            "w": 251,
+            "h": 102
+          }
+        },
+        {
+          "filename": "Player",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 0,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Player_1",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 64,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 64,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Player_2",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 128,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 128,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Player_3",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 192,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 192,
+            "y": 264,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Ghost",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 0,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 0,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Ghost_1",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 64,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 64,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          }
+        },
+        {
+          "filename": "Ghost_2",
+          "rotated": false,
+          "trimmed": false,
+          "sourceSize": {
+            "w": 64,
+            "h": 64
+          },
+          "spriteSourceSize": {
+            "x": 128,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          },
+          "frame": {
+            "x": 128,
+            "y": 332,
+            "w": 64,
+            "h": 64
+          }
+        }
+      ]
+    }
+  ]
+}

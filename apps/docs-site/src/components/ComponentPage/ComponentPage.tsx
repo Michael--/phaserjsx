@@ -51,6 +51,7 @@ export function ComponentPage({ content, infoBox }: ComponentPageProps) {
           }
           height={content.quickStart.height}
           background={content.quickStart.background}
+          preload={content.quickStart.preload}
         />
         <div className="code-wrapper">
           <CodeBlock language="tsx">{content.quickStart.code}</CodeBlock>

@@ -10,6 +10,7 @@ import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
 import { iconContent } from './content/icon.content'
+import { imageContent } from './content/image.content'
 import { modalContent } from './content/modal.content'
 import { portalContent } from './content/portal.content'
 import { radiobuttonContent } from './content/radiobutton.content'
@@ -98,8 +99,10 @@ createRoot(document.getElementById('root')!).render(
       {/* Icon Component */}
       <Route path="/components/icon" element={<ComponentPage content={iconContent} />} />
 
+      {/* Image Component */}
+      <Route path="/components/image" element={<ComponentPage content={imageContent} />} />
+
       {/* Placeholder routes */}
-      <Route path="/components/image" element={<ComingSoonPage />} />
       <Route path="/components/*" element={<ComingSoonPage />} />
       <Route path="/guides/*" element={<ComingSoonPage />} />
       <Route path="*" element={<ComingSoonPage />} />

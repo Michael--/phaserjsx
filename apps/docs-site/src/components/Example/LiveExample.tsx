@@ -16,17 +16,36 @@ interface LiveExampleProps {
   height?: number
   /** Optional background configuration */
   background?: BackgroundConfig
+  /** Optional preload function for Phaser assets */
+  preload?: (scene: Phaser.Scene) => void
 }
 
 /**
  * Renders a Phaser canvas with a PhaserJSX example
  */
-export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExampleProps) {
+export function LiveExample({
+  sceneFactory,
+  width = 800,
+  height = 600,
+  preload,
+}: LiveExampleProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const gameRef = useRef<Phaser.Game | null>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
+
+    // Create scene class with preload support
+    const SceneClass = sceneFactory()
+    if (preload) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const originalPreload = (SceneClass.prototype as any).preload
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(SceneClass.prototype as any).preload = function (this: Phaser.Scene) {
+        preload(this)
+        originalPreload?.call(this)
+      }
+    }
 
     // Create isolated Phaser Game instance
     gameRef.current = new Phaser.Game({
@@ -35,7 +54,7 @@ export function LiveExample({ sceneFactory, width = 800, height = 600 }: LiveExa
       width,
       height,
       backgroundColor: '#2d2d2d',
-      scene: sceneFactory(),
+      scene: SceneClass,
       scale: {
         mode: Phaser.Scale.NONE,
       },

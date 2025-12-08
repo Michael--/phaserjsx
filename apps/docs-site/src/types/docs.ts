@@ -22,6 +22,8 @@ export interface ExampleDefinition {
   code: string
   /** Optional background configuration */
   background?: import('./background').BackgroundConfig
+  /** Optional preload function for Phaser assets */
+  preload?: (scene: Phaser.Scene) => void
 }
 
 /**
@@ -32,6 +34,7 @@ export interface PropDefinition {
   type: string
   default?: string
   description: string
+  required?: boolean
 }
 
 /**
@@ -72,8 +75,10 @@ export interface ComponentDocs {
   examples: ExampleDefinition[]
   /** Essential props (top 5-7) */
   propsEssential: PropDefinition[]
+  /** Advanced/optional props */
+  propsAdvanced?: PropDefinition[]
   /** All props (complete reference) */
-  propsComplete: PropDefinition[]
+  propsComplete?: PropDefinition[]
   /** Inherited components and their props */
   inherits?: InheritedComponent[]
   /** Related documentation links */

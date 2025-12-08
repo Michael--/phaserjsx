@@ -68,7 +68,7 @@ const navigation: NavSection[] = [
     title: 'Media & Icons',
     items: [
       { label: 'Icon', path: '/components/icon' },
-      { label: '🚧 Image', path: '/components/image' },
+      { label: 'Image', path: '/components/image' },
     ],
   },
   {
