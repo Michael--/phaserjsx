@@ -1,5 +1,5 @@
 /** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, useCallback, useState } from '@phaserjsx/ui'
+import { AlertDialog, Button, Text, useCallback, useState, View } from '@phaserjsx/ui'
 
 /**
  * Async Confirm Example
@@ -20,7 +20,7 @@ export function AsyncExample() {
   }, [])
 
   return (
-    <>
+    <View gap={10} padding={10}>
       <Button variant="primary" onClick={handleOpen}>
         <Text text="Start Process" />
       </Button>
@@ -35,6 +35,6 @@ export function AsyncExample() {
         confirmText="Start"
         onConfirm={handleAsyncConfirm}
       />
-    </>
+    </View>
   )
 }

@@ -1,5 +1,5 @@
 /** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, useCallback, useState } from '@phaserjsx/ui'
+import { AlertDialog, Button, Text, View, useCallback, useState } from '@phaserjsx/ui'
 
 /**
  * Quick Start AlertDialog Example
@@ -15,7 +15,7 @@ export function QuickStartExample() {
   }, [])
 
   return (
-    <>
+    <View gap={10} padding={10}>
       <Button variant="primary" onClick={handleOpen}>
         <Text text="Show Alert" />
       </Button>
@@ -28,6 +28,6 @@ export function QuickStartExample() {
         description="Are you sure you want to proceed with this action?"
         onConfirm={handleConfirm}
       />
-    </>
+    </View>
   )
 }

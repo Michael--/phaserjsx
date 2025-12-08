@@ -1,5 +1,5 @@
 /** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, useCallback, useState } from '@phaserjsx/ui'
+import { AlertDialog, Button, Text, useCallback, useState, View } from '@phaserjsx/ui'
 
 /**
  * Destructive Action Example
@@ -17,7 +17,7 @@ export function DestructiveExample() {
   }, [])
 
   return (
-    <>
+    <View gap={10} padding={10}>
       <Button onClick={handleOpen}>
         <Text text="Delete Item" />
       </Button>
@@ -33,6 +33,6 @@ export function DestructiveExample() {
         confirmText="Delete"
         onConfirm={handleDelete}
       />
-    </>
+    </View>
   )
 }

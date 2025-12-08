@@ -1,5 +1,5 @@
 /** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, useCallback, useState } from '@phaserjsx/ui'
+import { AlertDialog, Button, Text, useCallback, useState, View } from '@phaserjsx/ui'
 
 /**
  * Custom Buttons Example
@@ -15,7 +15,7 @@ export function CustomButtonsExample() {
   }, [])
 
   return (
-    <>
+    <View gap={10} padding={10}>
       <Button variant="primary" onClick={handleOpen}>
         <Text text="Show Alert" />
       </Button>
@@ -31,6 +31,6 @@ export function CustomButtonsExample() {
         showCancel={false}
         onConfirm={handleConfirm}
       />
-    </>
+    </View>
   )
 }

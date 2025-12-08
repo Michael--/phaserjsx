@@ -16,7 +16,7 @@ export function VariantsExample() {
   }, [variant])
 
   return (
-    <>
+    <View gap={10} padding={10}>
       <View direction="row" gap={8}>
         <Button variant="primary" onClick={() => setVariant('info')}>
           <Text text="Info" />
@@ -61,6 +61,6 @@ export function VariantsExample() {
           onConfirm={handleConfirm}
         />
       )}
-    </>
+    </View>
   )
 }
