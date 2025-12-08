@@ -6,6 +6,7 @@ import type Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
+import { getRenderContext } from '../../render-context'
 import { View } from '../index'
 import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
@@ -66,27 +67,30 @@ export function ScrollView(props: ScrollViewProps) {
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
 
+  const [contentHeight, setContentHeight] = useState(0)
+  const [contentWidth, setContentWidth] = useState(0)
+
   // Get slider size, considering size variant and theme
   const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
 
   // Calculate if scrolling is needed
   const viewportHeight = viewportRef.current?.height ?? 0
   const viewportWidth = viewportRef.current?.width ?? 0
-  const contentHeight = Math.max(contentRef.current?.height ?? 0, viewportHeight)
-  const contentWidth = Math.max(contentRef.current?.width ?? 0, viewportWidth)
+  const effectiveContentHeight = Math.max(contentHeight, viewportHeight)
+  const effectiveContentWidth = Math.max(contentWidth, viewportWidth)
 
   // Use epsilon threshold to avoid floating-point precision issues
   const epsilon = 0.5
-  const needsVerticalScroll = contentHeight > viewportHeight + epsilon
-  const needsHorizontalScroll = contentWidth > viewportWidth + epsilon
+  const needsVerticalScroll = effectiveContentHeight > viewportHeight + epsilon
+  const needsHorizontalScroll = effectiveContentWidth > viewportWidth + epsilon
 
   const showVerticalSliderActual =
     showVerticalSlider === true || (needsVerticalScroll && showVerticalSlider === 'auto')
   const showHorizontalSliderActual =
     showHorizontalSlider === true || (needsHorizontalScroll && showHorizontalSlider === 'auto')
 
-  const maxScrollY = Math.max(0, contentHeight - viewportHeight)
-  const maxScrollX = Math.max(0, contentWidth - viewportWidth)
+  const maxScrollY = Math.max(0, effectiveContentHeight - viewportHeight)
+  const maxScrollX = Math.max(0, effectiveContentWidth - viewportWidth)
 
   // Update scroll when props.scroll changes
   useEffect(() => {
@@ -103,13 +107,44 @@ export function ScrollView(props: ScrollViewProps) {
         dy: scroll.dy,
         viewportWidth,
         viewportHeight,
-        contentWidth,
-        contentHeight,
+        contentWidth: effectiveContentWidth,
+        contentHeight: effectiveContentHeight,
         maxScrollX,
         maxScrollY,
       })
     }
-  }, [scroll, viewportWidth, viewportHeight, contentWidth, contentHeight, maxScrollX, maxScrollY])
+  }, [
+    scroll,
+    viewportWidth,
+    viewportHeight,
+    effectiveContentWidth,
+    effectiveContentHeight,
+    maxScrollX,
+    maxScrollY,
+  ])
+
+  // Update content dimensions after layout
+  useEffect(() => {
+    const update = () => {
+      if (contentRef.current) {
+        const newHeight = contentRef.current.height
+        const newWidth = contentRef.current.width
+        if (newHeight !== contentHeight) {
+          setContentHeight(newHeight)
+        }
+        if (newWidth !== contentWidth) {
+          setContentWidth(newWidth)
+        }
+      }
+      // Defer again for next layout
+      if (contentRef.current?.scene) {
+        getRenderContext(contentRef.current.scene).deferLayout(update)
+      }
+    }
+    if (contentRef.current?.scene) {
+      getRenderContext(contentRef.current.scene).deferLayout(update)
+    }
+  }, [])
 
   const calc = (deltaX: number, deltaY: number) => {
     if (!contentRef.current || !viewportRef.current) return
@@ -216,7 +251,7 @@ export function ScrollView(props: ScrollViewProps) {
               size={props.sliderSize}
               scrollPosition={scroll.dy}
               viewportSize={viewportHeight}
-              contentSize={contentHeight}
+              contentSize={effectiveContentHeight}
               onScroll={handleVerticalScroll}
             />
           </View>
