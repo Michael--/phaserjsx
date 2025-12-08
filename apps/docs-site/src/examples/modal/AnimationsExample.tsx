@@ -2,7 +2,15 @@
  * Modal Animations Example - Zoom and fade animations
  */
 /** @jsxImportSource @phaserjsx/ui */
-import { Modal, Text, View, WrapText, useState } from '@phaserjsx/ui'
+import {
+  Modal,
+  Text,
+  View,
+  WrapText,
+  createZoomInEffect,
+  createZoomOutEffect,
+  useState,
+} from '@phaserjsx/ui'
 
 export function AnimationsExample() {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +42,12 @@ export function AnimationsExample() {
         </View>
       </View>
 
-      <Modal show={isOpen} onClosed={() => setIsOpen(false)}>
+      <Modal
+        show={isOpen}
+        onClosed={() => setIsOpen(false)}
+        viewOpenEffect={createZoomInEffect}
+        viewCloseEffect={createZoomOutEffect}
+      >
         <View
           width={400}
           height={300}
