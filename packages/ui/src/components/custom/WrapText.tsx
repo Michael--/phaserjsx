@@ -4,7 +4,7 @@
  * Eliminates boilerplate for text wrapping by detecting parent dimensions
  * @module components/custom/WrapText
  */
-import { useRef, useState, useTheme } from '../../hooks'
+import { useCallback, useEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import { Text, View, type TextProps } from '../index'
 
@@ -14,7 +14,11 @@ import { Text, View, type TextProps } from '../index'
 export interface WrapTextProps extends TextProps {
   /** Enable/disable automatic wrapping (default: true) */
   wrap?: boolean
+  /** Optional cache key to persist measured width across remounts */
+  cacheKey?: string
 }
+
+const widthCache = new Map<string, number>()
 
 /**
  * WrapText component
@@ -75,41 +79,98 @@ export function WrapText(props: WrapTextProps) {
   type ContainerWithLayout = Phaser.GameObjects.Container & {
     __getLayoutSize?: () => { width: number; height: number }
   }
-  // Start with initialWidth to prevent layout flash
-  const [containerWidth, setContainerWidth] = useState(0)
-  const lastWidthRef = useRef(0)
-
-  // Use ref callback to detect container mount/changes
-  const containerRefCallback = (container: ContainerWithLayout | null) => {
-    if (!container || !wrap) {
-      return
-    }
-
-    // Check size after layout completes
-    const checkSize = () => {
-      if (container.__getLayoutSize) {
-        const size = container.__getLayoutSize()
-        // Only update if width actually changed
-        if (
-          size.width > 0 &&
-          size.width !== lastWidthRef.current &&
-          size.width !== containerWidth
-        ) {
-          lastWidthRef.current = size.width
-          //console.log('WrapText detected container props:', props)
-          //console.log('WrapText detected container cont:', container)
-          //console.log('WrapText detected container width:', containerWidth, size.width)
-          setContainerWidth(size.width)
-        }
-      }
-    }
-    setTimeout(() => {
-      checkSize()
-    }, 0)
+  const textKey = typeof props.text === 'string' ? props.text : null
+  let cacheKey: string | null = null
+  if (typeof props.cacheKey === 'string') {
+    cacheKey = props.cacheKey
+  } else if (typeof props.key === 'string') {
+    cacheKey = textKey ? `${props.key}::${textKey}` : props.key
+  } else if (textKey) {
+    cacheKey = textKey
   }
 
-  // Calculate effective text width
-  const textWidth = containerWidth > paddingOffset ? containerWidth - paddingOffset : 0
+  const cachedWidth = cacheKey ? (widthCache.get(cacheKey) ?? 0) : 0
+
+  // Start with cached width (if any) to prevent layout flash across remounts
+  const [containerWidth, setContainerWidth] = useState(cachedWidth)
+  const lastWidthRef = useRef(cachedWidth)
+  const containerRef = useRef<ContainerWithLayout | null>(null)
+  const measureRafRef = useRef<number | null>(null)
+
+  const measureWidth = useCallback(
+    (container: ContainerWithLayout) => {
+      if (!wrap) return
+
+      const performMeasure = () => {
+        if (!container.__getLayoutSize) return
+
+        const size = container.__getLayoutSize()
+        const nextWidth = size.width
+
+        if (nextWidth > 0 && nextWidth !== lastWidthRef.current && nextWidth !== containerWidth) {
+          lastWidthRef.current = nextWidth
+          if (cacheKey) {
+            widthCache.set(cacheKey, nextWidth)
+          }
+          setContainerWidth(nextWidth)
+        }
+      }
+
+      // Schedule measure on next frame to allow layout to settle
+      if (measureRafRef.current !== null) {
+        return
+      }
+
+      measureRafRef.current = requestAnimationFrame(() => {
+        measureRafRef.current = null
+        performMeasure()
+      })
+    },
+    [containerWidth, wrap]
+  )
+
+  // Use ref callback to detect container mount/changes
+  const containerRefCallback = useCallback(
+    (container: ContainerWithLayout | null) => {
+      if (containerRef.current === container) return
+
+      containerRef.current = container
+
+      if (!container || !wrap) {
+        return
+      }
+
+      if (containerWidth > 0) {
+        return
+      }
+
+      measureWidth(container)
+    },
+    [containerWidth, measureWidth, wrap]
+  )
+
+  // Re-measure if wrap toggles on while mounted and width not yet captured
+  useEffect(() => {
+    if (!wrap || containerWidth > 0) return
+
+    const container = containerRef.current
+    if (container) {
+      measureWidth(container)
+    }
+  }, [containerWidth, measureWidth, wrap])
+
+  useEffect(() => {
+    return () => {
+      if (measureRafRef.current !== null) {
+        cancelAnimationFrame(measureRafRef.current)
+        measureRafRef.current = null
+      }
+    }
+  }, [])
+
+  // Calculate effective text width; fall back to last known width when container is temporarily hidden
+  const measuredWidth = containerWidth > 0 ? containerWidth : lastWidthRef.current
+  const textWidth = measuredWidth > paddingOffset ? measuredWidth - paddingOffset : 0
 
   // Merge themed style with prop style
   const textStyle = {
