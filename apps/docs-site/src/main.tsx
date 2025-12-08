@@ -9,6 +9,7 @@ import { chartextinputContent } from './content/chartextinput.content'
 import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
+import { iconContent } from './content/icon.content'
 import { modalContent } from './content/modal.content'
 import { portalContent } from './content/portal.content'
 import { radiobuttonContent } from './content/radiobutton.content'
@@ -94,9 +95,11 @@ createRoot(document.getElementById('root')!).render(
         element={<ComponentPage content={chartextinputContent} />}
       />
 
+      {/* Icon Component */}
+      <Route path="/components/icon" element={<ComponentPage content={iconContent} />} />
+
       {/* Placeholder routes */}
       <Route path="/components/image" element={<ComingSoonPage />} />
-      <Route path="/components/icon" element={<ComingSoonPage />} />
       <Route path="/components/*" element={<ComingSoonPage />} />
       <Route path="/guides/*" element={<ComingSoonPage />} />
       <Route path="*" element={<ComingSoonPage />} />

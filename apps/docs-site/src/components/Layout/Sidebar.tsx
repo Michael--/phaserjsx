@@ -65,9 +65,15 @@ const navigation: NavSection[] = [
     ],
   },
   {
+    title: 'Media & Icons',
+    items: [
+      { label: 'Icon', path: '/components/icon' },
+      { label: '🚧 Image', path: '/components/image' },
+    ],
+  },
+  {
     title: 'Primitives',
     items: [
-      { label: '🚧 Image', path: '/components/image' },
       { label: '🚧 Sprite', path: '/components/sprite' },
       { label: '🚧 Graphics', path: '/components/graphics' },
       { label: '🚧 NineSlice', path: '/components/nineslice' },

@@ -47,6 +47,18 @@ export interface InheritedComponent {
 }
 
 /**
+ * Related documentation link
+ */
+export interface RelatedLink {
+  /** Link title */
+  title: string
+  /** Link URL */
+  link: string
+  /** Link description */
+  description: string
+}
+
+/**
  * Complete component documentation structure
  */
 export interface ComponentDocs {
@@ -64,4 +76,6 @@ export interface ComponentDocs {
   propsComplete: PropDefinition[]
   /** Inherited components and their props */
   inherits?: InheritedComponent[]
+  /** Related documentation links */
+  relatedLinks?: RelatedLink[]
 }
