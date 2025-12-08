@@ -2,6 +2,7 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
+import { accordionContent } from './content/accordion.content'
 import { alertdialogContent } from './content/alertdialog.content'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
@@ -79,6 +80,9 @@ createRoot(document.getElementById('root')!).render(
         path="/components/alertdialog"
         element={<ComponentPage content={alertdialogContent} />}
       />
+
+      {/* Accordion Component */}
+      <Route path="/components/accordion" element={<ComponentPage content={accordionContent} />} />
 
       {/* Guides */}
       <Route path="/guides/best-practices" element={<BestPracticesPage />} />

@@ -152,19 +152,27 @@ export const defaultTheme: Theme = {
     gap: 8,
   },
   Accordion: {
-    animated: true,
-    animationConfig: { tension: 170, friction: 26 } as const,
+    effect: 'none',
+    effectConfig: { magnitude: 0.02, time: 150 },
     headerStyle: {
       backgroundColor: colors.surface.dark.toNumber(),
-      padding: 12,
+      padding: 10,
+      gap: 10,
+      cornerRadius: 5,
+      width: 'fill',
     },
     contentStyle: {
       backgroundColor: colors.surface.light.toNumber(),
-      padding: 12,
+      padding: 10,
+      cornerRadius: 5,
+      width: 'fill',
+    },
+    Icon: {
+      size: 24,
     },
     textStyle: {
       color: colors.text.DEFAULT.toString(),
-      fontSize: '16px',
+      fontSize: '18px',
     },
   },
   NineSliceButton: {},
