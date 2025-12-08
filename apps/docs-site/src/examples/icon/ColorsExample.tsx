@@ -9,8 +9,13 @@ export function ColorsIconExample() {
   return (
     <View width={'100%'} height="100%" padding={20} gap={30} flexWrap="wrap">
       <View direction="column" alignItems="center" gap={10}>
-        <Text text="Default (White)" />
+        <Text text="Default" />
         <Icon type="star" size={48} />
+      </View>
+
+      <View direction="column" alignItems="center" gap={10}>
+        <Text text="White" />
+        <Icon type="star" size={48} tint={0xffffff} />
       </View>
 
       <View direction="column" alignItems="center" gap={10}>
