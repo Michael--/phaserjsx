@@ -24,6 +24,7 @@ export const defaultTheme: Theme = {
   },
   Icon: {
     size: 24,
+    tint: colors.border.dark.toNumber(),
   },
   text: {
     text: '',

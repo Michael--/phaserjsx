@@ -77,8 +77,9 @@ export function Icon(props: IconProps) {
 
   // Merge themed props with component props (props override theme)
   const size = props.size ?? themed.size ?? 32
+  const tint = props.tint ?? themed.tint
 
-  return <GenericIcon {...props} size={size} loader={iconLoader} />
+  return <GenericIcon {...props} size={size} tint={tint} loader={iconLoader} />
 }
 
 /**

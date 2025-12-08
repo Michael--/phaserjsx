@@ -134,7 +134,7 @@ export interface ImageBaseProps extends TransformProps, PhaserProps, LayoutProps
   frame?: string | number
 
   /** Tint color applied to image (0xRRGGBB) */
-  tint?: number
+  tint?: number | undefined
 
   /** Display width (scales image to fit) */
   displayWidth?: number | undefined
