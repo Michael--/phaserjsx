@@ -12,22 +12,22 @@ export function AtlasImageExample() {
       <View gap={20} alignItems="center" flexWrap="wrap" direction="row">
         <View direction="column" alignItems="center" gap={10}>
           <Text text="Button White" />
-          <Image texture="buttons" frame="ButtonWhite" displayWidth={120} displayHeight={30} />
+          <Image texture="buttons" frame="ButtonWhite" width={120} height={30} />
         </View>
 
         <View direction="column" alignItems="center" gap={10}>
           <Text text="Button Green" />
-          <Image texture="buttons" frame="ButtonRoundGreen" displayWidth={120} displayHeight={50} />
+          <Image texture="buttons" frame="ButtonRoundGreen" width={120} height={50} />
         </View>
 
         <View direction="column" alignItems="center" gap={10}>
           <Text text="Button Red" />
-          <Image texture="buttons" frame="ButtonRoundRed" displayWidth={120} displayHeight={50} />
+          <Image texture="buttons" frame="ButtonRoundRed" width={120} height={50} />
         </View>
 
         <View direction="column" alignItems="center" gap={10}>
           <Text text="Player Sprite" />
-          <Image texture="buttons" frame="Player" displayWidth={64} displayHeight={64} />
+          <Image texture="buttons" frame="Player" width={64} height={64} />
         </View>
       </View>
     </View>

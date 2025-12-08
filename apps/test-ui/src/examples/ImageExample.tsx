@@ -60,9 +60,9 @@ function ExplicitSizeImage() {
       <Text text="displayWidth and displayHeight set" style={tokens?.textStyles.small} />
 
       <ViewLevel3 direction="row" gap={10}>
-        <Image texture="phaser-jsx-logo" displayWidth={64} displayHeight={64} />
-        <Image texture="phaser-jsx-logo" displayWidth={128} displayHeight={128} />
-        <Image texture="phaser-jsx-logo" displayWidth={96} displayHeight={64} />
+        <Image texture="phaser-jsx-logo" width={64} height={64} />
+        <Image texture="phaser-jsx-logo" width={128} height={128} />
+        <Image texture="phaser-jsx-logo" width={96} height={64} />
       </ViewLevel3>
     </ViewLevel2>
   )
@@ -88,7 +88,7 @@ function FitModesDemo() {
             borderWidth={2}
             direction="stack"
           >
-            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="fill" />
+            <Image texture="phaser-jsx-logo" width={120} height={80} fit="fill" />
           </View>
         </View>
 
@@ -101,7 +101,7 @@ function FitModesDemo() {
             borderWidth={2}
             direction="stack"
           >
-            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="contain" />
+            <Image texture="phaser-jsx-logo" width={120} height={80} fit="contain" />
           </View>
         </View>
 
@@ -115,7 +115,7 @@ function FitModesDemo() {
             direction="stack"
             overflow="hidden"
           >
-            <Image texture="phaser-jsx-logo" displayWidth={120} displayHeight={80} fit="cover" />
+            <Image texture="phaser-jsx-logo" width={120} height={80} fit="cover" />
           </View>
         </View>
       </ViewLevel3>
@@ -143,13 +143,13 @@ function HeadlessImage() {
         backgroundColor={colors?.background.darkest.toNumber()}
         direction="stack"
       >
-        <Image texture="test-image" headless={true} x={150} y={100} displayWidth={200} />
+        <Image texture="test-image" headless={true} x={150} y={100} width={200} />
         <Image
           texture="test-image"
           headless={true}
           x={150}
           y={100}
-          displayWidth={200}
+          width={200}
           rotation={Math.PI / 4}
           alpha={0.7}
         />
@@ -178,7 +178,7 @@ function TintDemo() {
       <Text text="Tint Colors" style={tokens?.textStyles.large} />
 
       <ViewLevel3 direction="column" gap={10} alignItems="center">
-        <Image texture="test-image" displayWidth={200} tint={tintColor} />
+        <Image texture="test-image" width={200} tint={tintColor} />
         <View direction="row" gap={10}>
           {colors.map((color) => (
             <View
@@ -219,8 +219,8 @@ function SVGPageSingle() {
       <Text text="SVG using single load" style={tokens?.textStyles.large} />
       <ViewLevel3 gap={20} direction="row" padding={10}>
         <Image texture={ready ? 'icon-bricks' : ''} />
-        <Image texture={ready ? 'icon-bricks' : ''} displayWidth={64} />
-        <Image texture={ready ? 'icon-bricks' : ''} displayWidth={96} />
+        <Image texture={ready ? 'icon-bricks' : ''} width={64} />
+        <Image texture={ready ? 'icon-bricks' : ''} width={96} />
       </ViewLevel3>
     </ViewLevel2>
   )

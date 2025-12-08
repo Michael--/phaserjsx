@@ -82,15 +82,22 @@ export const imageContent: ComponentDocs = {
     },
     {
       name: 'width',
-      type: 'number',
+      type: 'number | SizeValue',
       description:
-        'Display width in pixels. Scales the image from its original size. Use with height for aspect ratio control.',
+        'Display width. Number for pixels, or "50%", "100vw", "fill" for responsive sizing. Scales the image from its original size.',
     },
     {
       name: 'height',
-      type: 'number',
+      type: 'number | SizeValue',
       description:
-        'Display height in pixels. Scales the image from its original size. Independent from width for stretching.',
+        'Display height. Number for pixels, or "50%", "100vh", "fill" for responsive sizing. Independent from width for stretching.',
+    },
+    {
+      name: 'fit',
+      type: "'fill' | 'contain' | 'cover'",
+      default: 'fill',
+      description:
+        'How image fits within bounds. fill: stretch to fill (may distort), contain: fit within bounds (preserve aspect), cover: fill bounds (preserve aspect, may crop).',
     },
   ],
 
@@ -108,30 +115,55 @@ export const imageContent: ComponentDocs = {
       description: 'Opacity from 0 (transparent) to 1 (opaque). Affects entire image uniformly.',
     },
     {
-      name: 'flipX',
-      type: 'boolean',
-      default: 'false',
-      description: 'Flip image horizontally. Useful for character direction changes.',
-    },
-    {
-      name: 'flipY',
-      type: 'boolean',
-      default: 'false',
-      description: 'Flip image vertically. Rarely needed, mostly for effects.',
-    },
-    {
       name: 'originX',
       type: 'number',
-      default: '0.5',
+      default: '0 (layout) / 0.5 (headless)',
       description:
-        'X anchor point (0-1). 0=left, 0.5=center, 1=right. Affects rotation and scaling pivot.',
+        'X anchor point (0-1). 0=left, 0.5=center, 1=right. Default depends on headless flag. Affects rotation and scaling pivot.',
     },
     {
       name: 'originY',
       type: 'number',
-      default: '0.5',
+      default: '0 (layout) / 0.5 (headless)',
       description:
-        'Y anchor point (0-1). 0=top, 0.5=center, 1=bottom. Affects rotation and scaling pivot.',
+        'Y anchor point (0-1). 0=top, 0.5=center, 1=bottom. Default depends on headless flag. Affects rotation and scaling pivot.',
+    },
+    {
+      name: 'visible',
+      type: "boolean | 'none'",
+      default: 'true',
+      description:
+        'Visibility. true: visible and takes space, false: hidden but takes space, "none": hidden and no space (like CSS display: none).',
+    },
+    {
+      name: 'headless',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'If true, image is rendered but excluded from layout. Use for decorative sprites, particles, or absolute-positioned images.',
+    },
+    {
+      name: 'x',
+      type: 'number',
+      description:
+        'X position in pixels. Overrides layout positioning for absolute placement. Use with headless for manual positioning.',
+    },
+    {
+      name: 'y',
+      type: 'number',
+      description:
+        'Y position in pixels. Overrides layout positioning for absolute placement. Use with headless for manual positioning.',
+    },
+    {
+      name: 'rotation',
+      type: 'number',
+      description:
+        'Rotation in radians. Only works with headless=true (rotation ignored for layout-aware images to prevent overlap issues).',
+    },
+    {
+      name: 'depth',
+      type: 'number',
+      description: 'Z-index for rendering order. Higher values render on top. Useful for layering.',
     },
   ],
 }

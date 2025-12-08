@@ -6,7 +6,7 @@ import type { ButtonProps } from './components/custom/Button'
 import type { TextProps as CustomTextProps } from './components/custom/Text'
 import type { ViewProps as CustomViewProps } from './components/custom/View'
 import type { GraphicsProps } from './components/primitives/graphics'
-import type { ImageProps } from './components/primitives/image'
+import type { ImagePrimitiveProps } from './components/primitives/image'
 import type { NineSliceProps } from './components/primitives/nineslice'
 import type { SpriteProps } from './components/primitives/sprite'
 import type { TextProps as PrimitiveTextProps } from './components/primitives/text'
@@ -22,7 +22,7 @@ declare global {
       text: PrimitiveTextProps
       nineslice: NineSliceProps
       sprite: SpriteProps
-      image: ImageProps
+      image: ImagePrimitiveProps
       graphics: GraphicsProps
       tilesprite: TileSpriteProps
       // Public API (uppercase) - custom wrappers with strict types
@@ -32,7 +32,7 @@ declare global {
       // Legacy uppercase primitives - for backward compatibility
       NineSlice: NineSliceProps
       Sprite: SpriteProps
-      Image: ImageProps
+      Image: ImagePrimitiveProps
       Graphics: GraphicsProps
       TileSprite: TileSpriteProps
     }

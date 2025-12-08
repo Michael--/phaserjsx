@@ -12,12 +12,13 @@ export { Dialog, type DialogProps } from './Dialog'
 export { Divider, type DividerProps } from './Divider'
 export { Dropdown, type DropdownOption, type DropdownProps } from './Dropdown'
 export {
-  createIconComponent,
   Icon,
+  createIconComponent,
   useIconPreload,
   type IconLoaderFn,
   type IconProps,
 } from './Icon'
+export { Image, type ImageProps } from './Image'
 export { Modal, type ModalProps } from './Modal'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { Portal, type PortalProps } from './Portal'
@@ -25,8 +26,8 @@ export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'
 export {
-  calculateSliderSize,
   ScrollSlider,
+  calculateSliderSize,
   type ScrollSliderProps,
   type SliderSize,
 } from './ScrollSlider'

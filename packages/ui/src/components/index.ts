@@ -13,10 +13,11 @@ import { viewCreator, viewPatcher } from './primitives/view'
 
 /**
  * Component type constants for JSX usage (legacy primitives)
+ * Note: Image constant removed to avoid conflict with custom Image component
+ * Use lowercase 'image' for primitive, or import Image wrapper from custom
  */
 export const NineSlice = 'NineSlice' as const
 export const Sprite = 'Sprite' as const
-export const Image = 'Image' as const
 export const Graphics = 'Graphics' as const
 export const TileSprite = 'TileSprite' as const
 
@@ -86,7 +87,7 @@ export {
   imageCreator,
   imagePatcher,
   type ImageBaseProps,
-  type ImageProps,
+  type ImagePrimitiveProps,
 } from './primitives/image'
 
 // Re-export Graphics component (no wrapper yet)

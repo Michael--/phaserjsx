@@ -3,10 +3,9 @@
  * Generic Icon component with pluggable loader system
  * Supports any icon library through a loader function
  */
-import type { ImageProps } from '..'
 import { useEffect, useState } from '../../hooks'
 import { useSVGTexture } from '../../hooks-svg'
-import { Image } from '../index'
+import { Image, type ImageProps } from './Image'
 
 /**
  * Icon loader function type
@@ -57,14 +56,7 @@ export function Icon<T extends string = string>(props: IconProps<T>) {
   const textureKey = `icon-${type}-${size}`
   const ready = svg ? useSVGTexture(textureKey, svg, size, size) : false
 
-  return (
-    <Image
-      texture={ready ? textureKey : ''}
-      displayWidth={size}
-      displayHeight={size}
-      {...imageProps}
-    />
-  )
+  return <Image texture={ready ? textureKey : ''} width={size} height={size} {...imageProps} />
 }
 
 /**

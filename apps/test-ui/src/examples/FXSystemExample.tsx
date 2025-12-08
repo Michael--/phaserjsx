@@ -116,7 +116,7 @@ export function FXSystemExample() {
                 justifyContent="center"
                 margin={50}
               >
-                <Image texture="phaser-jsx-logo" displayWidth={200} displayHeight={200} />
+                <Image texture="phaser-jsx-logo" width={200} height={200} />
                 <Text text="Stack FX Effects" />
               </View>
 

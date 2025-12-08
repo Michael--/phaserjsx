@@ -10,9 +10,9 @@ export function QuickStartImageExample() {
       <Text text="Images require preloaded Phaser assets:" />
 
       <View gap={20} direction="row" flexWrap="wrap">
-        <Image texture="test" displayWidth={64} displayHeight={64} />
-        <Image texture="back" displayWidth={64} displayHeight={64} />
-        <Image texture="wideline" displayWidth={64} displayHeight={64} />
+        <Image texture="test" width={64} height={64} />
+        <Image texture="back" width={64} height={64} />
+        <Image texture="wideline" width={64} height={64} />
       </View>
     </View>
   )
