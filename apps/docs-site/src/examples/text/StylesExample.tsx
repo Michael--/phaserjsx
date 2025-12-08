@@ -8,7 +8,7 @@ export function StylesTextExample() {
   return (
     <View width={'fill'} height={'fill'} justifyContent="center" alignItems="center" gap={16}>
       <Text text="Default Style" />
-      <Text text="Large Bold" style={{ fontSize: '28px', fontWeight: 'bold' }} />
+      <Text text="Large Bold" style={{ fontSize: '28px', fontStyle: 'bold' }} />
       <Text text="Colored Text" style={{ color: '#e91e63', fontSize: '20px' }} />
       <Text
         text="Custom Font"

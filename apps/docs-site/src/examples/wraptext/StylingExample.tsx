@@ -21,7 +21,7 @@ export function StylingWrapTextExample() {
       <View width={400} backgroundColor={0xfce4ec} padding={16} cornerRadius={8}>
         <WrapText
           text="Bold text with custom font family maintains proper wrapping behavior."
-          style={{ fontSize: '16px', fontWeight: 'bold', fontFamily: 'monospace' }}
+          style={{ fontSize: '16px', fontStyle: 'bold', fontFamily: 'monospace' }}
         />
       </View>
 

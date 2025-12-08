@@ -17,10 +17,7 @@ export function StandaloneRadioButtonExample() {
       justifyContent="center"
       alignItems="start"
     >
-      <Text
-        text="Manual RadioButton Control"
-        style={{ color: '#ffffff', fontSize: '14px', marginBottom: '8px' }}
-      />
+      <Text text="Manual RadioButton Control" style={{ color: '#ffffff', fontSize: '14px' }} />
 
       <RadioButton
         label="Option 1"
@@ -40,12 +37,9 @@ export function StandaloneRadioButtonExample() {
         onClick={() => setSelected('option3')}
       />
 
-      <Text
-        text={`Selected: ${selected}`}
-        style={{ color: '#95a5a6', fontSize: '12px', marginTop: '8px' }}
-      />
+      <Text text={`Selected: ${selected}`} style={{ color: '#95a5a6', fontSize: '12px' }} />
 
-      <View direction="column" gap={4} marginTop={16}>
+      <View direction="column" gap={4}>
         <Text
           text="Note: RadioButton provides the individual control."
           style={{ color: '#95a5a6', fontSize: '11px' }}
