@@ -29,6 +29,7 @@ const navigation: NavSection[] = [
       { label: 'View', path: '/components/view' },
       { label: 'ScrollView', path: '/components/scroll-view' },
       { label: 'Divider', path: '/components/divider' },
+      { label: '🚧 ScrollSlider (internal)', path: '/components/scroll-slider' },
     ],
   },
   {
@@ -69,21 +70,20 @@ const navigation: NavSection[] = [
       { label: 'Icon', path: '/components/icon' },
       { label: 'Image', path: '/components/image' },
       { label: 'Graphics', path: '/components/graphics' },
+      { label: 'NineSliceButton', path: '/components/nineslice-button' },
     ],
   },
   {
     title: 'Primitives',
     items: [
-      { label: '🚧 Sprite', path: '/components/sprite' },
-      { label: '🚧 NineSlice', path: '/components/nineslice' },
-      { label: '🚧 TileSprite', path: '/components/tilesprite' },
+      { label: '🚧 Sprite (soon)', path: '/components/sprite' },
+      { label: '🚧 NineSlice (internal)', path: '/components/nineslice' },
+      { label: '🚧 TileSprite (soon)', path: '/components/tilesprite' },
     ],
   },
   {
     title: 'Advanced',
     items: [
-      { label: '🚧 NineSliceButton', path: '/components/nineslice-button' },
-      { label: '🚧 ScrollSlider', path: '/components/scroll-slider' },
       { label: '🚧 RefOriginView', path: '/components/ref-origin-view' },
       { label: '🚧 TransformOriginView', path: '/components/transform-origin-view' },
     ],

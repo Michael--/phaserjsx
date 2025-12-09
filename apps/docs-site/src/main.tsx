@@ -14,6 +14,7 @@ import { graphicsContent } from './content/graphics.content'
 import { iconContent } from './content/icon.content'
 import { imageContent } from './content/image.content'
 import { modalContent } from './content/modal.content'
+import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { portalContent } from './content/portal.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { scrollviewContent } from './content/scrollview.content'
@@ -109,6 +110,12 @@ createRoot(document.getElementById('root')!).render(
 
       {/* Graphics Component */}
       <Route path="/components/graphics" element={<ComponentPage content={graphicsContent} />} />
+
+      {/* NineSliceButton Component */}
+      <Route
+        path="/components/nineslice-button"
+        element={<ComponentPage content={nineSliceButtonContent} />}
+      />
 
       {/* Placeholder routes */}
       <Route path="/components/*" element={<ComingSoonPage />} />
