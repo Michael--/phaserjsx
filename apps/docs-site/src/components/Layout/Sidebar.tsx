@@ -95,7 +95,7 @@ const navigation: NavSection[] = [
       { label: 'Responsive Design', path: '/guides/responsive-design' },
       { label: 'Layout Patterns', path: '/guides/layout-patterns' },
       { label: 'Effects & Animations', path: '/guides/effects-animations' },
-      { label: '🚧 Performance', path: '/guides/performance' },
+      { label: 'Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
       { label: 'Testing & Development', path: '/guides/testing' },
     ],

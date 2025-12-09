@@ -39,6 +39,7 @@ import {
 import { EffectsPage } from './pages/Guides/EffectsPage'
 import { GesturesPage } from './pages/Guides/GesturesPage'
 import { LayoutPatternsPage } from './pages/Guides/LayoutPatternsPage'
+import { PerformancePage } from './pages/Guides/PerformancePage'
 import { ResponsiveDesignPage } from './pages/Guides/ResponsiveDesignPage'
 import { ThemeSystemPage } from './pages/Guides/ThemeSystemPage'
 import { HomePage } from './pages/HomePage'
@@ -99,6 +100,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/effects-animations" element={<EffectsPage />} />
       <Route path="/guides/gestures" element={<GesturesPage />} />
       <Route path="/guides/layout-patterns" element={<LayoutPatternsPage />} />
+      <Route path="/guides/performance" element={<PerformancePage />} />
       <Route path="/guides/responsive-design" element={<ResponsiveDesignPage />} />
       <Route path="/guides/theme-system" element={<ThemeSystemPage />} />
       <Route path="/guides/icon-system" element={<IconSystemPage />} />
