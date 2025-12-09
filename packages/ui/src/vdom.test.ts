@@ -44,7 +44,6 @@ describe('VDOM', () => {
 
   beforeEach(() => {
     mockScene = {
-      rexUI: {},
       sys: {
         settings: {
           active: true,

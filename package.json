@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Declarative Phaser3 + rexUI framework with TypeScript",
-  "packageManager": "pnpm@latest",
+  "description": "Declarative Phaser3 + UI framework with TypeScript",
+  "packageManager": "pnpm@9.0.0",
   "workspaces": [
     "packages/*",
     "apps/*"

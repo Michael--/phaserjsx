@@ -96,7 +96,7 @@ function Counter() {
         <p className="mb-4">Create a scene that mounts your PhaserJSX component:</p>
         <CodeBlock language="typescript">
           {`import Phaser from 'phaser'
-import { mount } from '@phaserjsx/ui'
+import { mountJSX } from '@phaserjsx/ui'
 import { Counter } from './Counter'
 
 export class GameScene extends Phaser.Scene {
@@ -106,7 +106,10 @@ export class GameScene extends Phaser.Scene {
 
   create() {
     // Mount the Counter component
-    mount(<Counter />, this)
+    mountJSX(this, Counter, {
+      width: this.scale.width,
+      height: this.scale.height,
+    })
   }
 }`}
         </CodeBlock>
@@ -172,7 +175,7 @@ new Phaser.Game(config)`}
         <CodeBlock language="typescript">
           {`/** @jsxImportSource @phaserjsx/ui */
 import Phaser from 'phaser'
-import { mount, Button, Text, View, useState } from '@phaserjsx/ui'
+import { mountJSX, Button, Text, View, useState } from '@phaserjsx/ui'
 
 // Component
 function Counter() {
@@ -226,7 +229,10 @@ class GameScene extends Phaser.Scene {
   }
 
   create() {
-    mount(<Counter />, this)
+    mountJSX(this, Counter, {
+      width: this.scale.width,
+      height: this.scale.height,
+    })
   }
 }
 
@@ -288,8 +294,10 @@ new Phaser.Game(config)`}
           <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
             <h3 className="text-lg font-semibold mb-2">Mount Function</h3>
             <p>
-              Use <code>mount(component, scene)</code> to render your component tree into a Phaser
-              scene. Call this in the scene's <code>create()</code> method.
+              Use <code>mountJSX(scene, Component, props)</code> to render your component tree into
+              a Phaser scene. Call this in the scene's <code>create()</code> method. Always pass
+              width and height from <code>this.scale.width</code> and <code>this.scale.height</code>
+              .
             </p>
           </div>
         </div>
@@ -393,8 +401,8 @@ new Phaser.Game(config)`}
                 invisible
               </li>
               <li>
-                Verify you called <code>mount(component, scene)</code> in the scene's{' '}
-                <code>create()</code> method
+                Verify you called <code>mountJSX(this, Component, {'{ width, height }'})</code> in
+                the scene's <code>create()</code> method
               </li>
               <li>Check browser console for TypeScript or runtime errors</li>
             </ul>

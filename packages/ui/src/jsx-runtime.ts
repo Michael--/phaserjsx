@@ -37,7 +37,7 @@ export function jsx(
     vnode.__theme = theme as NonNullable<VNode['__theme']>
   }
 
-  // Extract RexUI add() config and store separately (removed from props)
+  // Extract UI add() config and store separately (removed from props)
   if (expand !== undefined || proportion !== undefined) {
     vnode.__addConfig = {}
     if (expand !== undefined) vnode.__addConfig.expand = expand as boolean

@@ -2,7 +2,7 @@
   "name": "@phaserjsx/ui",
   "version": "0.0.0",
   "type": "module",
-  "description": "Declarative Phaser3 + rexUI renderer core library",
+  "description": "Declarative Phaser3 + UI renderer core library",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -58,7 +58,6 @@
   "keywords": [
     "phaser",
     "phaser3",
-    "rexui",
     "declarative",
     "typescript",
     "game-engine"

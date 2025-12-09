@@ -127,11 +127,11 @@ phaserjsx/
 
 ### 📝 Next Steps
 
-1. **Add source code** - Implement actual Phaser + rexUI logic in `packages/ui/src/`
+1. **Add source code** - Implement actual Phaser + UI logic in `packages/ui/src/`
 2. **Build playground** - Create examples in `apps/test-ui/src/`
 3. **Write tests** - Add real test coverage
 4. **Setup npm publishing** - Add NPM_TOKEN to GitHub secrets for automated releases
-5. **Add dependencies** - Install phaser and rexui when ready to implement
+5. **Add dependencies** - Install phaser when ready to implement
 
 ### 🚀 Quick Start
 

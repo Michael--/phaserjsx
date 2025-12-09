@@ -1,8 +1,8 @@
 # phaserjsx
 
-> Declarative Phaser3 + rexUI framework with TypeScript
+> Declarative Phaser3 + UI framework with TypeScript
 
-A modern, type-safe, declarative framework for building Phaser3 games with rexUI components.
+A modern, type-safe, declarative framework for building Phaser3 games with UI components.
 
 ## 🚀 Getting Started
 
@@ -29,7 +29,7 @@ pnpm dev
 
 This monorepo contains the following packages:
 
-- **[@phaserjsx/ui](./packages/ui)** - Core library for declarative Phaser3 + rexUI rendering
+- **[@phaserjsx/ui](./packages/ui)** - Core library for declarative Phaser3 + UI rendering
 - **[@phaserjsx/test-ui](./apps/test-ui)** - Test and playground application
 
 ## 🛠️ Development
@@ -114,4 +114,3 @@ MIT
 ## 🔗 Links
 
 - [Phaser 3 Documentation](https://photonstorm.github.io/phaser3-docs/)
-- [rexUI Documentation](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/)
