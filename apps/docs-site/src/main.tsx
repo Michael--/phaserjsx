@@ -17,10 +17,12 @@ import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { portalContent } from './content/portal.content'
 import { radiobuttonContent } from './content/radiobutton.content'
+import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
 import { sliderContent } from './content/slider.content'
 import { textContent } from './content/text.content'
 import { toggleContent } from './content/toggle.content'
+import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
 import { wraptextContent } from './content/wraptext.content'
 import './index.css'
@@ -115,6 +117,18 @@ createRoot(document.getElementById('root')!).render(
       <Route
         path="/components/nineslice-button"
         element={<ComponentPage content={nineSliceButtonContent} />}
+      />
+
+      {/* RefOriginView Component */}
+      <Route
+        path="/components/ref-origin-view"
+        element={<ComponentPage content={refOriginViewContent} />}
+      />
+
+      {/* TransformOriginView Component */}
+      <Route
+        path="/components/transform-origin-view"
+        element={<ComponentPage content={transformOriginViewContent} />}
       />
 
       {/* Placeholder routes */}

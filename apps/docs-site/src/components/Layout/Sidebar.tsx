@@ -77,15 +77,14 @@ const navigation: NavSection[] = [
     title: 'Primitives',
     items: [
       { label: '🚧 Sprite (soon)', path: '/components/sprite' },
-      { label: '🚧 NineSlice (internal)', path: '/components/nineslice' },
       { label: '🚧 TileSprite (soon)', path: '/components/tilesprite' },
     ],
   },
   {
     title: 'Advanced',
     items: [
-      { label: '🚧 RefOriginView', path: '/components/ref-origin-view' },
-      { label: '🚧 TransformOriginView', path: '/components/transform-origin-view' },
+      { label: 'RefOriginView', path: '/components/ref-origin-view' },
+      { label: 'TransformOriginView', path: '/components/transform-origin-view' },
     ],
   },
   {

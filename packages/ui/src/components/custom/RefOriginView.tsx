@@ -17,10 +17,11 @@
  *   <Text>Rotates around center</Text>
  * </RefOriginView>
  */
+import type { ChildrenType } from '@phaserjsx/ui/types'
 import type Phaser from 'phaser'
-import { useRef, useState, type VNode } from '../../hooks'
-import { View } from '../index'
 import type { ViewProps } from '..'
+import { useRef, useState } from '../../hooks'
+import { View } from '../index'
 
 /**
  * Extended ViewProps with origin support
@@ -45,9 +46,9 @@ export interface RefOriginViewProps extends Omit<ViewProps, 'x' | 'y' | 'childre
    */
   y?: number
   /**
-   * Child node! Only one child allowed.
+   * Children nodes.
    */
-  children?: VNode
+  children?: ChildrenType
 }
 
 /**
