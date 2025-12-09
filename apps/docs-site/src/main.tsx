@@ -37,6 +37,7 @@ import {
   TestingPage,
 } from './pages/Guides'
 import { EffectsPage } from './pages/Guides/EffectsPage'
+import { ThemeSystemPage } from './pages/Guides/ThemeSystemPage'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
@@ -93,6 +94,8 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/testing" element={<TestingPage />} />
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
       <Route path="/guides/effects-animations" element={<EffectsPage />} />
+      <Route path="/guides/theme-system" element={<ThemeSystemPage />} />
+      <Route path="/guides/icon-system" element={<IconSystemPage />} />
       <Route path="/guides/icon-system" element={<IconSystemPage />} />
       <Route path="/guides/icon-generator-config" element={<IconGeneratorConfigPage />} />
       <Route path="/guides/custom-icon-component" element={<CustomIconComponentPage />} />
