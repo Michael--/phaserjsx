@@ -93,7 +93,7 @@ const navigation: NavSection[] = [
       { label: 'Gestures & Interaction', path: '/guides/gestures' },
       { label: 'Theme System', path: '/guides/theme-system' },
       { label: 'Responsive Design', path: '/guides/responsive-design' },
-      { label: '🚧 Layout Patterns', path: '/guides/layout-patterns' },
+      { label: 'Layout Patterns', path: '/guides/layout-patterns' },
       { label: 'Effects & Animations', path: '/guides/effects-animations' },
       { label: '🚧 Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
