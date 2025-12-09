@@ -26,6 +26,7 @@ import { transformOriginViewContent } from './content/transform-origin-view.cont
 import { viewContent } from './content/view.content'
 import { wraptextContent } from './content/wraptext.content'
 import './index.css'
+import { HooksApiPage } from './pages/ApiReference/HooksApiPage'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import {
   BestPracticesPage,
@@ -108,6 +109,9 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/icon-generator-config" element={<IconGeneratorConfigPage />} />
       <Route path="/guides/custom-icon-component" element={<CustomIconComponentPage />} />
       <Route path="/guides/custom-svg-icons" element={<CustomSvgIconsPage />} />
+
+      {/* API Reference */}
+      <Route path="/api/hooks" element={<HooksApiPage />} />
 
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
       <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />
