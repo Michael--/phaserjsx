@@ -146,10 +146,102 @@ export const defaultTheme: Theme = {
     },
   },
   Sidebar: {
+    variant: 'solid',
+    size: 'md',
     backgroundColor: colors.surface.light.toNumber(),
     backgroundAlpha: 1,
     padding: 16,
     gap: 8,
+    dividerColor: colors.border.light.toNumber(),
+    itemGap: 8,
+    sectionGap: 10,
+    headerStyle: {
+      gap: 10,
+      padding: { bottom: 6 },
+      width: 'fill',
+    },
+    footerStyle: {
+      gap: 8,
+      padding: { top: 6 },
+      width: 'fill',
+    },
+    sectionStyle: {
+      gap: 8,
+      padding: { top: 4, bottom: 8 },
+      width: 'fill',
+      titleStyle: {
+        ...textStyles.medium,
+        color: colors.text.dark.toString(),
+        fontStyle: 'bold',
+      },
+    },
+    itemStyle: {
+      gap: 8,
+      padding: { top: 8, bottom: 8, left: 10, right: 10 },
+      width: 'fill',
+      cornerRadius: 8,
+      backgroundColor: colors.surface.lightest.toNumber(),
+      textStyle: {
+        ...textStyles.medium,
+        color: colors.text.dark.toString(),
+      },
+      active: {
+        backgroundColor: colors.primary.lightest.toNumber(),
+        borderColor: colors.primary.light.toNumber(),
+        borderWidth: 1,
+        backgroundAlpha: 0.9,
+      },
+      disabledAlpha: 0.5,
+    },
+    badgeStyle: {
+      backgroundColor: colors.primary.light.toNumber(),
+      backgroundAlpha: 0.15,
+      cornerRadius: 6,
+      padding: { top: 4, bottom: 4, left: 8, right: 8 },
+      textStyle: {
+        ...textStyles.small,
+        color: colors.primary.dark.toString(),
+        fontStyle: 'bold',
+      },
+    },
+    variants: {
+      solid: {
+        backgroundColor: colors.surface.light.toNumber(),
+        borderColor: colors.border.light.toNumber(),
+        borderWidth: 1,
+      },
+      muted: {
+        backgroundColor: colors.surface.medium.toNumber(),
+        backgroundAlpha: 0.85,
+        borderColor: colors.border.light.toNumber(),
+        borderWidth: 1,
+      },
+      ghost: {
+        backgroundColor: colors.background.lightest.toNumber(),
+        backgroundAlpha: 0.6,
+        borderWidth: 0,
+      },
+      inset: {
+        backgroundColor: colors.surface.dark.toNumber(),
+        backgroundAlpha: 1,
+        borderColor: colors.border.medium.toNumber(),
+        borderWidth: 1,
+      },
+    },
+    sizes: {
+      sm: {
+        padding: 10,
+        gap: 6,
+      },
+      md: {
+        padding: 16,
+        gap: 8,
+      },
+      lg: {
+        padding: { top: 20, bottom: 20, left: 16, right: 16 },
+        gap: 12,
+      },
+    },
   },
   Accordion: {
     effect: 'none',

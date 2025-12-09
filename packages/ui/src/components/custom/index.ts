@@ -33,7 +33,14 @@ export {
   type SliderSize,
 } from './ScrollSlider'
 export { ScrollView, type ScrollInfo, type ScrollViewProps } from './ScrollView'
-export { Sidebar, type SidebarProps } from './Sidebar'
+export {
+  Sidebar,
+  type SidebarNavItem,
+  type SidebarProps,
+  type SidebarSection,
+  type SidebarSize,
+  type SidebarVariant,
+} from './Sidebar'
 export {
   RangeSlider,
   Slider,

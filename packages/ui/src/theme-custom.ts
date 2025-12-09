@@ -8,6 +8,7 @@
  */
 import type { AnimationConfig } from './animation/spring-physics'
 import type { ButtonVariant } from './components/custom/Button'
+import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
 
@@ -44,18 +45,29 @@ export interface CustomComponentThemes {
     medium?: Record<string, unknown>
     large?: Record<string, unknown>
   }
-  Sidebar: {
-    backgroundColor?: number
-    backgroundAlpha?: number
-    padding?:
-      | number
-      | {
-          top?: number
-          right?: number
-          bottom?: number
-          left?: number
-        }
-    gap?: number
+  Sidebar: ViewTheme & {
+    variant?: SidebarVariant
+    size?: SidebarSize
+    variants?: Partial<Record<SidebarVariant, ViewTheme>>
+    sizes?: Partial<Record<SidebarSize, ViewTheme>>
+    dividerColor?: number
+    dividerAlpha?: number
+    headerStyle?: ViewTheme
+    footerStyle?: ViewTheme
+    sectionStyle?: ViewTheme & {
+      titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    }
+    itemStyle?: ViewTheme & {
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+      active?: ViewTheme
+      disabledAlpha?: number
+    }
+    badgeStyle?: ViewTheme & {
+      textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    }
+    scrollable?: boolean
+    itemGap?: number
+    sectionGap?: number
   } & NestedComponentThemes
   Accordion: ViewTheme & {
     headerStyle?: ViewTheme
