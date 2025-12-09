@@ -7,7 +7,7 @@ import type { TextProps as CustomTextProps } from './components/custom/Text'
 import type { ViewProps as CustomViewProps } from './components/custom/View'
 import type { GraphicsProps } from './components/primitives/graphics'
 import type { ImagePrimitiveProps } from './components/primitives/image'
-import type { NineSliceProps } from './components/primitives/nineslice'
+import type { NineSlicePrimitiveProps } from './components/primitives/nineslice'
 import type { SpriteProps } from './components/primitives/sprite'
 import type { TextProps as PrimitiveTextProps } from './components/primitives/text'
 import type { TileSpriteProps } from './components/primitives/tilesprite'
@@ -20,7 +20,7 @@ declare global {
       // Primitives (lowercase) - internal use only
       view: PrimitiveViewProps
       text: PrimitiveTextProps
-      nineslice: NineSliceProps
+      nineslice: NineSlicePrimitiveProps
       sprite: SpriteProps
       image: ImagePrimitiveProps
       graphics: GraphicsProps
@@ -30,7 +30,7 @@ declare global {
       Text: CustomTextProps
       Button: ButtonProps
       // Legacy uppercase primitives - for backward compatibility
-      NineSlice: NineSliceProps
+      NineSlice: NineSlicePrimitiveProps
       Sprite: SpriteProps
       Image: ImagePrimitiveProps
       Graphics: GraphicsProps

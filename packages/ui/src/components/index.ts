@@ -13,10 +13,9 @@ import { viewCreator, viewPatcher } from './primitives/view'
 
 /**
  * Component type constants for JSX usage (legacy primitives)
- * Note: Image constant removed to avoid conflict with custom Image component
- * Use lowercase 'image' for primitive, or import Image wrapper from custom
+ * Note: Image and NineSlice constants removed to avoid conflicts with custom components
+ * Use lowercase primitives or import wrappers from custom
  */
-export const NineSlice = 'NineSlice' as const
 export const Sprite = 'Sprite' as const
 export const Graphics = 'Graphics' as const
 export const TileSprite = 'TileSprite' as const
@@ -64,13 +63,13 @@ export { View, type ViewProps } from './custom/View'
 export { textCreator, textPatcher, type TextBaseProps } from './primitives/text'
 export { viewCreator, viewPatcher, type ViewBaseProps } from './primitives/view'
 
-// Re-export NineSlice component (no wrapper yet)
+// Re-export NineSlice primitive (internal use only - prefer custom wrapper)
 export {
   nineSliceCreator,
   nineSlicePatcher,
   type NineSliceBaseProps,
   type NineSliceInnerBounds,
-  type NineSliceProps,
+  type NineSlicePrimitiveProps,
   type NineSliceRef,
 } from './primitives/nineslice'
 

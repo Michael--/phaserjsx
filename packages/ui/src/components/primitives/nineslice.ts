@@ -233,6 +233,11 @@ export interface NineSliceSpecificProps {
   texture: string
 
   /**
+   * Optional tint to apply to the NineSlice
+   */
+  tint?: number | undefined
+
+  /**
    * Optional frame within the texture atlas
    */
   frame?: string | number
@@ -271,9 +276,10 @@ export interface NineSliceBaseProps
     NineSliceSpecificProps {}
 
 /**
- * Props for NineSlice component - extends base props with JSX-specific props
+ * Props for NineSlice primitive - extends base props with JSX-specific props
+ * Renamed to avoid conflict with custom NineSlice wrapper
  */
-export interface NineSliceProps
+export interface NineSlicePrimitiveProps
   extends NineSliceBaseProps,
     PropsDefaultExtension<Phaser.GameObjects.NineSlice> {}
 
@@ -299,6 +305,11 @@ export const nineSliceCreator: HostCreator<'NineSlice'> = (scene, props) => {
     props.bottomHeight
   )
   nineSlice.setOrigin(0, 0) // Top-left origin for easier layout handling as it is in UI
+
+  // Apply tint if provided
+  if (props.tint !== undefined) {
+    nineSlice.setTint(props.tint)
+  }
 
   // Apply transform props (scale, rotation)
   createTransform(nineSlice, props)

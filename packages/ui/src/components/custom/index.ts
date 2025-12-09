@@ -20,6 +20,7 @@ export {
 } from './Icon'
 export { Image, type ImageProps } from './Image'
 export { Modal, type ModalProps } from './Modal'
+export { NineSlice, type NineSliceProps } from './NineSlice'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { Portal, type PortalProps } from './Portal'
 export { RadioButton, type RadioButtonProps } from './RadioButton'

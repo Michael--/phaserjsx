@@ -14,7 +14,8 @@ import {
 } from '../../effects'
 import { useEffect, useRef, useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
-import { NineSlice, View } from '../index'
+import { NineSlice } from './NineSlice'
+import { View } from './View'
 
 /**
  * Props for NineSliceButton component

@@ -52,4 +52,13 @@ export function applyNineSliceProps(
   if (prevWidth !== nextWidth || prevHeight !== nextHeight) {
     nineSlice.setSize(nextWidth, nextHeight)
   }
+
+  // Check if tint changed
+  if (prev.tint !== next.tint) {
+    if (next.tint !== undefined) {
+      nineSlice.setTint(next.tint)
+    } else {
+      nineSlice.clearTint()
+    }
+  }
 }
