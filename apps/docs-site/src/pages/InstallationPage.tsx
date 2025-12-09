@@ -7,15 +7,15 @@ import {
   SectionTitle,
 } from '../components/Doc/Typography'
 import { DocLayout } from '../components/Layout/DocLayout'
-import '../styles/docs.css'
 import basicSceneCode from '../examples-docs/installation/basic-scene.tsx?raw'
-import gameConfigCode from '../examples-docs/installation/game-config.ts?raw'
-import lifecycleCode from '../examples-docs/installation/scene-lifecycle.tsx?raw'
-import multiMountCode from '../examples-docs/installation/multi-mount.tsx?raw'
-import propsCode from '../examples-docs/installation/mount-with-props.tsx?raw'
 import devConfigCode from '../examples-docs/installation/dev-config.ts?raw'
+import gameConfigCode from '../examples-docs/installation/game-config.ts?raw'
 import inputConfigCode from '../examples-docs/installation/input-config.ts?raw'
+import propsCode from '../examples-docs/installation/mount-with-props.tsx?raw'
+import multiMountCode from '../examples-docs/installation/multi-mount.tsx?raw'
+import lifecycleCode from '../examples-docs/installation/scene-lifecycle.tsx?raw'
 import testCode from '../examples-docs/installation/test-component.tsx?raw'
+import '../styles/docs.css'
 
 /**
  * Installation guide for PhaserJSX
@@ -137,7 +137,7 @@ import { View, Text } from '@phaserjsx/ui'
             Here's a complete example of integrating PhaserJSX into a Phaser scene:
           </DocParagraph>
 
-          <CodeBlock language="typescript" title="GameScene.ts">
+          <CodeBlock language="typescript" title="GameScene.tsx">
             {basicSceneCode}
           </CodeBlock>
         </div>

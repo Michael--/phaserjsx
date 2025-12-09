@@ -29,7 +29,6 @@ const navigation: NavSection[] = [
       { label: 'View', path: '/components/view' },
       { label: 'ScrollView', path: '/components/scroll-view' },
       { label: 'Divider', path: '/components/divider' },
-      { label: '🚧 ScrollSlider (internal)', path: '/components/scroll-slider' },
     ],
   },
   {
