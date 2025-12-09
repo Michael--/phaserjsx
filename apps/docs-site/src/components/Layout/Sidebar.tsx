@@ -20,7 +20,7 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Introduction', path: '/introduction' },
       { label: 'Installation', path: '/installation' },
-      { label: '🚧 Quick Start', path: '/quick-start' },
+      { label: 'Quick Start', path: '/quick-start' },
     ],
   },
   {

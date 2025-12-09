@@ -49,6 +49,7 @@ import { ThemeSystemPage } from './pages/Guides/ThemeSystemPage'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
+import { QuickStartPage } from './pages/QuickStartPage'
 
 createRoot(document.getElementById('root')!).render(
   // Note: StrictMode disabled because Phaser Game instances don't play well
@@ -58,6 +59,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/" element={<HomePage />} />
       <Route path="/introduction" element={<IntroductionPage />} />
       <Route path="/installation" element={<InstallationPage />} />
+      <Route path="/quick-start" element={<QuickStartPage />} />
       <Route path="/components/button" element={<ComponentPage content={buttonContent} />} />
       <Route path="/components/toggle" element={<ComponentPage content={toggleContent} />} />
       <Route path="/components/slider" element={<ComponentPage content={sliderContent} />} />
