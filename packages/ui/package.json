@@ -60,10 +60,24 @@
     "phaser3",
     "declarative",
     "typescript",
-    "game-engine"
+    "game-engine",
+    "jsx",
+    "react-like",
+    "ui",
+    "components",
+    "hooks"
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/phaserjsx.git",
+    "directory": "packages/ui"
+  },
+  "homepage": "https://yourusername.github.io/phaserjsx",
+  "bugs": {
+    "url": "https://github.com/yourusername/phaserjsx/issues"
+  },
   "devDependencies": {
     "@types/lodash": "^4.17.20",
     "@types/node": "^24.10.1",

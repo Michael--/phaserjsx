@@ -1,10 +1,41 @@
-# phaserjsx
+# PhaserJSX
 
-> Declarative Phaser3 + UI framework with TypeScript
+> Declarative Phaser3 UI framework with React-like components and TypeScript
 
-A modern, type-safe, declarative framework for building Phaser3 games with UI components.
+A modern, type-safe framework for building game UIs in Phaser3 using JSX components, hooks, and a powerful theme system.
 
-## 🚀 Getting Started
+[![npm version](https://img.shields.io/npm/v/@phaserjsx/ui.svg)](https://www.npmjs.com/package/@phaserjsx/ui)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## ✨ Features
+
+- 🎨 **React-like API** - Familiar JSX syntax with hooks (useState, useEffect, useMemo, etc.)
+- 🎯 **Type-Safe** - Full TypeScript support with strict type checking
+- 🎨 **Powerful Theme System** - Global and component-level theming with runtime switching
+- 📦 **Rich Component Library** - Button, Text, Icon, Accordion, Dropdown, CharTextInput, and more
+- 🎭 **Built-in Effects** - 23+ animation effects (pulse, shake, fade, bounce, etc.)
+- 📱 **Responsive Design** - Flexible layout with multiple size value formats
+- 🚀 **Performance** - Optimized VDOM reconciliation with smart dirty checking
+
+## 📚 Documentation
+
+**Full documentation:** [https://yourusername.github.io/phaserjsx](https://yourusername.github.io/phaserjsx)
+
+- [Quick Start Guide](https://yourusername.github.io/phaserjsx/quick-start)
+- [Layout Patterns](https://yourusername.github.io/phaserjsx/guides/layout-patterns)
+- [Theme System](https://yourusername.github.io/phaserjsx/guides/theme-system)
+- [Components](https://yourusername.github.io/phaserjsx/components)
+- [API Reference](https://yourusername.github.io/phaserjsx/api/hooks)
+
+## 📦 Packages
+
+This monorepo contains:
+
+- **[@phaserjsx/ui](./packages/ui)** - Core UI framework library ([npm](https://www.npmjs.com/package/@phaserjsx/ui))
+- **[docs-site](./apps/docs-site)** - Documentation website (GitHub Pages)
+- **[test-ui](./apps/test-ui)** - Development playground and testing app
+
+## 🚀 Getting Started for Development
 
 ### Prerequisites
 
@@ -24,13 +55,6 @@ pnpm install
 # Run the development server
 pnpm dev
 ```
-
-## 📦 Packages
-
-This monorepo contains the following packages:
-
-- **[@phaserjsx/ui](./packages/ui)** - Core library for declarative Phaser3 + UI rendering
-- **[@phaserjsx/test-ui](./apps/test-ui)** - Test and playground application
 
 ## 🛠️ Development
 
