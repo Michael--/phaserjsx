@@ -177,7 +177,7 @@ export function NineSliceButton(props: NineSliceButtonProps) {
 
   const { props: themed } = getThemedProps('NineSliceButton', undefined, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
-  const { applyEffect } = useGameObjectEffect(ref)
+  const { applyEffect, stopEffects } = useGameObjectEffect(ref)
 
   // Force redraw after mount to ensure dimensions are calculated
   // and show content after that to avoid visual glitches
@@ -198,6 +198,9 @@ export function NineSliceButton(props: NineSliceButtonProps) {
     !disabled && onClick
       ? () => {
           onClick?.()
+
+          // Stop any running effects to prevent position drift
+          stopEffects()
 
           // Apply effect: props override theme, theme overrides default
           const resolved = resolveEffect(props, themed as EffectDefinition)
