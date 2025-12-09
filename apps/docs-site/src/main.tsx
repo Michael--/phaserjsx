@@ -26,7 +26,10 @@ import { transformOriginViewContent } from './content/transform-origin-view.cont
 import { viewContent } from './content/view.content'
 import { wraptextContent } from './content/wraptext.content'
 import './index.css'
+import { CorePropsApiPage } from './pages/ApiReference/CorePropsApiPage'
+import { EffectRegistryApiPage } from './pages/ApiReference/EffectRegistryApiPage'
 import { HooksApiPage } from './pages/ApiReference/HooksApiPage'
+import { ThemeTypesApiPage } from './pages/ApiReference/ThemeTypesApiPage'
 import { ComingSoonPage } from './pages/ComingSoonPage'
 import {
   BestPracticesPage,
@@ -112,6 +115,9 @@ createRoot(document.getElementById('root')!).render(
 
       {/* API Reference */}
       <Route path="/api/hooks" element={<HooksApiPage />} />
+      <Route path="/api/core-props" element={<CorePropsApiPage />} />
+      <Route path="/api/theme-types" element={<ThemeTypesApiPage />} />
+      <Route path="/api/effects" element={<EffectRegistryApiPage />} />
 
       <Route path="/components/text" element={<ComponentPage content={textContent} />} />
       <Route path="/components/wraptext" element={<ComponentPage content={wraptextContent} />} />

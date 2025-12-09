@@ -113,9 +113,9 @@ const navigation: NavSection[] = [
     title: 'API Reference',
     items: [
       { label: 'Hooks', path: '/api/hooks' },
-      { label: '🚧 Core Props', path: '/api/core-props' },
-      { label: '🚧 Theme Types', path: '/api/theme-types' },
-      { label: '🚧 Effect Registry', path: '/api/effects' },
+      { label: 'Core Props', path: '/api/core-props' },
+      { label: 'Theme Types', path: '/api/theme-types' },
+      { label: 'Effect Registry', path: '/api/effects' },
     ],
   },
 ]
