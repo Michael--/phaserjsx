@@ -21,10 +21,10 @@ export function NineSliceUsageExample() {
     <View
       width={'fill'}
       height={'fill'}
-      gap={50}
+      gap={20}
       padding={20}
       justifyContent="center"
-      flexWrap="wrap"
+      alignItems="center"
     >
       {/* Panel background */}
       <View direction="stack" width={450} height={120}>
@@ -51,16 +51,17 @@ export function NineSliceUsageExample() {
         >
           <Text
             text="Information Panel"
-            style={{ fontSize: 24, fontStyle: 'bold', color: '#550' }}
+            style={{ fontSize: 24, fontStyle: 'bold', color: '#440' }}
           />
           <Text
             text="Use NineSlice for scalable UI panels"
-            style={{ fontSize: 16, color: '#cc0' }}
+            style={{ fontSize: 16, color: '#440' }}
           />
         </View>
       </View>
 
-      {/* Progress bar background */}
+      {/* Progress bar & background one above each other */}
+      <Text text="Stacking NineSlice creating a progress bar" style={{ fontSize: 20 }} />
       <View direction="stack" width={450} height={60}>
         <NineSlice
           texture="ui"
@@ -71,18 +72,18 @@ export function NineSliceUsageExample() {
           rightWidth={14}
           topHeight={14}
           bottomHeight={14}
-          tint={0x444444}
+          tint={0x555555}
         />
         <NineSlice
           texture="ui"
           frame="ButtonWhite"
           width="70%"
           height="100%"
-          leftWidth={20}
-          rightWidth={20}
-          topHeight={15}
-          bottomHeight={15}
-          tint={0x440000}
+          leftWidth={14}
+          rightWidth={14}
+          topHeight={14}
+          bottomHeight={14}
+          tint={0x550000}
         />
         <View
           direction="column"
