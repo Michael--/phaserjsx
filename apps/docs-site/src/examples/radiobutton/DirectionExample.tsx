@@ -1,8 +1,8 @@
 /**
  * RadioButton Direction Example - Row and Column layouts
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RadioGroup, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RadioGroup, Text, useState, View } from '@number10/phaserjsx'
 
 export function DirectionRadioButtonExample() {
   const [column, setColumn] = useState('option2')

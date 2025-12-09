@@ -1,8 +1,8 @@
 /**
  * Portal Quick Start Example - Basic overlay rendering
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Portal, Text, View, useState } from '@number10/phaserjsx'
 
 export function QuickStartExample() {
   const [showPortal, setShowPortal] = useState(false)

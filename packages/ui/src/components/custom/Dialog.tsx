@@ -4,7 +4,7 @@
  * Provides consistent layout and styling for dialog patterns
  * @module components/custom/Dialog
  */
-import type { SizeValue } from '@phaserjsx/ui/core-props'
+import type { SizeValue } from '@number10/phaserjsx/core-props'
 import type { GestureEventData } from '../../gestures/gesture-types'
 import { useRef, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

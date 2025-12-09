@@ -1,8 +1,8 @@
 /**
  * Passing props to mounted components
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View, mountJSX } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View, mountJSX } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 
 interface PlayerUIProps {

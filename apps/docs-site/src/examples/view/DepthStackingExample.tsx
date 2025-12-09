@@ -1,8 +1,8 @@
 /**
  * View Depth Stacking Example - Z-Index control with depth property
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { ScrollView, Text, View, WrapText } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { ScrollView, Text, View, WrapText } from '@number10/phaserjsx'
 
 export function DepthStackingViewExample() {
   return (

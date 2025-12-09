@@ -1,9 +1,11 @@
 {
   "name": "phaserjsx",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Declarative Phaser3 + UI framework with TypeScript",
+  "author": "Michael Rieck (Michael--) <mr@number10.de>",
+  "license": "GPL-3.0-only",
   "packageManager": "pnpm@9.0.0",
   "workspaces": [
     "packages/*",

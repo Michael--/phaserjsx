@@ -1,4 +1,4 @@
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import {
   Button,
   Dialog,
@@ -11,7 +11,7 @@ import {
   useMemo,
   useState,
   useThemeTokens,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

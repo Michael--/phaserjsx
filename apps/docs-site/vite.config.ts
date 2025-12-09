@@ -1,4 +1,4 @@
-import { iconGeneratorPlugin } from '@phaserjsx/ui/vite-plugin-icons'
+import { iconGeneratorPlugin } from '@number10/phaserjsx/vite-plugin-icons'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { defineConfig } from 'vite'

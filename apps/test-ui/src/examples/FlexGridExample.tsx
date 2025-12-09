@@ -1,4 +1,11 @@
-import { ScrollView, Text, useForceRedraw, useSpring, useThemeTokens, View } from '@phaserjsx/ui'
+import {
+  ScrollView,
+  Text,
+  useForceRedraw,
+  useSpring,
+  useThemeTokens,
+  View,
+} from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

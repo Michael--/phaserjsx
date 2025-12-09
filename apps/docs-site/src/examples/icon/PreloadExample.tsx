@@ -1,9 +1,9 @@
 /**
  * Icon Preloading Example - Using useIcon hook
  */
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import { Icon, useIcon } from '@/components/Icon'
-import { Text, View } from '@phaserjsx/ui'
+import { Text, View } from '@number10/phaserjsx'
 
 export function PreloadIconExample() {
   const logoReady = useIcon('bootstrap')

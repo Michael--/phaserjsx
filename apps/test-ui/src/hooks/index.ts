@@ -1,6 +1,6 @@
 /**
  * Re-exports effect system from UI package for backward compatibility
- * @deprecated Import directly from '@phaserjsx/ui' instead
+ * @deprecated Import directly from '@number10/phaserjsx' instead
  */
 
-export * from '@phaserjsx/ui'
+export * from '@number10/phaserjsx'

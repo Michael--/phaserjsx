@@ -1,8 +1,8 @@
 /**
  * View Nested Layouts Example - Complex card-like structures
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View, WrapText } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View, WrapText } from '@number10/phaserjsx'
 
 export function NestedLayoutsViewExample() {
   return (

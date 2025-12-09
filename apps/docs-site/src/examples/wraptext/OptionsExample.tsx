@@ -1,8 +1,8 @@
 /**
  * WrapText Options Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View, WrapText } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View, WrapText } from '@number10/phaserjsx'
 
 export function OptionsWrapTextExample() {
   return (

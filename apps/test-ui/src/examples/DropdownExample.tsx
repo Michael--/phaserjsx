@@ -1,4 +1,4 @@
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 /**
  * Dropdown/Select component examples
  * Demonstrates single-select, multi-select, filterable, and custom rendering
@@ -12,7 +12,7 @@ import {
   View,
   type DropdownOption,
   type EdgeInsets,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { Icon } from '../components/Icon'
 import { ViewLevel2 } from './Helper'
 

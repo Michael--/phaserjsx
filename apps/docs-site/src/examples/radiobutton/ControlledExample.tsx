@@ -1,8 +1,8 @@
 /**
  * RadioButton Controlled Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RadioGroup, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RadioGroup, Text, useState, View } from '@number10/phaserjsx'
 
 export function ControlledRadioButtonExample() {
   const [priority, setPriority] = useState('normal')

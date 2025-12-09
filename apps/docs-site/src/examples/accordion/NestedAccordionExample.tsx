@@ -2,8 +2,8 @@
  * Nested Accordion Example
  * Accordions inside accordions
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Accordion, ScrollView, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Accordion, ScrollView, Text, View } from '@number10/phaserjsx'
 
 export function NestedAccordionExample() {
   return (

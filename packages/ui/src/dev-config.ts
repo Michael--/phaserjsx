@@ -11,7 +11,7 @@ import { debounce } from 'lodash'
  *
  * @example
  * ```typescript
- * import { DevConfig } from '@phaserjsx/ui'
+ * import { DevConfig } from '@number10/phaserjsx'
  *
  * // Enable specific debug categories
  * DevConfig.debug.enabled = true
@@ -242,7 +242,7 @@ export class DebugLogger {
  *
  * @example
  * ```typescript
- * import { DevPresets } from '@phaserjsx/ui'
+ * import { DevPresets } from '@number10/phaserjsx'
  *
  * // Quick activation of overflow debugging
  * DevPresets.debugOverflow()

@@ -1,4 +1,4 @@
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 /**
  * Slider component examples
  * Demonstrates horizontal, vertical, marks, custom styling, and disabled states
@@ -14,7 +14,7 @@ import {
   useTheme,
   View,
   type VNode,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { ViewLevel2 } from './Helper'
 
 function CenterOriginLabel(props: { children: VNode }) {

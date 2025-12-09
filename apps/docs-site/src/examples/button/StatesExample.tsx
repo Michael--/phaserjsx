@@ -1,8 +1,8 @@
 /**
  * Button States Example - Disabled and interactive states
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, useState, View } from '@number10/phaserjsx'
 
 export function StatesButtonExample() {
   const [clickCount, setClickCount] = useState(0)

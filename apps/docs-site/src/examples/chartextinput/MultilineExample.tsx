@@ -1,8 +1,8 @@
 /**
  * CharTextInput Multi-line Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharTextInput, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharTextInput, Text, useState, View } from '@number10/phaserjsx'
 
 export function MultilineCharTextInputExample() {
   const [value, setValue] = useState('Multi-line text input.\nTry typing and using Enter key!')

@@ -1,8 +1,8 @@
 /**
  * View Wrap Behavior Example - flexWrap for responsive layouts
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { ScrollView, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { ScrollView, Text, View } from '@number10/phaserjsx'
 
 export function WrapBehaviorViewExample() {
   return (

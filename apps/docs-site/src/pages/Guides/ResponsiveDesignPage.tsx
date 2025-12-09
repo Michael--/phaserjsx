@@ -476,7 +476,7 @@ mountJSX(<App />, scene, { width, height })`}
         </p>
 
         <CodeBlock language="tsx">
-          {`import { mountJSX } from '@phaserjsx/ui'
+          {`import { mountJSX } from '@number10/phaserjsx'
 
 class MainScene extends Phaser.Scene {
   create() {

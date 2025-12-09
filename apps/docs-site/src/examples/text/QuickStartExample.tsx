@@ -1,8 +1,8 @@
 /**
  * Text Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function QuickStartTextExample() {
   return (

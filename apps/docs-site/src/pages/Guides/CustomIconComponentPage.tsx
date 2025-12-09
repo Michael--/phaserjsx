@@ -22,7 +22,7 @@ export function CustomIconComponentPage() {
 
       <Section title="Why a Custom Wrapper?">
         <SectionDescription>
-          The generic Icon component in @phaserjsx/ui is intentionally unopinionated. A custom
+          The generic Icon component in @number10/phaserjsx is intentionally unopinionated. A custom
           wrapper provides:
         </SectionDescription>
 
@@ -104,13 +104,13 @@ export async function iconLoader(type: IconType): Promise<string> {
         </SectionDescription>
 
         <CodeBlock language="typescript">{`// Icon.tsx
-import type * as PhaserJSX from '@phaserjsx/ui'
+import type * as PhaserJSX from '@number10/phaserjsx'
 import {
   Icon as GenericIcon,
   getThemedProps,
   useTheme,
   type IconProps as GenericIconProps,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { iconLoader } from './iconLoader'
 import type { IconType } from './icon-types.generated'
 
@@ -118,7 +118,7 @@ import type { IconType } from './icon-types.generated'
 export type { IconType }
 
 // Module augmentation for theme support
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Icon: {
       size?: number
@@ -162,7 +162,7 @@ export function Icon(props: IconProps) {
         <SectionDescription>Add a hook for preloading icons before rendering.</SectionDescription>
 
         <CodeBlock language="typescript">{`// useIcon.ts
-import { useIconPreload } from '@phaserjsx/ui'
+import { useIconPreload } from '@number10/phaserjsx'
 import { iconLoader } from './iconLoader'
 import type { IconType } from './icon-types.generated'
 
@@ -267,19 +267,19 @@ export async function iconLoader(type: IconType): Promise<string> {
 }`}</CodeBlock>
 
         <h3>Icon.tsx</h3>
-        <CodeBlock language="typescript">{`import type * as PhaserJSX from '@phaserjsx/ui'
+        <CodeBlock language="typescript">{`import type * as PhaserJSX from '@number10/phaserjsx'
 import {
   Icon as GenericIcon,
   getThemedProps,
   useTheme,
   type IconProps as GenericIconProps,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { iconLoader } from './iconLoader'
 import type { IconType } from './icon-types.generated'
 
 export type { IconType }
 
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Icon: { size?: number } & PhaserJSX.ViewTheme
   }
@@ -298,7 +298,7 @@ export function Icon(props: IconProps) {
 }`}</CodeBlock>
 
         <h3>useIcon.ts</h3>
-        <CodeBlock language="typescript">{`import { useIconPreload } from '@phaserjsx/ui'
+        <CodeBlock language="typescript">{`import { useIconPreload } from '@number10/phaserjsx'
 import { iconLoader } from './iconLoader'
 import type { IconType } from './icon-types.generated'
 

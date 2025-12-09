@@ -1,8 +1,8 @@
 /**
  * Dropdown Multi-Select Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Dropdown, Text, useState, View, type DropdownOption } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Dropdown, Text, useState, View, type DropdownOption } from '@number10/phaserjsx'
 
 const options: DropdownOption[] = [
   { value: 'red', label: 'Red' },

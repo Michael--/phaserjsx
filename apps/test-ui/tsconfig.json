@@ -10,7 +10,7 @@
 
     // JSX configuration
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui"
+    "jsxImportSource": "@number10/phaserjsx"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],

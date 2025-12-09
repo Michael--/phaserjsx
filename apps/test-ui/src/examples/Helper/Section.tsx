@@ -1,4 +1,4 @@
-import { Text, useThemeTokens } from '@phaserjsx/ui'
+import { Text, useThemeTokens } from '@number10/phaserjsx'
 
 /**
  * Section header component

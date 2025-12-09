@@ -1,8 +1,8 @@
 /**
  * CharTextInput Customization Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharTextInput, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharTextInput, Text, useState, View } from '@number10/phaserjsx'
 
 export function CustomizationCharTextInputExample() {
   const [value1, setValue1] = useState('Custom cursor')

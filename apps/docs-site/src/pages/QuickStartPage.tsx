@@ -23,7 +23,7 @@ export function QuickStartPage() {
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">1. Installation</h2>
         <p className="mb-4">Install PhaserJSX and Phaser 3 via your package manager:</p>
-        <CodeBlock language="bash">{`npm install @phaserjsx/ui phaser`}</CodeBlock>
+        <CodeBlock language="bash">{`npm install @number10/phaserjsx phaser`}</CodeBlock>
         <p className="mt-4 text-sm text-gray-600">
           Or use <code>yarn add</code> or <code>pnpm add</code>
         </p>
@@ -39,7 +39,7 @@ export function QuickStartPage() {
           {`{
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui",
+    "jsxImportSource": "@number10/phaserjsx",
     "target": "ES2020",
     "lib": ["ES2020", "DOM"],
     "moduleResolution": "bundler"
@@ -55,8 +55,8 @@ export function QuickStartPage() {
           Create a simple counter component using PhaserJSX hooks and components:
         </p>
         <CodeBlock language="tsx">
-          {`/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View, useState } from '@phaserjsx/ui'
+          {`/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, View, useState } from '@number10/phaserjsx'
 
 function Counter() {
   const [count, setCount] = useState(0)
@@ -96,7 +96,7 @@ function Counter() {
         <p className="mb-4">Create a scene that mounts your PhaserJSX component:</p>
         <CodeBlock language="typescript">
           {`import Phaser from 'phaser'
-import { mountJSX } from '@phaserjsx/ui'
+import { mountJSX } from '@number10/phaserjsx'
 import { Counter } from './Counter'
 
 export class GameScene extends Phaser.Scene {
@@ -173,9 +173,9 @@ new Phaser.Game(config)`}
 
         <h3 className="text-xl font-semibold mb-3">src/main.ts</h3>
         <CodeBlock language="typescript">
-          {`/** @jsxImportSource @phaserjsx/ui */
+          {`/** @jsxImportSource @number10/phaserjsx */
 import Phaser from 'phaser'
-import { mountJSX, Button, Text, View, useState } from '@phaserjsx/ui'
+import { mountJSX, Button, Text, View, useState } from '@number10/phaserjsx'
 
 // Component
 function Counter() {
@@ -259,8 +259,9 @@ new Phaser.Game(config)`}
           <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
             <h3 className="text-lg font-semibold mb-2">JSX Import Source</h3>
             <p>
-              Always add <code>/** @jsxImportSource @phaserjsx/ui */</code> at the top of files
-              using JSX. This tells TypeScript to use PhaserJSX's JSX runtime instead of React's.
+              Always add <code>/** @jsxImportSource @number10/phaserjsx */</code> at the top of
+              files using JSX. This tells TypeScript to use PhaserJSX's JSX runtime instead of
+              React's.
             </p>
           </div>
 
@@ -392,7 +393,7 @@ new Phaser.Game(config)`}
               <li>
                 Check that you added{' '}
                 <code className="bg-gray-100 px-2 py-1 rounded">
-                  /** @jsxImportSource @phaserjsx/ui */
+                  /** @jsxImportSource @number10/phaserjsx */
                 </code>{' '}
                 at the top of your component file
               </li>
@@ -418,7 +419,7 @@ new Phaser.Game(config)`}
               <li>
                 Ensure{' '}
                 <code className="bg-gray-100 px-2 py-1 rounded">
-                  "jsxImportSource": "@phaserjsx/ui"
+                  "jsxImportSource": "@number10/phaserjsx"
                 </code>{' '}
                 is set
               </li>

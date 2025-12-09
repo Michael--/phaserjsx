@@ -2,11 +2,11 @@
  * Icon Button wrapper
  * Specialized Button component with Icons support
  */
-import { Button, getThemedProps, Text, type ButtonProps } from '@phaserjsx/ui'
+import { Button, getThemedProps, Text, type ButtonProps } from '@number10/phaserjsx'
 import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add IconButton theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     IconButton: {
       textStyle?: Phaser.Types.GameObjects.Text.TextStyle

@@ -4,7 +4,7 @@
  *
  * @example Basic usage:
  * ```tsx
- * import { useFX, createShadowFX } from '@phaserjsx/ui/fx'
+ * import { useFX, createShadowFX } from '@number10/phaserjsx/fx'
  *
  * function MyComponent() {
  *   const ref = useRef(null)
@@ -20,7 +20,7 @@
  *
  * @example Convenience hooks:
  * ```tsx
- * import { useShadow } from '@phaserjsx/ui/fx'
+ * import { useShadow } from '@number10/phaserjsx/fx'
  *
  * function MyComponent() {
  *   const ref = useRef(null)
@@ -32,7 +32,7 @@
  *
  * @example Registry-based FX:
  * ```tsx
- * import { useFX, applyFXByName } from '@phaserjsx/ui/fx'
+ * import { useFX, applyFXByName } from '@number10/phaserjsx/fx'
  *
  * function MyComponent() {
  *   const ref = useRef(null)

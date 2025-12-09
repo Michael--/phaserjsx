@@ -1,8 +1,8 @@
 /**
  * CharTextInput Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharTextInput, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharTextInput, Text, useState, View } from '@number10/phaserjsx'
 
 export function QuickStartCharTextInputExample() {
   const [value, setValue] = useState('Hello World')

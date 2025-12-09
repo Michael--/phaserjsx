@@ -1,10 +1,10 @@
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 /**
  * Quick demo of Icon component in docs-site
  * Shows a simple icon to verify the system works
  */
 import { Icon } from '@/components/Icon'
-import { View } from '@phaserjsx/ui'
+import { View } from '@number10/phaserjsx'
 
 export function IconDemo() {
   return (

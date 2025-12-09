@@ -1,9 +1,9 @@
 /**
  * Icon Interactive Example - Icons with hover/click effects
  */
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import { Icon } from '@/components/Icon'
-import { useState, View } from '@phaserjsx/ui'
+import { useState, View } from '@number10/phaserjsx'
 
 export function InteractiveIconExample() {
   const [favorite, setFavorite] = useState(false)

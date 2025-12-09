@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Test and playground app for @phaserjsx/ui",
+  "description": "Test and playground app for @number10/phaserjsx",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -16,7 +16,7 @@
     "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts"
   },
   "dependencies": {
-    "@phaserjsx/ui": "workspace:*",
+    "@number10/phaserjsx": "workspace:*",
     "bootstrap-icons": "^1.13.1",
     "phaser": "^3.90.0",
     "phaser3-rex-plugins": "^1.80.17"

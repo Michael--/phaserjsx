@@ -40,7 +40,7 @@ export type BuiltInFXName =
  * Extension point for custom FX (declaration merging)
  * @example
  * ```typescript
- * declare module '@phaserjsx/ui/fx' {
+ * declare module '@number10/phaserjsx/fx' {
  *   interface FXNameExtensions {
  *     myCustomFX: 'myCustomFX'
  *   }

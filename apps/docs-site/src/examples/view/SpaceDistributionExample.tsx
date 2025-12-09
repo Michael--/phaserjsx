@@ -1,8 +1,8 @@
 /**
  * View Space Distribution Example - space-around and space-between
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 function Box({ color }: { color: number }) {
   return <View backgroundColor={color} width={40} height={40} />

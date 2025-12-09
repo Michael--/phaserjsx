@@ -1,8 +1,8 @@
 /**
  * Toggle States Example - Checked and Disabled
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, Toggle, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, Toggle, useState, View } from '@number10/phaserjsx'
 
 export function StatesToggleExample() {
   const [enabled, setEnabled] = useState(true)

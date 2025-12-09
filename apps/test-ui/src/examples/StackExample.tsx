@@ -1,4 +1,4 @@
-import type { DesignTokens } from '@phaserjsx/ui'
+import type { DesignTokens } from '@number10/phaserjsx'
 import {
   ScrollView,
   Text,
@@ -7,7 +7,7 @@ import {
   useThemeTokens,
   View,
   type GestureEventData,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import type Phaser from 'phaser'
 import { ViewLevel2 } from './Helper/ViewLevel'
 

@@ -2,8 +2,8 @@
  * Theme Preview - comprehensive visualization of all theme values
  * Shows colors, typography, spacing, shadows, and component examples
  */
-import type { ColorShade } from '@phaserjsx/ui'
-import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import type { ColorShade } from '@number10/phaserjsx'
+import { ScrollView, Text, useThemeTokens, View } from '@number10/phaserjsx'
 import { Button } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

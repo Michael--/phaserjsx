@@ -1,8 +1,8 @@
 /**
  * Portal Event Blocking Example - Control click-through behavior
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Portal, Text, View, useState } from '@number10/phaserjsx'
 
 export function EventBlockingExample() {
   const [showBlocking, setShowBlocking] = useState(false)

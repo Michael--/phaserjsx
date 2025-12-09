@@ -1,9 +1,9 @@
 /**
  * Icon Colors Example - Tinting icons with colors
  */
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import { Icon } from '@/components/Icon'
-import { Text, View } from '@phaserjsx/ui'
+import { Text, View } from '@number10/phaserjsx'
 
 export function ColorsIconExample() {
   return (

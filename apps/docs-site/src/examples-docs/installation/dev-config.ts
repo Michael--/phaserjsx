@@ -1,7 +1,7 @@
 /**
  * Development mode configuration
  */
-import { DevConfig } from '@phaserjsx/ui'
+import { DevConfig } from '@number10/phaserjsx'
 
 // In your game initialization
 DevConfig.debug.enabled = true // Enable debug mode

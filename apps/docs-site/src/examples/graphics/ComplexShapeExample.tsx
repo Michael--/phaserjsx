@@ -2,8 +2,8 @@
  * Complex Shape Example
  * Demonstrates complex custom shapes
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Graphics, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Graphics, Text, View } from '@number10/phaserjsx'
 
 /**
  * Complex shape demo

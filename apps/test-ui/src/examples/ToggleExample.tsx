@@ -1,7 +1,7 @@
 /**
  * ToggleExample - Demonstrates various Toggle/Switch variants, states, and configurations
  */
-import { createTheme, ScrollView, Text, Toggle, useState, View } from '@phaserjsx/ui'
+import { createTheme, ScrollView, Text, Toggle, useState, View } from '@number10/phaserjsx'
 import { Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

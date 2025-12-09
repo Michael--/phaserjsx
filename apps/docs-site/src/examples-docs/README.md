@@ -34,7 +34,6 @@ Code examples are imported as raw strings and displayed in `CodeBlock` component
 
 ```tsx
 import basicSceneCode from '../examples-docs/installation/basic-scene.tsx?raw'
-
 ;<CodeBlock language="typescript" title="GameScene.ts">
   {basicSceneCode}
 </CodeBlock>
@@ -63,7 +62,7 @@ pnpm typecheck  # Checks both docs site AND examples
 
 ### 2. JSX Import Source
 
-- **PhaserJSX examples**: Add `/** @jsxImportSource @phaserjsx/ui */` at the top
+- **PhaserJSX examples**: Add `/** @jsxImportSource @number10/phaserjsx */` at the top
 - **Plain TypeScript**: No pragma needed
 - **React examples**: Add `/** @jsxImportSource react */` (if needed)
 
@@ -107,7 +106,7 @@ If examples fail to compile, the build fails, ensuring docs stay up-to-date.
 ## Benefits
 
 ✅ **No more stale examples** - Compile errors force updates  
-✅ **API changes caught immediately** - TypeScript validates against @phaserjsx/ui  
+✅ **API changes caught immediately** - TypeScript validates against @number10/phaserjsx  
 ✅ **Copy-paste ready** - Examples are real, working code  
 ✅ **Refactoring safe** - Renaming APIs breaks examples, making them discoverable  
 ✅ **Developer confidence** - Know that docs match reality

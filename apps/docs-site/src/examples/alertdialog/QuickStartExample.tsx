@@ -1,5 +1,5 @@
-/** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, View, useCallback, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { AlertDialog, Button, Text, View, useCallback, useState } from '@number10/phaserjsx'
 
 /**
  * Quick Start AlertDialog Example

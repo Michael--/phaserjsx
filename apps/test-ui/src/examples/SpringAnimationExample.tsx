@@ -12,7 +12,7 @@ import {
   useState,
   useThemeTokens,
   View,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { Button, TransformOriginView } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 

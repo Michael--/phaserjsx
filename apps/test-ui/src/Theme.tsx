@@ -3,7 +3,7 @@
  * @param props - App props from Phaser scene
  * @returns App component JSX
  */
-import { createTheme, getPresetWithMode, type PresetName } from '@phaserjsx/ui'
+import { createTheme, getPresetWithMode, type PresetName } from '@number10/phaserjsx'
 import { Icon } from './components'
 
 /**

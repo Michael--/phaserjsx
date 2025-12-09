@@ -11,7 +11,7 @@ import {
   useState,
   useThemeTokens,
   View,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 function Example() {

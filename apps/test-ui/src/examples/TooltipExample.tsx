@@ -1,7 +1,7 @@
 /**
  * TooltipExample - Demonstrates onTooltip property on various components
  */
-import { createTextStyle, ScrollView, Text, useThemeTokens } from '@phaserjsx/ui'
+import { createTextStyle, ScrollView, Text, useThemeTokens } from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

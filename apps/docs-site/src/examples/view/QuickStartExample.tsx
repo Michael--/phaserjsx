@@ -2,8 +2,8 @@
  * View Quick Start Example - Basic visible container
  * Note: An empty View is invisible. Add background color or content to make it visible.
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function QuickStartViewExample() {
   return (

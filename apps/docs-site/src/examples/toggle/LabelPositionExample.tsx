@@ -1,8 +1,8 @@
 /**
  * Toggle Label Positioning Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, Toggle, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, Toggle, useState, View } from '@number10/phaserjsx'
 
 export function LabelPositionToggleExample() {
   const [left, setLeft] = useState(false)

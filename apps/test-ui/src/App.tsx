@@ -18,7 +18,7 @@ import {
   WrapText,
   type MountProps,
   type RadioGroupOption,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
 import { createAppTheme, globalTheme } from './Theme'
@@ -34,7 +34,7 @@ themeRegistry.updateGlobalTheme(globalTheme)
 setColorPreset('oceanBlue')
 
 // Activate desired debug preset by default:
-// import { DevPresets } from '@phaserjsx/ui'
+// import { DevPresets } from '@number10/phaserjsx'
 // DevPresets.debugVDOM()
 
 /**

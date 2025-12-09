@@ -1,8 +1,8 @@
 /**
  * View Basic Layout Example - Dimensions and padding
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function BasicLayoutViewExample() {
   return (

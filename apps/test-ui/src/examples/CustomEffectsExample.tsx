@@ -2,7 +2,7 @@
  * Custom Effects Example
  * Demonstrates how to use custom effects in components
  */
-import { Button, Text, View } from '@phaserjsx/ui'
+import { Button, Text, View } from '@number10/phaserjsx'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 function Example() {

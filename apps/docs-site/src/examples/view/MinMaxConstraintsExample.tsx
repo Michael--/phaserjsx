@@ -1,8 +1,8 @@
 /**
  * View Min/Max Constraints Example - Size boundaries for responsive layouts
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function MinMaxConstraintsViewExample() {
   return (

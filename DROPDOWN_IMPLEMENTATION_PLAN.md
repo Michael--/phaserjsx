@@ -333,7 +333,7 @@ export const defaultTheme = {
    - Arrow/Indicator (als children übergeben oder Graphics-fallback)
    - Hover State mit useGameObjectEffect
 
-   ⚠️ WICHTIG: Icons sind nicht in @phaserjsx/ui verfügbar!
+   ⚠️ WICHTIG: Icons sind nicht in @number10/phaserjsx verfügbar!
    - Nutze children Slot für Arrow/Icon
    - Fallback: Simple Graphics Triangle
    - User kann custom Icon/SVG als children übergeben
@@ -742,7 +742,7 @@ apps/test-ui/src/examples/
 
 ### 2. Icons/Arrow Handling
 
-- **Problem:** @phaserjsx/ui hat keine Icons
+- **Problem:** @number10/phaserjsx hat keine Icons
 - **Lösung:** User übergibt Icons als children/props
 - **Fallback:** Simple Graphics Triangle als Default-Arrow
 - **Beispiel:**

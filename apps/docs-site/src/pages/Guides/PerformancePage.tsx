@@ -257,7 +257,7 @@ const handleClick = useCallback(() => {
         <p>To disable automatic memoization for components with side effects:</p>
 
         <CodeBlock language="tsx">
-          {`import { noMemo } from '@phaserjsx/ui'
+          {`import { noMemo } from '@number10/phaserjsx'
 
 function AlwaysUpdate({ value }: Props) {
   console.log('Rendering:', value)  // Side effect

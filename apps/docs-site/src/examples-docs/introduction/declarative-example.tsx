@@ -2,8 +2,8 @@
  * Declarative PhaserJSX example - automatic GameObject management
  * This demonstrates the modern declarative approach with JSX
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, View, useState } from '@number10/phaserjsx'
 
 function CounterExample() {
   const [counter, setCounter] = useState(0)

@@ -1,8 +1,8 @@
 /**
  * View Borders & Styling Example - Borders, corner radius, and opacity
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function BordersStylingViewExample() {
   return (

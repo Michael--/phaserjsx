@@ -1,8 +1,8 @@
 /**
  * Slider Orientation Example - Horizontal and Vertical
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Slider, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Slider, Text, useState, View } from '@number10/phaserjsx'
 
 export function OrientationSliderExample() {
   const [horizontal, setHorizontal] = useState(30)

@@ -1,8 +1,8 @@
 /**
  * Visibility Example - Demonstrates different approaches to showing/hiding components
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, useEffect, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, useEffect, useState, View } from '@number10/phaserjsx'
 
 /**
  * Demonstrates three different approaches to controlling component visibility in PhaserJSX

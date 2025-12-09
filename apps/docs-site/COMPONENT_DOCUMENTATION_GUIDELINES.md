@@ -94,8 +94,8 @@ src/examples/{component}/
 /**
  * {Component} {Feature} Example - Brief description
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Component, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Component, View } from '@number10/phaserjsx'
 
 export function Feature{Component}Example() {
   return (
@@ -111,7 +111,7 @@ export function Feature{Component}Example() {
 - Each file exports ONE example function
 - Use descriptive names: `{Feature}{Component}Example`
 - Add JSDoc comment explaining what's demonstrated
-- Always include `@jsxImportSource @phaserjsx/ui`
+- Always include `@jsxImportSource @number10/phaserjsx`
 - Keep examples focused on one concept
 - Use consistent padding/layout for visual consistency
 
@@ -272,7 +272,7 @@ SCENE_SIZES.large // 600px - Advanced examples, rich demos
 
 ### Always Include
 
-- `/** @jsxImportSource @phaserjsx/ui */` pragma
+- `/** @jsxImportSource @number10/phaserjsx */` pragma
 - Necessary imports
 - Working, copy-paste ready code
 - Proper indentation (2 spaces)
@@ -285,8 +285,8 @@ SCENE_SIZES.large // 600px - Advanced examples, rich demos
 ### Example Code Format
 
 ```tsx
-/** @jsxImportSource @phaserjsx/ui */
-import { Component, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Component, Text, View } from '@number10/phaserjsx'
 
 export function FeatureExample() {
   return (
@@ -446,7 +446,7 @@ export const content: ComponentDocs = {
 export const content: ComponentDocs = {
   quickStart: {
     component: QuickStartExample,
-    code: `/** @jsxImportSource @phaserjsx/ui */
+    code: `/** @jsxImportSource @number10/phaserjsx */
     // Duplicated code that will drift...
     `,
   },

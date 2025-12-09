@@ -61,15 +61,15 @@ export function InstallationPage() {
         </div>
 
         <CodeBlock language="bash" title="npm">
-          {`npm install @phaserjsx/ui`}
+          {`npm install @number10/phaserjsx`}
         </CodeBlock>
 
         <CodeBlock language="bash" title="yarn">
-          {`yarn add @phaserjsx/ui`}
+          {`yarn add @number10/phaserjsx`}
         </CodeBlock>
 
         <CodeBlock language="bash" title="pnpm">
-          {`pnpm add @phaserjsx/ui`}
+          {`pnpm add @number10/phaserjsx`}
         </CodeBlock>
 
         <DocParagraph>
@@ -89,7 +89,7 @@ export function InstallationPage() {
           {`{
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui",
+    "jsxImportSource": "@number10/phaserjsx",
     "moduleResolution": "bundler",
     "target": "ES2020",
     "lib": ["ES2020", "DOM"],
@@ -104,8 +104,8 @@ export function InstallationPage() {
             <code>"jsx": "react-jsx"</code> - Enables modern JSX transform
           </div>
           <div className="doc-list-item">
-            <code>"jsxImportSource": "@phaserjsx/ui"</code> - Uses PhaserJSX's JSX runtime instead
-            of React's
+            <code>"jsxImportSource": "@number10/phaserjsx"</code> - Uses PhaserJSX's JSX runtime
+            instead of React's
           </div>
         </div>
 
@@ -116,8 +116,8 @@ export function InstallationPage() {
             you can override the JSX source per file using a pragma comment:
           </p>
           <CodeBlock language="typescript">
-            {`/** @jsxImportSource @phaserjsx/ui */
-import { View, Text } from '@phaserjsx/ui'
+            {`/** @jsxImportSource @number10/phaserjsx */
+import { View, Text } from '@number10/phaserjsx'
 
 // This file uses PhaserJSX JSX runtime`}
           </CodeBlock>
@@ -266,7 +266,7 @@ import { View, Text } from '@phaserjsx/ui'
           <DocParagraph>
             <strong>Solution:</strong> Ensure <code>tsconfig.json</code> has{' '}
             <code>"jsx": "react-jsx"</code>
-            and <code>"jsxImportSource": "@phaserjsx/ui"</code>
+            and <code>"jsxImportSource": "@number10/phaserjsx"</code>
           </DocParagraph>
         </div>
 

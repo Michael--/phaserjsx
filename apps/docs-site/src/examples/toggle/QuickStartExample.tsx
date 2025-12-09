@@ -1,8 +1,8 @@
 /**
  * Toggle Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, Toggle, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, Toggle, useState, View } from '@number10/phaserjsx'
 
 export function QuickStartToggleExample() {
   const [isEnabled, setIsEnabled] = useState(false)

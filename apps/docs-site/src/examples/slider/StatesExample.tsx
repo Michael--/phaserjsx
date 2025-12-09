@@ -1,8 +1,8 @@
 /**
  * Slider States Example - Disabled and various configurations
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Slider, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Slider, Text, useState, View } from '@number10/phaserjsx'
 
 export function StatesSliderExample() {
   const [normal, setNormal] = useState(50)

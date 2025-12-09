@@ -3,7 +3,7 @@
  * Import this file in your main.ts to enable type-safe custom effect names
  */
 
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface EffectNameExtensions {
     squash: 'squash'
   }

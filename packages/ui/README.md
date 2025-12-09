@@ -1,11 +1,11 @@
-# @phaserjsx/ui
+# @number10/phaserjsx
 
 > Declarative Phaser3 UI framework with React-like components and TypeScript
 
 A modern, type-safe framework for building game UIs in Phaser3 using JSX components, hooks, and a powerful theme system.
 
-[![npm version](https://img.shields.io/npm/v/@phaserjsx/ui.svg)](https://www.npmjs.com/package/@phaserjsx/ui)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@number10/phaserjsx.svg)](https://www.npmjs.com/package/@number10/phaserjsx)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](../../LICENSE)
 
 ## ✨ Features
 
@@ -23,11 +23,11 @@ A modern, type-safe framework for building game UIs in Phaser3 using JSX compone
 ## 📦 Installation
 
 ```bash
-npm install @phaserjsx/ui phaser
+npm install @number10/phaserjsx phaser
 # or
-yarn add @phaserjsx/ui phaser
+yarn add @number10/phaserjsx phaser
 # or
-pnpm add @phaserjsx/ui phaser
+pnpm add @number10/phaserjsx phaser
 ```
 
 ## 🚀 Quick Start
@@ -38,7 +38,7 @@ pnpm add @phaserjsx/ui phaser
 {
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui"
+    "jsxImportSource": "@number10/phaserjsx"
   }
 }
 ```
@@ -46,8 +46,7 @@ pnpm add @phaserjsx/ui phaser
 ### 2. Create a Component
 
 ```tsx
-import { useState } from '@phaserjsx/ui'
-import { View, Button, Text } from '@phaserjsx/ui/components'
+import { useState, View, Button, Text } from '@number10/phaserjsx'
 
 function Counter() {
   const [count, setCount] = useState(0)
@@ -67,7 +66,7 @@ function Counter() {
 
 ```tsx
 import Phaser from 'phaser'
-import { mountJSX } from '@phaserjsx/ui'
+import { mountJSX } from '@number10/phaserjsx'
 
 class GameScene extends Phaser.Scene {
   create() {
@@ -90,41 +89,14 @@ new Phaser.Game(config)
 
 ## 📖 Documentation
 
-**Full documentation is available at:** [https://yourusername.github.io/phaserjsx](https://yourusername.github.io/phaserjsx)
-
-### Core Concepts
-
-- [Installation & Setup](https://yourusername.github.io/phaserjsx/installation)
-- [Quick Start Guide](https://yourusername.github.io/phaserjsx/quick-start)
-- [Layout Patterns](https://yourusername.github.io/phaserjsx/guides/layout-patterns)
-- [Theme System](https://yourusername.github.io/phaserjsx/guides/theme-system)
-- [Responsive Design](https://yourusername.github.io/phaserjsx/guides/responsive-design)
-
-### API Reference
-
-- [Hooks API](https://yourusername.github.io/phaserjsx/api/hooks)
-- [Core Props](https://yourusername.github.io/phaserjsx/api/core-props)
-- [Theme Types](https://yourusername.github.io/phaserjsx/api/theme-types)
-- [Effect Registry](https://yourusername.github.io/phaserjsx/api/effects)
-
-### Components
-
-- [View](https://yourusername.github.io/phaserjsx/components/view) - Fundamental layout container
-- [Text](https://yourusername.github.io/phaserjsx/components/text) - Styled text rendering
-- [Button](https://yourusername.github.io/phaserjsx/components/button) - Interactive buttons with states
-- [Icon](https://yourusername.github.io/phaserjsx/components/icon) - SVG icon system
-- [Accordion](https://yourusername.github.io/phaserjsx/components/accordion) - Expandable sections
-- [Dropdown](https://yourusername.github.io/phaserjsx/components/dropdown) - Select menus
-- [CharTextInput](https://yourusername.github.io/phaserjsx/components/chartextinput) - Text input with character display
-- [More Components...](https://yourusername.github.io/phaserjsx/components)
+Documentation site will be published on GitHub Pages soon. In the meantime, see usage examples below.
 
 ## 🎯 Examples
 
 ### Form with State Management
 
 ```tsx
-import { useState } from '@phaserjsx/ui'
-import { View, CharTextInput, Button, Text } from '@phaserjsx/ui/components'
+import { useState, View, CharTextInput, Button, Text } from '@number10/phaserjsx'
 
 function LoginForm() {
   const [username, setUsername] = useState('')
@@ -160,8 +132,8 @@ function LoginForm() {
 ### Themed Components
 
 ```tsx
-import { View, Button, Text } from '@phaserjsx/ui/components'
-import type { Theme } from '@phaserjsx/ui'
+import { View, Button, Text } from '@number10/phaserjsx'
+import type { Theme } from '@number10/phaserjsx'
 
 const customTheme: Theme = {
   Button: {
@@ -189,7 +161,7 @@ function ThemedButton() {
 ### Effects & Animations
 
 ```tsx
-import { Button, Text } from '@phaserjsx/ui/components'
+import { Button, Text } from '@number10/phaserjsx'
 
 function AnimatedButton() {
   return (
@@ -219,7 +191,7 @@ npx generate-icon-types
 Configuration in `icon-generator.config.ts`:
 
 ```typescript
-import type { IconGeneratorConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
+import type { IconGeneratorConfig } from '@number10/phaserjsx/scripts/icon-generator-config'
 
 export default {
   inputDir: './src/assets/icons',
@@ -236,7 +208,7 @@ Automatic icon generation during development:
 
 ```typescript
 import { defineConfig } from 'vite'
-import { phaserjsxIconsPlugin } from '@phaserjsx/ui/vite-plugin-icons'
+import { phaserjsxIconsPlugin } from '@number10/phaserjsx/vite-plugin-icons'
 
 export default defineConfig({
   plugins: [
@@ -250,15 +222,14 @@ export default defineConfig({
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please visit the [main repository](https://github.com/yourusername/phaserjsx) for contribution guidelines.
+Contributions are welcome! Please visit the [main repository](https://github.com/number10/phaserjsx) for contribution guidelines.
 
 ## 📝 License
 
-MIT © [Your Name]
+GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--) at mr@number10.de.
 
 ## 🔗 Links
 
-- [Documentation](https://yourusername.github.io/phaserjsx)
-- [GitHub Repository](https://github.com/yourusername/phaserjsx)
-- [Issue Tracker](https://github.com/yourusername/phaserjsx/issues)
-- [npm Package](https://www.npmjs.com/package/@phaserjsx/ui)
+- [GitHub Repository](https://github.com/number10/phaserjsx)
+- [Issue Tracker](https://github.com/number10/phaserjsx/issues)
+- [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)

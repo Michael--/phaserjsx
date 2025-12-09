@@ -1,7 +1,7 @@
 /**
  * CheckboxExample - Demonstrates various Checkbox variants, states, and configurations
  */
-import { createTheme, ScrollView, Text, View } from '@phaserjsx/ui'
+import { createTheme, ScrollView, Text, View } from '@number10/phaserjsx'
 import { Checkbox, Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

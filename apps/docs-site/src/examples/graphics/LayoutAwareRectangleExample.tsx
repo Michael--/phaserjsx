@@ -2,8 +2,8 @@
  * Layout-Aware Rectangle Example
  * Demonstrates Graphics with layout integration
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Graphics, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Graphics, Text, View } from '@number10/phaserjsx'
 
 /**
  * Rectangle with layout integration

@@ -1,8 +1,8 @@
 /**
  * Divider Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Divider, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Divider, Text, View } from '@number10/phaserjsx'
 
 export function QuickStartExample() {
   return (

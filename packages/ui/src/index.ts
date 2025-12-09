@@ -86,7 +86,7 @@ export { getRenderContext, type RenderContext } from './render-context'
 
 /**
  * Consumers can import JSX runtime from here:
- *   import { jsx, jsxs, Fragment } from "@phaserjsx/ui/jsx-runtime";
+ *   import { jsx, jsxs, Fragment } from "@number10/phaserjsx/jsx-runtime";
  */
 export { Fragment, jsx, jsxs } from './jsx-runtime'
 

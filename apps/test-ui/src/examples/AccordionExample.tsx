@@ -1,4 +1,4 @@
-import { createTheme, ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { createTheme, ScrollView, Text, useThemeTokens, View } from '@number10/phaserjsx'
 import { Accordion, Icon } from '../components'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 

@@ -1,8 +1,8 @@
 /**
  * ScrollView Quick Start Example - Basic scrollable content
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { ScrollView, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { ScrollView, Text, View } from '@number10/phaserjsx'
 
 export function QuickStartScrollViewExample() {
   return (

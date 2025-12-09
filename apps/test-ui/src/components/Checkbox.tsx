@@ -1,12 +1,19 @@
 /**
  * Checkbox component - Selectable option with square indicator and label
  */
-import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, Text, useState, useTheme, View, type PartialTheme } from '@phaserjsx/ui'
+import type * as PhaserJSX from '@number10/phaserjsx'
+import {
+  getThemedProps,
+  Text,
+  useState,
+  useTheme,
+  View,
+  type PartialTheme,
+} from '@number10/phaserjsx'
 import { Icon, type IconType } from './Icon'
 
 // Module augmentation to add RadioGroup theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Checkbox: {
       color?: number

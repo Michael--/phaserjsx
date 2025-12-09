@@ -98,7 +98,7 @@ Low-level utility for manual texture creation (not a hook).
 **Example:**
 
 ```typescript
-import { svgToTexture } from '@phaserjsx/ui'
+import { svgToTexture } from '@number10/phaserjsx'
 
 await svgToTexture(scene, 'my-icon', svgString, 64, 64)
 ```
@@ -127,7 +127,12 @@ await svgToTexture(scene, 'my-icon', svgString, 64, 64)
 ## Import
 
 ```typescript
-import { useSVGTexture, useSVGTextures, svgToTexture, type SVGTextureConfig } from '@phaserjsx/ui'
+import {
+  useSVGTexture,
+  useSVGTextures,
+  svgToTexture,
+  type SVGTextureConfig,
+} from '@number10/phaserjsx'
 ```
 
 ## Notes

@@ -1,8 +1,8 @@
 /**
  * CharText Wrapping Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharText, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharText, Text, View } from '@number10/phaserjsx'
 
 export function WrappingCharTextExample() {
   return (

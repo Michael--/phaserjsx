@@ -9,7 +9,7 @@ import {
   useRef,
   useThemeTokens,
   View,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import type Phaser from 'phaser'
 import { ViewLevel2 } from './Helper/ViewLevel'
 

@@ -11,7 +11,7 @@ import {
   useState,
   useThemeTokens,
   View,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import type Phaser from 'phaser'
 import { Button } from '../components'
 import { SectionHeader } from './Helper'

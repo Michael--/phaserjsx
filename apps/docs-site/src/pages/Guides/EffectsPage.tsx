@@ -233,7 +233,7 @@ effectConfig={{ direction: 'left', time: 400 }}`}
         </p>
 
         <CodeBlock language="tsx">
-          {`import { useGameObjectEffect, type EffectFn } from '@phaserjsx/ui'
+          {`import { useGameObjectEffect, type EffectFn } from '@number10/phaserjsx'
 
 const myCustomEffect: EffectFn = (obj, config) => {
   const time = config.time ?? 500
@@ -291,7 +291,7 @@ function MyButton() {
         </p>
 
         <CodeBlock language="tsx">
-          {`import { useSpring, useForceRedraw } from '@phaserjsx/ui'
+          {`import { useSpring, useForceRedraw } from '@number10/phaserjsx'
 
 function AnimatedBox() {
   const [rotation, setRotation] = useSpring(0, 'gentle')

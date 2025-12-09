@@ -1,7 +1,7 @@
 /**
  * Minimal Phaser bootstrap that mounts the JSX tree into a Scene.
  */
-import { mountJSX } from '@phaserjsx/ui'
+import { mountJSX } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 import { App, type DemoMode, Switcher } from './App'
 
@@ -88,7 +88,7 @@ class MainScene extends Phaser.Scene {
   }
   preload() {
     // Load local assets
-    this.load.atlas('ui', 'assets/ui/buttons.png', 'assets/ui/buttons.json')
+    this.load.atlas('ui', 'assets/phaserjsx/buttons.png', 'assets/phaserjsx/buttons.json')
     this.load.image('phaser-planet', 'assets/images/phaser-planet-small.png')
     this.load.image('phaser-jsx-logo', 'assets/images/phaser-jsx-logo.png')
     this.load.image('test-image', 'assets/images/test.png')

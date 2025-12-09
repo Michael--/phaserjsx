@@ -77,7 +77,7 @@ pnpm exec tsx generate-icon-loaders.ts \
 
 ## As Installed Package
 
-When `@phaserjsx/ui` is installed as an npm package:
+When `@number10/phaserjsx` is installed as an npm package:
 
 ```json
 {

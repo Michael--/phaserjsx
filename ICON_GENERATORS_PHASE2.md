@@ -158,7 +158,7 @@ pnpm run generate-icons
 ### Published Package (Future):
 
 ```bash
-npm install @phaserjsx/ui
+npm install @number10/phaserjsx
 pnpm exec generate-icon-types --help
 # ✓ Works via bin field
 ```
@@ -240,11 +240,11 @@ Or wait for package to be published and use:
 
 ### For Package Consumers:
 
-After `@phaserjsx/ui` is published to npm:
+After `@number10/phaserjsx` is published to npm:
 
 ```bash
 # Install package
-pnpm add @phaserjsx/ui
+pnpm add @number10/phaserjsx
 
 # Use generators via bin
 pnpm exec generate-icon-types -p bootstrap-icons -o ./src/icons.ts

@@ -2,7 +2,7 @@
 
 # PhaserJSX UI Roadmap
 
-> Status-Analyse und Feature-Roadmap für das @phaserjsx/ui Package
+> Status-Analyse und Feature-Roadmap für das @number10/phaserjsx Package
 
 **Stand:** 30. November 2025  
 **Version:** Pre-Release (vor npm-Publish)

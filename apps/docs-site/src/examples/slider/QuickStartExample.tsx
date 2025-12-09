@@ -1,8 +1,8 @@
 /**
  * Slider Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Slider, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Slider, Text, useState, View } from '@number10/phaserjsx'
 
 export function QuickStartSliderExample() {
   const [volume, setVolume] = useState(50)

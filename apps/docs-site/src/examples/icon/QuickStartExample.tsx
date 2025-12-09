@@ -1,9 +1,9 @@
 /**
  * Icon Quick Start Example - Basic icon usage
  */
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import { Icon } from '@/components/Icon'
-import { View } from '@phaserjsx/ui'
+import { View } from '@number10/phaserjsx'
 
 export function QuickStartIconExample() {
   return (

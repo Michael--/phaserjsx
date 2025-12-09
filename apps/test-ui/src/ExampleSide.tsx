@@ -1,5 +1,5 @@
-import type * as PhaserJSX from '@phaserjsx/ui'
-import { getThemedProps, RadioButton, Text, View, type VNode } from '@phaserjsx/ui'
+import type * as PhaserJSX from '@number10/phaserjsx'
+import { getThemedProps, RadioButton, Text, View, type VNode } from '@number10/phaserjsx'
 import { Accordion, Icon, type IconType } from './components'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
@@ -42,7 +42,7 @@ import { TooltipExample } from './examples/TooltipExample'
 import { WrapTextExample } from './examples/WrapTextExample'
 
 // Module augmentation to add Sidebar theme to CustomComponentThemes
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     ExampleContainer: {
       // default is empty

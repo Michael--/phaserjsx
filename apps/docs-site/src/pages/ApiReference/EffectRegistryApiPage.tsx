@@ -262,8 +262,8 @@ type EffectName =
             <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
               <h4 className="font-semibold mb-2">Example:</h4>
               <CodeBlock language="tsx">
-                {`import { useGameObjectEffect } from '@phaserjsx/ui'
-import { applyEffectByName } from '@phaserjsx/ui/effects'
+                {`import { useGameObjectEffect } from '@number10/phaserjsx'
+import { applyEffectByName } from '@number10/phaserjsx/effects'
 
 function AnimatedButton() {
   const ref = useRef()
@@ -317,7 +317,7 @@ function AnimatedButton() {
             <div className="mt-4 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
               <h4 className="font-semibold mb-2">Example:</h4>
               <CodeBlock language="tsx">
-                {`import { resolveEffect } from '@phaserjsx/ui/effects'
+                {`import { resolveEffect } from '@number10/phaserjsx/effects'
 
 function ThemedButton(props: ButtonProps) {
   const theme = useTheme()
@@ -412,8 +412,8 @@ function ThemedButton(props: ButtonProps) {
           <div>
             <h3 className="text-xl font-semibold mb-3">Custom Component with Effects</h3>
             <CodeBlock language="tsx">
-              {`import { useGameObjectEffect } from '@phaserjsx/ui'
-import { applyEffectByName, resolveEffect, EffectDefinition } from '@phaserjsx/ui/effects'
+              {`import { useGameObjectEffect } from '@number10/phaserjsx'
+import { applyEffectByName, resolveEffect, EffectDefinition } from '@number10/phaserjsx/effects'
 
 interface MyComponentProps extends EffectDefinition {
   label: string
@@ -442,8 +442,8 @@ function MyComponent(props: MyComponentProps) {
           <div>
             <h3 className="text-xl font-semibold mb-3">Programmatic Effect Triggering</h3>
             <CodeBlock language="tsx">
-              {`import { useGameObjectEffect } from '@phaserjsx/ui'
-import { applyEffectByName } from '@phaserjsx/ui/effects'
+              {`import { useGameObjectEffect } from '@number10/phaserjsx'
+import { applyEffectByName } from '@number10/phaserjsx/effects'
 
 function NotificationBadge() {
   const ref = useRef()
@@ -508,7 +508,7 @@ function NotificationBadge() {
             <h3 className="text-xl font-semibold mb-3">Declaring Custom Effect Names</h3>
             <CodeBlock language="typescript">
               {`// In your types file
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface EffectNameExtensions {
     rainbow: 'rainbow'
     spiral: 'spiral'
@@ -520,7 +520,7 @@ declare module '@phaserjsx/ui' {
           <div>
             <h3 className="text-xl font-semibold mb-3">Creating Custom Effect Functions</h3>
             <CodeBlock language="typescript">
-              {`import type { EffectFn, EffectConfig } from '@phaserjsx/ui/effects'
+              {`import type { EffectFn, EffectConfig } from '@number10/phaserjsx/effects'
 
 export const createRainbowEffect: EffectFn = (
   gameObject: Phaser.GameObjects.GameObject,
@@ -548,7 +548,7 @@ export const createRainbowEffect: EffectFn = (
           <div>
             <h3 className="text-xl font-semibold mb-3">Registering Custom Effects</h3>
             <CodeBlock language="typescript">
-              {`import { EFFECT_REGISTRY } from '@phaserjsx/ui/effects'
+              {`import { EFFECT_REGISTRY } from '@number10/phaserjsx/effects'
 import { createRainbowEffect } from './effects/rainbow'
 
 // Add to registry

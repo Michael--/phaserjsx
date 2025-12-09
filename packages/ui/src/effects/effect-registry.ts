@@ -76,7 +76,7 @@ export type BuiltInEffectName =
  * Use declaration merging to add custom effects:
  * @example
  * ```typescript
- * declare module '@phaserjsx/ui' {
+ * declare module '@number10/phaserjsx' {
  *   interface EffectNameExtensions {
  *     myCustom: 'myCustom'
  *   }

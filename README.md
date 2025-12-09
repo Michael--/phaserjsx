@@ -4,8 +4,8 @@
 
 A modern, type-safe framework for building game UIs in Phaser3 using JSX components, hooks, and a powerful theme system.
 
-[![npm version](https://img.shields.io/npm/v/@phaserjsx/ui.svg)](https://www.npmjs.com/package/@phaserjsx/ui)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://img.shields.io/npm/v/@number10/phaserjsx.svg)](https://www.npmjs.com/package/@number10/phaserjsx)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 ## ✨ Features
 
@@ -19,19 +19,13 @@ A modern, type-safe framework for building game UIs in Phaser3 using JSX compone
 
 ## 📚 Documentation
 
-**Full documentation:** [https://yourusername.github.io/phaserjsx](https://yourusername.github.io/phaserjsx)
-
-- [Quick Start Guide](https://yourusername.github.io/phaserjsx/quick-start)
-- [Layout Patterns](https://yourusername.github.io/phaserjsx/guides/layout-patterns)
-- [Theme System](https://yourusername.github.io/phaserjsx/guides/theme-system)
-- [Components](https://yourusername.github.io/phaserjsx/components)
-- [API Reference](https://yourusername.github.io/phaserjsx/api/hooks)
+Documentation site will be published on GitHub Pages soon. For now, see the repository and package README for setup details.
 
 ## 📦 Packages
 
 This monorepo contains:
 
-- **[@phaserjsx/ui](./packages/ui)** - Core UI framework library ([npm](https://www.npmjs.com/package/@phaserjsx/ui))
+- **[@number10/phaserjsx](./packages/ui)** - Core UI framework library ([npm](https://www.npmjs.com/package/@number10/phaserjsx))
 - **[docs-site](./apps/docs-site)** - Documentation website (GitHub Pages)
 - **[test-ui](./apps/test-ui)** - Development playground and testing app
 
@@ -46,7 +40,7 @@ This monorepo contains:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/phaserjsx.git
+git clone https://github.com/number10/phaserjsx.git
 cd phaserjsx
 
 # Install dependencies
@@ -59,7 +53,7 @@ pnpm dev
 ## 🛠️ Development
 
 ```bash
-# Run development server (test-ui app)
+# Run development servers (package build watcher + test-ui app)
 pnpm dev
 
 # Build all packages
@@ -83,7 +77,7 @@ pnpm doctor
 
 ## 📝 Scripts
 
-- `pnpm dev` - Start the test-ui development server
+- `pnpm dev` - Run package build watcher and start the test-ui development server
 - `pnpm build` - Build all packages
 - `pnpm test` - Run all tests
 - `pnpm lint` - Lint all code
@@ -100,9 +94,9 @@ phaserjsx/
 ├── .husky/                # Git hooks
 ├── .changeset/            # Changesets configuration
 ├── packages/
-│   └── ui/                # @phaserjsx/ui core library
+│   └── ui/                # @number10/phaserjsx core library
 ├── apps/
-│   └── test-ui/           # @phaserjsx/test-ui playground app
+│   └── test-ui/           # Playground app
 ├── package.json           # Root package manifest
 ├── pnpm-workspace.yaml    # pnpm workspace configuration
 └── tsconfig.base.json     # Shared TypeScript configuration
@@ -133,7 +127,7 @@ This project uses:
 
 ## 📄 License
 
-MIT
+GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--) at mr@number10.de.
 
 ## 🔗 Links
 

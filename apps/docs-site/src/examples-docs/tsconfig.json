@@ -3,7 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui",
+    "jsxImportSource": "@number10/phaserjsx",
     "strict": true,
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true,

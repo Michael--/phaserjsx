@@ -22,7 +22,7 @@ Without warnings, performance problems are **invisible**:
 Warnings are enabled by default in development:
 
 ```typescript
-import { DevConfig } from '@phaserjsx/ui'
+import { DevConfig } from '@number10/phaserjsx'
 
 // Disable specific warnings
 DevConfig.warnings.missingKeys = false // Disable key warnings

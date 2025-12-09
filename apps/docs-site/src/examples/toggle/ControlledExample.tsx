@@ -1,9 +1,9 @@
 /**
  * Toggle Controlled vs Uncontrolled Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { useState } from '@phaserjsx/ui'
-import { Text, Toggle, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { useState } from '@number10/phaserjsx'
+import { Text, Toggle, View } from '@number10/phaserjsx'
 
 export function ControlledToggleExample() {
   const [controlled, setControlled] = useState(false)

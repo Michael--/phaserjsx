@@ -3,7 +3,7 @@
  * Integrates icon generator into Vite's build pipeline
  *
  * Usage in vite.config.ts:
- *   import { iconGeneratorPlugin } from '@phaserjsx/ui/vite-plugin-icons'
+ *   import { iconGeneratorPlugin } from '@number10/phaserjsx/vite-plugin-icons'
  *
  *   export default defineConfig({
  *     plugins: [

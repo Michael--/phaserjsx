@@ -41,7 +41,7 @@ export function HomePage() {
 
       <Section title="Quick Start">
         <pre className="code-install">
-          <code>npm install @phaserjsx/ui</code>
+          <code>npm install @number10/phaserjsx</code>
         </pre>
       </Section>
 

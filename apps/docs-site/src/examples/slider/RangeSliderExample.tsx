@@ -1,8 +1,8 @@
 /**
  * RangeSlider Example - Two thumbs for range selection
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RangeSlider, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RangeSlider, Text, useState, View } from '@number10/phaserjsx'
 
 export function RangeSliderExample() {
   const [priceRange, setPriceRange] = useState<[number, number]>([25, 75])

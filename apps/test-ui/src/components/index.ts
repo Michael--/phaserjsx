@@ -3,7 +3,7 @@
  * These demonstrate how to build composite components using the base View and Text primitives
  */
 
-// Re-export migrated components from @phaserjsx/ui
+// Re-export migrated components from @number10/phaserjsx
 export {
   Accordion,
   CharText,
@@ -20,7 +20,7 @@ export {
   type RefOriginViewProps,
   type SidebarProps,
   type TransformOriginViewProps,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 
 // Test-UI specific components (depend on local icon system)
 export { Checkbox, type CheckboxProps } from './Checkbox'

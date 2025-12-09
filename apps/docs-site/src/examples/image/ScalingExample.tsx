@@ -1,8 +1,8 @@
 /**
  * Image Scaling - Different scaling modes
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Image, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Image, Text, View } from '@number10/phaserjsx'
 
 export function ScalingImageExample() {
   return (

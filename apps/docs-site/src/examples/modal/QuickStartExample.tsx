@@ -1,8 +1,8 @@
 /**
  * Modal Quick Start Example - Basic modal with backdrop
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Modal, Text, View, WrapText, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Modal, Text, View, WrapText, useState } from '@number10/phaserjsx'
 
 export function QuickStartExample() {
   const [isOpen, setIsOpen] = useState(false)

@@ -1,5 +1,5 @@
-/** @jsxImportSource @phaserjsx/ui */
-import { ScrollView, Text, View, WrapText, useThemeTokens } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { ScrollView, Text, View, WrapText, useThemeTokens } from '@number10/phaserjsx'
 import { SectionHeader, ViewLevel2, ViewLevel3 } from './Helper'
 
 /**

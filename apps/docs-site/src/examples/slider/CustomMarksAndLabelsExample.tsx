@@ -1,8 +1,8 @@
 /**
  * Slider with Marks Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RefOriginView, Slider, Text, useState, View, type VNode } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RefOriginView, Slider, Text, useState, View, type VNode } from '@number10/phaserjsx'
 
 // Helper component to center the label below the mark
 function CenterOriginLabel(props: { children: VNode }) {

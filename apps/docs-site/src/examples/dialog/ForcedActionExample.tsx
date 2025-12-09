@@ -1,5 +1,14 @@
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Dialog, Text, View, WrapText, useCallback, useMemo, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import {
+  Button,
+  Dialog,
+  Text,
+  View,
+  WrapText,
+  useCallback,
+  useMemo,
+  useState,
+} from '@number10/phaserjsx'
 
 /**
  * Forced Action Dialog Example

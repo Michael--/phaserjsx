@@ -4,7 +4,7 @@
  */
 import type { BackgroundAnimation, BackgroundConfig } from '@/types/background'
 import { DEFAULT_BACKGROUND } from '@/types/background'
-import { mountJSX, type VNode } from '@phaserjsx/ui'
+import { mountJSX, type VNode } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 
 /**

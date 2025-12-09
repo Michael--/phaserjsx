@@ -1,8 +1,8 @@
 /**
  * View Padding Variations Example - Individual padding for each side
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 const Box = ({ text }: { text: string }) => (
   <View

@@ -1,8 +1,8 @@
 /**
  * Modal Backdrop Behavior Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Modal, Text, View, WrapText, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Modal, Text, View, WrapText, useState } from '@number10/phaserjsx'
 
 export function BackdropExample() {
   const [blockingModal, setBlockingModal] = useState(false)

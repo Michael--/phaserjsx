@@ -7,7 +7,7 @@ import { useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import { Text, View } from '../index'
 
-// import { getThemedProps, Text, useState, View } from '@phaserjsx/ui'
+// import { getThemedProps, Text, useState, View } from '@number10/phaserjsx'
 
 /**
  * Option item for RadioGroup

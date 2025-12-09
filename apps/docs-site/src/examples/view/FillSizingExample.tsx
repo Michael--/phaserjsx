@@ -1,8 +1,8 @@
 /**
  * View Fill Sizing Example - Using "fill" to take full available space
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 export function FillSizingViewExample() {
   return (

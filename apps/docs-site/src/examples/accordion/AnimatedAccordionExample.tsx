@@ -2,8 +2,8 @@
  * Animated Accordion Example
  * Accordion with smooth height animation
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Accordion, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Accordion, Text, View } from '@number10/phaserjsx'
 
 export function AnimatedAccordionExample() {
   return (

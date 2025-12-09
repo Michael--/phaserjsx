@@ -1,9 +1,9 @@
 /**
  * Icon with Button Example - Icons combined with buttons
  */
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import { Icon } from '@/components/Icon'
-import { Button, Text, View } from '@phaserjsx/ui'
+import { Button, Text, View } from '@number10/phaserjsx'
 
 export function ButtonIconExample() {
   return (

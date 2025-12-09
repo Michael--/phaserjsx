@@ -17,7 +17,7 @@ A flexible, type-safe theme system for PhaserJSX that provides global and local 
 ### Setting a Global Theme
 
 ```tsx
-import { themeRegistry, createTheme } from '@phaserjsx/ui'
+import { themeRegistry, createTheme } from '@number10/phaserjsx'
 
 // Set global theme for built-in components
 themeRegistry.updateGlobalTheme(
@@ -87,7 +87,7 @@ themeRegistry.updateGlobalTheme(
 ### Using the useTheme Hook
 
 ```tsx
-import { useTheme } from '@phaserjsx/ui'
+import { useTheme } from '@number10/phaserjsx'
 
 function ThemedComponent() {
   const theme = useTheme()
@@ -106,7 +106,7 @@ Custom components can extend the theme system via module augmentation:
 
 ```tsx
 // 1. Extend the theme interface
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Button: {
       backgroundColor?: number
@@ -117,7 +117,7 @@ declare module '@phaserjsx/ui' {
 }
 
 // 2. Register default theme values
-import { themeRegistry } from '@phaserjsx/ui'
+import { themeRegistry } from '@number10/phaserjsx'
 
 themeRegistry.registerCustomComponent('Button', {
   backgroundColor: 0x0000ff,
@@ -126,7 +126,7 @@ themeRegistry.registerCustomComponent('Button', {
 })
 
 // 3. Use themed props in your component
-import { getThemedProps } from '@phaserjsx/ui'
+import { getThemedProps } from '@number10/phaserjsx'
 
 function Button(props: ButtonProps) {
   const { props: themed, nestedTheme } = getThemedProps('Button', undefined, props)
@@ -151,7 +151,7 @@ Components can define styles for their child components using nested themes:
 
 ```tsx
 // 1. Extend theme definition with nested component themes
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Sidebar: {
       backgroundColor?: number

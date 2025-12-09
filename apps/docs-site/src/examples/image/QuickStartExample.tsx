@@ -1,8 +1,8 @@
 /**
  * Image Quick Start - Basic image loading from Phaser assets
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Image, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Image, Text, View } from '@number10/phaserjsx'
 
 export function QuickStartImageExample() {
   return (

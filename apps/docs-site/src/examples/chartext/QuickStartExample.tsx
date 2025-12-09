@@ -1,8 +1,8 @@
 /**
  * CharText Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharText, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharText, View } from '@number10/phaserjsx'
 
 export function QuickStartCharTextExample() {
   return (

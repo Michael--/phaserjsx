@@ -2,8 +2,8 @@
  * Dependency-Based Redraw Example
  * Demonstrates redraw when dependencies change
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Graphics, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Graphics, Text, View, useState } from '@number10/phaserjsx'
 
 /**
  * Dependency-based redraw demo

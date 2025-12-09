@@ -1,6 +1,6 @@
 # PhaserJSX UI Documentation Site
 
-Documentation and showcase site for @phaserjsx/ui component library.
+Documentation and showcase site for @number10/phaserjsx component library.
 
 ## Architecture
 
@@ -11,7 +11,7 @@ This is a **React-based** documentation site that demonstrates PhaserJSX compone
 The site uses **two separate JSX runtimes** without conflicts:
 
 - **React JSX** (`@jsxImportSource react`) - For docs UI (navigation, layout, text)
-- **PhaserJSX** (`@jsxImportSource @phaserjsx/ui`) - For live component examples (Phaser canvas)
+- **PhaserJSX** (`@jsxImportSource @number10/phaserjsx`) - For live component examples (Phaser canvas)
 
 ### How It Works
 

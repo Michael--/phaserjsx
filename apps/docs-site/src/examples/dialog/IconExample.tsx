@@ -1,5 +1,14 @@
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Dialog, Text, Toggle, useCallback, useMemo, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import {
+  Button,
+  Dialog,
+  Text,
+  Toggle,
+  useCallback,
+  useMemo,
+  useState,
+  View,
+} from '@number10/phaserjsx'
 
 /**
  * Dialog with Icon Example

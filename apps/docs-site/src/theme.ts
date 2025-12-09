@@ -1,7 +1,7 @@
 /**
  * Theme configuration for docs-site examples
  */
-import { createTheme, getPresetWithMode, setColorPreset, themeRegistry } from '@phaserjsx/ui'
+import { createTheme, getPresetWithMode, setColorPreset, themeRegistry } from '@number10/phaserjsx'
 
 /**
  * Create minimal theme for docs examples

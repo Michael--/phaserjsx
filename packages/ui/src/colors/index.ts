@@ -1,6 +1,6 @@
 /**
  * Color system public API
- * @module @phaserjsx/ui/colors
+ * @module @number10/phaserjsx/colors
  */
 
 // Types

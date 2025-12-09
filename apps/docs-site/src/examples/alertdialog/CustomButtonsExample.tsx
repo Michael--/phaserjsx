@@ -1,5 +1,5 @@
-/** @jsxImportSource @phaserjsx/ui */
-import { AlertDialog, Button, Text, useCallback, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { AlertDialog, Button, Text, useCallback, useState, View } from '@number10/phaserjsx'
 
 /**
  * Custom Buttons Example

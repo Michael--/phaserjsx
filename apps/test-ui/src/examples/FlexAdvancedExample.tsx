@@ -1,4 +1,4 @@
-import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollView, Text, useThemeTokens, View } from '@number10/phaserjsx'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**

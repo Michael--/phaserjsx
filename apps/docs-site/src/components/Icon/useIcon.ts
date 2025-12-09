@@ -1,7 +1,7 @@
 /**
  * Hook to preload an icon and check if it's ready
  */
-import { useIconPreload } from '@phaserjsx/ui'
+import { useIconPreload } from '@number10/phaserjsx'
 import type { IconType } from './icon-types.generated'
 import { iconLoader } from './iconLoader'
 

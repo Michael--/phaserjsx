@@ -1,8 +1,8 @@
 /**
  * WrapText Styling Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { View, WrapText } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { View, WrapText } from '@number10/phaserjsx'
 
 export function StylingWrapTextExample() {
   return (

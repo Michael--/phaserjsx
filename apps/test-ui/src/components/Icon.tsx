@@ -8,7 +8,7 @@ import {
   useIconPreload,
   useTheme,
   type IconProps as GenericIconProps,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { iconLoaders } from './icon-loaders.generated'
 import type { IconType } from './icon-types.generated'
 

@@ -2,8 +2,8 @@
  * Controlled Accordion Example
  * Accordion controlled by external state
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Accordion, Button, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Accordion, Button, Text, View, useState } from '@number10/phaserjsx'
 
 export function ControlledAccordionExample() {
   const [isOpen, setIsOpen] = useState(false)

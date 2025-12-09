@@ -25,7 +25,7 @@ export function IconGeneratorConfigPage() {
           Create icon-generator.config.ts in your project root with defineIconConfig helper.
         </SectionDescription>
 
-        <CodeBlock language="typescript">{`import { defineIconConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
+        <CodeBlock language="typescript">{`import { defineIconConfig } from '@number10/phaserjsx/scripts/icon-generator-config'
 
 export default defineIconConfig({
   source: [
@@ -260,7 +260,7 @@ const config = {
           Full configuration with all options for a real-world setup.
         </SectionDescription>
 
-        <CodeBlock language="typescript">{`import { defineIconConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
+        <CodeBlock language="typescript">{`import { defineIconConfig } from '@number10/phaserjsx/scripts/icon-generator-config'
 
 export default defineIconConfig({
   // Multiple icon sources

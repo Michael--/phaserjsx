@@ -1,8 +1,8 @@
 /**
  * View Alignment Example - Positioning content within View
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, View } from '@number10/phaserjsx'
 
 const Box = ({ label }: { label: string }) => (
   <View backgroundColor={0xe74c3c} padding={8} cornerRadius={4}>

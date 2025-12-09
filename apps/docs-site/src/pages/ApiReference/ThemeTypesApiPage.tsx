@@ -406,7 +406,7 @@ const theme: PartialTheme = {
           <div>
             <h3 className="text-xl font-semibold mb-3">Creating Themes</h3>
             <CodeBlock language="typescript">
-              {`import { Theme, PartialTheme } from '@phaserjsx/ui'
+              {`import { Theme, PartialTheme } from '@number10/phaserjsx'
 
 // Complete theme
 const darkTheme: Theme = {
@@ -440,7 +440,7 @@ const customizations: PartialTheme = {
           <div>
             <h3 className="text-xl font-semibold mb-3">Applying Themes</h3>
             <CodeBlock language="tsx">
-              {`import { ThemeProvider } from '@phaserjsx/ui'
+              {`import { ThemeProvider } from '@number10/phaserjsx'
 
 // Global theme
 <ThemeProvider theme={myTheme}>
@@ -463,7 +463,7 @@ const customizations: PartialTheme = {
           <div>
             <h3 className="text-xl font-semibold mb-3">Accessing Theme in Components</h3>
             <CodeBlock language="tsx">
-              {`import { useTheme, getThemedProps } from '@phaserjsx/ui'
+              {`import { useTheme, getThemedProps } from '@number10/phaserjsx'
 
 function MyComponent(props: MyComponentProps) {
   // Get current theme context
@@ -490,7 +490,7 @@ function MyComponent(props: MyComponentProps) {
             <h3 className="text-xl font-semibold mb-3">Runtime Theme Switching</h3>
             <CodeBlock language="tsx">
               {`import { useState } from 'react'
-import { ThemeProvider } from '@phaserjsx/ui'
+import { ThemeProvider } from '@number10/phaserjsx'
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState<Theme>(lightTheme)

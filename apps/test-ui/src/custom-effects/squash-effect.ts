@@ -2,7 +2,7 @@
  * Custom effect: Squash animation
  * Demonstrates how to create and register custom effects
  */
-import type { EffectFn } from '@phaserjsx/ui'
+import type { EffectFn } from '@number10/phaserjsx'
 
 /**
  * Squash effect - Compresses and stretches the object

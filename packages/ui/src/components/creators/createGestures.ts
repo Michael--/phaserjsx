@@ -2,7 +2,7 @@
  * Gesture setup for component initialization
  * Registers containers with the GestureManager for high-level gesture detection
  */
-import type { LayoutSize } from '@phaserjsx/ui/layout/types'
+import type { LayoutSize } from '@number10/phaserjsx/layout/types'
 import Phaser from 'phaser'
 import type { GestureProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'

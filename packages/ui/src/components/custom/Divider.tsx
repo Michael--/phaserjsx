@@ -3,7 +3,7 @@
  * Divider component - Simple visual separator
  * Test component to validate TSX support in packages/ui
  */
-import type { SizeValue } from '@phaserjsx/ui/core-props'
+import type { SizeValue } from '@number10/phaserjsx/core-props'
 import { View } from '../index'
 
 /**

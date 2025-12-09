@@ -39,7 +39,7 @@ export function IconSystemPage() {
         <h3>Core Components</h3>
         <ul>
           <li>
-            <strong>Generic Icon Component</strong> - Pluggable loader system in @phaserjsx/ui
+            <strong>Generic Icon Component</strong> - Pluggable loader system in @number10/phaserjsx
           </li>
           <li>
             <strong>Custom Icon Wrapper</strong> - Type-safe app-specific implementation
@@ -207,7 +207,7 @@ Code Change → Watch detects <Icon type="new-icon" />
 
         <h3>Configuration</h3>
         <CodeBlock language="typescript">
-          {`import { iconGeneratorPlugin } from '@phaserjsx/ui/vite-plugin-icons'
+          {`import { iconGeneratorPlugin } from '@number10/phaserjsx/vite-plugin-icons'
 
 export default defineConfig({
   plugins: [
@@ -268,7 +268,7 @@ import { Icon } from '@/components/Icon'
 <Icon type="check" /> // IntelliSense works
 
 // ❌ DON'T: Generic component
-import { Icon } from '@phaserjsx/ui'
+import { Icon } from '@number10/phaserjsx'
 <Icon type="check" loader={...} /> // Manual loader, no types`}
         </CodeBlock>
 

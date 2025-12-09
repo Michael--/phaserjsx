@@ -65,7 +65,7 @@ importers:
 
   apps/docs-site:
     dependencies:
-      '@phaserjsx/ui':
+      '@number10/phaserjsx':
         specifier: workspace:*
         version: link:../../packages/ui
       bootstrap-icons:
@@ -126,7 +126,7 @@ importers:
 
   apps/test-ui:
     dependencies:
-      '@phaserjsx/ui':
+      '@number10/phaserjsx':
         specifier: workspace:*
         version: link:../../packages/ui
       bootstrap-icons:
@@ -3185,7 +3185,7 @@ packages:
     hasBin: true
 
   set-cookie-parser@2.7.2:
-    resolution: {integrity: sha512-oeM1lpU/UvhTxw+g3cIfxXHyJRc/uidd3yK1P242gzHds0udQBYzs3y8j4gCCW+ZJ7ad0yctld8RYO+bdurlvw==}
+    resolution: {integrity: sha512-oeM1lpU/UvhTxw+g3cIfxXHyJRc/phaserjsxdd3yK1P242gzHds0udQBYzs3y8j4gCCW+ZJ7ad0yctld8RYO+bdurlvw==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -3612,7 +3612,7 @@ packages:
       '@vitest/browser-playwright': 4.0.8
       '@vitest/browser-preview': 4.0.8
       '@vitest/browser-webdriverio': 4.0.8
-      '@vitest/ui': 4.0.8
+      '@vitest/phaserjsx': 4.0.8
       happy-dom: '*'
       jsdom: '*'
     peerDependenciesMeta:
@@ -3628,7 +3628,7 @@ packages:
         optional: true
       '@vitest/browser-webdriverio':
         optional: true
-      '@vitest/ui':
+      '@vitest/phaserjsx':
         optional: true
       happy-dom:
         optional: true

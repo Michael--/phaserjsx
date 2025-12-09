@@ -1,4 +1,4 @@
-# Documentation & Showcase Strategy für @phaserjsx/ui
+# Documentation & Showcase Strategy für @number10/phaserjsx
 
 **Stand:** 4. Dezember 2025  
 **Ziel:** Professionelle, online-fähige Dokumentations- und Showcase-Lösung
@@ -151,7 +151,7 @@ Die aktuelle `test-ui` App ist:
 **Pros:**
 
 - ✅ **VOLLE KONTROLLE** über Phaser-Integration
-- ✅ Maßgeschneidert für @phaserjsx/ui
+- ✅ Maßgeschneidert für @number10/phaserjsx
 - ✅ Keine Kämpfe mit Frameworks
 - ✅ Kann `test-ui` Code wiederverwenden
 - ✅ Einfacher zu verstehen & warten
@@ -311,7 +311,7 @@ docs-site/ (New Vite App)
 
 5. **Theme:**
    - Dark/Light Mode (wie test-ui)
-   - Consistent mit @phaserjsx/ui Theme
+   - Consistent mit @number10/phaserjsx Theme
 
 ### Technology Stack
 
@@ -501,7 +501,7 @@ apps/
 
 ```
 packages/
-├── ui/                # @phaserjsx/ui
+├── ui/                # @number10/phaserjsx
 └── examples/          # @phaserjsx/examples
     └── src/
         ├── ButtonExample.tsx
@@ -677,11 +677,11 @@ Die Docs-Site (React) und PhaserJSX nutzen **beide JSX**, aber mit **unterschied
 // packages/ui/tsconfig.json
 {
   "jsx": "react-jsx",
-  "jsxImportSource": "."  // → @phaserjsx/ui
+  "jsxImportSource": "."  // → @number10/phaserjsx
 }
 
 // Component File
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 <View>...</View>  // → VNode (Phaser GameObject)
 ```
 
@@ -706,7 +706,7 @@ Die Docs-Site (React) und PhaserJSX nutzen **beide JSX**, aber mit **unterschied
 ```tsx
 // ❌ PROBLEM: Beide wollen den gleichen JSX namespace!
 // PhaserJSX File
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 <View>...</View>  // → VNode
 
 // React File (same project)
@@ -718,7 +718,7 @@ Die Docs-Site (React) und PhaserJSX nutzen **beide JSX**, aber mit **unterschied
 
 ```tsx
 // ❌ KONFLIKT: Beide haben <Button>, <View>, etc.
-import { Button as PhaserButton } from '@phaserjsx/ui'
+import { Button as PhaserButton } from '@number10/phaserjsx'
 import { Button as ReactButton } from 'react-component-lib'
 ```
 
@@ -757,7 +757,7 @@ docs-site/ (React + Vite)
 │
 packages/examples/ (PhaserJSX)
 └── src/
-    └── ButtonExample.tsx         # @jsxImportSource @phaserjsx/ui
+    └── ButtonExample.tsx         # @jsxImportSource @number10/phaserjsx
 ```
 
 ### Implementation Example
@@ -782,8 +782,8 @@ export function ButtonPage() {
       {/* Phaser Canvas Container */}
       <LiveExample sceneFactory={() => createPhaserScene(ButtonExample)} />
       <CodeBlock language="tsx">
-        {`/** @jsxImportSource @phaserjsx/ui */
-import { Button } from '@phaserjsx/ui'
+        {`/** @jsxImportSource @number10/phaserjsx */
+import { Button } from '@number10/phaserjsx'
 
 <Button>Click Me</Button>`}
       </CodeBlock>
@@ -796,8 +796,8 @@ import { Button } from '@phaserjsx/ui'
 
 ```tsx
 // packages/examples/src/ButtonExample.tsx
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, View } from '@number10/phaserjsx'
 
 export function ButtonExample() {
   return (
@@ -863,8 +863,8 @@ export function LiveExample({ sceneFactory }: LiveExampleProps) {
 ```typescript
 // docs-site/src/utils/phaser-bridge.ts
 import Phaser from 'phaser'
-import { mount } from '@phaserjsx/ui'
-import type { VNode } from '@phaserjsx/ui'
+import { mount } from '@number10/phaserjsx'
+import type { VNode } from '@number10/phaserjsx'
 
 /**
  * Creates a Phaser Scene that mounts a PhaserJSX component
@@ -905,7 +905,7 @@ export function createPhaserScene(component: () => VNode) {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "@phaserjsx/ui", // ← Default: PhaserJSX
+    "jsxImportSource": "@number10/phaserjsx", // ← Default: PhaserJSX
     "types": ["phaser"]
   },
   "include": ["src/**/*"]

@@ -1,4 +1,4 @@
-import { useThemeTokens, View, type ViewProps } from '@phaserjsx/ui'
+import { useThemeTokens, View, type ViewProps } from '@number10/phaserjsx'
 
 export function ViewLevel1(props: ViewProps) {
   return (

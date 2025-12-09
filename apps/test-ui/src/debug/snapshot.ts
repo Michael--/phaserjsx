@@ -3,8 +3,8 @@
  * All functions are read-only and do not mutate the VDOM or registries
  */
 
-import type { VNode } from '@phaserjsx/ui'
-import { DevConfig, nodeRegistry, themeRegistry, viewportRegistry } from '@phaserjsx/ui'
+import type { VNode } from '@number10/phaserjsx'
+import { DevConfig, nodeRegistry, themeRegistry, viewportRegistry } from '@number10/phaserjsx'
 
 /**
  * Simplified VNode structure for debugging

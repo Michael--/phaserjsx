@@ -4,7 +4,7 @@
  *
  * @example Basic usage:
  * ```tsx
- * import { useGameObjectEffect, createPulseEffect } from '@phaserjsx/ui/effects'
+ * import { useGameObjectEffect, createPulseEffect } from '@number10/phaserjsx/effects'
  *
  * function MyButton() {
  *   const ref = useRef(null)
@@ -20,7 +20,7 @@
  *
  * @example Using effect registry:
  * ```tsx
- * import { useGameObjectEffect, applyEffectByName } from '@phaserjsx/ui/effects'
+ * import { useGameObjectEffect, applyEffectByName } from '@number10/phaserjsx/effects'
  *
  * function MyComponent() {
  *   const ref = useRef(null)
@@ -34,7 +34,7 @@
  *
  * @example Custom effects:
  * ```tsx
- * import { useGameObjectEffect, type EffectFn } from '@phaserjsx/ui/effects'
+ * import { useGameObjectEffect, type EffectFn } from '@number10/phaserjsx/effects'
  *
  * const myCustomEffect: EffectFn = (obj, config) => {
  *   obj.scene.tweens.add({

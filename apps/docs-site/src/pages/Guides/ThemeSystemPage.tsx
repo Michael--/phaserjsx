@@ -108,7 +108,7 @@ export function ThemeSystemPage() {
         </p>
 
         <CodeBlock language="tsx">
-          {`import { createTheme, getPresetWithMode } from '@phaserjsx/ui'
+          {`import { createTheme, getPresetWithMode } from '@number10/phaserjsx'
 
 // Get preset with color mode
 const preset = getPresetWithMode('oceanBlue', 'light')
@@ -223,7 +223,7 @@ const darkPreset = getPresetWithMode('oceanBlue', 'dark')
         </p>
 
         <CodeBlock language="tsx">
-          {`import { createTheme } from '@phaserjsx/ui'
+          {`import { createTheme } from '@number10/phaserjsx'
 
 // This View and all children use the custom theme
 <View
@@ -332,9 +332,9 @@ const darkPreset = getPresetWithMode('oceanBlue', 'dark')
 
         <CodeBlock language="tsx">
           {`// In your component file (e.g., Checkbox.tsx)
-import type * as PhaserJSX from '@phaserjsx/ui'
+import type * as PhaserJSX from '@number10/phaserjsx'
 
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     Checkbox: {
       color?: number
@@ -361,7 +361,7 @@ declare module '@phaserjsx/ui' {
         </p>
 
         <CodeBlock language="tsx">
-          {`import { getThemedProps, useTheme, View, Text } from '@phaserjsx/ui'
+          {`import { getThemedProps, useTheme, View, Text } from '@number10/phaserjsx'
 
 export function Checkbox(props: CheckboxProps) {
   const localTheme = useTheme()
@@ -541,7 +541,7 @@ colors.primary.darkest   // Darkest shade`}
         </p>
 
         <CodeBlock language="tsx">
-          {`import { setColorPreset, setColorMode } from '@phaserjsx/ui'
+          {`import { setColorPreset, setColorMode } from '@number10/phaserjsx'
 
 // Initial setup with light mode
 setColorPreset('oceanBlue')
@@ -573,7 +573,7 @@ function changeTheme(preset: 'oceanBlue' | 'forestGreen' | 'midnight') {
         </p>
 
         <CodeBlock language="tsx">
-          {`import { generateColorScale, type ColorPreset } from '@phaserjsx/ui'
+          {`import { generateColorScale, type ColorPreset } from '@number10/phaserjsx'
 
 export const myCustomPreset: ColorPreset = {
   name: 'myCustom',
@@ -733,7 +733,7 @@ const footerTheme = createTheme({
         <p>Enable theme debugging to see theme resolution in console:</p>
 
         <CodeBlock language="tsx">
-          {`import { DebugLogger } from '@phaserjsx/ui'
+          {`import { DebugLogger } from '@number10/phaserjsx'
 
 // Enable theme logging
 DebugLogger.enable('theme')

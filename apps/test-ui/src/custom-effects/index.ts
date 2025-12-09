@@ -2,7 +2,7 @@
  * Custom Effects Registry
  * Register custom effects to extend the built-in effect system
  */
-import { EFFECT_REGISTRY } from '@phaserjsx/ui'
+import { EFFECT_REGISTRY } from '@number10/phaserjsx'
 import { createSquashEffect } from './squash-effect'
 import './types' // Import type augmentation
 

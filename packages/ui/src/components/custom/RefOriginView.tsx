@@ -17,7 +17,7 @@
  *   <Text>Rotates around center</Text>
  * </RefOriginView>
  */
-import type { ChildrenType } from '@phaserjsx/ui/types'
+import type { ChildrenType } from '@number10/phaserjsx/types'
 import type Phaser from 'phaser'
 import type { ViewProps } from '..'
 import { useRef, useState } from '../../hooks'

@@ -1,8 +1,8 @@
 /**
  * NineSliceButton Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { NineSliceButton, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { NineSliceButton, Text, View } from '@number10/phaserjsx'
 
 /**
  * Preload function for Quick Start example
@@ -10,7 +10,7 @@ import { NineSliceButton, Text, View } from '@phaserjsx/ui'
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadQuickStartNineSliceButton(scene: Phaser.Scene) {
-  scene.load.atlas('ui', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
+  scene.load.atlas('ui', '/assets/phaserjsx/buttons.png', '/assets/phaserjsx/buttons.json')
 }
 
 /**

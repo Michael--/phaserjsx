@@ -1,8 +1,9 @@
 {
-  "name": "@phaserjsx/ui",
-  "version": "0.0.0",
+  "name": "@number10/phaserjsx",
+  "version": "0.1.0",
   "type": "module",
   "description": "Declarative Phaser3 + UI renderer core library",
+  "author": "Michael Rieck (Michael--) <mr@number10.de>",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -67,16 +68,15 @@
     "components",
     "hooks"
   ],
-  "author": "",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/phaserjsx.git",
+    "url": "https://github.com/number10/phaserjsx.git",
     "directory": "packages/ui"
   },
-  "homepage": "https://yourusername.github.io/phaserjsx",
+  "homepage": "https://github.com/number10/phaserjsx",
   "bugs": {
-    "url": "https://github.com/yourusername/phaserjsx/issues"
+    "url": "https://github.com/number10/phaserjsx/issues"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.20",

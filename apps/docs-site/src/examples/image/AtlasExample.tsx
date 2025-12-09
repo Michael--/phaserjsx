@@ -1,8 +1,8 @@
 /**
  * Image from Atlas - Using texture atlas frames
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Image, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Image, Text, View } from '@number10/phaserjsx'
 
 export function AtlasImageExample() {
   return (
@@ -36,5 +36,5 @@ export function AtlasImageExample() {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadAtlasImage(scene: Phaser.Scene) {
-  scene.load.atlas('buttons', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
+  scene.load.atlas('buttons', '/assets/phaserjsx/buttons.png', '/assets/phaserjsx/buttons.json')
 }

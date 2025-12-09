@@ -1,4 +1,4 @@
-/** @jsxImportSource @phaserjsx/ui */
+/** @jsxImportSource @number10/phaserjsx */
 import {
   Button,
   Modal,
@@ -9,7 +9,7 @@ import {
   useMemo,
   useState,
   useThemeTokens,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { SectionHeader, ViewLevel2 } from './Helper'
 
 /**

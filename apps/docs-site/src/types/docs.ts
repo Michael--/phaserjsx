@@ -2,7 +2,7 @@
  * Type definitions for documentation content
  */
 import type { SceneSize } from '@/constants/scene-sizes'
-import type { VNode } from '@phaserjsx/ui'
+import type { VNode } from '@number10/phaserjsx'
 
 /**
  * Definition for a single example

@@ -2,7 +2,7 @@
  * Gesture property appliers for component patching
  * Updates gesture registration when props change
  */
-import type { LayoutSize } from '@phaserjsx/ui/layout'
+import type { LayoutSize } from '@number10/phaserjsx/layout'
 import Phaser from 'phaser'
 import type { GestureProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'

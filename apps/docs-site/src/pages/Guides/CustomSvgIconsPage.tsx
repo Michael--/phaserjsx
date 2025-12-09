@@ -93,7 +93,7 @@ export function CustomSvgIconsPage() {
           Update icon-generator.config.ts to include your custom directory.
         </SectionDescription>
 
-        <CodeBlock language="typescript">{`import { defineIconConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
+        <CodeBlock language="typescript">{`import { defineIconConfig } from '@number10/phaserjsx/scripts/icon-generator-config'
 
 export default defineIconConfig({
   // Multiple sources: npm package + local directory

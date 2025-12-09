@@ -1,7 +1,7 @@
 /**
  * Design Tokens Example - demonstrates the new useThemeTokens API
  */
-import { ScrollView, Text, useThemeTokens, View } from '@phaserjsx/ui'
+import { ScrollView, Text, useThemeTokens, View } from '@number10/phaserjsx'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**

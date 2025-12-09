@@ -3,7 +3,7 @@
  * Reads __rootVNode stored by mountJSX without modifying VDOM
  */
 
-import type { VNode } from '@phaserjsx/ui'
+import type { VNode } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 
 /**

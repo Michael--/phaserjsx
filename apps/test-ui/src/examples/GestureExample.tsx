@@ -9,7 +9,7 @@ import {
   useState,
   useThemeTokens,
   type GestureEventData,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 /**

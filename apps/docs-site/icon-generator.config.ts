@@ -1,4 +1,4 @@
-import { defineIconConfig } from '@phaserjsx/ui/scripts/icon-generator-config'
+import { defineIconConfig } from '@number10/phaserjsx/scripts/icon-generator-config'
 
 /**
  * Icon generator configuration for docs-site

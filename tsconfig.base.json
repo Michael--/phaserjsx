@@ -41,8 +41,8 @@
     // Path mappings for workspace packages
     "baseUrl": ".",
     "paths": {
-      "@phaserjsx/ui": ["packages/ui/src"],
-      "@phaserjsx/ui/*": ["packages/ui/src/*"]
+      "@number10/phaserjsx": ["packages/ui/src"],
+      "@number10/phaserjsx/*": ["packages/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "coverage", ".changeset"]

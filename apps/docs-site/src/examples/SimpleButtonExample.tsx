@@ -2,8 +2,8 @@
  * Simple Button Example for POC
  * This demonstrates PhaserJSX running in the docs site
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, View } from '@number10/phaserjsx'
 
 /**
  * Basic button example

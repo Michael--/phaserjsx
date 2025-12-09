@@ -1,8 +1,8 @@
 /**
  * Dropdown Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Dropdown, Text, useState, View, type DropdownOption } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Dropdown, Text, useState, View, type DropdownOption } from '@number10/phaserjsx'
 
 const fruits: DropdownOption[] = [
   { value: 'apple', label: 'Apple' },

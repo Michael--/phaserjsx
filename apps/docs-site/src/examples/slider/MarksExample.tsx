@@ -1,8 +1,8 @@
 /**
  * Slider with Marks Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Slider, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Slider, Text, useState, View } from '@number10/phaserjsx'
 
 export function MarksSliderExample() {
   const [withMarks, setWithMarks] = useState(5)

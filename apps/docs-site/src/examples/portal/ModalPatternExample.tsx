@@ -1,8 +1,8 @@
 /**
  * Portal Modal Pattern Example - Building a simple modal with Portal
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, View, WrapText, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Portal, Text, View, WrapText, useState } from '@number10/phaserjsx'
 
 export function ModalPatternExample() {
   const [isOpen, setIsOpen] = useState(false)

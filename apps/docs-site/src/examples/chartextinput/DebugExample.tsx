@@ -1,8 +1,8 @@
 /**
  * CharTextInput Debug Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { CharTextInput, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { CharTextInput, Text, useState, View } from '@number10/phaserjsx'
 
 export function DebugCharTextInputExample() {
   const [value, setValue] = useState('Test input')

@@ -1,8 +1,8 @@
 /**
  * Test component to verify PhaserJSX installation
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View, mountJSX, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, View, mountJSX, useState } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 
 class TestScene extends Phaser.Scene {

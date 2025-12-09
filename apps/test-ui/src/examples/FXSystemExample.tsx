@@ -20,7 +20,7 @@ import {
   useThemeTokens,
   View,
   WrapText,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

@@ -2,8 +2,8 @@
  * Basic Accordion Example
  * Simple collapsible content
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Accordion, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Accordion, Text, View } from '@number10/phaserjsx'
 
 export function BasicAccordionExample() {
   return (

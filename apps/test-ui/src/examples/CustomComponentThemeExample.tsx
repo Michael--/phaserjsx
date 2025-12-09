@@ -9,7 +9,7 @@
  * Step 1: Extend the CustomComponentThemes interface via module augmentation
  * This makes your custom component's theme type-safe
  */
-declare module '@phaserjsx/ui' {
+declare module '@number10/phaserjsx' {
   interface CustomComponentThemes {
     CustomComponent: {
       backgroundColor?: number
@@ -17,7 +17,7 @@ declare module '@phaserjsx/ui' {
       width?: number | string
       padding?: number
       gap?: number
-    } & import('@phaserjsx/ui').NestedComponentThemes
+    } & import('@number10/phaserjsx').NestedComponentThemes
   }
 }
 
@@ -25,7 +25,7 @@ declare module '@phaserjsx/ui' {
  * Step 2: Register default theme values for your component
  * Do this in your component's initialization code
  */
-import { themeRegistry, type SizeValue } from '@phaserjsx/ui'
+import { themeRegistry, type SizeValue } from '@number10/phaserjsx'
 
 themeRegistry.registerCustomComponent('CustomComponentName', {
   backgroundColor: 0x1e1e1e,
@@ -44,7 +44,7 @@ themeRegistry.registerCustomComponent('CustomComponentName', {
  * Step 3: Use getThemedProps in your component to apply theme values
  * This merges global theme, local theme, and explicit props (explicit props win)
  */
-import { View, getThemedProps, type ViewProps } from '@phaserjsx/ui'
+import { View, getThemedProps, type ViewProps } from '@number10/phaserjsx'
 
 export interface CustomComponentProps {
   width?: SizeValue
@@ -81,7 +81,7 @@ function CustomComponent(props: CustomComponentProps) {
 /**
  * Step 4: Use the themed component with global, local, and nested theme overrides
  */
-import { Text } from '@phaserjsx/ui'
+import { Text } from '@number10/phaserjsx'
 
 export function UsageExample() {
   return (

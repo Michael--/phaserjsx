@@ -1,8 +1,8 @@
 /**
  * Button Effects Example - PhaserJSX animations
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Button, Text, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Button, Text, View } from '@number10/phaserjsx'
 
 export function EffectsButtonExample() {
   return (

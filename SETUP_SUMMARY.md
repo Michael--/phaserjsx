@@ -6,7 +6,7 @@ A complete, production-ready pnpm monorepo with:
 
 ### 📦 Packages
 
-- `@phaserjsx/ui` - Core library package (packages/ui/)
+- `@number10/phaserjsx` - Core library package (packages/ui/)
 - `@phaserjsx/test-ui` - Test/playground app (apps/test-ui/)
 
 ### 🛠️ Tooling & Configuration
@@ -64,7 +64,7 @@ phaserjsx/
 │   └── commit-msg         # Validates commit messages
 ├── .changeset/            # Changesets config
 ├── packages/
-│   └── ui/                # @phaserjsx/ui library
+│   └── ui/                # @number10/phaserjsx library
 │       ├── src/
 │       │   ├── index.ts   # Entry point (minimal placeholder)
 │       │   └── index.test.ts  # Placeholder test
@@ -114,7 +114,7 @@ phaserjsx/
 
 #### Vite
 
-- Library mode for `@phaserjsx/ui` (ESM + CJS outputs)
+- Library mode for `@number10/phaserjsx` (ESM + CJS outputs)
 - Dev server mode for `@phaserjsx/test-ui`
 - TypeScript declaration files with rollup
 

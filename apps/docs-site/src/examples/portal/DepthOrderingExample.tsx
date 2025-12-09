@@ -1,8 +1,8 @@
 /**
  * Portal Depth Ordering Example - Multiple portals at different depths
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Portal, Text, View, useState } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Portal, Text, View, useState } from '@number10/phaserjsx'
 
 export function DepthOrderingExample() {
   const [showAll, setShowAll] = useState(false)

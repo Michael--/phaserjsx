@@ -1,8 +1,8 @@
 /**
  * RefOriginView Quick Start Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RefOriginView, Text, useEffect, useRef, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RefOriginView, Text, useEffect, useRef, View } from '@number10/phaserjsx'
 import type Phaser from 'phaser'
 
 /**

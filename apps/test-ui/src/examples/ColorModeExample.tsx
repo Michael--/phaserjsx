@@ -10,7 +10,7 @@ import {
   useRedraw,
   useThemeTokens,
   View,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 

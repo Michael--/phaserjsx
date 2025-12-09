@@ -1,8 +1,8 @@
 /**
  * TransformOriginView Origin Comparison Example
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { Text, TransformOriginView, useForceRedraw, useSpring, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { Text, TransformOriginView, useForceRedraw, useSpring, View } from '@number10/phaserjsx'
 
 /**
  * Compares different origin points for rotation

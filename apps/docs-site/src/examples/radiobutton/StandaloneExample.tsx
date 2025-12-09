@@ -1,8 +1,8 @@
 /**
  * RadioButton Standalone Example - Using RadioButton component directly
  */
-/** @jsxImportSource @phaserjsx/ui */
-import { RadioButton, Text, useState, View } from '@phaserjsx/ui'
+/** @jsxImportSource @number10/phaserjsx */
+import { RadioButton, Text, useState, View } from '@number10/phaserjsx'
 
 export function StandaloneRadioButtonExample() {
   const [selected, setSelected] = useState('option1')

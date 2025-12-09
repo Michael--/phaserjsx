@@ -25,7 +25,7 @@ export interface SVGTextureConfig {
  * @example
  * ```ts
  * // In a Phaser scene
- * import { releaseSVGTexture } from '@phaserjsx/ui'
+ * import { releaseSVGTexture } from '@number10/phaserjsx'
  *
  * // When changing levels or cleaning up
  * releaseSVGTexture('icon-bell')
@@ -43,7 +43,7 @@ export function releaseSVGTexture(scene: Phaser.Scene, key: string): void {
  * @example
  * ```ts
  * // In a Phaser scene
- * import { releaseSVGTextures } from '@phaserjsx/ui'
+ * import { releaseSVGTextures } from '@number10/phaserjsx'
  *
  * // Clean up all icon textures when changing scenes
  * releaseSVGTextures(['icon-bell', 'icon-settings', 'icon-user'])
@@ -62,7 +62,7 @@ export function releaseSVGTextures(scene: Phaser.Scene, keys: string[]): void {
  * @example
  * ```ts
  * // In a Phaser scene shutdown or cleanup
- * import { releaseAllSVGTextures } from '@phaserjsx/ui'
+ * import { releaseAllSVGTextures } from '@number10/phaserjsx'
  *
  * // When changing to a different scene or restarting
  * releaseAllSVGTextures()

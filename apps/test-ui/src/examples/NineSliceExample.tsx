@@ -1,7 +1,7 @@
 /**
  * NineSlice Example - demonstrates scalable UI elements using NineSlice
  */
-import { Text, useState, useThemeTokens } from '@phaserjsx/ui'
+import { Text, useState, useThemeTokens } from '@number10/phaserjsx'
 import { NineSliceButton } from '../components'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'
 

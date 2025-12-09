@@ -11,7 +11,7 @@ import {
   useSVGTextures,
   useState,
   useThemeTokens,
-} from '@phaserjsx/ui'
+} from '@number10/phaserjsx'
 import type Phaser from 'phaser'
 import { Icon } from '../components'
 import { SectionHeader } from './Helper'
