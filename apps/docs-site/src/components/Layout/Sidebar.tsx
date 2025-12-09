@@ -90,7 +90,7 @@ const navigation: NavSection[] = [
     title: 'Guides',
     items: [
       { label: 'Best Practices', path: '/guides/best-practices' },
-      { label: '🚧 Gestures & Interaction', path: '/guides/gestures' },
+      { label: 'Gestures & Interaction', path: '/guides/gestures' },
       { label: 'Theme System', path: '/guides/theme-system' },
       { label: '🚧 Responsive Design', path: '/guides/responsive-design' },
       { label: '🚧 Layout Patterns', path: '/guides/layout-patterns' },
