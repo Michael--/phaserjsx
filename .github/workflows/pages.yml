@@ -20,11 +20,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # pnpm clean install setup
+      # pnpm setup (Version kommt aus packageManager in package.json)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9 # or 10
           run_install: false # we install dependencies in the next step
 
       - name: Setup Node.js
