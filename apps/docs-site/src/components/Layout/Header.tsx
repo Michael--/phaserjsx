@@ -4,6 +4,7 @@
 /** @jsxImportSource react */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import packageJson from '../../../package.json'
 import logoImage from '../../assets/phaser-jsx-logo.png'
 
 /**
@@ -55,6 +56,16 @@ export function Header() {
             }}
           >
             PhaserJSX UI
+          </span>
+          <span
+            style={{
+              fontSize: '14px',
+              color: darkMode ? '#666' : '#999',
+              alignSelf: 'flex-end',
+              marginBottom: '2px',
+            }}
+          >
+            v{packageJson.version}
           </span>
         </Link>
         <nav style={{ display: 'flex', gap: '16px' }}>
