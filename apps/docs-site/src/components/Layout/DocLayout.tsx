@@ -2,7 +2,9 @@
  * DocLayout - Main documentation layout with header, sidebar, and content
  */
 /** @jsxImportSource react */
+import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 
@@ -15,6 +17,15 @@ interface DocLayoutProps {
  */
 export function DocLayout({ children }: DocLayoutProps) {
   const darkMode = true // TODO: sync with theme context
+  const location = useLocation()
+  const mainRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    const main = mainRef.current
+    if (main) {
+      main.scrollTo({ top: 0 })
+    }
+  }, [location.pathname])
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -22,6 +33,7 @@ export function DocLayout({ children }: DocLayoutProps) {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar />
         <main
+          ref={mainRef}
           style={{
             flex: 1,
             overflowY: 'auto',
