@@ -30,14 +30,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          # kein pnpm-Cache hier, um Integrity-Stress zu vermeiden
+          # kein pnpm-Cache, um Integrity-Stress zu vermeiden
 
-      # Dependencies Monorepo-Root install (for workspace:*)
+      # Dependencies im Monorepo-Root (workspace:*)
       - name: Install dependencies (workspace)
         run: pnpm install
 
-      - name: Build docs-site
-        working-directory: ./apps/docs-site
+      # Important: build fully from workspace root to ensure all packages are built
+      - name: Build workspace
         run: pnpm run build
 
       - name: Upload build artifact
