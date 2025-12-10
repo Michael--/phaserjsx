@@ -2,6 +2,7 @@
  * Sidebar - Navigation menu
  */
 /** @jsxImportSource react */
+import { useLayoutEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 interface NavItem {
@@ -120,15 +121,36 @@ const navigation: NavSection[] = [
   },
 ]
 
+let persistedScrollTop = 0
+
 /**
  * Sidebar navigation menu
  */
 export function Sidebar() {
   const location = useLocation()
   const darkMode = true // TODO: sync with theme context
+  const containerRef = useRef<HTMLElement | null>(null)
+
+  useLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    container.scrollTop = persistedScrollTop
+
+    const handleScroll = () => {
+      persistedScrollTop = container.scrollTop
+    }
+
+    container.addEventListener('scroll', handleScroll)
+    return () => {
+      persistedScrollTop = container.scrollTop
+      container.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   return (
     <aside
+      ref={containerRef}
       style={{
         width: '250px',
         height: '100%',
