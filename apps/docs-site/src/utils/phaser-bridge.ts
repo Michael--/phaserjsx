@@ -4,6 +4,7 @@
  */
 import type { BackgroundAnimation, BackgroundConfig } from '@/types/background'
 import { DEFAULT_BACKGROUND } from '@/types/background'
+import phaserJsxLogo from '@/assets/phaser-jsx-logo.png'
 import { mountJSX, type VNode } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 
@@ -27,7 +28,7 @@ export function createPhaserScene(component: () => VNode, background?: Backgroun
 
     preload() {
       // Preload PhaserJSX logo for background
-      this.load.image('phaser-jsx-logo', '/src/assets/phaser-jsx-logo.png')
+      this.load.image('phaser-jsx-logo', phaserJsxLogo)
     }
 
     create() {

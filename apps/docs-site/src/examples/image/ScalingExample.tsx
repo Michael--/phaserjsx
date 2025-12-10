@@ -3,6 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { Image, Text, View } from '@number10/phaserjsx'
+import { resolveAssetPath } from '@/utils/assetPath'
 
 export function ScalingImageExample() {
   return (
@@ -32,6 +33,6 @@ export function ScalingImageExample() {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadScalingImage(scene: Phaser.Scene) {
-  scene.load.image('test', '/assets/images/test.png')
-  scene.load.image('wideline', '/assets/images/wideline.png')
+  scene.load.image('test', resolveAssetPath('assets/images/test.png'))
+  scene.load.image('wideline', resolveAssetPath('assets/images/wideline.png'))
 }

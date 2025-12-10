@@ -59,12 +59,15 @@ export function Header() {
         </Link>
         <nav style={{ display: 'flex', gap: '16px' }}>
           <Link
-            to="/components"
+            to="/components/view"
             style={{ color: darkMode ? '#aaa' : '#666', textDecoration: 'none' }}
           >
-            Components
+            Components 🚧
           </Link>
-          <Link to="/guides" style={{ color: darkMode ? '#aaa' : '#666', textDecoration: 'none' }}>
+          <Link
+            to="/guides/best-practices"
+            style={{ color: darkMode ? '#aaa' : '#666', textDecoration: 'none' }}
+          >
             Guides
           </Link>
         </nav>

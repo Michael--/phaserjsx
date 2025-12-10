@@ -51,11 +51,16 @@ import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
 import { QuickStartPage } from './pages/QuickStartPage'
 
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '') // '/' -> ''  | '/phaserjsx/' -> '/phaserjsx'
+
 createRoot(document.getElementById('root')!).render(
   // Note: StrictMode disabled because Phaser Game instances don't play well
   // with React's double-mount behavior in development
-  <BrowserRouter>
+  <BrowserRouter basename={basename}>
     <Routes>
+      {/* /phaserjsx/index.html -> intern /index.html */}
+      <Route path="/index.html" element={<HomePage />} />
+      {/* normal Start page */}
       <Route path="/" element={<HomePage />} />
       <Route path="/introduction" element={<IntroductionPage />} />
       <Route path="/installation" element={<InstallationPage />} />

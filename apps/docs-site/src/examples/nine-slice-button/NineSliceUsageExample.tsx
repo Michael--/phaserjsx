@@ -3,6 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { NineSlice, Text, View } from '@number10/phaserjsx'
+import { resolveAssetPath } from '@/utils/assetPath'
 
 /**
  * Preload function for NineSlice usage example
@@ -10,7 +11,11 @@ import { NineSlice, Text, View } from '@number10/phaserjsx'
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadNineSliceUsage(scene: Phaser.Scene) {
-  scene.load.atlas('ui', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
+  scene.load.atlas(
+    'ui',
+    resolveAssetPath('assets/ui/buttons.png'),
+    resolveAssetPath('assets/ui/buttons.json')
+  )
 }
 
 /**

@@ -3,6 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { Image, Text, View } from '@number10/phaserjsx'
+import { resolveAssetPath } from '@/utils/assetPath'
 
 export function AtlasImageExample() {
   return (
@@ -36,5 +37,9 @@ export function AtlasImageExample() {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadAtlasImage(scene: Phaser.Scene) {
-  scene.load.atlas('buttons', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
+  scene.load.atlas(
+    'buttons',
+    resolveAssetPath('assets/ui/buttons.png'),
+    resolveAssetPath('assets/ui/buttons.json')
+  )
 }
