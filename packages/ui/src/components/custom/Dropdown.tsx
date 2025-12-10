@@ -13,7 +13,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../../effects'
-import { useForceRedraw, useMemo, useRef, useState, useTheme } from '../../hooks'
+import { useForceRedraw, useRef, useState, useTheme } from '../../hooks'
 import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
@@ -187,13 +187,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const maxHeight = props.maxHeight ?? overlayTheme.maxHeight ?? 300
   const arrowConfig = themed.arrow ?? {}
 
-  // Filter options based on filterQuery
-  const filteredOptions = useMemo(() => {
-    return props.isFilterable
-      ? props.options.filter((opt) => opt.label.toLowerCase().includes(filterQuery.toLowerCase()))
-      : props.options
-  }, [props.isFilterable, props.options, filterQuery])
-
   // Get selected options
   const getSelectedOptions = (): DropdownOption<T>[] => {
     if (props.multiple) {
@@ -253,6 +246,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
     setIsOpen(false)
     setOverlayHeight(0)
     setArrowRotation(0)
+    setFilterQuery('')
     props.onClose?.()
   }
 
@@ -357,14 +351,20 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const triggerStyle = getTriggerStyle()
   const overlayPosition = calculateOverlayPosition()
 
-  // Render options list
-  const renderedOptions = useMemo((): ChildrenType => {
-    return filteredOptions.map((option, _index) => {
+  // Render ALL options, use visible prop to show/hide based on filter
+  // No useMemo - re-render on every filter change to ensure proper updates
+  const renderedOptions = (() => {
+    return props.options.map((option, _index) => {
       const isSelected = props.multiple
         ? (currentValue as T[]).includes(option.value)
         : currentValue === option.value
       const isDisabled =
         (option.disabled ?? false) || (isAnimating && (props.placement ?? 'bottom') === 'top')
+
+      // Check if option matches current filter
+      const matchesFilter = props.isFilterable
+        ? option.label.toLowerCase().includes(filterQuery.toLowerCase())
+        : true
 
       const optionStyle = {
         ...optionTheme,
@@ -382,6 +382,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
           direction="row"
           alignItems="center"
           enableGestures={!isDisabled}
+          visible={matchesFilter ? true : 'none'}
           onTouch={(data) => {
             data.stopPropagation()
             if (!isDisabled) handleSelect(option.value, data)
@@ -402,17 +403,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
         </View>
       )
     })
-  }, [
-    filteredOptions,
-    currentValue,
-    props.multiple,
-    props.renderOption,
-    optionTheme,
-    themed.optionSelected,
-    themed.optionDisabled,
-    textStyle,
-    isAnimating,
-  ])
+  })()
 
   const placement = props.placement ?? 'bottom'
 
@@ -442,13 +433,12 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const filterInput = props.isFilterable && (
     <CharTextInput
       value={filterQuery}
-      onChange={setFilterQuery}
+      onChange={(newValue) => {
+        setFilterQuery(newValue)
+      }}
       placeholder={props.filterInputPlaceholder ?? 'Filter...'}
       height={themed.filterInput?.height ?? 32}
       margin={placement === 'top' ? { top: 8 } : { bottom: 8 }}
-      onFocus={() => {
-        shouldIgnoreNextClick.current = true
-      }}
       {...(themed.filterInput ?? {})}
     />
   )
@@ -457,11 +447,16 @@ export function Dropdown<T = string>(props: DropdownProps<T>) {
   const optionsList = (
     <View flex={1} width={'fill'}>
       <ScrollView
-        key={`scroll-${filteredOptions.length}-${filterQuery}`}
         ref={scrollViewRef}
         showVerticalSlider={isAnimating ? false : 'auto'}
         height="fill"
         width="100%"
+        onTouch={() => {
+          // Blur active element (CharTextInput) to allow scrolling
+          if (document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur()
+          }
+        }}
       >
         <View
           direction="column"
