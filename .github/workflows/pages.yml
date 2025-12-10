@@ -20,7 +20,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # pnpm setup (Version kommt aus packageManager in package.json)
+      # pnpm clean install setup
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -31,6 +31,10 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+
+      # WICHTIG: pnpm store aufräumen (gegen ERR_PNPM_TARBALL_INTEGRITY)
+      - name: Prune pnpm store
+        run: pnpm store prune
 
       # Dependencies Monorepo-Root install (for workspace:*)
       - name: Install dependencies (workspace)
