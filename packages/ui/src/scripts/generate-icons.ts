@@ -10,10 +10,12 @@
  */
 import { watch } from 'node:fs'
 import { access, readdir, readFile, writeFile } from 'node:fs/promises'
-import { basename, dirname, join, relative, resolve } from 'node:path'
+import { basename, dirname, extname, join, relative, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { parseArgs } from 'node:util'
 import type { IconGeneratorConfig } from './icon-generator-config'
+
+const TS_CONFIG_EXTENSIONS = new Set(['.ts', '.mts', '.cts', '.tsx'])
 
 /**
  * Find icon package in node_modules
@@ -484,12 +486,31 @@ export async function loadConfig(
 ): Promise<IconGeneratorConfig> {
   const absolutePath = resolve(cwd, configPath)
   const fileUrl = pathToFileURL(absolutePath).href
+  const extension = extname(absolutePath).toLowerCase()
 
   try {
     const module = await import(fileUrl)
     return module.default || module
   } catch (error) {
-    throw new Error(`Failed to load config from ${configPath}: ${error}`)
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    const isUnknownExtension =
+      TS_CONFIG_EXTENSIONS.has(extension) || errorMessage.includes('Unknown file extension')
+
+    // Fallback for TypeScript configs when Node can't load .ts directly (e.g. in CI)
+    if (isUnknownExtension) {
+      try {
+        const { tsImport } = await import('tsx/esm/api')
+        const module = await tsImport(fileUrl, import.meta.url)
+        return module.default || module
+      } catch (tsxError) {
+        const tsxMessage = tsxError instanceof Error ? tsxError.message : String(tsxError)
+        throw new Error(
+          `Failed to load config from ${configPath}: ${tsxMessage} (after tsx fallback)`
+        )
+      }
+    }
+
+    throw new Error(`Failed to load config from ${configPath}: ${errorMessage}`)
   }
 }
 

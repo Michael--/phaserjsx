@@ -22,7 +22,15 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
-      external: ['node:fs', 'node:fs/promises', 'node:path', 'node:util', 'node:url', 'vite'],
+      external: [
+        'node:fs',
+        'node:fs/promises',
+        'node:path',
+        'node:util',
+        'node:url',
+        'vite',
+        'tsx/esm/api',
+      ],
       output: {
         banner: (chunk) => {
           // Only add shebang to executable scripts
