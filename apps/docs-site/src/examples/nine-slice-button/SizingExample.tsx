@@ -10,7 +10,7 @@ import { NineSliceButton, Text, View } from '@number10/phaserjsx'
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadSizingNineSliceButton(scene: Phaser.Scene) {
-  scene.load.atlas('ui', '/assets/phaserjsx/buttons.png', '/assets/phaserjsx/buttons.json')
+  scene.load.atlas('ui', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
 }
 
 /**

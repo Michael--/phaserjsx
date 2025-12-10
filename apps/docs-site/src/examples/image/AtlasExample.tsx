@@ -36,5 +36,5 @@ export function AtlasImageExample() {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function preloadAtlasImage(scene: Phaser.Scene) {
-  scene.load.atlas('buttons', '/assets/phaserjsx/buttons.png', '/assets/phaserjsx/buttons.json')
+  scene.load.atlas('buttons', '/assets/ui/buttons.png', '/assets/ui/buttons.json')
 }
