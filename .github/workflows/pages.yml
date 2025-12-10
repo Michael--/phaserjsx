@@ -20,21 +20,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # pnpm clean install setup
+      # pnpm bereitstellen (Version aus packageManager)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install: false # we install dependencies in the next step
+          run_install: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-
-      # WICHTIG: pnpm store aufräumen (gegen ERR_PNPM_TARBALL_INTEGRITY)
-      - name: Prune pnpm store
-        run: pnpm store prune
+          # kein pnpm-Cache hier, um Integrity-Stress zu vermeiden
 
       # Dependencies Monorepo-Root install (for workspace:*)
       - name: Install dependencies (workspace)
