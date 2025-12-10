@@ -229,6 +229,55 @@ export function ScrollView(props: ScrollViewProps) {
             <View ref={contentRef} x={-scroll.dx} y={-scroll.dy}>
               {children}
             </View>
+
+            {/* Invisible blocker overlay - same size as content, scrolls with content
+                Blocks touches to masked content outside visible viewport area */}
+            <View
+              width={effectiveContentWidth}
+              height={effectiveContentHeight}
+              x={-scroll.dx}
+              y={-scroll.dy}
+              enableGestures={true}
+              backgroundAlpha={0}
+              onTouch={(data) => {
+                const viewport = viewportRef.current
+                if (!viewport) return
+
+                // Get viewport world position using transform matrix
+                const worldMatrix = viewport.getWorldTransformMatrix()
+                const vpWorldX = worldMatrix.tx
+                const vpWorldY = worldMatrix.ty
+
+                // Get viewport size from layout
+                const vpSize = (
+                  viewport as unknown as {
+                    __getLayoutSize?: () => { width: number; height: number }
+                  }
+                ).__getLayoutSize?.() ?? {
+                  width: viewportWidth,
+                  height: viewportHeight,
+                }
+
+                // Get touch position in world coordinates
+                const touchX = data.pointer?.worldX ?? 0
+                const touchY = data.pointer?.worldY ?? 0
+
+                // Check if touch is within viewport bounds
+                // Use small epsilon for floating point comparison
+                const epsilon = 0.1
+                const inBounds =
+                  touchX >= vpWorldX - epsilon &&
+                  touchX <= vpWorldX + vpSize.width + epsilon &&
+                  touchY >= vpWorldY - epsilon &&
+                  touchY <= vpWorldY + vpSize.height + epsilon
+
+                if (!inBounds) {
+                  // Touch outside viewport - block it
+                  data.stopPropagation()
+                }
+                // If in bounds, let it pass through to children below
+              }}
+            />
           </View>
           {/* Horizontal slider at the bottom */}
           <View visible={showHorizontalSliderActual ? true : 'none'}>
