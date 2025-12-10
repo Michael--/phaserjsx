@@ -19,7 +19,7 @@ A modern, type-safe framework for building game UIs in Phaser3 using JSX compone
 
 ## 📚 Documentation
 
-Documentation site will be published on GitHub Pages soon. For now, see the repository and package README for setup details.
+[📖 Full Documentation](https://michael--.github.io/phaserjsx/)
 
 ## 📦 Packages
 
@@ -40,7 +40,7 @@ This monorepo contains:
 
 ```bash
 # Clone the repository
-git clone https://github.com/number10/phaserjsx.git
+git clone https://github.com/Michael--/phaserjsx.git
 cd phaserjsx
 
 # Install dependencies
@@ -131,4 +131,8 @@ GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--)
 
 ## 🔗 Links
 
+- [📖 Documentation](https://michael--.github.io/phaserjsx/)
+- [GitHub Repository](https://github.com/Michael--/phaserjsx)
+- [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)
+- [Issue Tracker](https://github.com/Michael--/phaserjsx/issues)
 - [Phaser 3 Documentation](https://photonstorm.github.io/phaser3-docs/)

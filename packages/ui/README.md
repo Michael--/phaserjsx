@@ -89,7 +89,9 @@ new Phaser.Game(config)
 
 ## 📖 Documentation
 
-Documentation site will be published on GitHub Pages soon. In the meantime, see usage examples below.
+[📖 Full Documentation](https://michael--.github.io/phaserjsx/)
+
+See usage examples below for quick reference.
 
 ## 🎯 Examples
 
@@ -222,7 +224,7 @@ export default defineConfig({
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please visit the [main repository](https://github.com/number10/phaserjsx) for contribution guidelines.
+Contributions are welcome! Please visit the [main repository](https://github.com/Michael--/phaserjsx) for contribution guidelines.
 
 ## 📝 License
 
@@ -230,6 +232,7 @@ GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--)
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/number10/phaserjsx)
-- [Issue Tracker](https://github.com/number10/phaserjsx/issues)
+- [📖 Documentation](https://michael--.github.io/phaserjsx/)
+- [GitHub Repository](https://github.com/Michael--/phaserjsx)
 - [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)
+- [Issue Tracker](https://github.com/Michael--/phaserjsx/issues)
