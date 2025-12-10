@@ -26,10 +26,10 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Enable Corepack (pnpm)
+        run: corepack enable
 
-      # Install im Monorepo-Root, damit workspace:* aufgelöst wird
+      # pnpm install im Monorepo-Root, damit workspace:* funktioniert
       - name: Install dependencies (workspace)
         run: pnpm install
 
