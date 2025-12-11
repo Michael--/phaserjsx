@@ -102,6 +102,13 @@ export const DevConfig = {
      * @default true (in development)
      */
     unnecessaryRemounts: false,
+
+    /**
+     * Warn when VNodes are frozen/sealed and need copying
+     * Happens in production builds or with certain bundler optimizations
+     * @default false (usually only relevant in production)
+     */
+    frozenVNodes: false,
   },
 
   /**

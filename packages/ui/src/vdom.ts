@@ -208,6 +208,64 @@ function buildComponentPath(vnode: VNode): string {
 }
 
 /**
+ * Safely sets __theme on a VNode, handling frozen/sealed objects
+ * Creates a shallow copy if the object is not extensible
+ * @param vnode - VNode to set theme on
+ * @param theme - Theme object to set
+ * @returns Original VNode if extensible, or shallow copy with theme
+ */
+function setThemeSafe<T extends VNode>(vnode: T, theme: Record<string, unknown>): T {
+  // Check if object can be modified
+  if (Object.isExtensible(vnode)) {
+    vnode.__theme = theme
+    return vnode
+  }
+
+  // Object is frozen/sealed - create shallow copy with theme
+  if (DevConfig.warnings.frozenVNodes) {
+    const componentPath = buildComponentPath(vnode)
+    console.warn(
+      `[PhaserJSX] Frozen VNode detected at <${componentPath}>. ` +
+        `Creating shallow copy to apply theme. ` +
+        `This may happen in production builds or with certain bundler optimizations.`
+    )
+  }
+
+  // Create shallow copy with theme
+  return { ...vnode, __theme: theme }
+}
+
+/**
+ * Safely sets a property on a VNode, handling frozen/sealed objects
+ * Creates a shallow copy if the object is not extensible
+ * @param vnode - VNode to set property on
+ * @param key - Property key to set
+ * @param value - Value to set
+ * @returns Original VNode if extensible, or shallow copy with property
+ */
+function setVNodePropSafe<T extends VNode, K extends string>(vnode: T, key: K, value: unknown): T {
+  // Check if object can be modified
+  if (Object.isExtensible(vnode)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(vnode as any)[key] = value
+    return vnode
+  }
+
+  // Object is frozen/sealed - create shallow copy with property
+  if (DevConfig.warnings.frozenVNodes) {
+    const componentPath = buildComponentPath(vnode)
+    console.warn(
+      `[PhaserJSX] Frozen VNode detected at <${componentPath}>. ` +
+        `Creating shallow copy to set property '${key}'. ` +
+        `This may happen in production builds or with certain bundler optimizations.`
+    )
+  }
+
+  // Create shallow copy with property
+  return { ...vnode, [key]: value } as T
+}
+
+/**
  * Updates gesture hit area based on current layout size
  * Called after layout recalculation to sync hit area with actual container size
  * @param container - Container with potential gesture registration
@@ -373,20 +431,24 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     flatChildren.forEach((c) => {
       if (!shouldSkipChild(c)) {
         // Type guard: c is VNode at this point
-        const child = c as VNode
+        let child = c as VNode
         // Track parent VNode for error messages
-        ;(child as VNode & { __parentVNode?: VNode }).__parentVNode = vnode
+        child = setVNodePropSafe(child, '__parentVNode', vnode)
         // Propagate theme to children
         if (!child.__theme && vnode.__theme) {
-          child.__theme = vnode.__theme
+          const themed = setThemeSafe(child, vnode.__theme)
+          if (themed !== child) {
+            // VNode was frozen, replace it in parent's children array
+            flatChildren[flatChildren.indexOf(child)] = themed
+          }
         }
         const childNode = mount(parentOrScene, child)
         if (!firstNode) firstNode = childNode
       }
     })
     // Store a marker so we know this is a fragment during unmount/patch
-    vnode.__node = firstNode
-    vnode.__parent = parentOrScene
+    vnode = setVNodePropSafe(vnode, '__node', firstNode)
+    vnode = setVNodePropSafe(vnode, '__parent', parentOrScene)
     // Fragment must have at least one child to work properly
     if (!firstNode) {
       throw new Error('Fragment must have at least one child element')
@@ -424,12 +486,12 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       theme: vnode.__theme, // Inherit theme from parent or use vnode's theme
     }
     // Store context on the component vnode for patching
-    ;(vnode as VNode & { __ctx?: Ctx }).__ctx = ctx
+    vnode = setVNodePropSafe(vnode, '__ctx', ctx)
     // Pass children to the component via props
     const propsWithChildren = vnode.children?.length
       ? { ...(vnode.props ?? {}), children: vnode.children }
       : vnode.props
-    const rendered = withHooks(ctx, () =>
+    let rendered = withHooks(ctx, () =>
       (vnode.type as (props: unknown) => VNode)(propsWithChildren)
     )
 
@@ -447,7 +509,11 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
     // Propagate theme to rendered VNode
     if (ctx.theme && !rendered.__theme) {
-      rendered.__theme = ctx.theme
+      const themed = setThemeSafe(rendered, ctx.theme)
+      if (themed !== rendered) {
+        // VNode was frozen, use the copy
+        return mount(parentOrScene, themed)
+      }
     }
 
     // Check if this is a VNode factory (renders immediately without using hooks)
@@ -458,7 +524,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       ctx.vnode = rendered
       // Copy __addConfig from component VNode to rendered VNode
       if (vnode.__addConfig) {
-        rendered.__addConfig = vnode.__addConfig
+        rendered = setVNodePropSafe(rendered, '__addConfig', vnode.__addConfig)
       }
       // Mount the rendered VNode directly without creating a component context
       return mount(parentOrScene, rendered)
@@ -466,7 +532,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
     // Copy __addConfig from component VNode to rendered VNode
     if (vnode.__addConfig) {
-      rendered.__addConfig = vnode.__addConfig
+      rendered = setVNodePropSafe(rendered, '__addConfig', vnode.__addConfig)
     }
     const node = mount(parentOrScene, rendered)
     ctx.cleanups.push(() => unmount(rendered))
@@ -502,8 +568,8 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   }
 
   const node = host.create(nodeType, themedProps as NodeProps, scene)
-  vnode.__node = node
-  vnode.__parent = parentOrScene // Store parent for unmounting
+  vnode = setVNodePropSafe(vnode, '__node', node)
+  vnode = setVNodePropSafe(vnode, '__parent', parentOrScene) // Store parent for unmounting
 
   // Attach ref after node creation
   const ref = vnode.props?.ref as Ref<Phaser.GameObjects.GameObject> | undefined
@@ -522,7 +588,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
   flatChildren.forEach((c, index) => {
     if (!shouldSkipChild(c)) {
       // Type guard: c is VNode at this point
-      const child = c as VNode
+      let child = c as VNode
 
       // Additional validation: check if child is actually a VNode object
       if (!child || typeof child !== 'object' || !child.type) {
@@ -538,16 +604,23 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       }
 
       // Track parent VNode for error messages
-      ;(child as VNode & { __parentVNode?: VNode }).__parentVNode = vnode
+      child = setVNodePropSafe(child, '__parentVNode', vnode)
 
       // Skip theme propagation for primitives (strings, numbers, booleans)
       if (typeof child === 'object') {
         // Merge parent's nested theme with child's existing theme
         if (Object.keys(nestedTheme).length > 0) {
-          child.__theme = child.__theme ? { ...nestedTheme, ...child.__theme } : nestedTheme
+          const mergedTheme = child.__theme ? { ...nestedTheme, ...child.__theme } : nestedTheme
+          const themed = setThemeSafe(child, mergedTheme)
+          if (themed !== child) {
+            flatChildren[flatChildren.indexOf(child)] = themed
+          }
         } else if (!child.__theme && vnode.__theme) {
           // Fallback: Propagate theme to children (inherit parent's theme if child doesn't have one)
-          child.__theme = vnode.__theme
+          const themed = setThemeSafe(child, vnode.__theme)
+          if (themed !== child) {
+            flatChildren[flatChildren.indexOf(child)] = themed
+          }
         }
       }
       mount(node as ParentType, child)
@@ -676,7 +749,11 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
   if (oldV.type === Fragment && newV.type === Fragment) {
     // Transfer theme from newV to oldV
     if (newV.__theme !== undefined) {
-      oldV.__theme = newV.__theme
+      const themed = setThemeSafe(oldV, newV.__theme)
+      if (themed !== oldV) {
+        // oldV was frozen - this shouldn't happen in normal operation
+        console.error('[PhaserJSX] Cannot patch frozen Fragment VNode')
+      }
     }
 
     const a = flattenChildren(oldV.children)
@@ -690,7 +767,10 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       if (!isValidC1 && isValidC2) {
         // Propagate theme to new child (only for objects)
         if (typeof c2 === 'object' && newV.__theme && !c2.__theme) {
-          c2.__theme = newV.__theme
+          const themed = setThemeSafe(c2, newV.__theme)
+          if (themed !== c2) {
+            b[i] = themed
+          }
         }
         mount(parent, c2)
       } else if (isValidC1 && !isValidC2) {
@@ -698,8 +778,10 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       } else if (isValidC1 && isValidC2) {
         // Propagate theme to both children (only for objects)
         if (typeof c1 === 'object' && typeof c2 === 'object' && newV.__theme) {
-          c1.__theme = newV.__theme
-          c2.__theme = newV.__theme
+          let themed1 = setThemeSafe(c1, newV.__theme)
+          let themed2 = setThemeSafe(c2, newV.__theme)
+          if (themed1 !== c1) a[i] = themed1
+          if (themed2 !== c2) b[i] = themed2
         }
         patchVNode(parent, c1, c2)
       }
@@ -714,6 +796,8 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       if (!ctx) {
         // No context means this is a VNode factory (like RexSizer), not a real component
         // Render both and patch the results
+        // Type guard: both oldV and newV are non-null and have same type
+        if (!newV || !oldV) return
         const propsWithChildren = newV.children?.length
           ? { ...(newV.props ?? {}), children: newV.children }
           : newV.props
@@ -736,7 +820,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
         ctx.theme = newV.__theme
       }
       // Transfer context to newV so future patches work
-      ;(newV as VNode & { __ctx?: Ctx }).__ctx = ctx
+      const newVWithCtx = setVNodePropSafe(newV, '__ctx', ctx)
 
       // Build props for comparison (merge props + children)
       const propsWithChildren = ctx.componentVNode.children?.length
@@ -749,9 +833,9 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
         return
       }
 
-      // Re-render with updated props
+      // Re-render with updated props (use newVWithCtx for type safety)
       const renderedNext = withHooks(ctx, () =>
-        (newV.type as (props: unknown) => VNode)(propsWithChildren)
+        (newVWithCtx.type as (props: unknown) => VNode)(propsWithChildren)
       )
 
       // Handle null returns (e.g., from Portal component)
@@ -763,7 +847,14 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
 
       // Propagate theme to rendered VNode if not already set
       if (ctx.theme && !renderedNext.__theme) {
-        renderedNext.__theme = ctx.theme
+        const themed = setThemeSafe(renderedNext, ctx.theme)
+        if (themed !== renderedNext) {
+          // Update context to use themed copy
+          patchVNode(parent, ctx.vnode, themed)
+          ctx.vnode = themed
+          for (const run of ctx.effects) run()
+          return
+        }
       }
 
       patchVNode(parent, ctx.vnode, renderedNext)
@@ -783,18 +874,27 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
     return
   }
   const nodeType = oldV.type as NodeType
-  newV.__node = oldV.__node
+  newV = setVNodePropSafe(newV, '__node', oldV.__node)
 
   // Transfer theme from newV to oldV (theme may have changed)
   // Transfer theme from newV to oldV, or inherit from oldV if newV has no theme
   // This ensures theme updates are properly applied during patching
   if (newV.__theme !== undefined) {
-    oldV.__theme = newV.__theme
+    const themed = setThemeSafe(oldV, newV.__theme)
+    if (themed !== oldV) {
+      // oldV was frozen - this shouldn't happen during patch
+      console.error('[PhaserJSX] Cannot patch frozen VNode in host node')
+    }
   } else if (oldV.__theme !== undefined) {
     // IMPORTANT: If newV doesn't have a theme, inherit from oldV
     // This happens when a function component re-renders and creates new VNodes
     // without explicitly propagating the theme
-    newV.__theme = oldV.__theme
+    const themed = setThemeSafe(newV, oldV.__theme)
+    if (themed !== newV) {
+      // newV was frozen - we need to use the copy
+      // This is a problem because we can't replace newV in the parent
+      console.error('[PhaserJSX] Cannot inherit theme to frozen VNode')
+    }
   }
 
   // Update ref if it changed
@@ -851,9 +951,16 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       // Merge parent's nested theme for new child (only for objects)
       if (typeof c2 === 'object') {
         if (Object.keys(newNestedTheme).length > 0) {
-          c2.__theme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+          const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
+          const themed = setThemeSafe(c2, mergedTheme)
+          if (themed !== c2) {
+            b[i] = themed
+          }
         } else if (!c2.__theme && newV.__theme) {
-          c2.__theme = newV.__theme
+          const themed = setThemeSafe(c2, newV.__theme)
+          if (themed !== c2) {
+            b[i] = themed
+          }
         }
       }
       mount(oldV.__node as ParentType, c2)
@@ -867,13 +974,17 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       if (typeof c1 === 'object' && typeof c2 === 'object') {
         if (Object.keys(newNestedTheme).length > 0) {
           const mergedTheme = c2.__theme ? { ...newNestedTheme, ...c2.__theme } : newNestedTheme
-          c1.__theme = mergedTheme
-          c2.__theme = mergedTheme
+          let themed1 = setThemeSafe(c1, mergedTheme)
+          let themed2 = setThemeSafe(c2, mergedTheme)
+          if (themed1 !== c1) a[i] = themed1
+          if (themed2 !== c2) b[i] = themed2
         } else if (newV.__theme) {
           // Fallback: Propagate theme to child (inherit parent's theme)
           // IMPORTANT: Always propagate, even if child has theme, because parent theme might have changed
-          c1.__theme = newV.__theme
-          c2.__theme = newV.__theme
+          let themed1 = setThemeSafe(c1, newV.__theme)
+          let themed2 = setThemeSafe(c2, newV.__theme)
+          if (themed1 !== c1) a[i] = themed1
+          if (themed2 !== c2) b[i] = themed2
         }
       }
 

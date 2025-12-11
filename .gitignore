@@ -35,6 +35,7 @@ yarn-error.log*
 # Temporary files
 *.tmp
 .cache/
+number10-phaserjsx-*.tgz
 
 # Changeset pre-release files
 .changeset/*.md
