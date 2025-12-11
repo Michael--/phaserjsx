@@ -13,6 +13,7 @@ themeRegistry.subscribe(() => {
 /**
  * Set the active color preset globally
  * Applies the preset with the current color mode and updates all components
+ * Triggers complete remount of all active mountJSX instances
  * @param presetName - Name of the preset to apply
  * @example
  * ```typescript
@@ -29,6 +30,15 @@ export function setColorPreset(presetName: PresetName): void {
   // Update color tokens
   themeRegistry.setColorTokens(preset.colors)
   themeRegistry.setCurrentPresetName(presetName)
+
+  // Trigger complete remount of all VDOM trees to apply new preset
+  // This is done asynchronously to allow listeners to update first
+  setTimeout(() => {
+    // Import remountAll lazily to avoid circular dependency
+    import('../vdom').then(({ remountAll }) => {
+      remountAll()
+    })
+  }, 0)
 }
 
 /**

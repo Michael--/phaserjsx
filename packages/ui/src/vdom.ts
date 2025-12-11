@@ -20,6 +20,183 @@ import type { ParentType, Ref } from './types'
 export type VNodeLike = VNode | VNode[] | null
 
 /**
+ * Registry for active mountJSX instances to enable complete remounting
+ * Stores parent, type, and props for each mount to enable theme-triggered remounts
+ */
+interface MountRegistryEntry {
+  id: number
+  parent: ParentType
+  type: NodeType | ((props: unknown) => VNode)
+  props: MountProps & Record<string, unknown>
+  rootNode: Phaser.GameObjects.GameObject
+}
+
+class MountRegistry {
+  private entries: Map<number, MountRegistryEntry> = new Map()
+  private nextId = 1
+
+  /**
+   * Register a new mountJSX instance
+   * @param parent - Parent container or scene
+   * @param type - Component type or node type
+   * @param props - Mount props
+   * @param rootNode - Root game object
+   * @returns Registry ID for this mount
+   */
+  register(
+    parent: ParentType,
+    type: NodeType | ((props: unknown) => VNode),
+    props: MountProps & Record<string, unknown>,
+    rootNode: Phaser.GameObjects.GameObject
+  ): number {
+    const id = this.nextId++
+    this.entries.set(id, { id, parent, type, props, rootNode })
+    DebugLogger.log('vdom', `Registered mount ${id}`)
+    return id
+  }
+
+  /**
+   * Unregister a mountJSX instance
+   * @param id - Registry ID
+   */
+  unregister(id: number): void {
+    const entry = this.entries.get(id)
+    if (entry) {
+      DebugLogger.log('vdom', `Unregistered mount ${id}`)
+      this.entries.delete(id)
+    }
+  }
+
+  /**
+   * Get all active mount entries
+   * @returns Array of mount entries
+   */
+  getAllEntries(): MountRegistryEntry[] {
+    return Array.from(this.entries.values())
+  }
+
+  /**
+   * Clear all entries (for testing)
+   */
+  clear(): void {
+    this.entries.clear()
+    this.nextId = 1
+  }
+}
+
+/**
+ * Global mount registry instance
+ */
+const mountRegistry = new MountRegistry()
+
+/**
+ * Remount all active mountJSX instances
+ * Completely unmounts and remounts every registered root
+ * Used when theme changes require full VDOM rebuild
+ */
+export function remountAll(): void {
+  const entries = mountRegistry.getAllEntries()
+
+  if (entries.length === 0) {
+    DebugLogger.log('vdom', 'No mounts to remount')
+    return
+  }
+
+  console.log(`[REMOUNT] Starting remount of ${entries.length} root(s)`)
+
+  entries.forEach((entry) => {
+    try {
+      // Find the current VNode stored in the scene
+      const scene =
+        entry.parent instanceof Phaser.Scene
+          ? entry.parent
+          : (entry.parent as Phaser.GameObjects.GameObject).scene
+
+      if (!scene || !scene.sys) {
+        console.warn('[REMOUNT] Scene is invalid, skipping remount')
+        return
+      }
+
+      const currentVNode = (scene as unknown as { __rootVNode?: VNode }).__rootVNode
+
+      // Clear all children from the root container first
+      if (entry.rootNode instanceof Phaser.GameObjects.Container) {
+        // Remove all children from container
+        const children = entry.rootNode.getAll()
+        children.forEach((child) => {
+          ;(entry.rootNode as Phaser.GameObjects.Container).remove(child, true) // true = destroy child
+        })
+      }
+
+      // Unmount the VDOM tree (this cleans up hooks, contexts, etc.)
+      if (currentVNode) {
+        // Recursively unmount children but skip the final host.remove
+        // since we already cleared the container above
+        const flatChildren = flattenChildren(currentVNode.children)
+        flatChildren.forEach(unmount)
+
+        // Clean up component context if it exists
+        if (currentVNode.__ctx) {
+          disposeCtx(currentVNode.__ctx)
+          delete currentVNode.__ctx
+        }
+      }
+
+      // Create and mount a fresh VDOM tree
+      const { width, height, disableAutoSize = false, ...componentProps } = entry.props
+
+      // Update viewport dimensions
+      const renderContext = getRenderContext(entry.parent)
+      renderContext.setViewport(width, height, scene)
+      portalRegistry.setViewportSize(scene, width, height)
+
+      // Create VNode with or without SceneWrapper
+      let vnode: VNode
+
+      if (disableAutoSize) {
+        vnode = { type: entry.type, props: { ...componentProps, width, height }, children: [] }
+      } else {
+        const componentVNode: VNode = {
+          type: entry.type,
+          props: componentProps,
+          children: [],
+        }
+
+        vnode = {
+          type: SceneWrapper,
+          props: {
+            width,
+            height,
+            children: componentVNode,
+          },
+          children: [],
+        }
+      }
+
+      // Store new root VNode on the scene
+      ;(scene as unknown as { __rootVNode?: VNode }).__rootVNode = vnode
+
+      // Mount the new VDOM tree into the EXISTING parent container
+      const rootNode = mount(entry.parent, vnode)
+
+      if (rootNode instanceof Phaser.GameObjects.Container) {
+        ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
+      }
+
+      // Update registry with new root node and restore registry ID
+      entry.rootNode = rootNode
+      ;(rootNode as unknown as { __registryId?: number }).__registryId = entry.id
+
+      console.log('[REMOUNT] Successfully remounted entry', entry.id)
+    } catch (error) {
+      console.error('[REMOUNT] Failed to remount entry', entry.id, error)
+    }
+  })
+
+  console.log('[REMOUNT] Remount complete')
+}
+
+/**
  * Base props that mountJSX requires for scene dimensions
  * Provides viewport size for percentage-based sizing
  */
@@ -706,6 +883,14 @@ export function unmount(vnode: VNode | null | undefined | false): void {
   // Clean up children FIRST (before removing from parent)
   const flatChildren = flattenChildren(vnode.children)
   flatChildren.forEach(unmount)
+
+  // Unregister from mount registry if this is a root node
+  const node = vnode.__node as Phaser.GameObjects.GameObject & { __registryId?: number }
+  if (node?.__registryId !== undefined) {
+    mountRegistry.unregister(node.__registryId)
+    delete node.__registryId
+  }
+
   // Then remove from parent/scene
   const parent = vnode.__parent
   if (parent) host.remove(parent as ParentType, vnode.__node as Phaser.GameObjects.GameObject)
@@ -1147,6 +1332,12 @@ export function mountJSX(
   if (rootNode instanceof Phaser.GameObjects.Container) {
     ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
   }
+
+  // Register this mount in the registry for theme-triggered remounts
+  const registryId = mountRegistry.register(parentOrScene, type, props, rootNode)
+
+  // Store registry ID on root node for cleanup
+  ;(rootNode as unknown as { __registryId?: number }).__registryId = registryId
 
   return rootNode
 }

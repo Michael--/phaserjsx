@@ -146,6 +146,7 @@ class ThemeRegistry {
   /**
    * Set color mode and notify listeners
    * Updates color tokens if a preset is active
+   * Triggers complete remount of all active mountJSX instances
    * @param mode - Color mode to set
    */
   setColorMode(mode: 'light' | 'dark'): void {
@@ -159,6 +160,15 @@ class ThemeRegistry {
       }
 
       this.notifyListeners()
+
+      // Trigger complete remount of all VDOM trees to apply new theme
+      // This is done asynchronously to allow listeners to update first
+      setTimeout(() => {
+        // Import remountAll lazily to avoid circular dependency
+        import('./vdom').then(({ remountAll }) => {
+          remountAll()
+        })
+      }, 0)
     }
   }
 
