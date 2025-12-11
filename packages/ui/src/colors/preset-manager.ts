@@ -27,12 +27,13 @@ export function setColorPreset(presetName: PresetName): void {
   const currentMode = themeRegistry.getColorMode()
   const preset = getPresetWithMode(presetName, currentMode)
 
-  // Update color tokens
+  // Update color tokens WITHOUT notifying listeners
+  // We skip listener notifications to prevent unnecessary re-renders
   themeRegistry.setColorTokens(preset.colors)
-  themeRegistry.setCurrentPresetName(presetName)
+  themeRegistry.setCurrentPresetName(presetName, true) // true = skip notify
 
   // Trigger complete remount of all VDOM trees to apply new preset
-  // This is done asynchronously to allow listeners to update first
+  // Using setTimeout(0) to ensure all synchronous state updates complete first
   setTimeout(() => {
     // Import remountAll lazily to avoid circular dependency
     import('../vdom').then(({ remountAll }) => {

@@ -159,10 +159,11 @@ class ThemeRegistry {
         // We just notify listeners here
       }
 
-      this.notifyListeners()
+      // Skip notifyListeners() - we're doing a complete remount instead
+      // This prevents unnecessary re-renders and flickering
 
       // Trigger complete remount of all VDOM trees to apply new theme
-      // This is done asynchronously to allow listeners to update first
+      // Using setTimeout(0) to ensure all synchronous state updates complete first
       setTimeout(() => {
         // Import remountAll lazily to avoid circular dependency
         import('./vdom').then(({ remountAll }) => {
@@ -183,11 +184,14 @@ class ThemeRegistry {
   /**
    * Set current preset name
    * @param name - Preset name
+   * @param skipNotify - If true, skip notifying listeners (used during remount)
    */
-  setCurrentPresetName(name: string | undefined): void {
+  setCurrentPresetName(name: string | undefined, skipNotify = false): void {
     if (this.currentPresetName !== name) {
       this.currentPresetName = name
-      this.notifyListeners()
+      if (!skipNotify) {
+        this.notifyListeners()
+      }
     }
   }
 
