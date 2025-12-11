@@ -144,7 +144,7 @@ class ThemeRegistry {
   }
 
   /**
-   * Set color mode and notify listeners
+   * Set color mode and trigger complete remount
    * Updates color tokens if a preset is active
    * Triggers complete remount of all active mountJSX instances
    * @param mode - Color mode to set
@@ -153,10 +153,16 @@ class ThemeRegistry {
     if (this.colorMode !== mode) {
       this.colorMode = mode
 
-      // If a preset is active, reload it with the new mode
-      if (this.currentPresetName && this.colorTokens) {
-        // This will be handled by preset-manager to avoid circular dependency
-        // We just notify listeners here
+      // If a preset is active, reload color tokens with the new mode
+      if (this.currentPresetName) {
+        // Import and update color tokens immediately
+        import('./colors/color-presets').then(({ getPresetWithMode }) => {
+          const preset = getPresetWithMode(
+            this.currentPresetName as 'oceanBlue' | 'forestGreen' | 'midnight',
+            mode
+          )
+          this.colorTokens = preset.colors
+        })
       }
 
       // Skip notifyListeners() - we're doing a complete remount instead
