@@ -3,7 +3,12 @@
  * @param props - App props from Phaser scene
  * @returns App component JSX
  */
-import { createTheme, getPresetWithMode, type PresetName } from '@number10/phaserjsx'
+import {
+  createTextStyleTokens,
+  createTheme,
+  getPresetWithMode,
+  type PresetName,
+} from '@number10/phaserjsx'
 import { Icon } from './components'
 
 /**
@@ -18,6 +23,7 @@ export function createAppTheme(
 ) {
   const preset = getPresetWithMode(presetName, mode)
   const { colors } = preset
+  const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
 
   return createTheme(
     {
@@ -28,12 +34,6 @@ export function createAppTheme(
           fontSize: '20px',
           fontFamily: 'Arial',
         },
-      },
-      // the default View theme is transparent
-      View: {
-        //backgroundColor: 0x000000,
-        //cornerRadius: 0,
-        //backgroundAlpha: 0,
       },
 
       // custom component theme for Sidebar
@@ -114,7 +114,7 @@ export function createAppTheme(
 
       Icon: {
         size: 24,
-        tint: colors.border.dark.toNumber(),
+        tint: colors.text.DEFAULT.toNumber(),
       },
 
       Accordion: {
@@ -145,10 +145,32 @@ export function createAppTheme(
       ScrollSlider: {
         borderColor: colors.border.dark.toNumber(),
         trackColor: colors.surface.dark.toNumber(),
-        thumbColor: colors.primary.light.toNumber(),
+        thumbColor: colors.secondary.dark.toNumber(),
         borderWidth: 2,
         minThumbSize: 30,
         size: 24,
+      },
+
+      Slider: {
+        // Track styling
+        trackColor: colors.surface.dark.toNumber(),
+        trackFilledColor: colors.primary.dark.toNumber(),
+        trackHoverColor: colors.surface.dark.toNumber(),
+
+        // Thumb styling
+        thumbColor: colors.primary.light.toNumber(),
+        thumbBorderColor: colors.border.light.toNumber(),
+        thumbHoverColor: colors.primary.light.toNumber(),
+        thumbActiveColor: colors.primary.dark.toNumber(),
+
+        // Marks/Ticks
+        markColor: colors.border.medium.toNumber(),
+
+        // Value label
+        valueLabel: {
+          backgroundColor: colors.background.dark.toNumber(),
+          textStyle: { ...textStyles.small, color: colors.text.light.toString() },
+        },
       },
 
       Button: {

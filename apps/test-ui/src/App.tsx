@@ -200,7 +200,7 @@ export function App(props: MountProps) {
     return <QuickStartExample />
   }
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('fx')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('slider')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
 

@@ -12,10 +12,11 @@ import {
   Text,
   useState,
   useTheme,
+  useThemeTokens,
   View,
   type VNode,
 } from '@number10/phaserjsx'
-import { ViewLevel2 } from './Helper'
+import { ViewLevel2, ViewLevel3 } from './Helper'
 
 function CenterOriginLabel(props: { children: VNode }) {
   return (
@@ -40,19 +41,30 @@ export function SliderExample() {
   const [timeRange, setTimeRange] = useState<[number, number]>([9, 17])
   const localTheme = useTheme()
   // const { props: themed } = getThemedProps('Slider', localTheme, {})
+  const tokens = useThemeTokens()
+  const textColor = tokens?.colors.text.DEFAULT.toString() ?? '#000000'
+  const headingStyle =
+    tokens?.textStyles.title ?? ({ fontSize: '28px', fontStyle: 'bold', color: textColor } as const)
+  const subheadingStyle =
+    tokens?.textStyles.medium ?? ({ fontSize: '16px', color: textColor } as const)
+  const mediumStyle = tokens?.textStyles.medium ?? ({ fontSize: '16px', color: textColor } as const)
+  const smallStyle = tokens?.textStyles.small ?? ({ fontSize: '12px', color: textColor } as const)
+  const largeStyle = tokens?.textStyles.large ?? ({ fontSize: '20px', color: textColor } as const)
+  const mutedStyle = { ...smallStyle, color: tokens?.colors.text.light.toString() ?? textColor }
+  const hotColor = tokens?.colors.error.medium.toString() ?? textColor
+  const coldColor = tokens?.colors.info.light.toString() ?? textColor
+  const roomColor = textColor
+  const accentFill =
+    tokens?.colors.accent.dark.toNumber() ?? tokens?.colors.primary.dark.toNumber() ?? 0
 
   return (
-    <ScrollView width="fill" height="fill" backgroundColor={0xf0f0f0} padding={20}>
+    <ScrollView width="fill" height="fill" padding={20}>
       <ViewLevel2>
-        <Text
-          text="Slider Component Examples"
-          style={{ fontSize: '32px', color: '#000000' }}
-          margin={{ bottom: 20 }}
-        />
+        <Text text="Slider Component Examples" style={headingStyle} margin={{ bottom: 20 }} />
 
         {/* Basic Horizontal Slider */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Basic Horizontal Slider" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Basic Horizontal Slider" style={subheadingStyle} />
           <Slider
             value={volume}
             onChange={(v) => {
@@ -62,12 +74,12 @@ export function SliderExample() {
             max={100}
             step={1}
           />
-          <Text text={`Volume: ${volume}%`} style={{ fontSize: '14px', color: '#666666' }} />
-        </View>
+          <Text text={`Volume: ${volume}%`} style={smallStyle} />
+        </ViewLevel3>
 
         {/* With Value Label */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="With Value Label" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="With Value Label" style={subheadingStyle} />
           <Slider
             defaultValue={65}
             min={0}
@@ -77,17 +89,11 @@ export function SliderExample() {
             formatValue={(v: number) => `${v}%`}
             trackLength={300}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Temperature Slider with Marks */}
-        <View
-          width="fill"
-          gap={12}
-          padding={{ left: 30, top: 16, right: 16, bottom: 30 }}
-          backgroundColor={0xffffff}
-          margin={{ bottom: 16 }}
-        >
-          <Text text="With Marks and Labels" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="With Marks and Labels" style={subheadingStyle} />
           <View direction="row" gap={75}>
             <Slider
               value={temperature}
@@ -100,7 +106,7 @@ export function SliderExample() {
                   value: -10,
                   label: (
                     <CenterOriginLabel>
-                      <Text text={'Cold'} style={{ fontSize: '16px', color: '#0000ff' }} />
+                      <Text text={'Cold'} style={{ ...mediumStyle, color: coldColor }} />
                     </CenterOriginLabel>
                   ),
                 },
@@ -108,7 +114,13 @@ export function SliderExample() {
                   value: 0,
                   label: (
                     <CenterOriginLabel>
-                      <Text text={'0°C'} style={{ fontSize: '16px', color: '#5555ff' }} />
+                      <Text
+                        text={'0°C'}
+                        style={{
+                          ...mediumStyle,
+                          color: tokens?.colors.info.medium.toString() ?? textColor,
+                        }}
+                      />
                     </CenterOriginLabel>
                   ),
                 },
@@ -116,7 +128,7 @@ export function SliderExample() {
                   value: 20,
                   label: (
                     <CenterOriginLabel>
-                      <Text text={'Room'} style={{ fontSize: '16px', color: '#0' }} />
+                      <Text text={'Room'} style={{ ...mediumStyle, color: roomColor }} />
                     </CenterOriginLabel>
                   ),
                 },
@@ -124,7 +136,7 @@ export function SliderExample() {
                   value: 40,
                   label: (
                     <CenterOriginLabel>
-                      <Text text={'Hot'} style={{ fontSize: '16px', color: '#ff0000' }} />
+                      <Text text={'Hot'} style={{ ...mediumStyle, color: hotColor }} />
                     </CenterOriginLabel>
                   ),
                 },
@@ -136,26 +148,26 @@ export function SliderExample() {
             />
             <Text
               text={`Temperature: ${temperature}°C`}
-              style={{ fontSize: '20px', color: '#aaaaaa' }}
+              style={{ ...largeStyle, color: tokens?.colors.text.light.toString() ?? textColor }}
             />
           </View>
-        </View>
+        </ViewLevel3>
 
         {/* Auto-Generated Marks */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Auto-Generated Marks" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Auto-Generated Marks" style={subheadingStyle} />
           <Slider defaultValue={5} min={0} max={10} step={1} marks={true} trackLength={250} />
-        </View>
+        </ViewLevel3>
 
         {/* Disabled Slider */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Disabled State" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Disabled State" style={subheadingStyle} />
           <Slider value={50} min={0} max={100} disabled trackLength={250} />
-        </View>
+        </ViewLevel3>
 
         {/* Continuous (No Snap) */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Continuous (No Snap)" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Continuous (No Snap)" style={subheadingStyle} />
           <Slider
             defaultValue={50}
             min={0}
@@ -165,11 +177,11 @@ export function SliderExample() {
             formatValue={(v: number) => `${v.toFixed(2)}`}
             trackLength={280}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Custom Thumb Rendering */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Custom Thumb (Square)" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Custom Thumb (Square)" style={subheadingStyle} />
           <Slider
             defaultValue={30}
             min={0}
@@ -178,7 +190,7 @@ export function SliderExample() {
               <Graphics
                 onDraw={(g: Phaser.GameObjects.Graphics) => {
                   g.clear()
-                  g.fillStyle(0x333333, 1)
+                  g.fillStyle(tokens?.colors.surface.dark.toNumber() ?? 0, 1)
                   g.fillRect(-10, -10, 20, 20)
                 }}
                 scale={isDragging ? 1.1 : 1}
@@ -186,11 +198,11 @@ export function SliderExample() {
             )}
             trackLength={250}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Custom Track Rendering */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Custom Track" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Custom Track" style={subheadingStyle} />
           <Slider
             defaultValue={40}
             min={0}
@@ -201,7 +213,7 @@ export function SliderExample() {
                   g.clear()
                   const length = 250
                   const height = localTheme?.Slider?.trackHeight ?? 6
-                  g.lineStyle(10, 0x660066, 1)
+                  g.lineStyle(10, accentFill, 1)
                   for (let i = 0; i < length * fillPercentage; i += 10) {
                     g.lineBetween(i, 0, i + height, height)
                   }
@@ -210,11 +222,11 @@ export function SliderExample() {
             )}
             trackLength={250}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Fine Step Size */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Fine Step Size (0.1)" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Fine Step Size (0.1)" style={subheadingStyle} />
           <Slider
             value={fineTune}
             onChange={setFineTune}
@@ -225,14 +237,11 @@ export function SliderExample() {
             formatValue={(v: number) => `${v.toFixed(1)}`}
             trackLength={300}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Large Value Range */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text
-            text="Large Value Range (-100 to 100)"
-            style={{ fontSize: '18px', color: '#000000' }}
-          />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Large Value Range (-100 to 100)" style={subheadingStyle} />
           <Slider
             value={rangeValue}
             onChange={setRangeValue}
@@ -243,18 +252,12 @@ export function SliderExample() {
             showValue
             trackLength={350}
           />
-        </View>
+        </ViewLevel3>
 
         <ViewLevel2 direction="row">
           {/* Basic Vertical Slider */}
-          <View
-            width="fill"
-            gap={12}
-            padding={16}
-            backgroundColor={0xffffff}
-            margin={{ bottom: 16 }}
-          >
-            <Text text="Basic Vertical Slider" style={{ fontSize: '18px', color: '#000000' }} />
+          <ViewLevel3 width={'fill'}>
+            <Text text="Basic Vertical Slider" style={subheadingStyle} />
             <Slider
               orientation="vertical"
               value={volume}
@@ -266,18 +269,12 @@ export function SliderExample() {
               max={100}
               step={1}
             />
-            <Text text={`Volume: ${volume}%`} style={{ fontSize: '14px', color: '#666666' }} />
-          </View>
+            <Text text={`Volume: ${volume}%`} style={mutedStyle} />
+          </ViewLevel3>
 
           {/* Vertical Slider with Marks */}
-          <View
-            width="fill"
-            gap={12}
-            padding={16}
-            backgroundColor={0xffffff}
-            margin={{ bottom: 16 }}
-          >
-            <Text text="Vertical with Marks" style={{ fontSize: '18px', color: '#000000' }} />
+          <ViewLevel3 width={'fill'}>
+            <Text text="Vertical with Marks" style={subheadingStyle} />
             <Slider
               orientation="vertical"
               defaultValue={50}
@@ -288,31 +285,25 @@ export function SliderExample() {
               showValue
               trackLength={200}
             />
-          </View>
+          </ViewLevel3>
         </ViewLevel2>
 
         {/* Reverse Direction Examples */}
         <Text
           text="Reverse Direction (right-to-left / bottom-to-top)"
-          style={{ fontSize: '24px', color: '#000000' }}
+          style={headingStyle}
           margin={{ top: 20, bottom: 12 }}
         />
 
         {/* Horizontal Reversed */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text
-            text="Horizontal Reversed (100 → 0)"
-            style={{ fontSize: '18px', color: '#000000' }}
-          />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Horizontal Reversed (100 → 0)" style={subheadingStyle} />
           <Slider defaultValue={30} min={0} max={100} reverse showValue trackLength={300} />
-        </View>
+        </ViewLevel3>
 
         {/* Vertical Reversed */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text
-            text="Vertical Reversed (top-to-bottom)"
-            style={{ fontSize: '18px', color: '#000000' }}
-          />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Vertical Reversed (top-to-bottom)" style={subheadingStyle} />
           <Slider
             orientation="vertical"
             defaultValue={40}
@@ -322,18 +313,18 @@ export function SliderExample() {
             showValue
             trackLength={200}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Range Slider Examples */}
         <Text
           text="Range Slider (Two Thumbs)"
-          style={{ fontSize: '24px', color: '#000000' }}
+          style={headingStyle}
           margin={{ top: 20, bottom: 12 }}
         />
 
         {/* Basic Range Slider */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Price Range" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Price Range" style={subheadingStyle} />
           <RangeSlider
             value={priceRange}
             onChange={setPriceRange}
@@ -344,15 +335,12 @@ export function SliderExample() {
             formatValue={(v: number) => `$${v}`}
             trackLength={350}
           />
-          <Text
-            text={`Selected: $${priceRange[0]} - $${priceRange[1]}`}
-            style={{ fontSize: '14px', color: '#666666' }}
-          />
-        </View>
+          <Text text={`Selected: $${priceRange[0]} - $${priceRange[1]}`} style={mutedStyle} />
+        </ViewLevel3>
 
         {/* Range Slider with Marks */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Time Range (with marks)" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Time Range (with marks)" style={subheadingStyle} />
           <RangeSlider
             value={timeRange}
             onChange={setTimeRange}
@@ -366,13 +354,13 @@ export function SliderExample() {
           />
           <Text
             text={`Working hours: ${timeRange[0]}:00 - ${timeRange[1]}:00`}
-            style={{ fontSize: '14px', color: '#666666' }}
+            style={mutedStyle}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Range Slider Reversed */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Range Slider Reversed" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Range Slider Reversed" style={subheadingStyle} />
           <RangeSlider
             defaultValue={[30, 70]}
             min={0}
@@ -381,14 +369,11 @@ export function SliderExample() {
             showValue
             trackLength={300}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Range Slider with Min Distance */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text
-            text="Range Slider with Min Distance (10)"
-            style={{ fontSize: '18px', color: '#000000' }}
-          />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Range Slider with Min Distance (10)" style={subheadingStyle} />
           <RangeSlider
             defaultValue={[40, 60]}
             min={0}
@@ -397,11 +382,11 @@ export function SliderExample() {
             showValue
             trackLength={300}
           />
-        </View>
+        </ViewLevel3>
 
         {/* Vertical Range Slider */}
-        <View width="fill" gap={12} padding={16} backgroundColor={0xffffff} margin={{ bottom: 16 }}>
-          <Text text="Vertical Range Slider" style={{ fontSize: '18px', color: '#000000' }} />
+        <ViewLevel3 width={'fill'}>
+          <Text text="Vertical Range Slider" style={subheadingStyle} />
           <RangeSlider
             orientation="vertical"
             defaultValue={[25, 75]}
@@ -412,7 +397,7 @@ export function SliderExample() {
             showValue
             trackLength={250}
           />
-        </View>
+        </ViewLevel3>
       </ViewLevel2>
     </ScrollView>
   )

@@ -95,12 +95,12 @@ export const defaultTheme: Theme = {
     },
   },
   ScrollSlider: {
-    borderColor: colors.border.medium.toNumber(),
+    borderColor: colors.border.dark.toNumber(),
     trackColor: colors.surface.dark.toNumber(),
-    thumbColor: colors.primary.light.toNumber(),
-    borderWidth: 1,
-    size: 12,
-    minThumbSize: 20,
+    thumbColor: colors.primary.dark.toNumber(),
+    borderWidth: 2,
+    minThumbSize: 30,
+    size: 24,
   },
   Button: {
     disabledColor: colors.background.DEFAULT.toNumber(),
@@ -356,14 +356,14 @@ export const defaultTheme: Theme = {
   Slider: {
     // Track styling
     trackColor: colors.surface.dark.toNumber(),
-    trackFilledColor: colors.primary.DEFAULT.toNumber(),
+    trackFilledColor: colors.primary.dark.toNumber(),
     trackHeight: 6,
     trackBorderRadius: 3,
     trackLength: 200,
-    trackHoverColor: colors.surface.medium.toNumber(),
+    trackHoverColor: colors.surface.dark.toNumber(),
 
     // Thumb styling
-    thumbColor: colors.primary.DEFAULT.toNumber(),
+    thumbColor: colors.primary.light.toNumber(),
     thumbSize: 20,
     thumbBorderColor: colors.border.light.toNumber(),
     thumbBorderWidth: 2,
@@ -380,7 +380,7 @@ export const defaultTheme: Theme = {
     labelStyle: textStyles.small,
     labelOffset: 10,
     valueLabel: {
-      backgroundColor: colors.surface.darkest.toNumber(),
+      backgroundColor: colors.background.dark.toNumber(),
       textStyle: { ...textStyles.small, color: colors.text.light.toString() },
       padding: { left: 6, right: 6, top: 4, bottom: 4 },
       cornerRadius: 4,

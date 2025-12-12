@@ -233,7 +233,14 @@ export function Sidebar(props: SidebarProps) {
   const contentNodes = [...normalizeChildren(primaryContent), ...normalizeChildren(extraContent)]
 
   return (
-    <View {...combinedProps} theme={nestedTheme}>
+    <View
+      {...combinedProps}
+      theme={nestedTheme}
+      backgroundColor={themed.backgroundColor}
+      backgroundAlpha={themed.backgroundAlpha}
+      padding={themed.padding}
+      gap={themed.gap}
+    >
       {props.header ? <View {...headerStyle}>{props.header}</View> : null}
 
       {scrollable ? (
