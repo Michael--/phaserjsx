@@ -21,17 +21,14 @@ import {
 } from '@number10/phaserjsx'
 import { DebugSide, type DebugPresetKey } from './DemoSide'
 import { ExampleContainer, ExampleSide, type ExampleKey } from './ExampleSide'
-import { createAppTheme, globalTheme } from './Theme'
+import { createAppTheme } from './Theme'
 import { Button, Sidebar } from './components'
 import { registerCustomEffects } from './custom-effects'
 import './custom-effects/types' // Enable custom effect types
 import { ViewLevel2 } from './examples/Helper'
 
-// Set global theme ONCE (safe in function body for SPA)
-themeRegistry.updateGlobalTheme(globalTheme)
-
-// Initialize preset
-setColorPreset('oceanBlue')
+// Initialize preset and mode in one go
+setColorPreset('forestGreen', 'dark')
 
 // Activate desired debug preset by default:
 // import { DevPresets } from '@number10/phaserjsx'

@@ -45,4 +45,9 @@ export {
 } from './color-theme-helpers'
 
 // Preset management
-export { getAvailablePresets, getCurrentPreset, setColorPreset } from './preset-manager'
+export {
+  getAvailablePresets,
+  getCurrentPreset,
+  setColorMode,
+  setColorPreset,
+} from './preset-manager'
