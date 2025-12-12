@@ -4,9 +4,10 @@
  * @returns App component JSX
  */
 import {
-  createTextStyleTokens,
+  createDefaultTheme,
   createTheme,
   getPresetWithMode,
+  themeRegistry,
   type PresetName,
 } from '@number10/phaserjsx'
 import { Icon } from './components'
@@ -23,7 +24,8 @@ export function createAppTheme(
 ) {
   const preset = getPresetWithMode(presetName, mode)
   const { colors } = preset
-  const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
+  const baseTheme = createDefaultTheme(presetName, mode)
+  themeRegistry.setGlobalTheme(baseTheme)
 
   return createTheme(
     {
@@ -57,18 +59,6 @@ export function createAppTheme(
         },
       },
 
-      RadioButton: {
-        color: colors.border.medium.toNumber(),
-        selectedColor: colors.accent.darkest.toNumber(),
-        labelStyle: { color: colors.text.DEFAULT.toString(), fontSize: 14 },
-        gap: 10,
-        size: 16,
-        innerSize: 16,
-        View: {
-          padding: 2,
-        },
-      },
-
       Checkbox: {
         color: colors.border.medium.toNumber(),
         labelStyle: { color: colors.text.DEFAULT.toString(), fontSize: 14 },
@@ -79,39 +69,6 @@ export function createAppTheme(
         },
       },
 
-      CharText: {
-        borderColor: colors.border.medium.toNumber(),
-        borderWidth: 2,
-        cornerRadius: 6,
-        padding: 10,
-        textStyle: {
-          color: colors.text.toString(),
-          fontSize: '20px',
-          fontFamily: 'Arial',
-        },
-        cursorColor: colors.accent.DEFAULT.toNumber(),
-        cursorWidth: 3,
-        cursorBlinkSpeed: 200,
-      },
-
-      CharTextInput: {
-        textStyle: {
-          color: colors.text.DEFAULT.toString(),
-          fontSize: '20px',
-          fontFamily: 'Arial',
-        },
-        charSpacing: 2,
-        cursorColor: colors.accent.DEFAULT.toNumber(),
-        cursorWidth: 3,
-        cursorBlinkSpeed: 200,
-        selectionColor: colors.accent.light.toNumber(),
-        selectionAlpha: 0.5,
-        lineHeight: 1.2,
-        wordWrap: false,
-        focusedBorderColor: colors.accent.lightest.toNumber(),
-        disabledColor: colors.border.dark.toNumber(),
-      },
-
       Icon: {
         size: 24,
         tint: colors.text.DEFAULT.toNumber(),
@@ -119,117 +76,22 @@ export function createAppTheme(
 
       Accordion: {
         effect: 'wobble',
-        effectConfig: { magnitude: 0.02, time: 150 },
-        headerStyle: {
-          backgroundColor: colors.surface.dark.toNumber(),
-          padding: 10,
-          gap: 10,
-          cornerRadius: 5,
-          width: 'fill',
-        },
-        contentStyle: {
-          backgroundColor: colors.surface.light.toNumber(),
-          padding: 10,
-          cornerRadius: 5,
-          width: 'fill',
-        },
-        Icon: {
-          size: 24,
-        },
-        textStyle: {
-          color: colors.text.DEFAULT.toString(),
-          fontSize: '18px',
-        },
-      },
-
-      ScrollSlider: {
-        borderColor: colors.border.dark.toNumber(),
-        trackColor: colors.surface.dark.toNumber(),
-        thumbColor: colors.secondary.dark.toNumber(),
-        borderWidth: 2,
-        minThumbSize: 30,
-        size: 24,
-      },
-
-      Slider: {
-        // Track styling
-        trackColor: colors.surface.dark.toNumber(),
-        trackFilledColor: colors.primary.dark.toNumber(),
-        trackHoverColor: colors.surface.dark.toNumber(),
-
-        // Thumb styling
-        thumbColor: colors.primary.light.toNumber(),
-        thumbBorderColor: colors.border.light.toNumber(),
-        thumbHoverColor: colors.primary.light.toNumber(),
-        thumbActiveColor: colors.primary.dark.toNumber(),
-
-        // Marks/Ticks
-        markColor: colors.border.medium.toNumber(),
-
-        // Value label
-        valueLabel: {
-          backgroundColor: colors.background.dark.toNumber(),
-          textStyle: { ...textStyles.small, color: colors.text.light.toString() },
-        },
-      },
-
-      Button: {
-        disabledColor: colors.border.medium.toNumber(),
-        backgroundColor: colors.primary.DEFAULT.toNumber(),
-        backgroundAlpha: 1.0,
-        borderColor: colors.primary.dark.toNumber(),
-        borderWidth: 1,
-        cornerRadius: 6,
-        padding: 8,
-        gap: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        primary: {
-          backgroundColor: colors.primary.medium.toNumber(),
-          borderColor: colors.primary.dark.toNumber(),
-        },
-        secondary: {
-          backgroundColor: colors.secondary.DEFAULT.toNumber(),
-          borderColor: colors.secondary.dark.toNumber(),
-          effect: 'press',
-          effectConfig: { intensity: 0.9, time: 200 },
-        },
-        outline: {
-          backgroundColor: 0x000000,
-          backgroundAlpha: 0.0,
-          borderColor: colors.accent.DEFAULT.toNumber(),
-          borderWidth: 2,
-          effect: 'flash',
-          effectConfig: { intensity: 1.15, time: 200 },
-        },
-        small: {
-          padding: 6,
-          cornerRadius: 4,
-        },
-        medium: {
-          padding: 8,
-          cornerRadius: 6,
-        },
-        large: {
-          padding: { top: 12, bottom: 12, left: 8, right: 8 },
-          cornerRadius: 8,
-        },
       },
 
       IconButton: {
         textStyle: {
-          color: '#ffffff',
+          color: colors.text.DEFAULT.toString(),
           fontSize: '18px',
         },
         iconSize: 24,
         primary: {
           textStyle: {
-            color: '#ffffff',
+            color: colors.text.DEFAULT.toString(),
           },
         },
         secondary: {
           textStyle: {
-            color: '#ffffff',
+            color: colors.text.DEFAULT.toString(),
           },
         },
         outline: {
@@ -254,16 +116,6 @@ export function createAppTheme(
           textStyle: {
             fontSize: '24px',
           },
-        },
-      },
-
-      ExampleContainer: {
-        View: {
-          //backgroundColor: colors.surface.DEFAULT.toNumber(),
-          //backgroundAlpha: 0.1,
-          // padding: 10,
-          //gap: 10,
-          //cornerRadius: 0,
         },
       },
 

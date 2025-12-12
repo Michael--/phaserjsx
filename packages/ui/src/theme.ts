@@ -7,7 +7,7 @@ import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 import type { ComponentThemes, PartialTheme, Theme } from './theme-base'
 import './theme-custom' // Import to activate declaration merging
-import { defaultTheme } from './theme-defaults'
+import { createDefaultTheme, defaultTheme } from './theme-defaults'
 
 // Re-export all types and interfaces
 export type {
@@ -25,7 +25,7 @@ export type {
   TileSpriteTheme,
   ViewTheme,
 } from './theme-base'
-export { defaultTheme }
+export { createDefaultTheme, defaultTheme }
 
 /**
  * Global theme registry
