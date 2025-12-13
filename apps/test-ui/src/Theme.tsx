@@ -139,6 +139,3 @@ export function createAppTheme(
     preset
   )
 }
-
-// Initial theme with default preset
-export const globalTheme = createAppTheme('oceanBlue', 'light')
