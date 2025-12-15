@@ -2,7 +2,7 @@
 /**
  * ScrollView component providing a scrollable area with optional sliders
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
@@ -180,8 +180,8 @@ export function ScrollView(props: ScrollViewProps) {
     // Calculate new scroll position
     const maxScrollY = Math.max(0, contentHeight - viewportHeight)
     const maxScrollX = Math.max(0, contentWidth - viewportWidth)
-    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
-    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
+    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy + deltaY))
+    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx + deltaX))
 
     setScroll({ dx: newScrollX, dy: newScrollY })
   }
@@ -201,7 +201,8 @@ export function ScrollView(props: ScrollViewProps) {
       duration,
       ease: 'Quad.easeOut',
       onUpdate: (tween) => {
-        setScroll({ dx: tween.targets[0].dx, dy: tween.targets[0].dy })
+        const target = tween.targets[0] as { dx: number; dy: number }
+        setScroll({ dx: target.dx, dy: target.dy })
       },
       onComplete: () => {
         tweenRef.current = null
@@ -274,7 +275,8 @@ export function ScrollView(props: ScrollViewProps) {
         duration: 300,
         ease: 'Quad.easeOut',
         onUpdate: (tween) => {
-          setScroll({ dx: tween.targets[0].dx, dy: tween.targets[0].dy })
+          const target = tween.targets[0] as { dx: number; dy: number }
+          setScroll({ dx: target.dx, dy: target.dy })
         },
         onComplete: () => {
           tweenRef.current = null
