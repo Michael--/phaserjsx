@@ -33,6 +33,12 @@ export interface ScrollInfo {
 }
 
 /**
+ * Snap configuration types
+ */
+export type SnapMode = 'auto' | { positions: number[]; threshold?: number }
+export type SnapAlignment = 'start' | 'center' | 'end'
+
+/**
  * Props for ScrollView component
  */
 export interface ScrollViewProps extends ViewProps {
@@ -46,6 +52,14 @@ export interface ScrollViewProps extends ViewProps {
   scroll?: { dx: number; dy: number }
   /** Callback when scroll information changes */
   onScrollInfoChange?: (info: ScrollInfo) => void
+  /** Snap-Verhalten: false (deaktiviert), 'auto' (zu Items), oder manuelle Positionen */
+  snap?: boolean | SnapMode
+  /** Ausrichtung beim Snappen */
+  snapAlignment?: SnapAlignment
+  /** Schwellenwert für Snap (Pixel) */
+  snapThreshold?: number
+  /** Momentum Scrolling aktivieren */
+  momentum?: boolean
 }
 
 /**
@@ -60,6 +74,10 @@ export function ScrollView(props: ScrollViewProps) {
     showHorizontalSlider = 'auto',
     scroll: initialScroll,
     onScrollInfoChange,
+    snap = false,
+    snapAlignment = 'start',
+    snapThreshold = 20,
+    momentum = true,
   } = props
 
   const [scroll, setScroll] = useState(initialScroll ?? { dx: 0, dy: 0 })
@@ -69,6 +87,11 @@ export function ScrollView(props: ScrollViewProps) {
 
   const [contentHeight, setContentHeight] = useState(0)
   const [contentWidth, setContentWidth] = useState(0)
+
+  // State for momentum scrolling
+  const [velocity, setVelocity] = useState({ vx: 0, vy: 0 })
+  const [lastTime, setLastTime] = useState(0)
+  const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
   // Get slider size, considering size variant and theme
   const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
@@ -163,6 +186,103 @@ export function ScrollView(props: ScrollViewProps) {
     setScroll({ dx: newScrollX, dy: newScrollY })
   }
 
+  const startMomentum = () => {
+    if (!contentRef.current?.scene) return
+
+    const scene = contentRef.current.scene
+    const duration = Math.min(1000, Math.max(200, Math.abs(velocity.vx) + Math.abs(velocity.vy))) // 200-1000ms
+    const targetDx = Math.max(0, Math.min(maxScrollX, scroll.dx + velocity.vx * (duration / 1000)))
+    const targetDy = Math.max(0, Math.min(maxScrollY, scroll.dy + velocity.vy * (duration / 1000)))
+
+    tweenRef.current = scene.tweens.add({
+      targets: { dx: scroll.dx, dy: scroll.dy },
+      dx: targetDx,
+      dy: targetDy,
+      duration,
+      ease: 'Quad.easeOut',
+      onUpdate: (tween) => {
+        setScroll({ dx: tween.targets[0].dx, dy: tween.targets[0].dy })
+      },
+      onComplete: () => {
+        tweenRef.current = null
+        // After momentum, apply snap if enabled
+        if (snap) {
+          applySnap()
+        }
+      },
+    })
+  }
+
+  const getSnapPositions = (): { x: number[]; y: number[] } => {
+    if (typeof snap === 'object' && 'positions' in snap) {
+      // Manual positions - assume same for x/y if not specified
+      return { x: snap.positions, y: snap.positions }
+    }
+    if (snap === 'auto' && contentRef.current) {
+      // Auto: calculate from child heights (vertical) or widths (horizontal)
+      const children = contentRef.current.list as Phaser.GameObjects.GameObject[]
+      const yPositions: number[] = [0]
+      let cumulativeY = 0
+      for (const child of children) {
+        if (child instanceof Phaser.GameObjects.Container) {
+          cumulativeY += child.height
+          yPositions.push(cumulativeY)
+        }
+      }
+      // For horizontal, assume similar logic if needed
+      return { x: [0], y: yPositions }
+    }
+    return { x: [], y: [] }
+  }
+
+  const findNearestSnap = (current: number, positions: number[], viewportSize: number): number => {
+    let nearest = current
+    let minDistance = Infinity
+    for (const pos of positions) {
+      let adjustedPos = pos
+      if (snapAlignment === 'center') {
+        adjustedPos = pos - viewportSize / 2
+      } else if (snapAlignment === 'end') {
+        adjustedPos = pos - viewportSize
+      }
+      adjustedPos = Math.max(0, Math.min(maxScrollX || maxScrollY || 0, adjustedPos))
+      const distance = Math.abs(current - adjustedPos)
+      if (distance < minDistance && distance <= snapThreshold) {
+        minDistance = distance
+        nearest = adjustedPos
+      }
+    }
+    return nearest
+  }
+
+  const applySnap = () => {
+    if (!contentRef.current?.scene || !snap) return
+
+    const positions = getSnapPositions()
+    const viewportHeight = viewportRef.current?.height ?? 0
+    const viewportWidth = viewportRef.current?.width ?? 0
+
+    const targetDx = findNearestSnap(scroll.dx, positions.x, viewportWidth)
+    const targetDy = findNearestSnap(scroll.dy, positions.y, viewportHeight)
+
+    if (targetDx !== scroll.dx || targetDy !== scroll.dy) {
+      const scene = contentRef.current.scene
+      tweenRef.current = scene.tweens.add({
+        targets: { dx: scroll.dx, dy: scroll.dy },
+        dx: targetDx,
+        dy: targetDy,
+        duration: 300,
+        ease: 'Quad.easeOut',
+        onUpdate: (tween) => {
+          setScroll({ dx: tween.targets[0].dx, dy: tween.targets[0].dy })
+        },
+        onComplete: () => {
+          tweenRef.current = null
+        },
+      })
+    }
+  }
+
   const handleVerticalScroll = (scrollPos: number) => {
     const clampedScrollPos = Math.max(0, Math.min(maxScrollY, scrollPos))
     setScroll((prev) => ({ ...prev, dy: clampedScrollPos }))
@@ -175,11 +295,26 @@ export function ScrollView(props: ScrollViewProps) {
 
   const handleTouchMove = (data: GestureEventData) => {
     // Process start and move events, ignore end
-    if (data.state === 'end') return
+    if (data.state === 'end') {
+      if (momentum && (Math.abs(velocity.vx) > 0.1 || Math.abs(velocity.vy) > 0.1)) {
+        startMomentum()
+      }
+      return
+    }
     data.stopPropagation()
 
     const deltaX = data.dx ?? 0
     const deltaY = data.dy ?? 0
+
+    // Calculate velocity for momentum
+    const now = Date.now()
+    const deltaTime = now - lastTime
+    if (deltaTime > 0) {
+      const newVx = (deltaX / deltaTime) * 1000 // pixels per second
+      const newVy = (deltaY / deltaTime) * 1000
+      setVelocity({ vx: newVx, vy: newVy })
+      setLastTime(now)
+    }
 
     calc(deltaX, deltaY)
   }
