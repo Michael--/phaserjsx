@@ -425,6 +425,7 @@ export function ScrollView(props: ScrollViewProps) {
               viewportSize={viewportWidth}
               contentSize={contentWidth}
               onScroll={handleHorizontalScroll}
+              momentum={momentum}
             />
           </View>
         </View>
@@ -439,6 +440,7 @@ export function ScrollView(props: ScrollViewProps) {
               viewportSize={viewportHeight}
               contentSize={effectiveContentHeight}
               onScroll={handleVerticalScroll}
+              momentum={momentum}
             />
           </View>
           {showHorizontalSliderActual && (

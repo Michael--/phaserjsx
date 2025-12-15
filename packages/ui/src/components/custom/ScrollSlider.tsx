@@ -2,9 +2,9 @@
 /**
  * ScrollSlider component for scrollable content areas
  */
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
-import { useRef } from '../../hooks'
+import { useEffect, useRef, useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { LayoutSize } from '../index'
 import { View } from '../index'
@@ -43,6 +43,8 @@ export interface ScrollSliderProps {
   contentSize: number
   /** Callback when slider is scrolled, returns new scroll position in pixels */
   onScroll: (scrollPosition: number) => void
+  /** Enable momentum scrolling for thumb dragging */
+  momentum?: boolean
 }
 
 /**
@@ -51,11 +53,14 @@ export interface ScrollSliderProps {
  * @returns JSX element
  */
 export function ScrollSlider(props: ScrollSliderProps) {
-  const { direction, scrollPosition, viewportSize, contentSize, onScroll } = props
+  const { direction, scrollPosition, viewportSize, contentSize, onScroll, momentum = true } = props
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
   const trackContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const velocityRef = useRef(0)
+  const lastTimeRef = useRef(0)
+  const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
   const isVertical = direction === 'vertical'
   const { border, outer, dimension } = calculateSliderSize(props.size)
@@ -89,27 +94,79 @@ export function ScrollSlider(props: ScrollSliderProps) {
   // Calculate thumb position from scroll position
   const thumbPosition = maxScroll > 0 ? (scrollPosition / maxScroll) * thumbRange : 0
 
+  const [currentThumbPos, setCurrentThumbPos] = useState(thumbPosition)
+
+  // Sync currentThumbPos with thumbPosition when not dragging
+  useEffect(() => {
+    if (!isDraggingRef.current) {
+      setCurrentThumbPos(thumbPosition)
+    }
+  }, [thumbPosition])
+
   const handleThumbTouchMove = (data: GestureEventData) => {
     // Stop event propagation to prevent ScrollView from receiving the event
     data.stopPropagation()
 
     if (data.state === 'start') {
       isDraggingRef.current = true
+      velocityRef.current = 0
+      lastTimeRef.current = Date.now()
+      // Stop any ongoing momentum tween
+      if (tweenRef.current) {
+        tweenRef.current.stop()
+        tweenRef.current = null
+      }
       return
     }
 
     if (data.state === 'end') {
       isDraggingRef.current = false
+      // Apply the final scroll position
+      const finalScrollPos = thumbRange > 0 ? (currentThumbPos / thumbRange) * maxScroll : 0
+      onScroll(finalScrollPos)
+      if (momentum && Math.abs(velocityRef.current) > 0.1) {
+        startMomentum(finalScrollPos)
+      }
       return
     }
 
     if (!isDraggingRef.current) return
 
     const delta = isVertical ? (data.dy ?? 0) : (data.dx ?? 0)
-    const newThumbPos = Math.max(0, Math.min(thumbRange, thumbPosition + delta))
-    const newScrollPos = thumbRange > 0 ? (newThumbPos / thumbRange) * maxScroll : 0
+    const now = Date.now()
+    const deltaTime = now - lastTimeRef.current
+    if (deltaTime > 0) {
+      velocityRef.current = (delta / deltaTime) * 1000 // pixels per second
+      lastTimeRef.current = now
+    }
 
-    onScroll(newScrollPos)
+    const newThumbPos = Math.max(0, Math.min(thumbRange, currentThumbPos + delta))
+    setCurrentThumbPos(newThumbPos)
+  }
+
+  const startMomentum = (startPos: number) => {
+    if (!sliderRef.current?.scene) return
+
+    const scene = sliderRef.current.scene
+    const duration = Math.min(1000, Math.max(200, Math.abs(velocityRef.current))) // 200-1000ms
+    const targetScrollPos = Math.max(
+      0,
+      Math.min(maxScroll, startPos + velocityRef.current * (duration / 1000))
+    )
+
+    tweenRef.current = scene.tweens.add({
+      targets: { pos: startPos },
+      pos: targetScrollPos,
+      duration,
+      ease: 'Quad.easeOut',
+      onUpdate: (tween) => {
+        const target = tween.targets[0] as { pos: number }
+        onScroll(target.pos)
+      },
+      onComplete: () => {
+        tweenRef.current = null
+      },
+    })
   }
 
   const handleBackgroundTouch = (data: GestureEventData) => {
@@ -162,8 +219,8 @@ export function ScrollSlider(props: ScrollSliderProps) {
         <View
           width={isVertical ? dimension : thumbSize}
           height={isVertical ? thumbSize : dimension}
-          x={isVertical ? 0 : thumbPosition}
-          y={isVertical ? thumbPosition : 0}
+          x={isVertical ? 0 : currentThumbPos}
+          y={isVertical ? currentThumbPos : 0}
           backgroundColor={themed.thumbColor ?? 0xeeeebb}
           enableGestures={true}
           onTouchMove={handleThumbTouchMove}
