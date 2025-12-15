@@ -180,8 +180,8 @@ export function ScrollView(props: ScrollViewProps) {
     // Calculate new scroll position
     const maxScrollY = Math.max(0, contentHeight - viewportHeight)
     const maxScrollX = Math.max(0, contentWidth - viewportWidth)
-    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy + deltaY))
-    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx + deltaX))
+    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
+    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
 
     setScroll({ dx: newScrollX, dy: newScrollY })
   }
@@ -191,8 +191,8 @@ export function ScrollView(props: ScrollViewProps) {
 
     const scene = contentRef.current.scene
     const duration = Math.min(1000, Math.max(200, Math.abs(velocity.vx) + Math.abs(velocity.vy))) // 200-1000ms
-    const targetDx = Math.max(0, Math.min(maxScrollX, scroll.dx + velocity.vx * (duration / 1000)))
-    const targetDy = Math.max(0, Math.min(maxScrollY, scroll.dy + velocity.vy * (duration / 1000)))
+    const targetDx = Math.max(0, Math.min(maxScrollX, scroll.dx - velocity.vx * (duration / 1000)))
+    const targetDy = Math.max(0, Math.min(maxScrollY, scroll.dy - velocity.vy * (duration / 1000)))
 
     tweenRef.current = scene.tweens.add({
       targets: { dx: scroll.dx, dy: scroll.dy },
