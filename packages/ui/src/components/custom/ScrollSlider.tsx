@@ -4,7 +4,7 @@
  */
 import Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
-import { useEffect, useRef, useState } from '../../hooks'
+import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { LayoutSize } from '../index'
 import { View } from '../index'
@@ -94,15 +94,6 @@ export function ScrollSlider(props: ScrollSliderProps) {
   // Calculate thumb position from scroll position
   const thumbPosition = maxScroll > 0 ? (scrollPosition / maxScroll) * thumbRange : 0
 
-  const [currentThumbPos, setCurrentThumbPos] = useState(thumbPosition)
-
-  // Sync currentThumbPos with thumbPosition when not dragging
-  useEffect(() => {
-    if (!isDraggingRef.current) {
-      setCurrentThumbPos(thumbPosition)
-    }
-  }, [thumbPosition])
-
   const handleThumbTouchMove = (data: GestureEventData) => {
     // Stop event propagation to prevent ScrollView from receiving the event
     data.stopPropagation()
@@ -121,11 +112,8 @@ export function ScrollSlider(props: ScrollSliderProps) {
 
     if (data.state === 'end') {
       isDraggingRef.current = false
-      // Apply the final scroll position
-      const finalScrollPos = thumbRange > 0 ? (currentThumbPos / thumbRange) * maxScroll : 0
-      onScroll(finalScrollPos)
       if (momentum && Math.abs(velocityRef.current) > 0.1) {
-        startMomentum(finalScrollPos)
+        startMomentum(scrollPosition)
       }
       return
     }
@@ -140,8 +128,10 @@ export function ScrollSlider(props: ScrollSliderProps) {
       lastTimeRef.current = now
     }
 
-    const newThumbPos = Math.max(0, Math.min(thumbRange, currentThumbPos + delta))
-    setCurrentThumbPos(newThumbPos)
+    const newThumbPos = Math.max(0, Math.min(thumbRange, thumbPosition + delta))
+    const newScrollPos = thumbRange > 0 ? (newThumbPos / thumbRange) * maxScroll : 0
+
+    onScroll(newScrollPos)
   }
 
   const startMomentum = (startPos: number) => {
@@ -219,8 +209,8 @@ export function ScrollSlider(props: ScrollSliderProps) {
         <View
           width={isVertical ? dimension : thumbSize}
           height={isVertical ? thumbSize : dimension}
-          x={isVertical ? 0 : currentThumbPos}
-          y={isVertical ? currentThumbPos : 0}
+          x={isVertical ? 0 : thumbPosition}
+          y={isVertical ? thumbPosition : 0}
           backgroundColor={themed.thumbColor ?? 0xeeeebb}
           enableGestures={true}
           onTouchMove={handleThumbTouchMove}
