@@ -116,6 +116,54 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
   )
 }
 
+function ScrollExampleSnapAuto(props: { title: string; count: number; width: SizeValue }) {
+  const tokens = useThemeTokens()
+
+  return (
+    <ViewLevel2 alignItems="center">
+      <Text text={props.title} style={tokens?.textStyles.large} />
+      <ViewLevel2>
+        <View
+          width={200}
+          height={400}
+          padding={0}
+          backgroundColor={tokens?.colors.secondary.light.toNumber()}
+        >
+          <ScrollView snap="auto" snapAlignment="center" momentum={true}>
+            <Content count={props.count} width={props.width} />
+          </ScrollView>
+        </View>
+      </ViewLevel2>
+    </ViewLevel2>
+  )
+}
+
+function ScrollExampleSnapManual(props: { title: string }) {
+  const tokens = useThemeTokens()
+
+  return (
+    <ViewLevel2 alignItems="center">
+      <Text text={props.title} style={tokens?.textStyles.large} />
+      <ViewLevel2>
+        <View width={200} height={400} padding={0}>
+          <ScrollView
+            snap={{ positions: [0, 100, 200, 300], threshold: 30 }}
+            snapAlignment="start"
+            momentum={true}
+          >
+            <View direction="column" gap={10} padding={10}>
+              <View height={100} backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()} />
+              <View height={100} backgroundColor={tokens?.colors.secondary.DEFAULT.toNumber()} />
+              <View height={100} backgroundColor={tokens?.colors.accent.DEFAULT.toNumber()} />
+              <View height={100} backgroundColor={tokens?.colors.primary.light.toNumber()} />
+            </View>
+          </ScrollView>
+        </View>
+      </ViewLevel2>
+    </ViewLevel2>
+  )
+}
+
 function ScrollExampleSliderFullLocal(props: { title: string; width: string }) {
   const tokens = useThemeTokens()
 
@@ -225,6 +273,11 @@ export function ScrollExample() {
           <ViewLevel2 direction="row">
             <ScrollExampleSliderLocal title="V-Slider" count={20} width="100%" />
             <ScrollExampleSliderFullLocal title="XY-Slider" width="100%" />
+          </ViewLevel2>
+          {/** Snap examples */}
+          <ViewLevel2 direction="row">
+            <ScrollExampleSnapAuto title="Snap Auto Center" count={10} width="100%" />
+            <ScrollExampleSnapManual title="Snap Manual" />
           </ViewLevel2>
         </ViewLevel2>
       </ScrollView>

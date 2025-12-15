@@ -52,13 +52,13 @@ export interface ScrollViewProps extends ViewProps {
   scroll?: { dx: number; dy: number }
   /** Callback when scroll information changes */
   onScrollInfoChange?: (info: ScrollInfo) => void
-  /** Snap-Verhalten: false (deaktiviert), 'auto' (zu Items), oder manuelle Positionen */
+  /** Snap behavior: false (disabled), 'auto' (to items), or manual positions */
   snap?: boolean | SnapMode
-  /** Ausrichtung beim Snappen */
+  /** Alignment for snapping */
   snapAlignment?: SnapAlignment
-  /** Schwellenwert für Snap (Pixel) */
+  /** Threshold for snap (pixels) */
   snapThreshold?: number
-  /** Momentum Scrolling aktivieren */
+  /** Enable momentum scrolling */
   momentum?: boolean
 }
 
