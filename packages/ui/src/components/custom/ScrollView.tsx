@@ -325,8 +325,7 @@ export function ScrollView(props: ScrollViewProps) {
     data.stopPropagation()
     data.preventDefault()
 
-    // Invert deltaY for natural scroll direction (positive = scroll down)
-    calc(-data.deltaX, -data.deltaY)
+    calc(data.deltaX, data.deltaY)
   }
 
   // Force redraw after mount to ensure dimensions are calculated
