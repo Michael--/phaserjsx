@@ -29,6 +29,7 @@ interface MountRegistryEntry {
   type: NodeType | ((props: unknown) => VNode)
   props: MountProps & Record<string, unknown>
   rootNode: Phaser.GameObjects.GameObject
+  vnode: VNode
 }
 
 class MountRegistry {
@@ -47,10 +48,11 @@ class MountRegistry {
     parent: ParentType,
     type: NodeType | ((props: unknown) => VNode),
     props: MountProps & Record<string, unknown>,
-    rootNode: Phaser.GameObjects.GameObject
+    rootNode: Phaser.GameObjects.GameObject,
+    vnode: VNode
   ): number {
     const id = this.nextId++
-    this.entries.set(id, { id, parent, type, props, rootNode })
+    this.entries.set(id, { id, parent, type, props, rootNode, vnode })
     DebugLogger.log('vdom', `Registered mount ${id}`)
     return id
   }
@@ -65,6 +67,15 @@ class MountRegistry {
       DebugLogger.log('vdom', `Unregistered mount ${id}`)
       this.entries.delete(id)
     }
+  }
+
+  /**
+   * Get a specific mount entry by registry ID
+   * @param id - Registry ID
+   * @returns Mount entry or undefined if not found
+   */
+  getEntry(id: number): MountRegistryEntry | undefined {
+    return this.entries.get(id)
   }
 
   /**
@@ -185,7 +196,9 @@ export function remountAll(): void {
 
       // Update registry with new root node and restore registry ID
       entry.rootNode = rootNode
+      entry.vnode = vnode
       ;(rootNode as unknown as { __registryId?: number }).__registryId = entry.id
+      ;(rootNode as unknown as { __rootVNode?: VNode }).__rootVNode = vnode
 
       console.log('[REMOUNT] Successfully remounted entry', entry.id)
     } catch (error) {
@@ -214,6 +227,14 @@ export interface MountProps {
  * Use this for type-safe mountJSX calls
  */
 export type MountComponentProps<P = Record<string, never>> = MountProps & P
+
+/**
+ * Returned handle from mountJSX
+ * Extends the root GameObject with a typed unmount helper
+ */
+export interface MountHandle extends Phaser.GameObjects.GameObject {
+  unmount: () => void
+}
 
 /**
  * Flattens nested arrays iteratively (performance optimized)
@@ -1266,19 +1287,19 @@ export function mountJSX<T extends NodeType>(
   parentOrScene: ParentType,
   type: T,
   props: MountComponentProps<NodeProps<T>>
-): Phaser.GameObjects.GameObject
+): MountHandle
 
 export function mountJSX<P = Record<string, never>>(
   parentOrScene: ParentType,
   type: (props: P & MountProps) => VNode,
   props: MountComponentProps<P>
-): Phaser.GameObjects.GameObject
+): MountHandle
 
 export function mountJSX(
   parentOrScene: ParentType,
   type: NodeType | ((props: unknown) => VNode),
   props: MountProps & Record<string, unknown> = { width: 0, height: 0 }
-): Phaser.GameObjects.GameObject {
+): MountHandle {
   // Extract MountProps and component props
   const { width, height, disableAutoSize = false, ...componentProps } = props
 
@@ -1333,11 +1354,55 @@ export function mountJSX(
     ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
   }
 
+  // Store root VNode on the mounted node to allow typed unmounting later
+  ;(rootNode as unknown as { __rootVNode?: VNode }).__rootVNode = vnode
+
   // Register this mount in the registry for theme-triggered remounts
-  const registryId = mountRegistry.register(parentOrScene, type, props, rootNode)
+  const registryId = mountRegistry.register(parentOrScene, type, props, rootNode, vnode)
 
   // Store registry ID on root node for cleanup
   ;(rootNode as unknown as { __registryId?: number }).__registryId = registryId
 
-  return rootNode
+  const handle = rootNode as MountHandle
+  handle.unmount = () => unmountJSX(handle)
+
+  return handle
+}
+
+/**
+ * Convenience helper to unmount a tree created via mountJSX without manual casting
+ * Accepts either the root GameObject returned from mountJSX or the owning scene
+ * @param target - Root GameObject or Phaser scene that holds the mounted JSX tree
+ */
+export function unmountJSX(target: Phaser.Scene | Phaser.GameObjects.GameObject): void {
+  const scene = target instanceof Phaser.Scene ? target : target.scene
+  const targetWithVNode = target as unknown as { __rootVNode?: VNode; __registryId?: number }
+  const sceneWithVNode = scene as unknown as { __rootVNode?: VNode }
+
+  // Prefer VNode stored directly on the root node (supports multiple mounts per scene)
+  const rootVNode = targetWithVNode.__rootVNode ?? sceneWithVNode?.__rootVNode
+
+  if (rootVNode) {
+    unmount(rootVNode)
+
+    // Clear stored references to avoid reusing a stale VNode after unmount
+    if (targetWithVNode.__rootVNode === rootVNode) {
+      delete targetWithVNode.__rootVNode
+    }
+    if (sceneWithVNode?.__rootVNode === rootVNode) {
+      delete sceneWithVNode.__rootVNode
+    }
+    return
+  }
+
+  // Fallback: use registry entry if available (in case __rootVNode was cleared)
+  if (targetWithVNode.__registryId !== undefined) {
+    const entry = mountRegistry.getEntry(targetWithVNode.__registryId)
+    if (entry?.vnode) {
+      unmount(entry.vnode)
+      return
+    }
+  }
+
+  DebugLogger.log('vdom', 'unmountJSX called but no root VNode found on target')
 }

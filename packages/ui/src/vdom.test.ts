@@ -37,7 +37,7 @@ vi.mock('./render-context', () => ({
 }))
 
 import { host } from './host'
-import { createElement, mount, patchVNode, unmount } from './vdom'
+import { createElement, mount, mountJSX, patchVNode, unmount, unmountJSX } from './vdom'
 
 describe('VDOM', () => {
   let mockScene: unknown
@@ -150,6 +150,44 @@ describe('VDOM', () => {
 
       // Cleanup should be called
       expect(cleanupSpy).toHaveBeenCalled()
+    })
+  })
+
+  describe('unmountJSX', () => {
+    it('should unmount using the root node without casting', () => {
+      const vnode = createElement('View', {})
+      vnode.__node = { id: 'root', parentContainer: mockScene }
+      vnode.__parent = mockScene
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rootNode = { scene: mockScene, __rootVNode: vnode } as any
+
+      unmountJSX(rootNode)
+
+      expect(vi.mocked(host.remove)).toHaveBeenCalledWith(mockScene, {
+        id: 'root',
+        parentContainer: mockScene,
+      })
+      expect(rootNode.__rootVNode).toBeUndefined()
+    })
+
+    it('exposes an unmount helper on the mount handle', () => {
+      const parent = mockScene
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(host.create).mockReturnValue({ id: 'root' } as any)
+
+      const handle = mountJSX(parent as any, 'View', {
+        width: 100,
+        height: 100,
+        disableAutoSize: true,
+      })
+
+      handle.unmount()
+
+      expect(vi.mocked(host.remove)).toHaveBeenCalledWith(
+        mockScene,
+        expect.objectContaining({ id: 'root' })
+      )
     })
   })
 
