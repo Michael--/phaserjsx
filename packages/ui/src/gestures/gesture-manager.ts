@@ -142,6 +142,11 @@ export class GestureManager {
 
     // Clear hover state
     this.hoveredContainers.delete(container)
+
+    // Remove from active move tracking
+    for (const hitContainers of this.activeContainersForMove.values()) {
+      hitContainers.delete(container)
+    }
   }
 
   /**

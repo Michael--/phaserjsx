@@ -4,12 +4,13 @@
  * Enables overlays, modals, tooltips without affecting parent tree layout
  */
 import { getGestureManager } from '../../gestures/gesture-manager'
-import { useEffect, useMemo, useScene } from '../../hooks'
+import type { VNode } from '../../hooks'
+import { useEffect, useMemo, useRef, useScene } from '../../hooks'
 import { DeferredLayoutQueue } from '../../layout/layout-engine'
 import type { LayoutSize } from '../../layout/types'
 import { portalRegistry } from '../../portal'
 import type { ChildrenType } from '../../types'
-import { mount } from '../../vdom'
+import { mount, patchVNode, unmount } from '../../vdom'
 
 /**
  * Props for Portal component
@@ -57,7 +58,10 @@ export function Portal(props: PortalProps) {
   const depth = props.depth ?? 1000
   const scene = useScene()
   const blockEvents = props.blockEvents ?? true
+  const mountedNodesRef = useRef<Phaser.GameObjects.GameObject[]>([])
+  const previousChildrenRef = useRef<VNode[]>([])
 
+  // Initial mount effect - runs once
   useEffect(() => {
     // Register portal with depth-based container first
     const portalContainer = portalRegistry.register(
@@ -79,14 +83,20 @@ export function Portal(props: PortalProps) {
 
     // Mount children directly (preserves absolute positioning)
     const children = Array.isArray(props.children) ? props.children : [props.children]
+    const mountedNodes: Phaser.GameObjects.GameObject[] = []
+
     for (const child of children) {
       if (child) {
         const mountedNode = mount(portalContainer, child)
         if (mountedNode) {
           portalContainer.add(mountedNode)
+          mountedNodes.push(mountedNode)
         }
       }
     }
+
+    mountedNodesRef.current = mountedNodes
+    previousChildrenRef.current = children as VNode[]
 
     // Register event blocker on invisible container AFTER layout completes
     const gestureManager = getGestureManager(scene)
@@ -150,7 +160,42 @@ export function Portal(props: PortalProps) {
       }
       portalRegistry.unregister(portalId)
     }
-  }, [portalId, depth, scene, props.children, blockEvents])
+  }, [portalId, depth, scene, blockEvents])
+
+  // Update effect - patches children when they change
+  useEffect(() => {
+    const portal = portalRegistry.get(portalId)
+    if (!portal) return
+
+    const portalContainer = portal.container
+
+    const newChildren = Array.isArray(props.children) ? props.children : [props.children]
+    const oldChildren = previousChildrenRef.current
+
+    // Patch each child
+    const maxLen = Math.max(oldChildren.length, newChildren.length)
+    for (let i = 0; i < maxLen; i++) {
+      const oldChild = oldChildren[i] as VNode | null | undefined
+      const newChild = newChildren[i] as VNode | null | undefined
+
+      if (oldChild && newChild) {
+        // Patch existing child
+        patchVNode(portalContainer, oldChild, newChild)
+      } else if (!oldChild && newChild) {
+        // Mount new child
+        const mountedNode = mount(portalContainer, newChild)
+        if (mountedNode) {
+          portalContainer.add(mountedNode)
+          mountedNodesRef.current.push(mountedNode)
+        }
+      } else if (oldChild && !newChild) {
+        // Unmount removed child
+        unmount(oldChild)
+      }
+    }
+
+    previousChildrenRef.current = newChildren as VNode[]
+  }, [props.children, portalId])
 
   // Portal renders nothing in parent tree
   return null

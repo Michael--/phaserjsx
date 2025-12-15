@@ -160,7 +160,6 @@ export function Modal(props: ModalProps) {
       view.setVisible(false)
       backdrop.setVisible(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.show])
 
   // Handle Escape key
