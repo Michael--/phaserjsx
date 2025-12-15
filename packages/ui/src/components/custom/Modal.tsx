@@ -160,19 +160,8 @@ export function Modal(props: ModalProps) {
       view.setVisible(false)
       backdrop.setVisible(false)
     }
-  }, [
-    backdropAnimation,
-    closeDurationMs,
-    isVisible,
-    openDurationMs,
-    props.onClosed,
-    props.onOpen,
-    props.onRequestClose,
-    props.show,
-    stopBackdropEffects,
-    stopViewEffects,
-    viewAnimation,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.show])
 
   // Handle Escape key
   useEffect(() => {
