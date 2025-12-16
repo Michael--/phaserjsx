@@ -241,10 +241,6 @@ function resolveCalcOperand(
     // Percentage
     if (operand.type === 'percent') {
       if (parentSize === undefined) {
-        DebugLogger.warn(
-          'Size',
-          'Cannot resolve percentage in calc() without parent size. Using 0.'
-        )
         return 0
       }
       return (parentSize * operand.value) / 100
