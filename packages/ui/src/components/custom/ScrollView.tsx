@@ -48,8 +48,8 @@ export interface ScrollViewProps extends ViewProps {
   showHorizontalSlider?: boolean | 'auto' | undefined
   /** Size variant for the scroll sliders */
   sliderSize?: SliderSize
-  /** Initial scroll position */
-  scroll?: { dx: number; dy: number }
+  /** Initial scroll position; with snap enabled you can optionally set snapIndex instead of dx/dy */
+  scroll?: { dx?: number | undefined; dy?: number | undefined; snapIndex?: number | undefined }
   /** Callback when scroll information changes */
   onScrollInfoChange?: (info: ScrollInfo) => void
   /** Snap behavior: false (disabled), 'auto' (to items), or manual positions */
@@ -60,6 +60,8 @@ export interface ScrollViewProps extends ViewProps {
   snapThreshold?: number
   /** Enable momentum scrolling */
   momentum?: boolean
+  /** Callback fired when snapping lands on a target (index is from snap.positions) */
+  onSnap?: (index: number) => void
 }
 
 /**
@@ -78,10 +80,16 @@ export function ScrollView(props: ScrollViewProps) {
     snapAlignment = 'start',
     snapThreshold = 20,
     momentum = true,
+    onSnap,
   } = props
 
-  const [scroll, setScroll] = useState(initialScroll ?? { dx: 0, dy: 0 })
+  const [scroll, setScroll] = useState({
+    dx: initialScroll?.dx ?? 0,
+    dy: initialScroll?.dy ?? 0,
+  })
   const scrollRef = useRef(scroll)
+  const hasMountedRef = useRef(false)
+  const lastAppliedSnapIndexRef = useRef<number | undefined>(initialScroll?.snapIndex)
 
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -146,12 +154,105 @@ export function ScrollView(props: ScrollViewProps) {
       ? Infinity
       : resolvedSnapThreshold
 
-  // Update scroll when props.scroll changes
+  // Update scroll when props.scroll changes or when layout info is available
   useEffect(() => {
-    if (initialScroll) {
-      updateScroll(initialScroll)
+    if (!initialScroll) return
+    // console.log('ScrollView: applying initial scroll', initialScroll)
+    const allowAnimate = hasMountedRef.current
+
+    // If snapIndex is provided and manual snap positions are used, align to that index
+    if (snap && typeof snap === 'object' && 'positions' in snap) {
+      const { x: xTargets, y: yTargets } = getSnapTargets()
+      const hasTargets = xTargets.length > 0 || yTargets.length > 0
+
+      if (initialScroll.snapIndex !== undefined && hasTargets) {
+        const maxIdx = Math.max(xTargets.length, yTargets.length) - 1
+        const clampedIdx = Math.max(0, Math.min(initialScroll.snapIndex, maxIdx))
+
+        const targetX = xTargets[clampedIdx]
+        const targetY = yTargets[clampedIdx]
+
+        const nextDx =
+          targetX !== undefined
+            ? alignTargetPosition(targetX, viewportWidth, maxScrollX)
+            : (initialScroll.dx ?? scrollRef.current.dx)
+        const nextDy =
+          targetY !== undefined
+            ? alignTargetPosition(targetY, viewportHeight, maxScrollY)
+            : (initialScroll.dy ?? scrollRef.current.dy)
+
+        const shouldAnimate =
+          allowAnimate &&
+          (clampedIdx !== lastAppliedSnapIndexRef.current ||
+            Math.abs(scrollRef.current.dx - nextDx) > 0.5 ||
+            Math.abs(scrollRef.current.dy - nextDy) > 0.5)
+
+        lastAppliedSnapIndexRef.current = clampedIdx
+
+        if (shouldAnimate && contentRef.current?.scene) {
+          stopActiveTween()
+          const scene = contentRef.current.scene
+          tweenRef.current = scene.tweens.add({
+            targets: { dx: scrollRef.current.dx, dy: scrollRef.current.dy },
+            dx: nextDx,
+            dy: nextDy,
+            duration: 220,
+            ease: 'Quad.easeOut',
+            onUpdate: (tween) => {
+              const target = tween.targets[0] as { dx: number; dy: number }
+              updateScroll({ dx: target.dx, dy: target.dy })
+            },
+            onComplete: () => {
+              tweenRef.current = null
+              if (onSnap) {
+                onSnap(clampedIdx)
+              }
+            },
+          })
+        } else {
+          updateScroll({ dx: nextDx, dy: nextDy })
+          if (onSnap) {
+            onSnap(clampedIdx)
+          }
+        }
+        hasMountedRef.current = true
+        return
+      }
     }
-  }, [initialScroll])
+
+    // Fallback to provided dx/dy: TODO: what if when only one of dx/dy is provided? Animation ?
+    if (initialScroll.dx !== undefined && initialScroll.dy !== undefined) {
+      const nextDx = initialScroll.dx
+      const nextDy = initialScroll.dy
+      const shouldAnimate =
+        allowAnimate &&
+        (Math.abs(scrollRef.current.dx - nextDx) > 0.5 ||
+          Math.abs(scrollRef.current.dy - nextDy) > 0.5)
+
+      if (shouldAnimate && contentRef.current?.scene) {
+        stopActiveTween()
+        const scene = contentRef.current.scene
+        tweenRef.current = scene.tweens.add({
+          targets: { dx: scrollRef.current.dx, dy: scrollRef.current.dy },
+          dx: nextDx,
+          dy: nextDy,
+          duration: 220,
+          ease: 'Quad.easeOut',
+          onUpdate: (tween) => {
+            const target = tween.targets[0] as { dx: number; dy: number }
+            updateScroll({ dx: target.dx, dy: target.dy })
+          },
+          onComplete: () => {
+            tweenRef.current = null
+          },
+        })
+      } else {
+        updateScroll({ dx: nextDx, dy: nextDy })
+      }
+    }
+
+    hasMountedRef.current = true
+  }, [initialScroll, snap, viewportWidth, viewportHeight, maxScrollX, maxScrollY])
 
   // Notify parent of scroll info changes
   useEffect(() => {
@@ -247,6 +348,9 @@ export function ScrollView(props: ScrollViewProps) {
       },
       onComplete: () => {
         tweenRef.current = null
+        if (snappedTarget && snappedTarget.index >= 0 && onSnap) {
+          onSnap(snappedTarget.index)
+        }
       },
     })
   }
@@ -298,13 +402,15 @@ export function ScrollView(props: ScrollViewProps) {
     targets: SnapTarget[],
     viewportSize: number,
     maxScroll: number
-  ): number => {
-    if (targets.length === 0) return current
+  ): { position: number; index: number } => {
+    if (targets.length === 0) return { position: current, index: -1 }
 
     let nearest = current
     let minDistance = Infinity
+    let nearestIndex = -1
 
-    for (const { position, size } of targets) {
+    for (let index = 0; index < targets.length; index++) {
+      const { position, size } = targets[index] ?? { position: 0, size: 0 }
       let adjustedPos = position
 
       if (snapAlignment === 'center') {
@@ -319,13 +425,15 @@ export function ScrollView(props: ScrollViewProps) {
       if (distance < minDistance && distance <= effectiveSnapThreshold) {
         minDistance = distance
         nearest = adjustedPos
+        nearestIndex = index
       } else if (distance < minDistance && effectiveSnapThreshold === Infinity) {
         minDistance = distance
         nearest = adjustedPos
+        nearestIndex = index
       }
     }
 
-    return nearest
+    return { position: nearest, index: nearestIndex }
   }
 
   const calculateSnapDestination = (baseDx: number, baseDy: number) => {
@@ -333,22 +441,41 @@ export function ScrollView(props: ScrollViewProps) {
     const viewportHeightLocal = viewportRef.current?.height ?? 0
     const viewportWidthLocal = viewportRef.current?.width ?? 0
 
-    const targetDx = findNearestSnap(baseDx, xTargets, viewportWidthLocal, maxScrollX)
-    const targetDy = findNearestSnap(baseDy, yTargets, viewportHeightLocal, maxScrollY)
+    const snapX = findNearestSnap(baseDx, xTargets, viewportWidthLocal, maxScrollX)
+    const snapY = findNearestSnap(baseDy, yTargets, viewportHeightLocal, maxScrollY)
 
-    return { dx: targetDx, dy: targetDy }
+    // Prefer Y index if available, otherwise X
+    const snapIndex = snapY.index >= 0 ? snapY.index : snapX.index
+
+    return { dx: snapX.position, dy: snapY.position, index: snapIndex }
+  }
+
+  const alignTargetPosition = (target: SnapTarget, viewportSize: number, maxScroll: number) => {
+    let adjustedPos = target.position
+    if (snapAlignment === 'center') {
+      adjustedPos = target.position + target.size / 2 - viewportSize / 2
+    } else if (snapAlignment === 'end') {
+      adjustedPos = target.position + target.size - viewportSize
+    }
+    return Math.max(0, Math.min(maxScroll, adjustedPos))
   }
 
   const applySnap = () => {
     if (!contentRef.current?.scene || !snap) return
 
     const currentScroll = scrollRef.current
-    const { dx: targetDx, dy: targetDy } = calculateSnapDestination(
-      currentScroll.dx,
-      currentScroll.dy
-    )
+    const {
+      dx: targetDx,
+      dy: targetDy,
+      index: snapIndex,
+    } = calculateSnapDestination(currentScroll.dx, currentScroll.dy)
 
-    if (targetDx === currentScroll.dx && targetDy === currentScroll.dy) return
+    if (targetDx === currentScroll.dx && targetDy === currentScroll.dy) {
+      if (snapIndex >= 0 && onSnap) {
+        onSnap(snapIndex)
+      }
+      return
+    }
 
     const scene = contentRef.current.scene
     stopActiveTween()
@@ -365,6 +492,9 @@ export function ScrollView(props: ScrollViewProps) {
       },
       onComplete: () => {
         tweenRef.current = null
+        if (snapIndex >= 0 && onSnap) {
+          onSnap(snapIndex)
+        }
       },
     })
   }

@@ -173,9 +173,18 @@ function ScrollExampleAlignment(props: {
     gap: 20,
   })
 
+  const [snap, setSnap] = useState<number | undefined>(undefined)
+  const [lastSnap, setLastSnap] = useState<number | undefined>(undefined)
+
   return (
     <ViewLevel2 alignItems="center">
       <Text text={props.title} style={tokens?.textStyles.large} />
+      <View direction="row" depth={42}>
+        <Button text="0" onClick={() => setSnap(0)} variant="primary" size="small" />
+        <Button text="5" onClick={() => setSnap(5)} variant="primary" size="small" />
+        <Button text="42" onClick={() => setSnap(42)} variant="primary" size="small" />
+        <Text text={` Last snap: ${lastSnap ?? '-'}`} style={tokens?.textStyles.small} />
+      </View>
       <ViewLevel2>
         <View
           width={200}
@@ -184,7 +193,14 @@ function ScrollExampleAlignment(props: {
           backgroundColor={tokens?.colors.secondary.light.toNumber()}
         >
           <ScrollView
+            scroll={{ snapIndex: snap }}
             snap={{ positions: positions, threshold: props.height / 2 }}
+            onSnap={(s) => {
+              if (s != null) {
+                setLastSnap(s)
+                setSnap(s)
+              }
+            }}
             snapAlignment={props.snap}
             momentum={true}
           >
@@ -308,9 +324,9 @@ export function ScrollExample() {
           </ViewLevel2>
           {/** Snap examples */}
           <ViewLevel2 direction="row">
-            <ScrollExampleAlignment title="Snap Center" count={20} height={300} snap="center" />
-            <ScrollExampleAlignment title="Snap Start" count={20} height={200} snap="start" />
-            <ScrollExampleAlignment title="Snap End" count={20} height={200} snap="end" />
+            <ScrollExampleAlignment title="Snap Center" count={20} height={250} snap="center" />
+            <ScrollExampleAlignment title="Snap Start" count={20} height={250} snap="start" />
+            <ScrollExampleAlignment title="Snap End" count={20} height={250} snap="end" />
           </ViewLevel2>
         </ViewLevel2>
       </ScrollView>
