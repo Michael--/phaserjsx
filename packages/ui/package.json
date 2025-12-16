@@ -74,12 +74,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/number10/phaserjsx.git",
+    "url": "https://github.com/Michael--/phaserjsx",
     "directory": "packages/ui"
   },
-  "homepage": "https://github.com/number10/phaserjsx",
+  "homepage": "https://michael--.github.io/phaserjsx/",
   "bugs": {
-    "url": "https://github.com/number10/phaserjsx/issues"
+    "url": "https://github.com/Michael--/phaserjsx/issues"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.20",
