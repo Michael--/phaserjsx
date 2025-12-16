@@ -1,5 +1,18 @@
 # @phaserjsx/test-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- Add further exmaples to show ScrollView option Momentum and Snap
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @number10/phaserjsx@0.3.0
+
 ## 0.2.0
 
 ### Minor Changes
