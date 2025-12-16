@@ -35,7 +35,7 @@ export interface ScrollInfo {
 /**
  * Snap configuration types
  */
-export type SnapMode = 'auto' | { positions: number[]; threshold?: number }
+export type SnapMode = { positions: number[]; threshold?: number }
 export type SnapAlignment = 'start' | 'center' | 'end'
 
 /**
@@ -53,7 +53,7 @@ export interface ScrollViewProps extends ViewProps {
   /** Callback when scroll information changes */
   onScrollInfoChange?: (info: ScrollInfo) => void
   /** Snap behavior: false (disabled), 'auto' (to items), or manual positions */
-  snap?: boolean | SnapMode
+  snap?: SnapMode | undefined
   /** Alignment for snapping */
   snapAlignment?: SnapAlignment
   /** Threshold for snap (pixels) */
@@ -81,6 +81,7 @@ export function ScrollView(props: ScrollViewProps) {
   } = props
 
   const [scroll, setScroll] = useState(initialScroll ?? { dx: 0, dy: 0 })
+  const scrollRef = useRef(scroll)
 
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
   const viewportRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -92,6 +93,8 @@ export function ScrollView(props: ScrollViewProps) {
   const [velocity, setVelocity] = useState({ vx: 0, vy: 0 })
   const [lastTime, setLastTime] = useState(0)
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
+  const wheelSnapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const WHEEL_SNAP_DELAY = 200
 
   // Get slider size, considering size variant and theme
   const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
@@ -115,10 +118,38 @@ export function ScrollView(props: ScrollViewProps) {
   const maxScrollY = Math.max(0, effectiveContentHeight - viewportHeight)
   const maxScrollX = Math.max(0, effectiveContentWidth - viewportWidth)
 
+  const updateScroll = (
+    value:
+      | { dx: number; dy: number }
+      | ((prev: { dx: number; dy: number }) => { dx: number; dy: number })
+  ) => {
+    setScroll((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value
+      scrollRef.current = next
+      return next
+    })
+  }
+
+  const stopActiveTween = () => {
+    if (tweenRef.current) {
+      tweenRef.current.stop()
+      tweenRef.current = null
+    }
+  }
+
+  const resolvedSnapThreshold =
+    typeof snap === 'object' && 'positions' in snap
+      ? (snap.threshold ?? snapThreshold)
+      : snapThreshold
+  const effectiveSnapThreshold =
+    resolvedSnapThreshold === undefined || resolvedSnapThreshold < 0
+      ? Infinity
+      : resolvedSnapThreshold
+
   // Update scroll when props.scroll changes
   useEffect(() => {
     if (initialScroll) {
-      setScroll(initialScroll)
+      updateScroll(initialScroll)
     }
   }, [initialScroll])
 
@@ -183,7 +214,7 @@ export function ScrollView(props: ScrollViewProps) {
     const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
     const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
 
-    setScroll({ dx: newScrollX, dy: newScrollY })
+    updateScroll({ dx: newScrollX, dy: newScrollY })
   }
 
   const startMomentum = () => {
@@ -191,108 +222,167 @@ export function ScrollView(props: ScrollViewProps) {
 
     const scene = contentRef.current.scene
     const duration = Math.min(1000, Math.max(200, Math.abs(velocity.vx) + Math.abs(velocity.vy))) // 200-1000ms
-    const targetDx = Math.max(0, Math.min(maxScrollX, scroll.dx - velocity.vx * (duration / 1000)))
-    const targetDy = Math.max(0, Math.min(maxScrollY, scroll.dy - velocity.vy * (duration / 1000)))
+    const currentScroll = scrollRef.current
+    const baseTargetDx = Math.max(
+      0,
+      Math.min(maxScrollX, currentScroll.dx - velocity.vx * (duration / 1000))
+    )
+    const baseTargetDy = Math.max(
+      0,
+      Math.min(maxScrollY, currentScroll.dy - velocity.vy * (duration / 1000))
+    )
+    const snappedTarget = snap ? calculateSnapDestination(baseTargetDx, baseTargetDy) : null
+
+    stopActiveTween()
 
     tweenRef.current = scene.tweens.add({
-      targets: { dx: scroll.dx, dy: scroll.dy },
-      dx: targetDx,
-      dy: targetDy,
+      targets: { dx: currentScroll.dx, dy: currentScroll.dy },
+      dx: snappedTarget?.dx ?? baseTargetDx,
+      dy: snappedTarget?.dy ?? baseTargetDy,
       duration,
       ease: 'Quad.easeOut',
       onUpdate: (tween) => {
         const target = tween.targets[0] as { dx: number; dy: number }
-        setScroll({ dx: target.dx, dy: target.dy })
+        updateScroll({ dx: target.dx, dy: target.dy })
       },
       onComplete: () => {
         tweenRef.current = null
-        // After momentum, apply snap if enabled
-        if (snap) {
-          applySnap()
-        }
       },
     })
   }
 
-  const getSnapPositions = (): { x: number[]; y: number[] } => {
+  type SnapTarget = { position: number; size: number }
+
+  const getSnapTargets = (): { x: SnapTarget[]; y: SnapTarget[] } => {
+    const viewportHeightCurrent = viewportRef.current?.height ?? viewportHeight
+    const viewportWidthCurrent = viewportRef.current?.width ?? viewportWidth
+
     if (typeof snap === 'object' && 'positions' in snap) {
-      // Manual positions - assume same for x/y if not specified
-      return { x: snap.positions, y: snap.positions }
+      const sorted = [...snap.positions].sort((a, b) => a - b)
+      const inferredSizeY =
+        sorted.length > 1
+          ? Math.max(0, (sorted[1] ?? 0) - (sorted[0] ?? 0))
+          : viewportHeightCurrent || 0
+      const inferredSizeX =
+        sorted.length > 1
+          ? Math.max(0, (sorted[1] ?? 0) - (sorted[0] ?? 0))
+          : viewportWidthCurrent || 0
+      const targetsX = sorted.map((position, index) => {
+        const next = sorted[index + 1]
+        const size =
+          next !== undefined
+            ? Math.max(0, next - position)
+            : inferredSizeX > 0
+              ? inferredSizeX
+              : viewportWidthCurrent || 0
+        return { position, size }
+      })
+      const targetsY = sorted.map((position, index) => {
+        const next = sorted[index + 1]
+        const size =
+          next !== undefined
+            ? Math.max(0, next - position)
+            : inferredSizeY > 0
+              ? inferredSizeY
+              : viewportHeightCurrent || 0
+        return { position, size }
+      })
+      return { x: targetsX, y: targetsY }
     }
-    if (snap === 'auto' && contentRef.current) {
-      // Auto: calculate from child heights (vertical) or widths (horizontal)
-      const children = contentRef.current.list as Phaser.GameObjects.GameObject[]
-      const yPositions: number[] = [0]
-      let cumulativeY = 0
-      for (const child of children) {
-        if (child instanceof Phaser.GameObjects.Container) {
-          cumulativeY += child.height
-          yPositions.push(cumulativeY)
-        }
-      }
-      // For horizontal, assume similar logic if needed
-      return { x: [0], y: yPositions }
-    }
+
     return { x: [], y: [] }
   }
 
-  const findNearestSnap = (current: number, positions: number[], viewportSize: number): number => {
+  const findNearestSnap = (
+    current: number,
+    targets: SnapTarget[],
+    viewportSize: number,
+    maxScroll: number
+  ): number => {
+    if (targets.length === 0) return current
+
     let nearest = current
     let minDistance = Infinity
-    for (const pos of positions) {
-      let adjustedPos = pos
+
+    for (const { position, size } of targets) {
+      let adjustedPos = position
+
       if (snapAlignment === 'center') {
-        adjustedPos = pos - viewportSize / 2
+        adjustedPos = position + size / 2 - viewportSize / 2
       } else if (snapAlignment === 'end') {
-        adjustedPos = pos - viewportSize
+        adjustedPos = position + size - viewportSize
       }
-      adjustedPos = Math.max(0, Math.min(maxScrollX || maxScrollY || 0, adjustedPos))
+
+      adjustedPos = Math.max(0, Math.min(maxScroll, adjustedPos))
       const distance = Math.abs(current - adjustedPos)
-      if (distance < minDistance && distance <= snapThreshold) {
+
+      if (distance < minDistance && distance <= effectiveSnapThreshold) {
+        minDistance = distance
+        nearest = adjustedPos
+      } else if (distance < minDistance && effectiveSnapThreshold === Infinity) {
         minDistance = distance
         nearest = adjustedPos
       }
     }
+
     return nearest
+  }
+
+  const calculateSnapDestination = (baseDx: number, baseDy: number) => {
+    const { x: xTargets, y: yTargets } = getSnapTargets()
+    const viewportHeightLocal = viewportRef.current?.height ?? 0
+    const viewportWidthLocal = viewportRef.current?.width ?? 0
+
+    const targetDx = findNearestSnap(baseDx, xTargets, viewportWidthLocal, maxScrollX)
+    const targetDy = findNearestSnap(baseDy, yTargets, viewportHeightLocal, maxScrollY)
+
+    return { dx: targetDx, dy: targetDy }
   }
 
   const applySnap = () => {
     if (!contentRef.current?.scene || !snap) return
 
-    const positions = getSnapPositions()
-    const viewportHeight = viewportRef.current?.height ?? 0
-    const viewportWidth = viewportRef.current?.width ?? 0
+    const currentScroll = scrollRef.current
+    const { dx: targetDx, dy: targetDy } = calculateSnapDestination(
+      currentScroll.dx,
+      currentScroll.dy
+    )
 
-    const targetDx = findNearestSnap(scroll.dx, positions.x, viewportWidth)
-    const targetDy = findNearestSnap(scroll.dy, positions.y, viewportHeight)
+    if (targetDx === currentScroll.dx && targetDy === currentScroll.dy) return
 
-    if (targetDx !== scroll.dx || targetDy !== scroll.dy) {
-      const scene = contentRef.current.scene
-      tweenRef.current = scene.tweens.add({
-        targets: { dx: scroll.dx, dy: scroll.dy },
-        dx: targetDx,
-        dy: targetDy,
-        duration: 300,
-        ease: 'Quad.easeOut',
-        onUpdate: (tween) => {
-          const target = tween.targets[0] as { dx: number; dy: number }
-          setScroll({ dx: target.dx, dy: target.dy })
-        },
-        onComplete: () => {
-          tweenRef.current = null
-        },
-      })
-    }
+    const scene = contentRef.current.scene
+    stopActiveTween()
+
+    tweenRef.current = scene.tweens.add({
+      targets: { dx: currentScroll.dx, dy: currentScroll.dy },
+      dx: targetDx,
+      dy: targetDy,
+      duration: 250,
+      ease: 'Quad.easeOut',
+      onUpdate: (tween) => {
+        const target = tween.targets[0] as { dx: number; dy: number }
+        updateScroll({ dx: target.dx, dy: target.dy })
+      },
+      onComplete: () => {
+        tweenRef.current = null
+      },
+    })
   }
 
   const handleVerticalScroll = (scrollPos: number) => {
     const clampedScrollPos = Math.max(0, Math.min(maxScrollY, scrollPos))
-    setScroll((prev) => ({ ...prev, dy: clampedScrollPos }))
+    updateScroll((prev) => ({ ...prev, dy: clampedScrollPos }))
   }
 
   const handleHorizontalScroll = (scrollPos: number) => {
     const clampedScrollPos = Math.max(0, Math.min(maxScrollX, scrollPos))
-    setScroll((prev) => ({ ...prev, dx: clampedScrollPos }))
+    updateScroll((prev) => ({ ...prev, dx: clampedScrollPos }))
+  }
+
+  const handleSliderMomentumEnd = () => {
+    if (snap) {
+      applySnap()
+    }
   }
 
   const handleTouchMove = (data: GestureEventData) => {
@@ -300,7 +390,16 @@ export function ScrollView(props: ScrollViewProps) {
     if (data.state === 'end') {
       if (momentum && (Math.abs(velocity.vx) > 0.1 || Math.abs(velocity.vy) > 0.1)) {
         startMomentum()
+      } else if (snap) {
+        applySnap()
       }
+      return
+    }
+    if (data.state === 'start') {
+      stopActiveTween()
+      setVelocity({ vx: 0, vy: 0 })
+      setLastTime(Date.now())
+      data.stopPropagation()
       return
     }
     data.stopPropagation()
@@ -325,7 +424,15 @@ export function ScrollView(props: ScrollViewProps) {
     data.stopPropagation()
     data.preventDefault()
 
-    calc(data.deltaX, data.deltaY)
+    stopActiveTween()
+    calc(-data.deltaX, -data.deltaY)
+
+    if (snap) {
+      if (wheelSnapTimeoutRef.current) {
+        clearTimeout(wheelSnapTimeoutRef.current)
+      }
+      wheelSnapTimeoutRef.current = setTimeout(() => applySnap(), WHEEL_SNAP_DELAY)
+    }
   }
 
   // Force redraw after mount to ensure dimensions are calculated
@@ -342,6 +449,10 @@ export function ScrollView(props: ScrollViewProps) {
     return () => {
       clearTimeout(timer1)
       clearTimeout(timer2)
+      if (wheelSnapTimeoutRef.current) {
+        clearTimeout(wheelSnapTimeoutRef.current)
+      }
+      stopActiveTween()
     }
   }, [showVerticalSliderActual, showHorizontalSliderActual])
 
@@ -425,6 +536,7 @@ export function ScrollView(props: ScrollViewProps) {
               contentSize={contentWidth}
               onScroll={handleHorizontalScroll}
               momentum={momentum}
+              onMomentumEnd={handleSliderMomentumEnd}
             />
           </View>
         </View>
@@ -440,6 +552,7 @@ export function ScrollView(props: ScrollViewProps) {
               contentSize={effectiveContentHeight}
               onScroll={handleVerticalScroll}
               momentum={momentum}
+              onMomentumEnd={handleSliderMomentumEnd}
             />
           </View>
           {showHorizontalSliderActual && (

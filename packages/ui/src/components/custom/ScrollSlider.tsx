@@ -45,6 +45,8 @@ export interface ScrollSliderProps {
   onScroll: (scrollPosition: number) => void
   /** Enable momentum scrolling for thumb dragging */
   momentum?: boolean
+  /** Callback when momentum (or drag end without momentum) finishes */
+  onMomentumEnd?: () => void
 }
 
 /**
@@ -53,7 +55,15 @@ export interface ScrollSliderProps {
  * @returns JSX element
  */
 export function ScrollSlider(props: ScrollSliderProps) {
-  const { direction, scrollPosition, viewportSize, contentSize, onScroll, momentum = true } = props
+  const {
+    direction,
+    scrollPosition,
+    viewportSize,
+    contentSize,
+    onScroll,
+    momentum = true,
+    onMomentumEnd,
+  } = props
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
@@ -114,6 +124,8 @@ export function ScrollSlider(props: ScrollSliderProps) {
       isDraggingRef.current = false
       if (momentum && Math.abs(velocityRef.current) > 0.1) {
         startMomentum(scrollPosition)
+      } else if (onMomentumEnd) {
+        onMomentumEnd()
       }
       return
     }
@@ -155,6 +167,9 @@ export function ScrollSlider(props: ScrollSliderProps) {
       },
       onComplete: () => {
         tweenRef.current = null
+        if (onMomentumEnd) {
+          onMomentumEnd()
+        }
       },
     })
   }

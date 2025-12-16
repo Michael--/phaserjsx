@@ -7,6 +7,7 @@ import {
   type ScrollInfo,
   type SizeValue,
 } from '@number10/phaserjsx'
+import type { SnapAlignment } from '@number10/phaserjsx/components/custom/ScrollView'
 import { Button } from '../components'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
@@ -71,6 +72,46 @@ function Content(props: { count: number; width: SizeValue }) {
   )
 }
 
+function SnapContent(props: {
+  count: number
+  width: SizeValue
+  height: number
+  padding: number
+  gap: number
+}) {
+  const tokens = useThemeTokens()
+  const entry = (index: number) => {
+    return (
+      <View
+        key={index}
+        width={props.width}
+        height={props.height}
+        backgroundColor={
+          index % 2 === 0
+            ? tokens?.colors.secondary.light.toNumber()
+            : tokens?.colors.secondary.medium.toNumber()
+        }
+        borderColor={0x0}
+        borderWidth={2}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Text text={`Item ${index + 1}`} style={tokens?.textStyles.medium} />
+      </View>
+    )
+  }
+  const positions = Array.from({ length: props.count }).map(
+    (_, index) => (props.height + props.gap) * index
+  )
+  const content = (
+    <View padding={props.padding} gap={props.gap}>
+      {Array.from({ length: props.count }).map((_, index) => entry(index))}
+    </View>
+  )
+
+  return { content, positions }
+}
+
 /**
  *  Example of ScrollView usage, depending on props either vertical, horizontal or both scrolling is available
  * @param props title, count, width
@@ -116,8 +157,21 @@ function ScrollExampleSliderLocal(props: { title: string; count: number; width: 
   )
 }
 
-function ScrollExampleSnapAuto(props: { title: string; count: number; width: SizeValue }) {
+function ScrollExampleAlignment(props: {
+  title: string
+  count: number
+  height: number
+  snap: SnapAlignment
+}) {
   const tokens = useThemeTokens()
+
+  const { content, positions } = SnapContent({
+    count: props.count,
+    width: `calc(100% - 20px)`,
+    height: props.height,
+    padding: 10,
+    gap: 20,
+  })
 
   return (
     <ViewLevel2 alignItems="center">
@@ -129,34 +183,12 @@ function ScrollExampleSnapAuto(props: { title: string; count: number; width: Siz
           padding={0}
           backgroundColor={tokens?.colors.secondary.light.toNumber()}
         >
-          <ScrollView snap="auto" snapAlignment="center" momentum={true}>
-            <Content count={props.count} width={props.width} />
-          </ScrollView>
-        </View>
-      </ViewLevel2>
-    </ViewLevel2>
-  )
-}
-
-function ScrollExampleSnapManual(props: { title: string }) {
-  const tokens = useThemeTokens()
-
-  return (
-    <ViewLevel2 alignItems="center">
-      <Text text={props.title} style={tokens?.textStyles.large} />
-      <ViewLevel2>
-        <View width={200} height={400} padding={0}>
           <ScrollView
-            snap={{ positions: [0, 100, 200, 300], threshold: 30 }}
-            snapAlignment="start"
+            snap={{ positions: positions, threshold: props.height / 2 }}
+            snapAlignment={props.snap}
             momentum={true}
           >
-            <View direction="column" gap={10} padding={10}>
-              <View height={100} backgroundColor={tokens?.colors.primary.DEFAULT.toNumber()} />
-              <View height={100} backgroundColor={tokens?.colors.secondary.DEFAULT.toNumber()} />
-              <View height={100} backgroundColor={tokens?.colors.accent.DEFAULT.toNumber()} />
-              <View height={100} backgroundColor={tokens?.colors.primary.light.toNumber()} />
-            </View>
+            {content}
           </ScrollView>
         </View>
       </ViewLevel2>
@@ -276,8 +308,9 @@ export function ScrollExample() {
           </ViewLevel2>
           {/** Snap examples */}
           <ViewLevel2 direction="row">
-            <ScrollExampleSnapAuto title="Snap Auto Center" count={10} width="100%" />
-            <ScrollExampleSnapManual title="Snap Manual" />
+            <ScrollExampleAlignment title="Snap Center" count={20} height={300} snap="center" />
+            <ScrollExampleAlignment title="Snap Start" count={20} height={200} snap="start" />
+            <ScrollExampleAlignment title="Snap End" count={20} height={200} snap="end" />
           </ViewLevel2>
         </ViewLevel2>
       </ScrollView>
