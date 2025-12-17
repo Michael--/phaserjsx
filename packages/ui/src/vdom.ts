@@ -948,6 +948,52 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
     warnUnnecessaryRemount(oldV, newV)
     unmount(oldV)
     mount(parent, newV)
+
+    // CRITICAL: Recalculate parent layout after key change
+    // Key change means complete element replacement - parent dimensions may have changed
+    if (parent && typeof parent === 'object' && 'list' in parent) {
+      const parentContainer = parent as Phaser.GameObjects.Container & {
+        __layoutProps?: Record<string, unknown>
+        __getLayoutSize?: () => { width: number; height: number }
+      }
+      if (parentContainer.__layoutProps) {
+        // Get grandparent size for percentage/fill resolution
+        let grandparentSize: { width: number; height: number } | undefined
+        const grandparent = parentContainer.parentContainer as
+          | (Phaser.GameObjects.Container & {
+              __layoutProps?: Record<string, unknown>
+              __getLayoutSize?: () => { width: number; height: number }
+            })
+          | undefined
+
+        if (grandparent && grandparent.__layoutProps && grandparent.__getLayoutSize) {
+          const gpSize = grandparent.__getLayoutSize()
+          const gpPadding = (grandparent.__layoutProps.padding ?? 0) as
+            | number
+            | { left?: number; right?: number; top?: number; bottom?: number }
+          const normGpPadding =
+            typeof gpPadding === 'number'
+              ? { left: gpPadding, right: gpPadding, top: gpPadding, bottom: gpPadding }
+              : {
+                  left: gpPadding.left ?? 0,
+                  right: gpPadding.right ?? 0,
+                  top: gpPadding.top ?? 0,
+                  bottom: gpPadding.bottom ?? 0,
+                }
+          grandparentSize = {
+            width: gpSize.width - normGpPadding.left - normGpPadding.right,
+            height: gpSize.height - normGpPadding.top - normGpPadding.bottom,
+          }
+        }
+
+        calculateLayout(parentContainer, parentContainer.__layoutProps, grandparentSize)
+
+        // Defer gesture hit area update
+        const renderContext = getRenderContext(parent)
+        renderContext.deferLayout(() => updateGestureHitAreaAfterLayout(parentContainer))
+      }
+    }
+
     return
   }
 
@@ -1146,6 +1192,14 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
 
   // Check if the container's own layout props changed
   const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)
+
+  // CRITICAL: If number of valid children changed, trigger layout recalc
+  // This catches cases where children are added/removed without layout prop changes
+  const oldValidChildCount = a.filter((c) => c != null && c !== false).length
+  const newValidChildCount = b.filter((c) => c != null && c !== false).length
+  if (oldValidChildCount !== newValidChildCount) {
+    childrenChanged = true
+  }
 
   for (let i = 0; i < len; i++) {
     const c1 = a[i],
