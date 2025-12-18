@@ -224,6 +224,20 @@ export function useScene(): Phaser.Scene {
 }
 
 /**
+ * Hook to get the current viewport size from the render context
+ * Useful for responsive layouts and percentage-based calculations
+ * @returns Viewport dimensions { width, height }
+ */
+export function useViewportSize(): { width: number; height: number } {
+  const ctx = getCurrent()
+  if (!ctx) {
+    throw new Error('useViewportSize must be called within a component')
+  }
+  const renderContext = getContextFromParent(ctx.parent)
+  return renderContext.getViewport()
+}
+
+/**
  * Effect hook for side effects with cleanup
  * @param fn - Effect function that optionally returns cleanup
  * @param deps - Optional dependency array
