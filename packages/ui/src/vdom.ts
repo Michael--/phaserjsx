@@ -82,12 +82,34 @@ class MountRegistry {
    * Find a mount entry by parent and optional key
    * If key is provided, matches parent AND key
    * If key is omitted, returns first mount with matching parent (backward compatibility)
+   * Validates that scene is still active and objects are not destroyed
    * @param parent - Parent container or scene
    * @param key - Optional unique key to distinguish multiple mounts on same parent
-   * @returns Mount entry or undefined if not found
+   * @returns Mount entry or undefined if not found or invalid
    */
   findByParentAndKey(parent: ParentType, key?: string): MountRegistryEntry | undefined {
     for (const entry of this.entries.values()) {
+      // Validate scene is still active
+      const scene =
+        entry.parent instanceof Phaser.Scene
+          ? entry.parent
+          : (entry.parent as Phaser.GameObjects.GameObject).scene
+
+      // Skip if scene is invalid or shutting down
+      if (!scene || !scene.sys || !scene.sys.settings.active) {
+        // Scene was destroyed, remove from registry
+        DebugLogger.log('vdom', `Removing mount ${entry.id} - scene inactive`)
+        this.unregister(entry.id)
+        continue
+      }
+
+      // Skip if rootNode was destroyed or scene reference changed (scene restart)
+      if (!entry.rootNode.active || entry.rootNode.scene !== scene) {
+        DebugLogger.log('vdom', `Removing mount ${entry.id} - rootNode destroyed or scene changed`)
+        this.unregister(entry.id)
+        continue
+      }
+
       const entryKey = (entry.props as MountProps).key
 
       // If key is provided, match both parent AND key
@@ -1539,7 +1561,10 @@ export function mountJSX(
     const handle = existingMount.rootNode as MountHandle
     handle.unmount = () => unmountJSX(handle)
 
-    DebugLogger.log('vdom', `Patched existing mount ${existingMount.id} on same parent`)
+    DebugLogger.log(
+      'vdom',
+      `Patched existing mount ${existingMount.id} on same parent (type: ${typeof type === 'string' ? type : type.name})`
+    )
     return handle
   }
 
