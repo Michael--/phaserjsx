@@ -444,6 +444,30 @@ export class GestureManager {
     // Store hit containers for move event filtering
     if (hitContainers.size > 0) {
       this.activeContainersForMove.set(pointer.id, hitContainers)
+
+      // Send initial onTouchMove with 'start' state to all hit containers
+      this.bubbleEvent(
+        pointer,
+        'onTouchMove',
+        (targetState, targetLocalPos) => {
+          const isInside = this.isPointerInContainer(pointer, targetState)
+          const data = this.createEventData(
+            pointer,
+            targetLocalPos.x,
+            targetLocalPos.y,
+            targetState.hitArea.width,
+            targetState.hitArea.height,
+            { dx: 0, dy: 0, isInside, state: 'start' }
+          )
+          targetState.callbacks.onTouchMove?.(data)
+
+          // Mark that first move has been sent
+          targetState.isFirstMove = false
+
+          return data.isPropagationStopped()
+        },
+        hitContainers
+      )
     }
   }
 
