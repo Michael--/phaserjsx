@@ -79,14 +79,27 @@ class MountRegistry {
   }
 
   /**
-   * Find a mount entry by parent
+   * Find a mount entry by parent and optional key
+   * If key is provided, matches parent AND key
+   * If key is omitted, returns first mount with matching parent (backward compatibility)
    * @param parent - Parent container or scene
+   * @param key - Optional unique key to distinguish multiple mounts on same parent
    * @returns Mount entry or undefined if not found
    */
-  findByParent(parent: ParentType): MountRegistryEntry | undefined {
+  findByParentAndKey(parent: ParentType, key?: string): MountRegistryEntry | undefined {
     for (const entry of this.entries.values()) {
-      if (entry.parent === parent) {
-        return entry
+      const entryKey = (entry.props as MountProps).key
+
+      // If key is provided, match both parent AND key
+      if (key !== undefined) {
+        if (entry.parent === parent && entryKey === key) {
+          return entry
+        }
+      } else {
+        // If key is omitted, return first mount with matching parent (backward compat)
+        if (entry.parent === parent) {
+          return entry
+        }
       }
     }
     return undefined
@@ -98,6 +111,85 @@ class MountRegistry {
    */
   getAllEntries(): MountRegistryEntry[] {
     return Array.from(this.entries.values())
+  }
+
+  /**
+   * Get count of active mounts
+   * @returns Number of registered mounts
+   */
+  getCount(): number {
+    return this.entries.size
+  }
+
+  /**
+   * Get statistics about active mounts
+   * @returns Object with mount statistics
+   */
+  getStats(): {
+    totalMounts: number
+    byType: Map<string, number>
+    byParent: Map<ParentType, number>
+    byKey: Map<string, number>
+    mounts: Array<{
+      id: number
+      type: string
+      key?: string
+      parentType: string
+      propsKeys: string[]
+    }>
+  } {
+    const byType = new Map<string, number>()
+    const byParent = new Map<ParentType, number>()
+    const byKey = new Map<string, number>()
+    const mounts: Array<{
+      id: number
+      type: string
+      key?: string
+      parentType: string
+      propsKeys: string[]
+    }> = []
+
+    for (const entry of this.entries.values()) {
+      // Count by type
+      const typeName = typeof entry.type === 'string' ? entry.type : entry.type.name || 'Component'
+      byType.set(typeName, (byType.get(typeName) ?? 0) + 1)
+
+      // Count by parent
+      byParent.set(entry.parent, (byParent.get(entry.parent) ?? 0) + 1)
+
+      // Count by key
+      const key = (entry.props as MountProps).key
+      if (key) {
+        byKey.set(key, (byKey.get(key) ?? 0) + 1)
+      }
+
+      // Collect mount info
+      const parentType = entry.parent instanceof Phaser.Scene ? 'Scene' : 'Container'
+      const mountInfo: {
+        id: number
+        type: string
+        key?: string
+        parentType: string
+        propsKeys: string[]
+      } = {
+        id: entry.id,
+        type: typeName,
+        parentType,
+        propsKeys: Object.keys(entry.props),
+      }
+      if (key !== undefined) {
+        mountInfo.key = key
+      }
+      mounts.push(mountInfo)
+    }
+
+    return {
+      totalMounts: this.entries.size,
+      byType,
+      byParent,
+      byKey,
+      mounts,
+    }
   }
 
   /**
@@ -113,6 +205,15 @@ class MountRegistry {
  * Global mount registry instance
  */
 const mountRegistry = new MountRegistry()
+
+/**
+ * Get statistics about active mountJSX instances
+ * Useful for debugging and monitoring mount registry state
+ * @returns Object with mount statistics including counts by type, parent, and key
+ */
+export function getMountStats() {
+  return mountRegistry.getStats()
+}
 
 /**
  * Remount all active mountJSX instances
@@ -234,6 +335,8 @@ export interface MountProps {
   height: number
   /** Disable automatic SceneWrapper (default: false) */
   disableAutoSize?: boolean
+  /** Unique key to distinguish multiple mounts on same parent */
+  key?: string
 }
 
 /**
@@ -1368,13 +1471,28 @@ export function mountJSX(
   type: NodeType | ((props: unknown) => VNode),
   props: MountProps & Record<string, unknown> = { width: 0, height: 0 }
 ): MountHandle {
-  // Check if a mount already exists for this parent
-  const existingMount = mountRegistry.findByParent(parentOrScene)
+  // Check if a mount already exists for this parent (and key if provided)
+  const key = (props as MountProps).key
+  const existingMount = mountRegistry.findByParentAndKey(parentOrScene, key)
 
   if (existingMount) {
+    // Warn if type changed (suggests missing key)
+    if (existingMount.type !== type) {
+      const oldTypeName =
+        typeof existingMount.type === 'string'
+          ? existingMount.type
+          : existingMount.type.name || 'Component'
+      const newTypeName = typeof type === 'string' ? type : type.name || 'Component'
+      console.warn(
+        `[PhaserJSX] mountJSX type mismatch: Attempting to patch <${oldTypeName}> with <${newTypeName}>.\n` +
+          `This usually means you're missing a 'key' prop to distinguish multiple mounts on the same parent.\n` +
+          `Solution: Add unique keys like { key: 'sidebar', ... } and { key: 'main', ... }`
+      )
+    }
+
     // Patch existing mount with new props
-    // MountProps (width, height, disableAutoSize) are ignored - only first call matters
-    const { width: _w, height: _h, disableAutoSize: _d, ...componentProps } = props
+    // MountProps (width, height, disableAutoSize, key) are ignored - only first call matters
+    const { width: _w, height: _h, disableAutoSize: _d, key: _k, ...componentProps } = props
 
     // Update stored props in registry (for future remounts)
     existingMount.props = { ...existingMount.props, ...componentProps }

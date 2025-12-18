@@ -47,7 +47,12 @@ export { DOMInputElement, type DOMInputConfig } from './utils/dom-input-manager'
 export { KeyboardInputManager, type KeyboardInputManagerConfig } from './utils/KeyboardInputManager'
 
 // Explicit export for convenience functions
-export { mountJSX as mountComponent, type MountComponentProps, type MountProps } from './vdom'
+export {
+  getMountStats,
+  mountJSX as mountComponent,
+  type MountComponentProps,
+  type MountProps,
+} from './vdom'
 
 // Re-export component creators/patchers for advanced usage
 export * from './components'
