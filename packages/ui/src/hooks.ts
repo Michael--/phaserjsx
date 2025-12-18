@@ -3,6 +3,7 @@
  * It is independent from React/Preact renderers.
  */
 import type { Signal } from '@preact/signals-core'
+import type { LayoutSize } from './layout/types'
 import { getContextFromParent } from './render-context'
 import type { PartialTheme } from './theme'
 import type { ParentType } from './types'
@@ -235,6 +236,35 @@ export function useViewportSize(): { width: number; height: number } {
   }
   const renderContext = getContextFromParent(ctx.parent)
   return renderContext.getViewport()
+}
+
+/**
+ * Utility function to get layout size from a container
+ * Useful for imperative access to computed layout dimensions
+ * @param container - Phaser container with layout
+ * @returns Layout size or undefined if container has no layout
+ */
+export function getLayoutSize(
+  container: Phaser.GameObjects.Container | null | undefined
+): LayoutSize | undefined {
+  if (!container) return undefined
+  const withLayout = container as Phaser.GameObjects.Container & {
+    __getLayoutSize?: () => LayoutSize
+  }
+  return withLayout.__getLayoutSize?.()
+}
+
+/**
+ * Hook to get layout size from a ref
+ * Returns current layout dimensions of a container (updated after layout calculation)
+ * Useful for accessing computed dimensions after flexbox/percentage layout
+ * @param ref - Ref to a Phaser container
+ * @returns Current layout size or undefined
+ */
+export function useLayoutSize(ref: {
+  current: Phaser.GameObjects.Container | null
+}): LayoutSize | undefined {
+  return getLayoutSize(ref.current)
 }
 
 /**
