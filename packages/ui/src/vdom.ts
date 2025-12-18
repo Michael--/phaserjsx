@@ -79,6 +79,20 @@ class MountRegistry {
   }
 
   /**
+   * Find a mount entry by parent
+   * @param parent - Parent container or scene
+   * @returns Mount entry or undefined if not found
+   */
+  findByParent(parent: ParentType): MountRegistryEntry | undefined {
+    for (const entry of this.entries.values()) {
+      if (entry.parent === parent) {
+        return entry
+      }
+    }
+    return undefined
+  }
+
+  /**
    * Get all active mount entries
    * @returns Array of mount entries
    */
@@ -1354,6 +1368,63 @@ export function mountJSX(
   type: NodeType | ((props: unknown) => VNode),
   props: MountProps & Record<string, unknown> = { width: 0, height: 0 }
 ): MountHandle {
+  // Check if a mount already exists for this parent
+  const existingMount = mountRegistry.findByParent(parentOrScene)
+
+  if (existingMount) {
+    // Patch existing mount with new props
+    // MountProps (width, height, disableAutoSize) are ignored - only first call matters
+    const { width: _w, height: _h, disableAutoSize: _d, ...componentProps } = props
+
+    // Update stored props in registry (for future remounts)
+    existingMount.props = { ...existingMount.props, ...componentProps }
+
+    // Create new VNode with updated props for patching
+    let newVNode: VNode
+
+    if ((existingMount.props as MountProps).disableAutoSize) {
+      // Without wrapper
+      newVNode = {
+        type: existingMount.type,
+        props: {
+          ...componentProps,
+          width: existingMount.props.width,
+          height: existingMount.props.height,
+        },
+        children: [],
+      }
+    } else {
+      // With SceneWrapper
+      const componentVNode: VNode = {
+        type: existingMount.type,
+        props: componentProps,
+        children: [],
+      }
+
+      newVNode = {
+        type: SceneWrapper,
+        props: {
+          width: existingMount.props.width,
+          height: existingMount.props.height,
+          children: componentVNode,
+        },
+        children: [],
+      }
+    }
+
+    // Patch existing VNode
+    patchVNode(parentOrScene, existingMount.vnode, newVNode)
+
+    // Update stored VNode
+    existingMount.vnode = newVNode
+
+    const handle = existingMount.rootNode as MountHandle
+    handle.unmount = () => unmountJSX(handle)
+
+    DebugLogger.log('vdom', `Patched existing mount ${existingMount.id} on same parent`)
+    return handle
+  }
+
   // Extract MountProps and component props
   const { width, height, disableAutoSize = false, ...componentProps } = props
 
