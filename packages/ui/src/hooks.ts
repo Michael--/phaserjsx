@@ -315,6 +315,79 @@ export function useBackgroundGraphics(ref: {
 }
 
 /**
+ * Utility function to get layout rectangle (position + size) from a container
+ * Returns local position (x, y) combined with layout size
+ * @param container - Phaser container with layout
+ * @returns Layout rectangle { x, y, width, height } or undefined
+ */
+export function getLayoutRect(
+  container: Phaser.GameObjects.Container | null | undefined
+): { x: number; y: number; width: number; height: number } | undefined {
+  if (!container) return undefined
+  const size = getLayoutSize(container)
+  if (!size) return undefined
+  return {
+    x: container.x,
+    y: container.y,
+    width: size.width,
+    height: size.height,
+  }
+}
+
+/**
+ * Hook to get layout rectangle from a ref
+ * Returns local position and computed layout dimensions
+ * Combines container position with layout size for convenience
+ * @param ref - Ref to a Phaser container
+ * @returns Layout rectangle { x, y, width, height } or undefined
+ */
+export function useLayoutRect(ref: {
+  current: Phaser.GameObjects.Container | null
+}): { x: number; y: number; width: number; height: number } | undefined {
+  return getLayoutRect(ref.current)
+}
+
+/**
+ * Utility function to get world layout rectangle from a container
+ * Returns absolute position in scene coordinates combined with layout size
+ * Uses Phaser's world transform matrix for accurate world coordinates
+ * @param container - Phaser container with layout
+ * @returns World layout rectangle { x, y, width, height } or undefined
+ */
+export function getWorldLayoutRect(
+  container: Phaser.GameObjects.Container | null | undefined
+): { x: number; y: number; width: number; height: number } | undefined {
+  if (!container) return undefined
+  const size = getLayoutSize(container)
+  if (!size) return undefined
+
+  // Get world transform matrix for absolute position
+  const matrix = container.getWorldTransformMatrix()
+  const worldX = matrix.tx
+  const worldY = matrix.ty
+
+  return {
+    x: worldX,
+    y: worldY,
+    width: size.width,
+    height: size.height,
+  }
+}
+
+/**
+ * Hook to get world layout rectangle from a ref
+ * Returns absolute position in scene coordinates and computed layout dimensions
+ * Useful for positioning elements relative to screen or other world-space objects
+ * @param ref - Ref to a Phaser container
+ * @returns World layout rectangle { x, y, width, height } or undefined
+ */
+export function useWorldLayoutRect(ref: {
+  current: Phaser.GameObjects.Container | null
+}): { x: number; y: number; width: number; height: number } | undefined {
+  return getWorldLayoutRect(ref.current)
+}
+
+/**
  * Effect hook for side effects with cleanup
  * @param fn - Effect function that optionally returns cleanup
  * @param deps - Optional dependency array
