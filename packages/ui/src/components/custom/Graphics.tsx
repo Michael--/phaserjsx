@@ -18,8 +18,25 @@ export interface GraphicsProps
     PhaserProps,
     Omit<LayoutProps, 'direction' | 'justifyContent' | 'alignItems' | 'gap' | 'flexWrap'>,
     PropsDefaultExtension<Phaser.GameObjects.Graphics> {
-  /** Drawing callback - receives Graphics instance for imperative drawing */
+  /**
+   * Drawing callback - receives Graphics instance for custom drawing
+   * Called on mount and when dependencies change
+   * @param graphics - Phaser Graphics instance
+   * @param props - Current props (for accessing dynamic values)
+   */
   onDraw?: (graphics: Phaser.GameObjects.Graphics, props: GraphicsProps) => void
+
+  /**
+   * If true, graphics is cleared before onDraw is called
+   * Default: true (usually what you want)
+   */
+  autoClear?: boolean
+
+  /**
+   * Dependencies array - if any value changes, onDraw is re-executed
+   * Similar to React useEffect dependencies
+   */
+  dependencies?: unknown[]
 
   /** Children are not supported for Graphics component */
   children?: ChildrenType
