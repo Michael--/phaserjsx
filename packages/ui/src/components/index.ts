@@ -13,11 +13,9 @@ import { viewCreator, viewPatcher } from './primitives/view'
 
 /**
  * Component type constants for JSX usage (legacy primitives)
- * Note: Image, NineSlice and Graphics constants removed to avoid conflicts with custom components
- * Use lowercase primitives or import wrappers from custom
+ * Note: All primitive components now have custom wrappers
+ * Use lowercase primitives internally or import wrappers from custom
  */
-export const Sprite = 'Sprite' as const
-export const TileSprite = 'TileSprite' as const
 
 /**
  * Registers all built-in components with the host
@@ -56,7 +54,9 @@ export { Button, type ButtonProps } from './custom/Button'
 export { Graphics, type GraphicsProps } from './custom/Graphics'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
+export { Sprite, type SpriteProps } from './custom/Sprite'
 export { Text, type TextProps } from './custom/Text'
+export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
 export { View, type ViewProps } from './custom/View'
 
 // Re-export primitive creators/patchers for advanced use cases
@@ -73,13 +73,8 @@ export {
   type NineSliceRef,
 } from './primitives/nineslice'
 
-// Re-export Sprite component (dummy, no wrapper yet)
-export {
-  spriteCreator,
-  spritePatcher,
-  type SpriteBaseProps,
-  type SpriteProps,
-} from './primitives/sprite'
+// Re-export Sprite primitive (internal use only - prefer custom wrapper)
+export { spriteCreator, spritePatcher, type SpriteBaseProps } from './primitives/sprite'
 
 // Re-export Image component (dummy, no wrapper yet)
 export {
@@ -92,10 +87,9 @@ export {
 // Re-export Graphics primitive (internal use only - prefer custom wrapper)
 export { graphicsCreator, graphicsPatcher, type GraphicsBaseProps } from './primitives/graphics'
 
-// Re-export TileSprite component (dummy, no wrapper yet)
+// Re-export TileSprite primitive (internal use only - prefer custom wrapper)
 export {
   tileSpriteCreator,
   tileSpritePatcher,
   type TileSpriteBaseProps,
-  type TileSpriteProps,
 } from './primitives/tilesprite'
