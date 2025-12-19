@@ -349,8 +349,13 @@ export function useLayoutRect(ref: {
 
 /**
  * Utility function to get world layout rectangle from a container
- * Returns absolute position in scene coordinates combined with layout size
- * Uses Phaser's world transform matrix for accurate world coordinates
+ * Returns absolute bounding box in scene coordinates
+ * Combines layout size with world transform matrix for accurate positioning
+ * Accounts for parent transforms (position, scale, rotation)
+ *
+ * Note: Uses getLayoutSize() for dimensions (not getBounds() which only checks children)
+ * and getWorldTransformMatrix() for absolute position in world space.
+ *
  * @param container - Phaser container with layout
  * @returns World layout rectangle { x, y, width, height } or undefined
  */
@@ -358,19 +363,27 @@ export function getWorldLayoutRect(
   container: Phaser.GameObjects.Container | null | undefined
 ): { x: number; y: number; width: number; height: number } | undefined {
   if (!container) return undefined
+
+  // Get layout size (actual container dimensions from layout system)
   const size = getLayoutSize(container)
   if (!size) return undefined
 
   // Get world transform matrix for absolute position
   const matrix = container.getWorldTransformMatrix()
+
+  // World position (top-left corner with origin 0,0)
   const worldX = matrix.tx
   const worldY = matrix.ty
+
+  // Apply world scale to layout dimensions
+  const worldWidth = size.width * Math.abs(matrix.scaleX)
+  const worldHeight = size.height * Math.abs(matrix.scaleY)
 
   return {
     x: worldX,
     y: worldY,
-    width: size.width,
-    height: size.height,
+    width: worldWidth,
+    height: worldHeight,
   }
 }
 
