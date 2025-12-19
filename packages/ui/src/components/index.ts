@@ -13,11 +13,10 @@ import { viewCreator, viewPatcher } from './primitives/view'
 
 /**
  * Component type constants for JSX usage (legacy primitives)
- * Note: Image and NineSlice constants removed to avoid conflicts with custom components
+ * Note: Image, NineSlice and Graphics constants removed to avoid conflicts with custom components
  * Use lowercase primitives or import wrappers from custom
  */
 export const Sprite = 'Sprite' as const
-export const Graphics = 'Graphics' as const
 export const TileSprite = 'TileSprite' as const
 
 /**
@@ -54,6 +53,7 @@ export { type LayoutSize } from './../layout/types'
 
 // Re-export custom components (public API)
 export { Button, type ButtonProps } from './custom/Button'
+export { Graphics, type GraphicsProps } from './custom/Graphics'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
 export { Text, type TextProps } from './custom/Text'
@@ -89,13 +89,8 @@ export {
   type ImagePrimitiveProps,
 } from './primitives/image'
 
-// Re-export Graphics component (no wrapper yet)
-export {
-  graphicsCreator,
-  graphicsPatcher,
-  type GraphicsBaseProps,
-  type GraphicsProps,
-} from './primitives/graphics'
+// Re-export Graphics primitive (internal use only - prefer custom wrapper)
+export { graphicsCreator, graphicsPatcher, type GraphicsBaseProps } from './primitives/graphics'
 
 // Re-export TileSprite component (dummy, no wrapper yet)
 export {

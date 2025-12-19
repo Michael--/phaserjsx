@@ -104,7 +104,6 @@ function DependencyRedraw() {
           <Graphics
             x={50}
             y={50}
-            dependencies={[color]}
             onDraw={(g: Phaser.GameObjects.Graphics) => {
               g.fillStyle(color, 1)
               g.fillCircle(0, 0, radius)
@@ -125,7 +124,6 @@ function DependencyRedraw() {
           <Graphics
             x={50}
             y={50}
-            dependencies={[radius]}
             onDraw={(g: Phaser.GameObjects.Graphics) => {
               g.fillStyle(0xffff00, 1)
               g.fillCircle(0, 0, radius)
@@ -205,8 +203,6 @@ function AdditiveDrawing() {
         <Graphics
           x={100}
           y={100}
-          autoClear={false}
-          dependencies={[count]}
           onDraw={(g: Phaser.GameObjects.Graphics) => {
             // Add a new circle each time
             const angle = ((count - 1) * Math.PI * 2) / 5
