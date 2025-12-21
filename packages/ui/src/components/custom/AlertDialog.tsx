@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Text } from '../index'
 import { Button, type ButtonVariant } from './Button'
 import { Dialog } from './Dialog'
@@ -80,7 +81,7 @@ export interface AlertDialogProps {
  * />
  * ```
  */
-export function AlertDialog(props: AlertDialogProps) {
+export function AlertDialog(props: AlertDialogProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed } = getThemedProps('AlertDialog', localTheme, {})
 

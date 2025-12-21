@@ -9,6 +9,7 @@ import type { GestureEventData } from '../../gestures/gesture-types'
 import { useRef, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
 import { Modal } from './Modal'
 
@@ -71,7 +72,7 @@ export interface DialogProps {
  * </Dialog>
  * ```
  */
-export function Dialog(props: DialogProps) {
+export function Dialog(props: DialogProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Dialog', localTheme, {})
   const internalRef = useRef<Phaser.GameObjects.Container | null>(null)

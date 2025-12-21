@@ -21,6 +21,7 @@ import type { ChildrenType } from '@number10/phaserjsx/types'
 import type Phaser from 'phaser'
 import type { ViewProps } from '..'
 import { useRef, useState } from '../../hooks'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 
 /**
@@ -76,7 +77,7 @@ export function RefOriginView({
   padding,
   children,
   ...viewProps
-}: RefOriginViewProps) {
+}: RefOriginViewProps): VNodeLike {
   // Ref to outer View to get computed dimensions after layout
   const outerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const [numericDimension, setNumericWidth] = useState<{ x: number; y: number }>({ x: 0, y: 0 })

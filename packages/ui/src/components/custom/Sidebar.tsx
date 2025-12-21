@@ -9,6 +9,7 @@ import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Divider } from './Divider'
 import { ScrollView } from './ScrollView'
 import { Text } from './Text'
@@ -89,7 +90,7 @@ interface SidebarTheme extends ViewTheme {
  * Sidebar component - pre-configured container for navigation/options
  * Adds variants, size presets, and optional header/sections/footer slots.
  */
-export function Sidebar(props: SidebarProps) {
+export function Sidebar(props: SidebarProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themedProps, nestedTheme } = getThemedProps('Sidebar', localTheme, {})
   const themed = themedProps as SidebarTheme

@@ -7,6 +7,7 @@ import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
 import { getRenderContext } from '../../render-context'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
 
@@ -69,7 +70,7 @@ export interface ScrollViewProps extends ViewProps {
  * @param props - ScrollView properties
  * @returns JSX element
  */
-export function ScrollView(props: ScrollViewProps) {
+export function ScrollView(props: ScrollViewProps): VNodeLike {
   const {
     children,
     showVerticalSlider = 'auto',

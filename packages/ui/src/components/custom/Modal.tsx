@@ -15,6 +15,7 @@ import { useCallback, useEffect, useRef, useScene, useState, useTheme } from '..
 import { portalRegistry } from '../../portal'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 import { Portal } from './Portal'
 
@@ -52,7 +53,7 @@ export interface ModalProps {
  * @param props - Modal props
  * @returns Modal component
  */
-export function Modal(props: ModalProps) {
+export function Modal(props: ModalProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Modal', localTheme, {})
   const scene = useScene()

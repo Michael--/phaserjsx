@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Graphics, Text, View } from '../index'
 
 /**
@@ -77,7 +78,7 @@ export interface ToggleProps {
  * />
  * ```
  */
-export function Toggle(props: ToggleProps) {
+export function Toggle(props: ToggleProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Toggle', localTheme, props.theme ?? {})
 

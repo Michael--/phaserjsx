@@ -14,6 +14,7 @@ import {
 } from '../../effects'
 import { useEffect, useRef, useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
+import type { VNodeLike } from '../../vdom'
 import { NineSlice } from './NineSlice'
 import { View } from './View'
 
@@ -151,7 +152,7 @@ export interface NineSliceButtonProps extends ViewProps, EffectDefinition {
  * ```
  */
 
-export function NineSliceButton(props: NineSliceButtonProps) {
+export function NineSliceButton(props: NineSliceButtonProps): VNodeLike {
   const {
     texture,
     frame,

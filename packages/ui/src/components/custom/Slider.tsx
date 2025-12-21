@@ -4,13 +4,14 @@
  * Provides interactive value selection with horizontal/vertical orientation
  */
 import type Phaser from 'phaser'
+import type { ViewProps } from '..'
 import type { GestureEventData } from '../../core-props'
 import { applyEffectByName, useGameObjectEffect, type EffectDefinition } from '../../effects'
 import { useEffect, useMemo, useRef, useState, useTheme, type VNode } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Graphics, Text, View } from '../index'
-import type { ViewProps } from '..'
 import { RefOriginView } from './RefOriginView'
 
 /**
@@ -767,7 +768,7 @@ function BaseSlider(props: BaseSliderProps) {
  * @param props - Slider properties
  * @returns Slider JSX element
  */
-export function Slider(props: SliderProps) {
+export function Slider(props: SliderProps): VNodeLike {
   return <BaseSlider {...props} mode="single" />
 }
 
@@ -776,6 +777,6 @@ export function Slider(props: SliderProps) {
  * @param props - RangeSlider properties
  * @returns RangeSlider JSX element
  */
-export function RangeSlider(props: RangeSliderProps) {
+export function RangeSlider(props: RangeSliderProps): VNodeLike {
   return <BaseSlider {...props} mode="range" />
 }

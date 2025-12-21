@@ -5,6 +5,7 @@
 
 import { useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
+import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
 
 // import { getThemedProps, Text, useState, View } from '@number10/phaserjsx'
@@ -38,7 +39,7 @@ export interface RadioGroupProps {
  * @param props - RadioGroup properties
  * @returns RadioGroup JSX element
  */
-export function RadioGroup(props: RadioGroupProps) {
+export function RadioGroup(props: RadioGroupProps): VNodeLike {
   const { props: themed, nestedTheme } = getThemedProps('RadioButton', undefined, {})
 
   const [selected, setSelected] = useState<string>(props.value ?? '')

@@ -3,6 +3,7 @@
  * RadioButton component - Selectable option with circle indicator and label
  */
 import { getThemedProps } from '../../theme'
+import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
 
 /**
@@ -24,7 +25,7 @@ export interface RadioButtonProps {
  * @param props - RadioButton properties
  * @returns RadioButton JSX element
  */
-export function RadioButton(props: RadioButtonProps) {
+export function RadioButton(props: RadioButtonProps): VNodeLike {
   const { props: themed, nestedTheme } = getThemedProps('RadioButton', undefined, {})
   const size = themed.size ?? 16
   const innerSize = themed.innerSize ?? size * 0.75

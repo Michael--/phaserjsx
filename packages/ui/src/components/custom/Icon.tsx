@@ -5,6 +5,7 @@
  */
 import { useEffect, useState } from '../../hooks'
 import { useSVGTexture } from '../../hooks-svg'
+import type { VNodeLike } from '../../vdom'
 import { Image, type ImageProps } from './Image'
 
 /**
@@ -41,7 +42,7 @@ export interface IconProps<T extends string = string>
  * />
  * ```
  */
-export function Icon<T extends string = string>(props: IconProps<T>) {
+export function Icon<T extends string = string>(props: IconProps<T>): VNodeLike {
   const { type, loader, size = 32, ...imageProps } = props
   const [svg, setSvg] = useState<string | null>(null)
 

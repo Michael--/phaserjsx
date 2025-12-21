@@ -8,6 +8,7 @@ import type { EdgeInsets, PhaserProps, TextSpecificProps, TransformProps } from 
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType, PropsDefaultExtension } from '../../types'
+import type { VNodeLike } from '../../vdom'
 
 /**
  * Props for Text component
@@ -35,7 +36,7 @@ export interface TextProps
  * <Text text="Hello World" />
  * ```
  */
-export function Text(props: TextProps) {
+export function Text(props: TextProps): VNodeLike {
   const localTheme = useTheme()
   // Cast props to any for getThemedProps to handle optional style prop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

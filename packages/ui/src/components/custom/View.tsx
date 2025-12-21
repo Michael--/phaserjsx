@@ -14,6 +14,7 @@ import type {
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType, PropsDefaultExtension } from '../../types'
+import type { VNodeLike } from '../../vdom'
 
 /**
  * Props for View component
@@ -50,7 +51,7 @@ export interface ViewProps
  * </View>
  * ```
  */
-export function View(props: ViewProps) {
+export function View(props: ViewProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('View', localTheme, props)
 

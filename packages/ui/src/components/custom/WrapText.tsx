@@ -6,6 +6,7 @@
  */
 import { useCallback, useEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
+import type { VNodeLike } from '../../vdom'
 import { Text, View, type TextProps } from '../index'
 
 /**
@@ -68,7 +69,7 @@ const widthCache = new Map<string, number>()
  * </View>
  * ```
  */
-export function WrapText(props: WrapTextProps) {
+export function WrapText(props: WrapTextProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed } = getThemedProps('WrapText', localTheme, {})
 

@@ -3,6 +3,7 @@
  * Sprite component wrapper - strict type-safe wrapper around primitive sprite
  * This component is the public API for Sprite, with controlled prop interface
  */
+import type { VNodeLike } from '@number10/phaserjsx/vdom'
 import type Phaser from 'phaser'
 import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
@@ -97,7 +98,7 @@ export interface SpriteProps
  * />
  * ```
  */
-export function Sprite(props: SpriteProps) {
+export function Sprite(props: SpriteProps): VNodeLike {
   const localTheme = useTheme()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { props: themed, nestedTheme } = getThemedProps('Sprite', localTheme, props as any)

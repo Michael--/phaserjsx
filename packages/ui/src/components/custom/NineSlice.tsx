@@ -8,6 +8,7 @@ import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType, PropsDefaultExtension } from '../../types'
+import type { VNodeLike } from '../../vdom'
 
 /**
  * Props for NineSlice component
@@ -97,7 +98,7 @@ export interface NineSliceProps
  * />
  * ```
  */
-export function NineSlice(props: NineSliceProps) {
+export function NineSlice(props: NineSliceProps): VNodeLike {
   const localTheme = useTheme()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { props: themed, nestedTheme } = getThemedProps('NineSlice', localTheme, props as any)

@@ -17,6 +17,7 @@ import { useForceRedraw, useRef, useState, useTheme } from '../../hooks'
 import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Graphics, Text, View } from '../index'
 import { CharTextInput } from './CharTextInput'
 import { ScrollView } from './ScrollView'
@@ -151,7 +152,7 @@ function DefaultArrow(props: { color?: number; size?: number }) {
  * />
  * ```
  */
-export function Dropdown<T = string>(props: DropdownProps<T>) {
+export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Dropdown', localTheme, {})
 

@@ -3,6 +3,7 @@
  * TileSprite component wrapper - strict type-safe wrapper around primitive tilesprite
  * This component is the public API for TileSprite, with controlled prop interface
  */
+import type { VNodeLike } from '@number10/phaserjsx/vdom'
 import type Phaser from 'phaser'
 import type { PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
@@ -78,7 +79,7 @@ export interface TileSpriteProps
  * />
  * ```
  */
-export function TileSprite(props: TileSpriteProps) {
+export function TileSprite(props: TileSpriteProps): VNodeLike {
   const localTheme = useTheme()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { props: themed, nestedTheme } = getThemedProps('TileSprite', localTheme, props as any)

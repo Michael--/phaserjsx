@@ -4,6 +4,7 @@
  * Test component to validate TSX support in packages/ui
  */
 import type { SizeValue } from '@number10/phaserjsx/core-props'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 
 /**
@@ -25,7 +26,7 @@ export interface DividerProps {
  * @param props - Divider properties
  * @returns Divider JSX element
  */
-export function Divider(props: DividerProps) {
+export function Divider(props: DividerProps): VNodeLike {
   const { orientation = 'horizontal', thickness = 1, color = 0xcccccc, length } = props
 
   const isHorizontal = orientation === 'horizontal'

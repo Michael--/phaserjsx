@@ -3,6 +3,7 @@ import type { GestureEventData } from '../../../core-props'
 import { useGameObjectEffect } from '../../../effects'
 import { useEffect, useRef, useState } from '../../../hooks'
 import { getThemedProps } from '../../../theme'
+import type { VNodeLike } from '../../../vdom'
 import { View } from '../../index'
 import type { CharInfo, CharTextAPI, CharTextProps } from './types'
 import {
@@ -20,7 +21,7 @@ import {
  * @param props - CharText properties
  * @returns CharText JSX element
  */
-export function CharText(props: CharTextProps) {
+export function CharText(props: CharTextProps): VNodeLike {
   const { props: themed } = getThemedProps('CharText', undefined, {})
   const internalRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect: _applyEffect } = useGameObjectEffect(internalRef)

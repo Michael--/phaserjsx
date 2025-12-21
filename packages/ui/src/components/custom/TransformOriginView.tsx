@@ -17,9 +17,10 @@
  *   <View backgroundColor={0xff0000} />
  * </TransformOriginView>
  */
-import type { VNode } from '../../hooks'
-import { View } from '../index'
 import type { ViewProps } from '..'
+import type { VNode } from '../../hooks'
+import type { VNodeLike } from '../../vdom'
+import { View } from '../index'
 
 /**
  * Extended ViewProps with origin support for declarative transforms
@@ -74,7 +75,7 @@ export function TransformOriginView({
   borderAlpha,
   // All other ViewProps go to outer View
   ...outerViewProps
-}: TransformOriginViewProps) {
+}: TransformOriginViewProps): VNodeLike {
   if (typeof width !== 'number' || typeof height !== 'number') {
     throw new Error('TransformOriginView requires numeric width and height')
   }

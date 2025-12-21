@@ -2,6 +2,7 @@
 import type { ViewProps } from '..'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'
 import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
+import type { VNodeLike } from '../../vdom'
 import { CharText, type CharTextAPI } from './CharText'
 
 /**
@@ -84,7 +85,7 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
  * - No need for maxLines clipping
  * - Scroll-to-cursor behavior on input
  */
-export function CharTextInput(props: CharTextInputProps) {
+export function CharTextInput(props: CharTextInputProps): VNodeLike {
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)
   const charTextApiRef = useRef<CharTextAPI | null>(null)

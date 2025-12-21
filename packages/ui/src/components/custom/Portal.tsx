@@ -10,6 +10,7 @@ import { DeferredLayoutQueue } from '../../layout/layout-engine'
 import type { LayoutSize } from '../../layout/types'
 import { portalRegistry } from '../../portal'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { mount, patchVNode, unmount } from '../../vdom'
 
 /**
@@ -53,7 +54,7 @@ export interface PortalProps {
  * </Portal>
  * ```
  */
-export function Portal(props: PortalProps) {
+export function Portal(props: PortalProps): VNodeLike {
   const portalId = useMemo(() => props.id ?? portalRegistry.generateId(), [props.id])
   const depth = props.depth ?? 1000
   const scene = useScene()

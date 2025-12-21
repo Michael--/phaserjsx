@@ -6,6 +6,7 @@ import Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
 import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'
+import type { VNodeLike } from '../../vdom'
 import type { LayoutSize } from '../index'
 import { View } from '../index'
 
@@ -54,7 +55,7 @@ export interface ScrollSliderProps {
  * @param props - ScrollSlider properties
  * @returns JSX element
  */
-export function ScrollSlider(props: ScrollSliderProps) {
+export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
   const {
     direction,
     scrollPosition,

@@ -1,4 +1,5 @@
 /** @jsxImportSource ../.. */
+import type { ViewProps } from '..'
 import { useSpring, type AnimationConfig } from '../../animation'
 import {
   applyEffectByName,
@@ -9,8 +10,8 @@ import {
 import { useEffect, useForceRedraw, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
-import type { ViewProps } from '..'
 
 /**
  * Props for Accordion component
@@ -41,7 +42,7 @@ export interface AccordionProps extends ViewProps, EffectDefinition {
  * @param props - Accordion properties
  * @returns Accordion JSX element
  */
-export function Accordion(props: AccordionProps) {
+export function Accordion(props: AccordionProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed, nestedTheme } = getThemedProps('Accordion', localTheme, {})
 

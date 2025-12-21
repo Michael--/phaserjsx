@@ -14,6 +14,7 @@ import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 
 /**
@@ -55,7 +56,7 @@ export interface ButtonProps extends ViewProps, EffectDefinition {
  * </Button>
  * ```
  */
-export function Button(props: ButtonProps) {
+export function Button(props: ButtonProps): VNodeLike {
   const { children, onClick, disabled, variant, size, width, height, ...restProps } = props
   const { props: themed } = getThemedProps('Button', undefined, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
