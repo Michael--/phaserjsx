@@ -1,5 +1,5 @@
 /**
- * Joystick Custom Graphics Example - Custom base and thumb
+ * Joystick Custom Graphics Example - Custom base and thumb with Graphics
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { Graphics, Joystick, Text, useState, View } from '@number10/phaserjsx'
@@ -79,7 +79,7 @@ export function CustomGraphicsJoystickExample() {
           }
         }}
       />
-      <Text text={`Direction: ${direction}`} />
+      <Text text={`Direction: ${direction}`} style={{ fontSize: '10px' }} />
     </View>
   )
 }

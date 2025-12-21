@@ -3,11 +3,13 @@
  */
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import {
+  CompositeJoystickExample,
   CustomGraphicsJoystickExample,
   QuickStartJoystickExample,
   ThemesJoystickExample,
 } from '@/examples/joystick'
 // Import source code as raw strings
+import CompositeJoystickExampleRaw from '@/examples/joystick/CompositeExample.tsx?raw'
 import CustomGraphicsJoystickExampleRaw from '@/examples/joystick/CustomGraphicsExample.tsx?raw'
 import QuickStartJoystickExampleRaw from '@/examples/joystick/QuickStartExample.tsx?raw'
 import ThemesJoystickExampleRaw from '@/examples/joystick/ThemesExample.tsx?raw'
@@ -43,6 +45,14 @@ export const joystickContent: ComponentDocs = {
       component: CustomGraphicsJoystickExample,
       height: SCENE_SIZES.medium,
       code: CustomGraphicsJoystickExampleRaw,
+    },
+    {
+      id: 'composite',
+      title: 'Composite Elements',
+      description: 'Combine any VNodeLike elements - Views, Graphics, Images, Text, Icons',
+      component: CompositeJoystickExample,
+      height: SCENE_SIZES.medium,
+      code: CompositeJoystickExampleRaw,
     },
   ],
 
