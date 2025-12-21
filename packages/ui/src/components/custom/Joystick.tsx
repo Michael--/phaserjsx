@@ -363,6 +363,8 @@ export function Joystick(props: JoystickProps): VNodeLike {
   const thumbRef = useRef<Phaser.GameObjects.Container | null>(null)
   const forceExceededMinimumRef = useRef(false)
   const activeTweenRef = useRef<Phaser.Tweens.Tween | null>(null)
+  const isDraggingRef = useRef(false)
+  const currentThumbPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   // Determine size and center
   useEffect(() => {
@@ -370,8 +372,16 @@ export function Joystick(props: JoystickProps): VNodeLike {
       const size = getLayoutSize(outerRef.current)
       console.log(`Joystick size: ${JSON.stringify(size)}`)
       if (size != null) {
-        setCenter({ x: size.width / 2, y: size.height / 2 })
+        const newCenter = { x: size.width / 2, y: size.height / 2 }
+        setCenter(newCenter)
         setSize({ width: size.width, height: size.height })
+        // Set initial thumb position only if not dragging
+        if (!isDraggingRef.current && !activeTweenRef.current) {
+          currentThumbPosRef.current = newCenter
+          if (thumbRef.current != null) {
+            thumbRef.current.setPosition(newCenter.x, newCenter.y)
+          }
+        }
       }
     }, 0)
   }, [outerRef])
@@ -391,7 +401,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
       }
     const radius = Math.min(size.width, size.height) / 2
     return joystickThemeFactory(props.joystickTheme, radius)
-  }, [props.base, props.thumb, size])
+  }, [props.base, props.thumb, props.rotateThumb, props.joystickTheme, size])
 
   const touchMove = (data: GestureEventData) => {
     data.stopPropagation()
@@ -399,9 +409,11 @@ export function Joystick(props: JoystickProps): VNodeLike {
 
     if (data.state === 'start') {
       forceExceededMinimumRef.current = false
+      isDraggingRef.current = true
     }
 
     if (data.state === 'end') {
+      isDraggingRef.current = false
       // Stop any existing tween
       if (activeTweenRef.current) {
         activeTweenRef.current.stop()
@@ -419,6 +431,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
           ease: 'Cubic.easeOut',
           onComplete: () => {
             activeTweenRef.current = null
+            currentThumbPosRef.current = { x: center.x, y: center.y }
           },
         })
       }
@@ -465,6 +478,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
     }
 
     thumbRef.current.setPosition(offsetX, offsetY)
+    currentThumbPosRef.current = { x: offsetX, y: offsetY }
 
     // Rotate thumb based on angle if enabled
     if (props.rotateThumb || elements.rotateThumb) {
@@ -500,7 +514,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
         <View x={center.x} y={center.y}>
           {elements.base}
         </View>
-        <View ref={thumbRef} x={center.x} y={center.y}>
+        <View ref={thumbRef} x={currentThumbPosRef.current.x} y={currentThumbPosRef.current.y}>
           {elements.thumb}
         </View>
       </RefOriginView>
