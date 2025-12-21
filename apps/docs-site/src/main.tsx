@@ -13,6 +13,7 @@ import { dropdownContent } from './content/dropdown.content'
 import { graphicsContent } from './content/graphics.content'
 import { iconContent } from './content/icon.content'
 import { imageContent } from './content/image.content'
+import { joystickContent } from './content/joystick.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { portalContent } from './content/portal.content'
@@ -73,6 +74,7 @@ createRoot(document.getElementById('root')!).render(
         element={<ComponentPage content={radiobuttonContent} />}
       />
       <Route path="/components/dropdown" element={<ComponentPage content={dropdownContent} />} />
+      <Route path="/components/joystick" element={<ComponentPage content={joystickContent} />} />
       <Route
         path="/components/view"
         element={
