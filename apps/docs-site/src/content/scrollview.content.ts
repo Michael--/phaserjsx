@@ -7,12 +7,14 @@ import {
   NestedScrollViewExample,
   QuickStartScrollViewExample,
   SliderControlScrollViewExample,
+  SnapScrollViewExample,
 } from '@/examples/scrollview'
 // Import source code as raw strings
 import BothDirectionsScrollViewExampleRaw from '@/examples/scrollview/BothDirectionsExample.tsx?raw'
 import NestedScrollViewExampleRaw from '@/examples/scrollview/NestedScrollViewExample.tsx?raw'
 import QuickStartScrollViewExampleRaw from '@/examples/scrollview/QuickStartExample.tsx?raw'
 import SliderControlScrollViewExampleRaw from '@/examples/scrollview/SliderControlExample.tsx?raw'
+import SnapScrollViewExampleRaw from '@/examples/scrollview/SnapExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
 export const scrollviewContent: ComponentDocs = {
@@ -50,6 +52,15 @@ export const scrollviewContent: ComponentDocs = {
       code: SliderControlScrollViewExampleRaw,
     },
     {
+      id: 'snap-scrolling',
+      title: 'Snap Scrolling',
+      description:
+        'Snap to specific positions when scrolling stops. Perfect for carousels and item lists.',
+      component: SnapScrollViewExample,
+      height: SCENE_SIZES.large,
+      code: SnapScrollViewExampleRaw,
+    },
+    {
       id: 'nested-scrollview',
       title: 'Nested ScrollViews',
       description: 'ScrollViews containing other ScrollViews for complex layouts',
@@ -73,17 +84,24 @@ export const scrollviewContent: ComponentDocs = {
       description: 'Show horizontal scroll slider. "auto" shows only when content overflows.',
     },
     {
-      name: 'sliderSize',
-      type: 'SliderSize',
-      default: 'undefined',
+      name: 'momentum',
+      type: 'boolean',
+      default: 'true',
       description:
-        "Size variant for scroll sliders (affects slider width/height could be 'large' | 'medium' | 'small' | 'tiny' | undefined",
+        'Enable momentum scrolling - content continues to scroll after release with physics-based deceleration',
     },
     {
-      name: 'scroll',
-      type: '{ dx: number; dy: number }',
-      default: '{ dx: 0, dy: 0 }',
-      description: 'Initial scroll position (horizontal dx, vertical dy)',
+      name: 'snap',
+      type: 'SnapMode | undefined',
+      default: 'undefined',
+      description:
+        'Snap configuration: { positions: number[], threshold?: number }. Defines scroll positions to snap to.',
+    },
+    {
+      name: 'snapAlignment',
+      type: '"start" | "center" | "end"',
+      default: '"start"',
+      description: 'Alignment for snapping - where the snap target should align in the viewport',
     },
   ],
 
@@ -105,13 +123,47 @@ export const scrollviewContent: ComponentDocs = {
       type: 'SliderSize',
       default: 'undefined',
       description:
-        "Size variant for scroll sliders (affects slider width/height could be 'large' | 'medium' | 'small' | 'tiny' | undefined",
+        "Size variant for scroll sliders (affects slider width/height): 'large' | 'medium' | 'small' | 'tiny' | undefined",
     },
     {
       name: 'scroll',
-      type: '{ dx: number; dy: number }',
+      type: '{ dx?: number; dy?: number; snapIndex?: number }',
       default: '{ dx: 0, dy: 0 }',
-      description: 'Initial scroll position (horizontal dx, vertical dy)',
+      description:
+        'Scroll position control: dx/dy for direct positioning, snapIndex for programmatic snapping',
+    },
+    {
+      name: 'momentum',
+      type: 'boolean',
+      default: 'true',
+      description:
+        'Enable momentum scrolling - content continues to scroll after release with physics-based deceleration',
+    },
+    {
+      name: 'snap',
+      type: 'SnapMode | undefined',
+      default: 'undefined',
+      description:
+        'Snap configuration: { positions: number[], threshold?: number }. Array of scroll positions to snap to, with optional threshold for snap activation.',
+    },
+    {
+      name: 'snapAlignment',
+      type: '"start" | "center" | "end"',
+      default: '"start"',
+      description:
+        'Alignment for snapping: "start" (top/left), "center" (middle), "end" (bottom/right)',
+    },
+    {
+      name: 'snapThreshold',
+      type: 'number',
+      default: '20',
+      description: 'Distance threshold in pixels for triggering snap behavior',
+    },
+    {
+      name: 'onSnap',
+      type: '(index: number) => void',
+      default: 'undefined',
+      description: 'Callback fired when scrolling snaps to a position. Receives the snap index.',
     },
     {
       name: 'onScrollInfoChange',
