@@ -386,6 +386,11 @@ export function Joystick(props: JoystickProps): VNodeLike {
     }, 0)
   }, [outerRef])
 
+  // Extract theme values to prevent unnecessary re-renders
+  const themeType = props.joystickTheme?.theme
+  const themeTint = props.joystickTheme?.tint
+  const sizeKey = `${size.width}x${size.height}`
+
   const elements = useMemo(() => {
     if (props.base != null && props.thumb)
       return {
@@ -401,7 +406,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
       }
     const radius = Math.min(size.width, size.height) / 2
     return joystickThemeFactory(props.joystickTheme, radius)
-  }, [props.base, props.thumb, props.rotateThumb, props.joystickTheme, size])
+  }, [props.base, props.thumb, props.rotateThumb, themeType, themeTint, sizeKey])
 
   const touchMove = (data: GestureEventData) => {
     data.stopPropagation()
