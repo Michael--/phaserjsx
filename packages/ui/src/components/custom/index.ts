@@ -19,6 +19,7 @@ export {
   type IconProps,
 } from './Icon'
 export { Image, type ImageProps } from './Image'
+export { Joystick, type JoystickProps, type JoystickTheme } from './Joystick'
 export { Modal, type ModalProps } from './Modal'
 export { NineSlice, type NineSliceProps } from './NineSlice'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
