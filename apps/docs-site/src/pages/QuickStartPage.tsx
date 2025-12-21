@@ -46,6 +46,17 @@ export function QuickStartPage() {
   }
 }`}
         </CodeBlock>
+
+        <p className="mt-6 mb-4">
+          Create a <code>types.d.ts</code> file to import JSX type definitions:
+        </p>
+        <CodeBlock language="typescript">
+          {`// Import PhaserJSX JSX type definitions
+import "@number10/phaserjsx/dist/jsx-types"`}
+        </CodeBlock>
+        <p className="mt-2 text-sm text-gray-600">
+          This enables IntelliSense and type checking for PhaserJSX components in your IDE
+        </p>
       </section>
 
       {/* Step 3: Create Your First Component */}

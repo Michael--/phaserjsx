@@ -107,6 +107,48 @@ export function InstallationPage() {
             <code>"jsxImportSource": "@number10/phaserjsx"</code> - Uses PhaserJSX's JSX runtime
             instead of React's
           </div>
+          <div className="doc-list-item">
+            <code>"moduleResolution": "bundler"</code> - Required for modern build tools like Vite
+            to resolve package exports correctly
+          </div>
+        </div>
+
+        <div className="doc-subsection">
+          <h3>JSX Type Definitions</h3>
+          <DocParagraph>
+            To enable IntelliSense and type checking for PhaserJSX JSX elements, create a{' '}
+            <code>types.d.ts</code> file in your project root (or <code>src/</code> directory):
+          </DocParagraph>
+
+          <CodeBlock language="typescript" title="types.d.ts">
+            {`// Import PhaserJSX JSX type definitions
+import "@number10/phaserjsx/dist/jsx-types"`}
+          </CodeBlock>
+
+          <DocParagraph>
+            This file imports the global JSX namespace declarations, allowing TypeScript to
+            understand which JSX elements and props are available. Without this import:
+          </DocParagraph>
+          <div className="doc-list">
+            <div className="doc-list-item">
+              TypeScript won't recognize <code>&lt;View&gt;</code>, <code>&lt;Text&gt;</code>, etc.
+              as valid JSX elements
+            </div>
+            <div className="doc-list-item">
+              You won't get autocomplete for component props in your IDE
+            </div>
+            <div className="doc-list-item">Type errors won't be caught at compile time</div>
+          </div>
+
+          <div className="info-box">
+            <strong>💡 Why is this needed?</strong>
+            <p>
+              TypeScript's JSX type system relies on global namespace augmentation. The{' '}
+              <code>jsxImportSource</code> tells TypeScript which runtime to use, but the type
+              definitions for available elements must be explicitly imported. This is similar to how{' '}
+              <code>@types/react</code> works for React projects.
+            </p>
+          </div>
         </div>
 
         <div className="info-box">
