@@ -10,6 +10,7 @@ import { App } from './App'
  * Main Phaser scene for dev playground
  */
 class PlaygroundScene extends Phaser.Scene {
+  private graphics: Phaser.GameObjects.Graphics | null = null
   /**
    * Preload assets
    */
@@ -23,23 +24,29 @@ class PlaygroundScene extends Phaser.Scene {
   create() {
     console.log('PlaygroundScene.create() dimensions:', this.scale.width, 'x', this.scale.height)
 
-    // Simple grid background
-    const graphics = this.add.graphics()
-    graphics.lineStyle(1, 0xffffff, 0.1)
+    // JSX mounting is handled automatically by PhaserJSXPlugin
+    console.log('[PlaygroundScene] JSX will be mounted by plugin')
+
+    // re-create background on resize
+    this.scale.on('resize', () => this.createBackground(), this)
+  }
+
+  createBackground() {
+    if (this.graphics) this.graphics.clear()
+    else this.graphics = this.add.graphics()
+
+    this.graphics.lineStyle(1, 0xffffff, 0.5)
     const gridSize = 50
 
     for (let x = 0; x < this.scale.width; x += gridSize) {
-      graphics.moveTo(x, 0)
-      graphics.lineTo(x, this.scale.height)
+      this.graphics.moveTo(x, 0)
+      this.graphics.lineTo(x, this.scale.height)
     }
     for (let y = 0; y < this.scale.height; y += gridSize) {
-      graphics.moveTo(0, y)
-      graphics.lineTo(this.scale.width, y)
+      this.graphics.moveTo(0, y)
+      this.graphics.lineTo(this.scale.width, y)
     }
-    graphics.strokePath()
-
-    // JSX mounting is handled automatically by PhaserJSXPlugin
-    console.log('[PlaygroundScene] JSX will be mounted by plugin')
+    this.graphics.strokePath()
   }
 }
 
