@@ -26,18 +26,33 @@ export interface RefObject<T> {
  */
 export type Ref<T> = RefCallback<T> | RefObject<T>
 
+/**
+ * Props extension to include key, ref, and theme
+ */
 export interface PropsDefaultExtension<T = unknown> {
   key?: string | number | undefined
   ref?: Ref<T> | undefined
   theme?: PartialTheme | undefined
 }
 
+/**
+ * VNode types
+ */
 export type VNodeChild = VNode | null | undefined | false
 
+/**
+ * VNodeLike type - a VNode or an array of VNodeLike
+ */
 export type VNodeLike = VNodeChild | VNodeLike[]
 
+/**
+ * Children type - can be a single VNodeLike or an array of VNodeLike
+ */
 export type ChildrenType = VNodeLike
 
+/**
+ * Props extension to include children
+ */
 export interface PropsContainerExtension {
   children?: ChildrenType
 }

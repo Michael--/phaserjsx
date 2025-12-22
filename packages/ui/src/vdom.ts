@@ -15,7 +15,7 @@ import { calculateLayout, type LayoutSize } from './layout/index'
 import { portalRegistry } from './portal'
 import { getRenderContext } from './render-context'
 import { getThemedProps } from './theme'
-import type { ParentType, Ref } from './types'
+import type { ParentType, Ref, VNodeLike } from './types'
 export type { VNodeLike } from './types'
 
 /**
@@ -25,7 +25,7 @@ export type { VNodeLike } from './types'
 interface MountRegistryEntry {
   id: number
   parent: ParentType
-  type: NodeType | ((props: unknown) => VNode)
+  type: NodeType | ((props: unknown) => VNodeLike)
   props: MountProps & Record<string, unknown>
   rootNode: Phaser.GameObjects.GameObject
   vnode: VNode
@@ -45,7 +45,7 @@ class MountRegistry {
    */
   register(
     parent: ParentType,
-    type: NodeType | ((props: unknown) => VNode),
+    type: NodeType | ((props: unknown) => VNodeLike),
     props: MountProps & Record<string, unknown>,
     rootNode: Phaser.GameObjects.GameObject,
     vnode: VNode
@@ -372,6 +372,19 @@ export type MountComponentProps<P = Record<string, never>> = MountProps & P
  */
 export interface MountHandle extends Phaser.GameObjects.GameObject {
   unmount: () => void
+}
+
+/**
+ * Normalizes a component return into a single VNode or null.
+ * Wraps arrays into a Fragment VNode for consistent mounting.
+ */
+export function normalizeVNodeLike(rendered: VNodeLike): VNode | null {
+  if (!rendered) return null
+  if (Array.isArray(rendered)) {
+    const flat = (rendered as unknown[]).flat(Infinity) as (VNode | null | undefined | false)[]
+    return { type: Fragment, props: {}, children: flat }
+  }
+  return rendered as VNode
 }
 
 /**
@@ -817,7 +830,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
       vnode, // Will be updated to rendered VNode below
       componentVNode: vnode, // Keep reference to component VNode
       parent: parentOrScene,
-      function: vnode.type as (props: unknown) => VNode,
+      function: vnode.type as (props: unknown) => VNodeLike,
       isFactory: false,
       theme: vnode.__theme, // Inherit theme from parent or use vnode's theme
     }
@@ -827,9 +840,10 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     const propsWithChildren = vnode.children?.length
       ? { ...(vnode.props ?? {}), children: vnode.children }
       : vnode.props
-    let rendered = withHooks(ctx, () =>
-      (vnode.type as (props: unknown) => VNode)(propsWithChildren)
+    const renderedRaw = withHooks(ctx, () =>
+      (vnode.type as (props: unknown) => VNodeLike)(propsWithChildren)
     )
+    let rendered = normalizeVNodeLike(renderedRaw)
 
     // Handle null/undefined returns (e.g., from Portal component)
     if (!rendered) {
@@ -1191,10 +1205,12 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
         const propsWithChildren = newV.children?.length
           ? { ...(newV.props ?? {}), children: newV.children }
           : newV.props
-        const oldRendered = (oldV.type as (props: unknown) => VNode)(
+        const oldRenderedRaw = (oldV.type as (props: unknown) => VNodeLike)(
           oldV.children?.length ? { ...(oldV.props ?? {}), children: oldV.children } : oldV.props
         )
-        const newRendered = (newV.type as (props: unknown) => VNode)(propsWithChildren)
+        const newRenderedRaw = (newV.type as (props: unknown) => VNodeLike)(propsWithChildren)
+        const oldRendered = normalizeVNodeLike(oldRenderedRaw)
+        const newRendered = normalizeVNodeLike(newRenderedRaw)
         patchVNode(parent, oldRendered, newRendered)
         return
       }
@@ -1224,9 +1240,10 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       }
 
       // Re-render with updated props (use newVWithCtx for type safety)
-      const renderedNext = withHooks(ctx, () =>
-        (newVWithCtx.type as (props: unknown) => VNode)(propsWithChildren)
+      const renderedNextRaw = withHooks(ctx, () =>
+        (newVWithCtx.type as (props: unknown) => VNodeLike)(propsWithChildren)
       )
+      const renderedNext = normalizeVNodeLike(renderedNextRaw)
 
       // Handle null returns (e.g., from Portal component)
       if (!renderedNext) {
@@ -1483,13 +1500,13 @@ export function mountJSX<T extends NodeType>(
 
 export function mountJSX<P = Record<string, never>>(
   parentOrScene: ParentType,
-  type: (props: P & MountProps) => VNode,
+  type: (props: P & MountProps) => VNodeLike,
   props: MountComponentProps<P>
 ): MountHandle
 
 export function mountJSX(
   parentOrScene: ParentType,
-  type: NodeType | ((props: unknown) => VNode),
+  type: NodeType | ((props: unknown) => VNodeLike),
   props: MountProps & Record<string, unknown> = { width: 0, height: 0 }
 ): MountHandle {
   // Check if a mount already exists for this parent (and key if provided)

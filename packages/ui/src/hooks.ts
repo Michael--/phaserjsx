@@ -7,8 +7,8 @@ import type { BackgroundProps, LayoutProps, TransformProps } from './core-props'
 import type { LayoutSize } from './layout/types'
 import { getContextFromParent } from './render-context'
 import type { PartialTheme } from './theme'
-import type { ParentType } from './types'
-import { patchVNode } from './vdom'
+import type { ParentType, VNodeLike } from './types'
+import { normalizeVNodeLike, patchVNode } from './vdom'
 
 type Cleanup = void | (() => void)
 
@@ -33,10 +33,10 @@ export type Ctx = {
   slots: unknown[]
   effects: (() => Cleanup)[]
   cleanups: Cleanup[]
-  vnode: VNode // The rendered VNode (output of component function)
+  vnode: VNode | null // The rendered VNode (output of component function)
   componentVNode: VNode // The component VNode itself (with type = function)
   parent: ParentType
-  function: (props: unknown) => VNode
+  function: (props: unknown) => VNodeLike
   updater?: (() => void) | undefined
   isFactory: boolean
   lastProps?: unknown // Store last props for memoization
@@ -574,7 +574,7 @@ function scheduleUpdate(c: Ctx) {
       : componentProps
 
     // Render the component to get the new VNode
-    const nextVNode = withHooks(c, () => c.function(propsWithChildren))
+    const nextVNode = normalizeVNodeLike(withHooks(c, () => c.function(propsWithChildren)))
 
     // Patch the existing rendered tree
     patchVNode(c.parent, c.vnode, nextVNode)

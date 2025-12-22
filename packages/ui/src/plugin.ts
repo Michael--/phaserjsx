@@ -3,7 +3,7 @@
  * Enables declarative initialization via Phaser game config
  */
 import Phaser from 'phaser'
-import type { VNode } from './hooks'
+import type { VNodeLike } from './types'
 import { mountJSX, type MountHandle, type MountProps } from './vdom'
 
 /**
@@ -11,7 +11,7 @@ import { mountJSX, type MountHandle, type MountProps } from './vdom'
  */
 export interface PhaserJSXPluginConfig<P = Record<string, unknown>> {
   /** Component to mount */
-  component?: ((props: P & MountProps) => VNode) | string
+  component?: ((props: P & MountProps) => VNodeLike) | string
   /** Props for component (width and height are auto-injected from game size) */
   props?: P
   /** Container configuration */
@@ -29,7 +29,9 @@ export interface PhaserJSXPluginConfig<P = Record<string, unknown>> {
 /**
  * Extracts custom props from component function (excluding MountProps)
  */
-type InferCustomProps<C> = C extends (props: infer P) => VNode ? Omit<P, keyof MountProps> : never
+type InferCustomProps<C> = C extends (props: infer P) => VNodeLike
+  ? Omit<P, keyof MountProps>
+  : never
 
 /**
  * Type-safe plugin entry for PhaserJSX Plugin
@@ -75,7 +77,7 @@ export interface PhaserJSXPluginEntry<P = Record<string, unknown>> {
  * })
  * ```
  */
-export function createPhaserJSXPlugin<C extends (props: unknown) => VNode>(config: {
+export function createPhaserJSXPlugin<C extends (props: any) => VNodeLike>(config: {
   component: C
   props?: InferCustomProps<C>
   autoMount?: boolean
@@ -232,7 +234,7 @@ export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
    * Can be called from scene to set up component dynamically
    */
   configure(
-    component: ((props: unknown) => VNode) | string,
+    component: ((props: unknown) => VNodeLike) | string,
     props?: MountProps & Record<string, unknown>
   ): void {
     const newConfig: PhaserJSXPluginConfig = {
