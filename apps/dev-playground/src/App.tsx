@@ -18,7 +18,7 @@ import {
 
 export interface AppProps extends MountProps {
   /** Additional props can be defined here if needed */
-  title?: string
+  title: string
 }
 
 /**
@@ -44,7 +44,7 @@ export function App(props: AppProps) {
     >
       <View gap={20} alignItems="center" justifyContent="center" width="100%" height="100%">
         <Text
-          text={props.title ?? 'Playground'}
+          text={props.title}
           style={{
             fontSize: '48px',
             fontFamily: 'Arial',

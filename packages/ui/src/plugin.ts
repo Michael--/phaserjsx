@@ -27,6 +27,11 @@ export interface PhaserJSXPluginConfig<P = Record<string, unknown>> {
 }
 
 /**
+ * Extracts custom props from component function (excluding MountProps)
+ */
+type InferCustomProps<C> = C extends (props: infer P) => VNode ? Omit<P, keyof MountProps> : never
+
+/**
  * Type-safe plugin entry for PhaserJSX Plugin
  * Use this in game config for proper TypeScript support
  *
@@ -55,24 +60,38 @@ export interface PhaserJSXPluginEntry<P = Record<string, unknown>> {
 /**
  * Creates a type-safe PhaserJSX plugin entry for game config
  * Provides full IDE autocomplete and type checking for plugin configuration
+ * Automatically infers component props for full type safety
  *
- * @param config - Plugin configuration
+ * @param config - Plugin configuration with component and props
  * @returns Type-safe plugin entry for Phaser game config
  *
  * @example
  * ```typescript
- * const config: Phaser.Types.Core.GameConfig = {
- *   plugins: {
- *     global: [
- *       createPhaserJSXPlugin({
- *         component: App,
- *         props: { title: 'My App' },
- *         autoResize: true
- *       })
- *     ]
- *   }
- * }
+ * // Full type safety - TypeScript infers AppProps from component
+ * createPhaserJSXPlugin({
+ *   component: App,
+ *   props: { title: 'My App' },  // Only valid AppProps allowed!
+ *   autoResize: true
+ * })
  * ```
+ */
+export function createPhaserJSXPlugin<C extends (props: any) => VNode>(config: {
+  component: C
+  props?: InferCustomProps<C>
+  autoMount?: boolean
+  autoResize?: boolean
+  container?: { x?: number; y?: number; depth?: number }
+}): PhaserJSXPluginEntry<InferCustomProps<C>>
+
+/**
+ * Creates a PhaserJSX plugin entry (string component variant)
+ */
+export function createPhaserJSXPlugin<P = Record<string, unknown>>(
+  config: PhaserJSXPluginConfig<P>
+): PhaserJSXPluginEntry<P>
+
+/**
+ * Implementation
  */
 export function createPhaserJSXPlugin<P = Record<string, unknown>>(
   config: PhaserJSXPluginConfig<P>
