@@ -2,8 +2,8 @@
  * PhaserJSX Plugin configuration
  */
 /** @jsxImportSource @number10/phaserjsx */
-import { Button, Text, View, createPhaserJSXPlugin, useState } from '@number10/phaserjsx'
 import Phaser from 'phaser'
+import { Button, Text, View, createPhaserJSXPlugin, useState } from '@number10/phaserjsx'
 
 type CounterProps = {
   title: string
@@ -36,22 +36,40 @@ class GameScene extends Phaser.Scene {
   }
 }
 
-const config: Phaser.Types.Core.GameConfig = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  parent: 'game-container',
-  scene: [GameScene],
-  plugins: {
-    global: [
-      createPhaserJSXPlugin({
-        component: CounterUI,
-        props: { title: 'PhaserJSX Plugin' },
-        autoResize: true,
-        container: { x: 0, y: 0, depth: 100 },
-      }),
-    ],
-  },
+type PluginExampleOptions = {
+  parent: string | HTMLElement
+  width?: number
+  height?: number
+  title?: string
 }
 
-export const game = new Phaser.Game(config)
+export function createPluginExampleConfig({
+  parent,
+  width = 800,
+  height = 600,
+  title = 'PhaserJSX Plugin',
+}: PluginExampleOptions): Phaser.Types.Core.GameConfig {
+  return {
+    type: Phaser.AUTO,
+    width,
+    height,
+    parent,
+    scene: [GameScene],
+    plugins: {
+      global: [
+        createPhaserJSXPlugin({
+          component: CounterUI,
+          props: { title },
+          autoResize: true,
+          container: { x: 0, y: 0, depth: 100 },
+        }),
+      ],
+    },
+  }
+}
+
+export function createPluginExampleGame(options: PluginExampleOptions): Phaser.Game {
+  return new Phaser.Game(createPluginExampleConfig(options))
+}
+
+export const config = createPluginExampleConfig({ parent: 'game-container' })

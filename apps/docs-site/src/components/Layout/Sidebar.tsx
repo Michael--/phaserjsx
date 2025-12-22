@@ -99,6 +99,7 @@ const navigation: NavSection[] = [
       { label: 'Effects & Animations', path: '/guides/effects-animations' },
       { label: 'Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
+      { label: 'PhaserJSX Plugin', path: '/guides/phaserjsx-plugin' },
       { label: 'Testing & Development', path: '/guides/testing' },
     ],
   },

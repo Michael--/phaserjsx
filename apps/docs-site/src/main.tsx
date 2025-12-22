@@ -38,6 +38,7 @@ import {
   CustomSvgIconsPage,
   IconGeneratorConfigPage,
   IconSystemPage,
+  PhaserJsxPluginPage,
   SceneBackgroundsPage,
   TestingPage,
 } from './pages/Guides'
@@ -116,6 +117,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/performance" element={<PerformancePage />} />
       <Route path="/guides/responsive-design" element={<ResponsiveDesignPage />} />
       <Route path="/guides/theme-system" element={<ThemeSystemPage />} />
+      <Route path="/guides/phaserjsx-plugin" element={<PhaserJsxPluginPage />} />
       <Route path="/guides/icon-system" element={<IconSystemPage />} />
       <Route path="/guides/icon-system" element={<IconSystemPage />} />
       <Route path="/guides/icon-generator-config" element={<IconGeneratorConfigPage />} />
