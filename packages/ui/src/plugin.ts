@@ -75,7 +75,7 @@ export interface PhaserJSXPluginEntry<P = Record<string, unknown>> {
  * })
  * ```
  */
-export function createPhaserJSXPlugin<C extends (props: any) => VNode>(config: {
+export function createPhaserJSXPlugin<C extends (props: unknown) => VNode>(config: {
   component: C
   props?: InferCustomProps<C>
   autoMount?: boolean
@@ -219,6 +219,7 @@ export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
 
     // Call mountJSX again with same container and component
     // This will trigger a patch since mount already exists for this container
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.mountHandle = mountJSX(this.container, this.config.component as any, {
       ...props,
       width,
