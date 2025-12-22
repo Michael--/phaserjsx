@@ -38,6 +38,16 @@
       "internalConsoleOptions": "neverOpen"
     },
     {
+      "name": "Vite Dev Server (Dev Playground)",
+      "request": "launch",
+      "type": "node",
+      "cwd": "${workspaceFolder}/apps/dev-playground",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
       "name": "Launch Chrome (Docs Site)",
       "request": "launch",
       "type": "chrome",
@@ -51,6 +61,22 @@
         "/@fs${workspaceFolder}/*": "${workspaceFolder}/*",
         "./packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
         "./src/*": "${workspaceFolder}/apps/docs-site/src/*"
+      }
+    },
+    {
+      "name": "Launch Chrome (Dev Playground)",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:5174",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "@fs${workspaceFolder}/packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "@fs${workspaceFolder}/*": "${workspaceFolder}/*",
+        "/@fs${workspaceFolder}/packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "/@fs${workspaceFolder}/*": "${workspaceFolder}/*",
+        "./packages/ui/src/*": "${workspaceFolder}/packages/ui/src/*",
+        "./src/*": "${workspaceFolder}/apps/dev-playground/src/*"
       }
     }
   ],
@@ -67,6 +93,13 @@
       "configurations": ["Vite Dev Server (Docs Site)", "Launch Chrome (Docs Site)"],
       "presentation": {
         "order": 2
+      }
+    },
+    {
+      "name": "Debug Dev Playground",
+      "configurations": ["Vite Dev Server (Dev Playground)", "Launch Chrome (Dev Playground)"],
+      "presentation": {
+        "order": 3
       }
     }
   ]
