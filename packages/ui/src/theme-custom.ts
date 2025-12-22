@@ -78,6 +78,15 @@ export interface CustomComponentThemes {
     effect?: string
     effectConfig?: Record<string, unknown>
   }
+  Tabs: ViewTheme & {
+    tabListStyle?: ViewTheme
+    tabStyle?: ViewTheme
+    tabActiveStyle?: ViewTheme
+    tabDisabledStyle?: ViewTheme
+    panelStyle?: ViewTheme
+    tabGap?: number
+    tabTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+  }
   NineSliceButton: ViewTheme & {
     effect?: string
     effectConfig?: Record<string, unknown>

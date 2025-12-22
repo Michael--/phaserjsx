@@ -49,6 +49,7 @@ export {
   type SliderMark,
   type SliderProps,
 } from './Slider'
+export { Tab, TabPanel, Tabs, type TabPanelProps, type TabProps, type TabsProps } from './Tabs'
 export { Toggle, type ToggleProps } from './Toggle'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'
 export { WrapText, type WrapTextProps } from './WrapText'

@@ -266,6 +266,45 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         fontSize: '18px',
       },
     },
+    Tabs: {
+      tabListStyle: {
+        backgroundColor: colors.surface.dark.toNumber(),
+        padding: 10,
+        cornerRadius: { tl: 6, tr: 6, bl: 0, br: 0 },
+        width: 'fill',
+      },
+      tabStyle: {
+        backgroundColor: colors.surface.medium.toNumber(),
+        borderColor: colors.border.medium.toNumber(),
+        borderWidth: 1,
+        padding: { left: 14, right: 14, top: 8, bottom: 8 },
+        cornerRadius: 6,
+        alignItems: 'center',
+        justifyContent: 'center',
+      },
+      tabActiveStyle: {
+        backgroundColor: colors.primary.DEFAULT.toNumber(),
+        borderColor: colors.primary.dark.toNumber(),
+        borderWidth: 1,
+      },
+      tabDisabledStyle: {
+        alpha: 0.4,
+      },
+      panelStyle: {
+        backgroundColor: colors.surface.light.toNumber(),
+        borderColor: colors.border.medium.toNumber(),
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: { tl: 0, tr: 0, bl: 6, br: 6 },
+        width: 'fill',
+      },
+      tabGap: 10,
+      tabTextStyle: {
+        ...textStyles.DEFAULT,
+        fontSize: '16px',
+        color: colors.text.DEFAULT.toString(),
+      },
+    },
     NineSliceButton: {},
     CharText: {
       charSpacing: 0,

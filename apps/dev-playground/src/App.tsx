@@ -4,6 +4,9 @@
 import {
   type MountProps,
   Button,
+  Tab,
+  TabPanel,
+  Tabs,
   Text,
   useLayoutEffect,
   useLayoutRect,
@@ -70,6 +73,38 @@ export function App(props: AppProps) {
             <Text text="Test Button 2" />
           </Button>
         </View>
+
+        <Tabs width={700}>
+          <Tab>
+            <View direction="row" gap={8} alignItems="center">
+              <Text text="Overview" />
+            </View>
+          </Tab>
+          <Tab>
+            <Text text="Settings" />
+          </Tab>
+          <Tab disabled>
+            <Text text="Disabled" />
+          </Tab>
+
+          <TabPanel>
+            <View gap={8}>
+              <Text text="This panel hosts Phaser JSX content." />
+              <Text text="Swap tabs to see different content containers." />
+            </View>
+          </TabPanel>
+          <TabPanel>
+            <View gap={6}>
+              <Text text="Settings panel (custom VNode header)." />
+              <Text text="Add any UI controls or layouts here." />
+            </View>
+          </TabPanel>
+          <TabPanel>
+            <View gap={6}>
+              <Text text="Disabled tab keeps its panel unreachable." />
+            </View>
+          </TabPanel>
+        </Tabs>
 
         <View width={400} backgroundColor={0x444444} cornerRadius={10} padding={20}>
           <Text
