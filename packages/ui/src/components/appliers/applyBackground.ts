@@ -13,7 +13,10 @@ import type { BackgroundProps, LayoutProps } from '../../core-props'
  * @param next - New props
  */
 export function applyBackgroundProps(
-  container: Phaser.GameObjects.Container & { __background?: Phaser.GameObjects.Graphics },
+  container: Phaser.GameObjects.Container & {
+    __background?: Phaser.GameObjects.Graphics
+    __getLayoutSize?: () => { width: number; height: number }
+  },
   prev: Partial<BackgroundProps & LayoutProps>,
   next: Partial<BackgroundProps & LayoutProps>
 ): void {
@@ -21,10 +24,22 @@ export function applyBackgroundProps(
   const nextBgColor = next.backgroundColor
   const prevBgAlpha = prev.backgroundAlpha ?? 1
   const nextBgAlpha = next.backgroundAlpha ?? 1
-  const prevWidth = typeof prev.width === 'number' ? prev.width : 100
-  const nextWidth = typeof next.width === 'number' ? next.width : 100
-  const prevHeight = typeof prev.height === 'number' ? prev.height : 100
-  const nextHeight = typeof next.height === 'number' ? next.height : 100
+
+  // Get actual layout size if available, fall back to props
+  let prevWidth = typeof prev.width === 'number' ? prev.width : 100
+  let prevHeight = typeof prev.height === 'number' ? prev.height : 100
+  let nextWidth = typeof next.width === 'number' ? next.width : 100
+  let nextHeight = typeof next.height === 'number' ? next.height : 100
+
+  // Use actual layout size if available (for auto-sized or calculated dimensions)
+  if (container.__getLayoutSize) {
+    const layoutSize = container.__getLayoutSize()
+    prevWidth = layoutSize.width
+    prevHeight = layoutSize.height
+    nextWidth = layoutSize.width
+    nextHeight = layoutSize.height
+  }
+
   const prevCornerRadius = prev.cornerRadius ?? 0
   const nextCornerRadius = next.cornerRadius ?? 0
   const prevBorderColor = prev.borderColor
