@@ -1,14 +1,15 @@
 /**
  * Main app component for dev playground
  */
-import { Button, Text, View } from '@number10/phaserjsx'
+import { type MountProps, Button, Text, View } from '@number10/phaserjsx'
 
 /**
  * Props for App component
  */
-export interface AppProps {
-  width: number
-  height: number
+
+export interface AppProps extends MountProps {
+  /** Additional props can be defined here if needed */
+  title?: string
 }
 
 /**
@@ -16,16 +17,10 @@ export interface AppProps {
  */
 export function App(props: AppProps) {
   return (
-    <View
-      width={props.width}
-      height={props.height}
-      backgroundColor={0x333333}
-      alpha={0.8}
-      padding={40}
-    >
+    <View width={'fill'} height={'fill'} backgroundColor={0x333333} alpha={0.8} padding={40}>
       <View gap={20} alignItems="center" justifyContent="center" width="100%" height="100%">
         <Text
-          text="🚀 PhaserJSX Dev Playground"
+          text={props.title ?? 'Playground'}
           style={{
             fontSize: '48px',
             fontFamily: 'Arial',

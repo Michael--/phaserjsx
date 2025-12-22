@@ -72,7 +72,7 @@ const config: Phaser.Types.Core.GameConfig = {
         start: true,
         data: {
           component: App,
-          props: {},
+          props: { title: '🚀 PhaserJSX Dev Playground' },
         },
       },
     ],
