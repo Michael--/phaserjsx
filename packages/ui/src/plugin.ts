@@ -107,9 +107,40 @@ export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
     const shouldAutoMount = this.config?.autoMount !== false
     if (shouldAutoMount && this.config?.component) {
       this.mount()
+      this.setupResizeHandler()
     } else {
       console.warn('[PhaserJSX Plugin] Auto-mount disabled or no component configured')
     }
+  }
+
+  /**
+   * Setup resize event handler
+   */
+  private setupResizeHandler(): void {
+    if (!this.targetScene) return
+
+    // Listen to scale resize events
+    this.targetScene.scale.on('resize', this.onResize, this)
+  }
+
+  /**
+   * Handle scene resize - update component props
+   */
+  private onResize(gameSize: Phaser.Structs.Size): void {
+    if (!this.mountHandle || !this.config?.component || !this.container) return
+
+    // Get current props
+    const props = this.config.props || {}
+    const width = (props as { width?: unknown }).width ?? gameSize.width
+    const height = (props as { height?: unknown }).height ?? gameSize.height
+
+    // Call mountJSX again with same container and component
+    // This will trigger a patch since mount already exists for this container
+    this.mountHandle = mountJSX(this.container, this.config.component as any, {
+      ...props,
+      width,
+      height,
+    })
   }
 
   /**
@@ -197,6 +228,7 @@ export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
     this.game.events.off('ready', this.onGameReady, this)
     if (this.targetScene) {
       this.targetScene.events.off('create', this.onSceneCreate, this)
+      this.targetScene.scale.off('resize', this.onResize, this)
     }
 
     // Clear references

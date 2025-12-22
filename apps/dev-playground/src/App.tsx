@@ -1,7 +1,16 @@
 /**
  * Main app component for dev playground
  */
-import { type MountProps, Button, Text, View } from '@number10/phaserjsx'
+import {
+  type MountProps,
+  Button,
+  Text,
+  useEffect,
+  useLayoutRect,
+  useRef,
+  useState,
+  View,
+} from '@number10/phaserjsx'
 
 /**
  * Props for App component
@@ -16,8 +25,27 @@ export interface AppProps extends MountProps {
  * Main App component
  */
 export function App(props: AppProps) {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const [layoutText, setLayoutText] = useState('Calculating layout...')
+
+  // console.log('App props:', props)
+
+  useEffect(() => {
+    setTimeout(() => {
+      const layout = useLayoutRect(ref)
+      setLayoutText(JSON.stringify(layout, null, 2))
+    }, 0)
+  }, [props, ref])
+
   return (
-    <View width={'fill'} height={'fill'} backgroundColor={0x333333} alpha={0.8} padding={40}>
+    <View
+      ref={ref}
+      width={'fill'}
+      height={'fill'}
+      backgroundColor={0x333333}
+      alpha={0.8}
+      padding={40}
+    >
       <View gap={20} alignItems="center" justifyContent="center" width="100%" height="100%">
         <Text
           text={props.title ?? 'Playground'}
@@ -54,6 +82,15 @@ export function App(props: AppProps) {
               fontSize: '18px',
               fontFamily: 'Arial',
               color: '#cccccc',
+              align: 'left',
+            }}
+          />
+          <Text
+            text={`\nLayout Info:\n${layoutText}`}
+            style={{
+              fontSize: '14px',
+              fontFamily: 'Courier New',
+              color: '#888888',
               align: 'left',
             }}
           />

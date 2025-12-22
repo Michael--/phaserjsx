@@ -1513,17 +1513,32 @@ export function mountJSX(
     }
 
     // Patch existing mount with new props
-    // MountProps (width, height, disableAutoSize, key) are ignored - only first call matters
-    const { width: _w, height: _h, disableAutoSize: _d, key: _k, ...componentProps } = props
+    // Check if MountProps (width, height) have changed - if so, update them
+    const newWidth = props.width ?? existingMount.props.width
+    const newHeight = props.height ?? existingMount.props.height
+    const dimensionsChanged =
+      newWidth !== existingMount.props.width || newHeight !== existingMount.props.height
 
-    // Update stored props in registry (for future remounts)
-    existingMount.props = { ...existingMount.props, ...componentProps }
+    // Extract mount-only props (disableAutoSize, key) but keep width/height for component
+    const { disableAutoSize: _d, key: _k, ...componentProps } = props
+
+    // Update stored props in registry (including dimensions if changed)
+    if (dimensionsChanged) {
+      existingMount.props = {
+        ...existingMount.props,
+        ...componentProps,
+        width: newWidth,
+        height: newHeight,
+      }
+    } else {
+      existingMount.props = { ...existingMount.props, ...componentProps }
+    }
 
     // Create new VNode with updated props for patching
     let newVNode: VNode
 
     if ((existingMount.props as MountProps).disableAutoSize) {
-      // Without wrapper
+      // Without wrapper - pass width/height directly to component
       newVNode = {
         type: existingMount.type,
         props: {
@@ -1534,10 +1549,14 @@ export function mountJSX(
         children: [],
       }
     } else {
-      // With SceneWrapper
+      // With SceneWrapper - pass width/height to both wrapper AND component
       const componentVNode: VNode = {
         type: existingMount.type,
-        props: componentProps,
+        props: {
+          ...componentProps,
+          width: existingMount.props.width,
+          height: existingMount.props.height,
+        },
         children: [],
       }
 
@@ -1569,7 +1588,8 @@ export function mountJSX(
   }
 
   // Extract MountProps and component props
-  const { width, height, disableAutoSize = false, ...componentProps } = props
+  // Note: width/height are passed to BOTH SceneWrapper AND component for full access
+  const { width, height, disableAutoSize = false, key: _key, ...componentProps } = props
 
   // Extract scene and set viewport dimensions
   const scene =
@@ -1589,13 +1609,17 @@ export function mountJSX(
   let vnode: VNode
 
   if (disableAutoSize) {
-    // Without wrapper: mount component directly (legacy behavior)
+    // Without wrapper: mount component directly with width/height
     vnode = { type, props: { ...componentProps, width, height }, children: [] }
   } else {
-    // With wrapper (DEFAULT): use SceneWrapper for percentage-based sizing
+    // With wrapper (DEFAULT): pass width/height to both wrapper AND component
     const componentVNode: VNode = {
       type,
-      props: componentProps,
+      props: {
+        ...componentProps,
+        width,
+        height,
+      },
       children: [],
     }
 
