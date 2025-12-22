@@ -1282,6 +1282,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
   }
   const nodeType = oldV.type as NodeType
   newV = setVNodePropSafe(newV, '__node', oldV.__node)
+  newV = setVNodePropSafe(newV, '__parent', oldV.__parent ?? parent)
 
   // Transfer theme from newV to oldV (theme may have changed)
   // Transfer theme from newV to oldV, or inherit from oldV if newV has no theme
