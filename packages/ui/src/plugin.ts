@@ -1,0 +1,208 @@
+/**
+ * PhaserJSX Plugin for automatic JSX mounting
+ * Enables declarative initialization via Phaser game config
+ */
+import Phaser from 'phaser'
+import type { VNode } from './hooks'
+import { mountJSX, type MountHandle, type MountProps } from './vdom'
+
+/**
+ * Plugin configuration
+ */
+export interface PhaserJSXPluginConfig {
+  /** Component to mount */
+  component?: ((props: unknown) => VNode) | string
+  /** Props for component (must include width and height) */
+  props?: MountProps & Record<string, unknown>
+  /** Container configuration */
+  container?: {
+    x?: number
+    y?: number
+    depth?: number
+  }
+  /** Auto-mount on scene create (default: true) */
+  autoMount?: boolean
+}
+
+/**
+ * PhaserJSX Plugin
+ * Provides automatic JSX mounting through Phaser plugin system
+ *
+ * @example
+ * ```typescript
+ * // In game config
+ * plugins: {
+ *   global: [{
+ *     key: 'PhaserJSX',
+ *     plugin: PhaserJSXPlugin,
+ *     start: true,
+ *     data: {
+ *       component: App,
+ *       props: { width: '100%', height: '100%' }
+ *     }
+ *   }]
+ * }
+ * ```
+ */
+export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
+  private config: PhaserJSXPluginConfig | undefined
+  private mountHandle: MountHandle | undefined
+  private container: Phaser.GameObjects.Container | undefined
+  private targetScene: Phaser.Scene | undefined
+
+  /**
+   * Constructor - receives plugin manager and optional mapping
+   */
+  constructor(pluginManager: Phaser.Plugins.PluginManager) {
+    super(pluginManager)
+  }
+
+  /**
+   * Init lifecycle - called first with config data
+   */
+  override init(data?: PhaserJSXPluginConfig): void {
+    if (data) {
+      this.config = { ...data }
+    }
+  }
+
+  /**
+   * Start lifecycle - called when plugin should start
+   */
+  override start(): void {
+    // Listen for scene being added to the scene manager
+    this.game.events.on('ready', this.onGameReady, this)
+  }
+
+  /**
+   * Game ready handler - scene system is now initialized
+   */
+  private onGameReady(): void {
+    // Get first scene
+    const scenes = this.game.scene.scenes
+
+    if (scenes.length > 0) {
+      const targetScene = scenes[0]
+      if (!targetScene) return
+
+      this.targetScene = targetScene
+
+      // Listen to scene events
+      targetScene.events.once('create', this.onSceneCreate, this)
+
+      // If scene is already created, mount immediately
+      if (targetScene.scene.isActive()) {
+        this.onSceneCreate()
+      }
+    } else {
+      console.warn('[PhaserJSX Plugin] No scenes found to mount JSX')
+    }
+  }
+
+  /**
+   * Scene create handler - auto-mount JSX
+   */
+  private onSceneCreate(): void {
+    // Auto-mount if enabled and component is configured
+    const shouldAutoMount = this.config?.autoMount !== false
+    if (shouldAutoMount && this.config?.component) {
+      this.mount()
+    } else {
+      console.warn('[PhaserJSX Plugin] Auto-mount disabled or no component configured')
+    }
+  }
+
+  /**
+   * Configure plugin
+   * Can be called from scene to set up component dynamically
+   */
+  configure(
+    component: ((props: unknown) => VNode) | string,
+    props?: MountProps & Record<string, unknown>
+  ): void {
+    const newConfig: PhaserJSXPluginConfig = {
+      component,
+    }
+    if (props !== undefined) {
+      newConfig.props = props
+    }
+    this.config = {
+      ...this.config,
+      ...newConfig,
+    }
+  }
+
+  /**
+   * Mount JSX component
+   */
+  mount(): void {
+    if (!this.targetScene) {
+      console.warn('[PhaserJSX Plugin] No scene available for mounting')
+      return
+    }
+
+    if (!this.config?.component) {
+      console.warn('[PhaserJSX Plugin] No component configured for mounting')
+      return
+    }
+
+    // Create container if not exists
+    if (!this.container) {
+      const containerConfig = this.config.container || {}
+      this.container = this.targetScene.add.container(
+        containerConfig.x ?? 0,
+        containerConfig.y ?? 0
+      )
+      this.container.setDepth(containerConfig.depth ?? 100)
+    }
+
+    // Get dimensions from config or use scene dimensions
+    const props = this.config.props || {}
+    const width = (props as { width?: unknown }).width ?? this.targetScene.scale.width
+    const height = (props as { height?: unknown }).height ?? this.targetScene.scale.height
+
+    // Mount JSX
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.mountHandle = mountJSX(this.container, this.config.component as any, {
+      ...props,
+      width,
+      height,
+    })
+  }
+
+  /**
+   * Unmount JSX component
+   */
+  unmount(): void {
+    if (this.mountHandle) {
+      this.mountHandle.unmount()
+      this.mountHandle = undefined
+    }
+  }
+
+  /**
+   * Destroy lifecycle - cleanup
+   */
+  override destroy(): void {
+    // Unmount JSX
+    this.unmount()
+
+    // Remove container
+    if (this.container) {
+      this.container.destroy()
+      this.container = undefined
+    }
+
+    // Remove listeners
+    this.game.events.off('ready', this.onGameReady, this)
+    if (this.targetScene) {
+      this.targetScene.events.off('create', this.onSceneCreate, this)
+    }
+
+    // Clear references
+    this.targetScene = undefined
+    this.config = undefined
+
+    super.destroy()
+  }
+}

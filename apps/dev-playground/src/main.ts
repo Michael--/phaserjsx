@@ -1,7 +1,8 @@
 /**
  * Dev playground for PhaserJSX - focused development environment
+ * Using PhaserJSX Plugin for automatic mounting
  */
-import { mountJSX } from '@number10/phaserjsx'
+import { PhaserJSXPlugin } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 import { App } from './App'
 
@@ -17,7 +18,7 @@ class PlaygroundScene extends Phaser.Scene {
   }
 
   /**
-   * Create scene and mount JSX app
+   * Create scene - only background, JSX mounting handled by plugin
    */
   create() {
     console.log('PlaygroundScene.create() dimensions:', this.scale.width, 'x', this.scale.height)
@@ -37,19 +38,13 @@ class PlaygroundScene extends Phaser.Scene {
     }
     graphics.strokePath()
 
-    // Mount JSX app
-    const container = this.add.container(0, 0)
-    container.setDepth(100)
-
-    mountJSX(container, App, {
-      width: this.scale.width,
-      height: this.scale.height,
-    })
+    // JSX mounting is handled automatically by PhaserJSXPlugin
+    console.log('[PlaygroundScene] JSX will be mounted by plugin')
   }
 }
 
 /**
- * Phaser game configuration
+ * Phaser game configuration with PhaserJSX Plugin
  */
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -69,6 +64,19 @@ const config: Phaser.Types.Core.GameConfig = {
   backgroundColor: '#2a2a2a',
   parent: 'app',
   scene: [PlaygroundScene],
+  plugins: {
+    global: [
+      {
+        key: 'PhaserJSX',
+        plugin: PhaserJSXPlugin,
+        start: true,
+        data: {
+          component: App,
+          props: {},
+        },
+      },
+    ],
+  },
 }
 
 const game = new Phaser.Game(config)
