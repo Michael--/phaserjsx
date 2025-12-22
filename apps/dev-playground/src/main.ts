@@ -2,7 +2,7 @@
  * Dev playground for PhaserJSX - focused development environment
  * Using PhaserJSX Plugin for automatic mounting
  */
-import { PhaserJSXPlugin } from '@number10/phaserjsx'
+import { createPhaserJSXPlugin } from '@number10/phaserjsx'
 import Phaser from 'phaser'
 import { App } from './App'
 
@@ -66,15 +66,11 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: [PlaygroundScene],
   plugins: {
     global: [
-      {
-        key: 'PhaserJSX',
-        plugin: PhaserJSXPlugin,
-        start: true,
-        data: {
-          component: App,
-          props: { title: '🚀 PhaserJSX Dev Playground' },
-        },
-      },
+      createPhaserJSXPlugin({
+        component: App,
+        props: { title: '🚀 PhaserJSX Dev Playground' },
+        autoResize: true,
+      }),
     ],
   },
 }

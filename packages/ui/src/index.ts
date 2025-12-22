@@ -47,7 +47,12 @@ export { DOMInputElement, type DOMInputConfig } from './utils/dom-input-manager'
 export { KeyboardInputManager, type KeyboardInputManagerConfig } from './utils/KeyboardInputManager'
 
 // Export PhaserJSX Plugin for automatic mounting
-export { PhaserJSXPlugin, type PhaserJSXPluginConfig } from './plugin'
+export {
+  createPhaserJSXPlugin,
+  PhaserJSXPlugin,
+  type PhaserJSXPluginConfig,
+  type PhaserJSXPluginEntry,
+} from './plugin'
 
 // Explicit export for convenience functions
 export {

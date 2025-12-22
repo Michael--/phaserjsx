@@ -9,11 +9,11 @@ import { mountJSX, type MountHandle, type MountProps } from './vdom'
 /**
  * Plugin configuration
  */
-export interface PhaserJSXPluginConfig {
+export interface PhaserJSXPluginConfig<P = Record<string, unknown>> {
   /** Component to mount */
-  component?: ((props: unknown) => VNode) | string
-  /** Props for component (must include width and height) */
-  props?: MountProps & Record<string, unknown>
+  component?: ((props: P & MountProps) => VNode) | string
+  /** Props for component (width and height are auto-injected from game size) */
+  props?: P
   /** Container configuration */
   container?: {
     x?: number
@@ -22,6 +22,67 @@ export interface PhaserJSXPluginConfig {
   }
   /** Auto-mount on scene create (default: true) */
   autoMount?: boolean
+  /** Auto-resize on scale events (default: true) */
+  autoResize?: boolean
+}
+
+/**
+ * Type-safe plugin entry for PhaserJSX Plugin
+ * Use this in game config for proper TypeScript support
+ *
+ * @example
+ * ```typescript
+ * const config: Phaser.Types.Core.GameConfig = {
+ *   plugins: {
+ *     global: [
+ *       createPhaserJSXPlugin({
+ *         component: App,
+ *         props: { title: 'My App' },
+ *         autoResize: true
+ *       })
+ *     ]
+ *   }
+ * }
+ * ```
+ */
+export interface PhaserJSXPluginEntry<P = Record<string, unknown>> {
+  key: string
+  plugin: typeof PhaserJSXPlugin
+  start: boolean
+  data: PhaserJSXPluginConfig<P>
+}
+
+/**
+ * Creates a type-safe PhaserJSX plugin entry for game config
+ * Provides full IDE autocomplete and type checking for plugin configuration
+ *
+ * @param config - Plugin configuration
+ * @returns Type-safe plugin entry for Phaser game config
+ *
+ * @example
+ * ```typescript
+ * const config: Phaser.Types.Core.GameConfig = {
+ *   plugins: {
+ *     global: [
+ *       createPhaserJSXPlugin({
+ *         component: App,
+ *         props: { title: 'My App' },
+ *         autoResize: true
+ *       })
+ *     ]
+ *   }
+ * }
+ * ```
+ */
+export function createPhaserJSXPlugin<P = Record<string, unknown>>(
+  config: PhaserJSXPluginConfig<P>
+): PhaserJSXPluginEntry<P> {
+  return {
+    key: 'PhaserJSX',
+    plugin: PhaserJSXPlugin,
+    start: true,
+    data: config,
+  }
 }
 
 /**
@@ -107,7 +168,10 @@ export class PhaserJSXPlugin extends Phaser.Plugins.BasePlugin {
     const shouldAutoMount = this.config?.autoMount !== false
     if (shouldAutoMount && this.config?.component) {
       this.mount()
-      this.setupResizeHandler()
+      // Setup resize handler if auto-resize is enabled (default: true)
+      if (this.config?.autoResize !== false) {
+        this.setupResizeHandler()
+      }
     } else {
       console.warn('[PhaserJSX Plugin] Auto-mount disabled or no component configured')
     }
