@@ -63,6 +63,8 @@ export interface ScrollViewProps extends ViewProps {
   momentum?: boolean
   /** Callback fired when snapping lands on a target (index is from snap.positions) */
   onSnap?: (index: number) => void
+  /** Callback to deliver the slider size */
+  onSliderSize?: (size: { width: number; height: number }) => void
 }
 
 /**
@@ -82,6 +84,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     snapThreshold = 20,
     momentum = true,
     onSnap,
+    ...viewProps
   } = props
 
   const [scroll, setScroll] = useState({
@@ -105,9 +108,6 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
   const wheelSnapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const WHEEL_SNAP_DELAY = 200
 
-  // Get slider size, considering size variant and theme
-  const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
-
   // Calculate if scrolling is needed
   const viewportHeight = viewportRef.current?.height ?? 0
   const viewportWidth = viewportRef.current?.width ?? 0
@@ -123,6 +123,13 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     showVerticalSlider === true || (needsVerticalScroll && showVerticalSlider === 'auto')
   const showHorizontalSliderActual =
     showHorizontalSlider === true || (needsHorizontalScroll && showHorizontalSlider === 'auto')
+
+  // Get slider size, considering size variant and theme
+  const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
+  props.onSliderSize?.({
+    width: showVerticalSlider ? sliderSize : 0,
+    height: showHorizontalSliderActual ? sliderSize : 0,
+  })
 
   const maxScrollY = Math.max(0, effectiveContentHeight - viewportHeight)
   const maxScrollX = Math.max(0, effectiveContentWidth - viewportWidth)
@@ -587,8 +594,11 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     }
   }, [showVerticalSliderActual, showHorizontalSliderActual])
 
+  const resolvedVisible =
+    viewProps.visible === 'none' ? 'none' : visible ? (viewProps.visible ?? true) : false
+
   return (
-    <View visible={visible}>
+    <View {...viewProps} visible={resolvedVisible}>
       <View direction="row" width="100%" height="100%" gap={0} padding={0}>
         {/* ScrollView takes remaining space */}
         <View flex={1} height={'100%'} direction="column">

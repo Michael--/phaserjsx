@@ -15,6 +15,9 @@ import {
   View,
 } from '@number10/phaserjsx'
 
+// DevConfig.debug.enabled = true
+// DevConfig.debug.layout = true
+
 /**
  * Props for App component
  */
@@ -30,6 +33,19 @@ export interface AppProps extends MountProps {
 export function App(props: AppProps) {
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
   const [layoutText, setLayoutText] = useState('Calculating layout...')
+  const [scrollTabIndex, setScrollTabIndex] = useState(0)
+  const scrollTabLabels = [
+    'Overview',
+    'Settings',
+    'Audio',
+    'Video',
+    'Network',
+    'Controls',
+    'Gameplay',
+    'Profiles',
+    'Credits',
+    'About',
+  ]
 
   useLayoutEffect(() => {
     const layout = useLayoutRect(ref)
@@ -76,9 +92,7 @@ export function App(props: AppProps) {
 
         <Tabs width={700}>
           <Tab>
-            <View direction="row" gap={8} alignItems="center">
-              <Text text="Overview" />
-            </View>
+            <Text text="Overview" />
           </Tab>
           <Tab>
             <Text text="Settings" />
@@ -87,23 +101,37 @@ export function App(props: AppProps) {
             <Text text="Disabled" />
           </Tab>
 
-          <TabPanel>
-            <View gap={8}>
-              <Text text="This panel hosts Phaser JSX content." />
-              <Text text="Swap tabs to see different content containers." />
-            </View>
+          <TabPanel minHeight={200} gap={8}>
+            <Text text="This panel hosts Phaser JSX content." />
+            <Text text="Swap tabs to see different content containers." />
           </TabPanel>
-          <TabPanel>
-            <View gap={6}>
-              <Text text="Settings panel (custom VNode header)." />
-              <Text text="Add any UI controls or layouts here." />
-            </View>
+          <TabPanel minHeight={200} gap={6}>
+            <Text text="Settings panel (custom VNode header)." />
+            <Text text="Add any UI controls or layouts here." />
           </TabPanel>
-          <TabPanel>
-            <View gap={6}>
-              <Text text="Disabled tab keeps its panel unreachable." />
-            </View>
+          <TabPanel minHeight={200} gap={6}>
+            <Text text="Disabled tab keeps its panel unreachable." />
           </TabPanel>
+        </Tabs>
+
+        <Tabs
+          width={700}
+          scrollableTabs={true}
+          activeIndex={scrollTabIndex}
+          onChange={setScrollTabIndex}
+        >
+          {scrollTabLabels.map((label) => (
+            <Tab key={label}>
+              <Text text={label} />
+            </Tab>
+          ))}
+          {scrollTabLabels.map((label) => (
+            <TabPanel key={`${label}-panel`}>
+              <View padding={10} backgroundColor={0xffff3f} cornerRadius={6}>
+                <Text text={`${label} panel`} />
+              </View>
+            </TabPanel>
+          ))}
         </Tabs>
 
         <View width={400} backgroundColor={0x444444} cornerRadius={10} padding={20}>

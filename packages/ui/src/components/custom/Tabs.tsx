@@ -3,12 +3,13 @@
  * Tabs component - horizontal tab list with switchable panels
  */
 import type { ViewProps } from '..'
-import { useMemo, useState, useTheme } from '../../hooks'
+import type { VNode } from '../../hooks'
+import { useLayoutEffect, useLayoutRect, useMemo, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
-import type { VNode } from '../../hooks'
 import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
+import { ScrollView, type ScrollViewProps } from './ScrollView'
 
 /**
  * Props for Tab header
@@ -44,6 +45,10 @@ export interface TabsProps extends Omit<ViewProps, 'children'> {
   onChange?: (index: number) => void
   /** Optional gap between tab headers */
   tabGap?: number
+  /** Enable horizontal scrolling for the tab list */
+  scrollableTabs?: boolean
+  /** ScrollView props applied to the tab list when scrollableTabs is enabled */
+  tabListScrollProps?: Omit<ScrollViewProps, 'children'>
 }
 
 /**
@@ -124,39 +129,83 @@ export function Tabs(props: TabsProps): VNodeLike {
   const activePanelProps = (activePanel?.props as TabPanelProps | undefined) ?? {}
   const panelChildren = activePanel?.children ?? activePanelProps.children
   const { children: _panelChildren, ...panelViewProps } = activePanelProps
+  const scrollableTabs = props.scrollableTabs ?? true
+  const tabListScrollProps = props.tabListScrollProps ?? {}
+
+  const tabListContentStyle = scrollableTabs
+    ? {
+        height: tabListStyle.height ?? '100%',
+        alignItems: tabListStyle.alignItems ?? 'center',
+      }
+    : {}
+
+  const tabListContent = (
+    <View
+      {...tabListStyle}
+      {...tabListContentStyle}
+      {...(tabGap !== undefined ? { gap: tabGap } : {})}
+      direction="row"
+      width={scrollableTabs ? 'auto' : '100%'}
+      height="auto"
+    >
+      {tabs.slice(0, panelCount).map((tab, index) => {
+        const tabProps = (tab.props as TabProps | undefined) ?? {}
+        const { label, disabled, onTouch, enableGestures, ...tabViewProps } = tabProps
+        const tabChildren = tab.children ?? tabProps.children
+        const isActive = index === safeIndex
+        const combinedTabStyle = {
+          ...tabStyle,
+          ...(isActive ? tabActiveStyle : {}),
+          ...(disabled ? tabDisabledStyle : {}),
+          ...tabViewProps,
+        }
+        const tabKey = tab.__key ?? tabProps.key ?? index
+
+        return (
+          <View
+            key={tabKey as string | number}
+            {...combinedTabStyle}
+            enableGestures={!disabled && (enableGestures ?? true)}
+            onTouch={(data) => {
+              if (disabled) return
+              handleSelect(index)
+              onTouch?.(data)
+            }}
+          >
+            {tabChildren ?? (label ? <Text text={label} style={tabTextStyle} /> : null)}
+          </View>
+        )
+      })}
+    </View>
+  )
+
+  // Measure tab height for scrollable tab list - a little hacky but works
+  const [tabHeight, setTabHeight] = useState<number>(0)
+  const [sliderHeight, setSliderHeight] = useState<number>(0)
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  useLayoutEffect(() => {
+    const layout = useLayoutRect(ref)
+    if (layout) setTabHeight(layout.height)
+  }, [props, ref])
 
   return (
     <View {...themed} {...viewProps} direction="column" theme={nestedTheme}>
-      <View {...tabListStyle} {...(tabGap !== undefined ? { gap: tabGap } : {})} direction="row">
-        {tabs.slice(0, panelCount).map((tab, index) => {
-          const tabProps = (tab.props as TabProps | undefined) ?? {}
-          const { label, disabled, onTouch, enableGestures, ...tabViewProps } = tabProps
-          const tabChildren = tab.children ?? tabProps.children
-          const isActive = index === safeIndex
-          const combinedTabStyle = {
-            ...tabStyle,
-            ...(isActive ? tabActiveStyle : {}),
-            ...(disabled ? tabDisabledStyle : {}),
-            ...tabViewProps,
-          }
-          const tabKey = tab.__key ?? tabProps.key ?? index
-
-          return (
-            <View
-              key={tabKey as string | number}
-              {...combinedTabStyle}
-              enableGestures={!disabled && (enableGestures ?? true)}
-              onTouch={(data) => {
-                if (disabled) return
-                handleSelect(index)
-                onTouch?.(data)
-              }}
-            >
-              {tabChildren ?? (label ? <Text text={label} style={tabTextStyle} /> : null)}
-            </View>
-          )
-        })}
-      </View>
+      {scrollableTabs ? (
+        <ScrollView
+          width="100%"
+          height={tabHeight + sliderHeight}
+          showHorizontalSlider="auto"
+          showVerticalSlider={false}
+          sliderSize="tiny"
+          theme={nestedTheme}
+          onSliderSize={(size) => setSliderHeight(size.height)}
+          {...tabListScrollProps}
+        >
+          <View ref={ref}>{tabListContent}</View>
+        </ScrollView>
+      ) : (
+        tabListContent
+      )}
 
       {activePanel ? (
         <View {...panelStyle} {...panelViewProps}>

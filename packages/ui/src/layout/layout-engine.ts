@@ -483,6 +483,24 @@ const strategies: Record<string, LayoutStrategy> = {
  * @param newWidth - New width after layout
  * @param newHeight - New height after layout
  */
+type LayoutSize = { width: number; height: number }
+type LayoutCycleState = {
+  last: LayoutSize
+  prev?: LayoutSize
+  count: number
+  lastTime: number
+}
+
+const LAYOUT_CYCLE_EPSILON = 0.5
+const LAYOUT_CYCLE_TIME_MS = 100
+const LAYOUT_CYCLE_MAX = 5
+const LAYOUT_MAX_SIZE = 200000
+const layoutCycleGuard = new WeakMap<Phaser.GameObjects.Container, LayoutCycleState>()
+
+function isCloseSize(a: LayoutSize, b: LayoutSize, epsilon: number): boolean {
+  return Math.abs(a.width - b.width) < epsilon && Math.abs(a.height - b.height) < epsilon
+}
+
 function invalidateParentLayoutIfNeeded(
   container: Phaser.GameObjects.Container,
   oldSize: { width: number; height: number } | undefined,
@@ -490,8 +508,62 @@ function invalidateParentLayoutIfNeeded(
   newHeight: number
 ): void {
   // Skip if no old size (first layout) or size unchanged
-  if (!oldSize || (oldSize.width === newWidth && oldSize.height === newHeight)) {
+  if (
+    !oldSize ||
+    (Math.abs(oldSize.width - newWidth) < LAYOUT_CYCLE_EPSILON &&
+      Math.abs(oldSize.height - newHeight) < LAYOUT_CYCLE_EPSILON)
+  ) {
     return
+  }
+
+  if (
+    !Number.isFinite(newWidth) ||
+    !Number.isFinite(newHeight) ||
+    newWidth > LAYOUT_MAX_SIZE ||
+    newHeight > LAYOUT_MAX_SIZE
+  ) {
+    const containerWithProps = container as Phaser.GameObjects.Container & {
+      __layoutProps?: LayoutProps
+      list?: unknown[]
+    }
+    DebugLogger.warn('layout', 'Runaway layout size detected, skipping parent invalidation', {
+      oldSize,
+      newSize: { width: newWidth, height: newHeight },
+      containerProps: containerWithProps.__layoutProps,
+      childCount: containerWithProps.list?.length ?? 0,
+    })
+    return
+  }
+
+  const newSize = { width: newWidth, height: newHeight }
+  const now = Date.now()
+  const guard = layoutCycleGuard.get(container)
+  if (guard) {
+    const repeatsPrev = guard.prev ? isCloseSize(guard.prev, newSize, LAYOUT_CYCLE_EPSILON) : false
+    if (repeatsPrev && now - guard.lastTime < LAYOUT_CYCLE_TIME_MS) {
+      guard.count += 1
+    } else {
+      guard.count = 0
+    }
+    guard.prev = guard.last
+    guard.last = newSize
+    guard.lastTime = now
+    layoutCycleGuard.set(container, guard)
+
+    if (guard.count >= LAYOUT_CYCLE_MAX) {
+      DebugLogger.warn('layout', 'Layout cycle detected, skipping parent invalidation', {
+        container,
+        oldSize,
+        newSize,
+      })
+      return
+    }
+  } else {
+    layoutCycleGuard.set(container, {
+      last: newSize,
+      count: 0,
+      lastTime: now,
+    })
   }
 
   // Size changed - need to recalculate parent layout
