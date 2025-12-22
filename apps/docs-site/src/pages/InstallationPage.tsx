@@ -13,6 +13,7 @@ import gameConfigCode from '../examples-docs/installation/game-config.ts?raw'
 import inputConfigCode from '../examples-docs/installation/input-config.ts?raw'
 import propsCode from '../examples-docs/installation/mount-with-props.tsx?raw'
 import multiMountCode from '../examples-docs/installation/multi-mount.tsx?raw'
+import pluginConfigCode from '../examples-docs/installation/plugin-config.tsx?raw'
 import lifecycleCode from '../examples-docs/installation/scene-lifecycle.tsx?raw'
 import testCode from '../examples-docs/installation/test-component.tsx?raw'
 import '../styles/docs.css'
@@ -170,7 +171,9 @@ import { View, Text } from '@number10/phaserjsx'
         <SectionTitle>3. Integrating with Phaser</SectionTitle>
         <DocParagraph>
           PhaserJSX components are rendered within Phaser scenes using the <code>mountJSX</code>{' '}
-          function. This is the bridge between Phaser's Scene lifecycle and your JSX components.
+          function. This is the bridge between Phaser's Scene lifecycle and your JSX components. If
+          you'd rather avoid manual calls, you can also use the PhaserJSX plugin to auto-mount your
+          root component from the game config.
         </DocParagraph>
 
         <div className="doc-subsection">
@@ -215,6 +218,18 @@ import { View, Text } from '@number10/phaserjsx'
               tree.
             </div>
           </div>
+        </div>
+
+        <div className="doc-subsection">
+          <h3>Optional: Auto-Mount with the PhaserJSX Plugin</h3>
+          <DocParagraph>
+            The plugin approach wires JSX mounting directly into the game config. It auto-mounts on
+            the first scene <code>create()</code> and can listen for resize events when{' '}
+            <code>autoResize</code> is enabled.
+          </DocParagraph>
+          <CodeBlock language="typescript" title="main.ts">
+            {pluginConfigCode}
+          </CodeBlock>
         </div>
 
         <div className="doc-subsection">

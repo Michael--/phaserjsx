@@ -6,6 +6,7 @@ import { DocDescription } from '@/components/Doc'
 import { CodeBlock } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import '@/styles/docs.css'
+import pluginConfigCode from '../examples-docs/installation/plugin-config.tsx?raw'
 
 /**
  * Quick Start guide for PhaserJSX
@@ -124,6 +125,17 @@ export class GameScene extends Phaser.Scene {
   }
 }`}
         </CodeBlock>
+      </section>
+
+      {/* Optional: Plugin Auto-Mount */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-4">4b. Optional: Auto-Mount with the Plugin</h2>
+        <p className="mb-4">
+          Prefer to avoid manual <code>mountJSX</code> calls? Use the PhaserJSX plugin to auto-mount
+          your root component from the game config. It can also handle resize events when{' '}
+          <code>autoResize</code> is enabled.
+        </p>
+        <CodeBlock language="typescript">{pluginConfigCode}</CodeBlock>
       </section>
 
       {/* Step 5: Initialize Phaser Game */}

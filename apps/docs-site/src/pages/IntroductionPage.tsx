@@ -184,6 +184,15 @@ export function IntroductionPage() {
             framework - you're enhanced by it.
           </DocParagraph>
         </div>
+
+        <div className="doc-subsection">
+          <h3>8. Plugin-Based Auto Mounting</h3>
+          <DocParagraph>
+            Prefer configuration-driven setup? The PhaserJSX plugin can auto-mount your root
+            component from the game config, handle scene lifecycle wiring, and optionally resize
+            your UI on scale events.
+          </DocParagraph>
+        </div>
       </DocSection>
 
       <DocSection>
