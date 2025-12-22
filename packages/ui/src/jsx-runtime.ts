@@ -3,10 +3,9 @@
  * This builds plain VNode objects consumed by our custom mount/patch.
  */
 import type { VNode } from './hooks'
-import type { VNodeLike } from './vdom'
+import type { VNodeLike } from './types'
 
-export const Fragment = (props: { children?: VNode | VNode[] | null }): VNodeLike =>
-  props?.children ?? null
+export const Fragment = (props: { children?: VNodeLike }): VNodeLike => props?.children ?? null
 
 /**
  * Safely sets a property on a VNode, handling frozen/sealed objects from bundlers

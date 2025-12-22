@@ -12,10 +12,16 @@ import type { SpriteProps } from './components/primitives/sprite'
 import type { TextProps as PrimitiveTextProps } from './components/primitives/text'
 import type { TileSpriteProps } from './components/primitives/tilesprite'
 import type { ViewProps as PrimitiveViewProps } from './components/primitives/view'
+import type { VNodeLike } from './types'
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
   namespace JSX {
+    type Element = VNodeLike
+    interface ElementChildrenAttribute {
+      // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+      children: {}
+    }
     interface IntrinsicElements {
       // Primitives (lowercase) - internal use only
       view: PrimitiveViewProps

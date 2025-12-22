@@ -16,8 +16,7 @@ import { portalRegistry } from './portal'
 import { getRenderContext } from './render-context'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref } from './types'
-
-export type VNodeLike = VNode | VNode[] | null
+export type { VNodeLike } from './types'
 
 /**
  * Registry for active mountJSX instances to enable complete remounting

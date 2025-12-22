@@ -32,7 +32,11 @@ export interface PropsDefaultExtension<T = unknown> {
   theme?: PartialTheme | undefined
 }
 
-export type ChildrenType = VNode | VNode[] | null | undefined
+export type VNodeChild = VNode | null | undefined | false
+
+export type VNodeLike = VNodeChild | VNodeLike[]
+
+export type ChildrenType = VNodeLike
 
 export interface PropsContainerExtension {
   children?: ChildrenType

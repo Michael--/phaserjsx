@@ -145,8 +145,13 @@ export function Sidebar(props: SidebarProps): VNodeLike {
   } = itemStyle ?? {}
   const { textStyle: badgeTextStyle, ...badgeContainer } = badgeStyle ?? {}
 
-  const normalizeChildren = (child: ChildrenType | null): VNode[] =>
-    child ? (Array.isArray(child) ? child : [child]) : []
+  const normalizeChildren = (child: ChildrenType | null): VNode[] => {
+    if (!child) return []
+    const flat = Array.isArray(child) ? (child as unknown[]).flat(Infinity) : [child]
+    return flat.filter(
+      (node): node is VNode => !!node && typeof node === 'object' && 'type' in node
+    )
+  }
 
   const renderTitle = (title?: string | ChildrenType) => {
     if (!title) return null
@@ -178,7 +183,7 @@ export function Sidebar(props: SidebarProps): VNodeLike {
       const disabledProps =
         item.disabled && disabledAlpha !== undefined ? { alpha: disabledAlpha } : {}
 
-      const content: VNode | VNode[] | null =
+      const content: ChildrenType | null =
         item.content ?? (item.label ? <Text text={item.label} style={itemTextStyle} /> : null)
       const iconNodes = normalizeChildren(item.icon ?? null)
       const contentNodes = normalizeChildren(content)

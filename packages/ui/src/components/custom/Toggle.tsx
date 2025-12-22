@@ -249,9 +249,10 @@ export function Toggle(props: ToggleProps): VNodeLike {
   )
 
   // Build label if provided
-  const labelElement = props.label && labelPosition !== 'none' && (
-    <Text text={props.label} style={themed.labelStyle} />
-  )
+  const labelElement =
+    props.label && labelPosition !== 'none' ? (
+      <Text text={props.label} style={themed.labelStyle} />
+    ) : null
 
   // Render with label positioning
   if (!props.label || labelPosition === 'none') {

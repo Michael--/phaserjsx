@@ -61,6 +61,13 @@ export function Portal(props: PortalProps): VNodeLike {
   const blockEvents = props.blockEvents ?? true
   const mountedNodesRef = useRef<Phaser.GameObjects.GameObject[]>([])
   const previousChildrenRef = useRef<VNode[]>([])
+  const normalizeChildren = (children: ChildrenType): VNode[] => {
+    if (!children) return []
+    const flat = Array.isArray(children) ? (children as unknown[]).flat(Infinity) : [children]
+    return flat.filter(
+      (child): child is VNode => !!child && typeof child === 'object' && 'type' in child
+    )
+  }
 
   // Initial mount effect - runs once
   useEffect(() => {
@@ -83,7 +90,7 @@ export function Portal(props: PortalProps): VNodeLike {
     }
 
     // Mount children directly (preserves absolute positioning)
-    const children = Array.isArray(props.children) ? props.children : [props.children]
+    const children = normalizeChildren(props.children)
     const mountedNodes: Phaser.GameObjects.GameObject[] = []
 
     for (const child of children) {
@@ -97,7 +104,7 @@ export function Portal(props: PortalProps): VNodeLike {
     }
 
     mountedNodesRef.current = mountedNodes
-    previousChildrenRef.current = children as VNode[]
+    previousChildrenRef.current = children
 
     // Register event blocker on invisible container AFTER layout completes
     const gestureManager = getGestureManager(scene)
@@ -170,7 +177,7 @@ export function Portal(props: PortalProps): VNodeLike {
 
     const portalContainer = portal.container
 
-    const newChildren = Array.isArray(props.children) ? props.children : [props.children]
+    const newChildren = normalizeChildren(props.children)
     const oldChildren = previousChildrenRef.current
 
     // Patch each child
@@ -195,7 +202,7 @@ export function Portal(props: PortalProps): VNodeLike {
       }
     }
 
-    previousChildrenRef.current = newChildren as VNode[]
+    previousChildrenRef.current = newChildren
   }, [props.children, portalId])
 
   // Portal renders nothing in parent tree
