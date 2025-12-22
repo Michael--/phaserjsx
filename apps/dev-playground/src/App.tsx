@@ -5,7 +5,7 @@ import {
   type MountProps,
   Button,
   Text,
-  useEffect,
+  useLayoutEffect,
   useLayoutRect,
   useRef,
   useState,
@@ -28,13 +28,9 @@ export function App(props: AppProps) {
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
   const [layoutText, setLayoutText] = useState('Calculating layout...')
 
-  // console.log('App props:', props)
-
-  useEffect(() => {
-    setTimeout(() => {
-      const layout = useLayoutRect(ref)
-      setLayoutText(JSON.stringify(layout, null, 2))
-    }, 0)
+  useLayoutEffect(() => {
+    const layout = useLayoutRect(ref)
+    setLayoutText(JSON.stringify(layout, null, 2))
   }, [props, ref])
 
   return (
@@ -75,22 +71,13 @@ export function App(props: AppProps) {
           </Button>
         </View>
 
-        <View width={400} height={200} backgroundColor={0x444444} cornerRadius={10} padding={20}>
+        <View width={400} backgroundColor={0x444444} cornerRadius={10} padding={20}>
           <Text
-            text={`This is your development playground.\nAdd your test components here.`}
+            text={`Layout Info:\n${layoutText}`}
             style={{
-              fontSize: '18px',
-              fontFamily: 'Arial',
-              color: '#cccccc',
-              align: 'left',
-            }}
-          />
-          <Text
-            text={`\nLayout Info:\n${layoutText}`}
-            style={{
-              fontSize: '14px',
+              fontSize: '24px',
               fontFamily: 'Courier New',
-              color: '#888888',
+              color: '#ffff88',
               align: 'left',
             }}
           />

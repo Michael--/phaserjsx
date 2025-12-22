@@ -425,6 +425,38 @@ export function useEffect(fn: () => Cleanup, deps?: readonly unknown[] | undefin
 }
 
 /**
+ * Layout effect hook - runs after layout calculations complete
+ * Executes via requestAnimationFrame after all layout updates
+ * Use this when you need access to final layout dimensions (useLayoutRect, etc.)
+ * @param fn - Effect function that optionally returns cleanup
+ * @param deps - Optional dependency array
+ */
+export function useLayoutEffect(fn: () => Cleanup, deps?: readonly unknown[] | undefined) {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const c = getCurrent()!
+  const i = c.index++
+  const slot = (c.slots[i] ??
+    (c.slots[i] = { deps: undefined, cleanup: undefined as Cleanup })) as {
+    deps?: readonly unknown[] | undefined
+    cleanup: Cleanup
+  }
+  c.effects.push(() => {
+    if (!depsChanged(slot.deps, deps)) return
+    if (typeof slot.cleanup === 'function') slot.cleanup()
+
+    // Defer execution until layout calculations complete
+    // Use requestAnimationFrame to run after layout pass finishes
+    requestAnimationFrame(() => {
+      slot.cleanup = fn()
+    })
+
+    if (deps !== undefined) {
+      slot.deps = deps
+    }
+  })
+}
+
+/**
  * Checks if dependency arrays have changed
  * @param a - Previous dependencies
  * @param b - Current dependencies
