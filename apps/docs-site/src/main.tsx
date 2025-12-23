@@ -21,6 +21,7 @@ import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
 import { sliderContent } from './content/slider.content'
+import { tabsContent } from './content/tabs.content'
 import { textContent } from './content/text.content'
 import { toggleContent } from './content/toggle.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
@@ -75,6 +76,7 @@ createRoot(document.getElementById('root')!).render(
         element={<ComponentPage content={radiobuttonContent} />}
       />
       <Route path="/components/dropdown" element={<ComponentPage content={dropdownContent} />} />
+      <Route path="/components/tabs" element={<ComponentPage content={tabsContent} />} />
       <Route path="/components/joystick" element={<ComponentPage content={joystickContent} />} />
       <Route
         path="/components/view"
