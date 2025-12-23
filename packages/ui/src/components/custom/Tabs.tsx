@@ -8,15 +8,13 @@ import { useLayoutEffect, useLayoutRect, useMemo, useRef, useState, useTheme } f
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
-import { Text, View } from '../index'
+import { View } from '../index'
 import { ScrollView, type ScrollViewProps } from './ScrollView'
 
 /**
  * Props for Tab header
  */
 export interface TabProps extends Omit<ViewProps, 'children'> {
-  /** Optional label convenience */
-  label?: string
   /** Tab header content */
   children?: ChildrenType
   /** Disabled tab */
@@ -113,15 +111,12 @@ export function Tabs(props: TabsProps): VNodeLike {
   const tabActiveStyle = themed.tabActiveStyle ?? {}
   const tabDisabledStyle = themed.tabDisabledStyle ?? {}
   const panelStyle = themed.panelStyle ?? {}
-  const tabTextStyle = themed.tabTextStyle
-  const tabGap = props.tabGap ?? themed.tabGap
 
   const {
     children: _children,
     activeIndex: _activeIndex,
     defaultIndex: _defaultIndex,
     onChange: _onChange,
-    tabGap: _tabGap,
     ...viewProps
   } = props
 
@@ -143,14 +138,13 @@ export function Tabs(props: TabsProps): VNodeLike {
     <View
       {...tabListStyle}
       {...tabListContentStyle}
-      {...(tabGap !== undefined ? { gap: tabGap } : {})}
       direction="row"
       width={scrollableTabs ? 'auto' : '100%'}
       height="auto"
     >
       {tabs.slice(0, panelCount).map((tab, index) => {
         const tabProps = (tab.props as TabProps | undefined) ?? {}
-        const { label, disabled, onTouch, enableGestures, ...tabViewProps } = tabProps
+        const { disabled, onTouch, enableGestures, ...tabViewProps } = tabProps
         const tabChildren = tab.children ?? tabProps.children
         const isActive = index === safeIndex
         const combinedTabStyle = {
@@ -172,7 +166,7 @@ export function Tabs(props: TabsProps): VNodeLike {
               onTouch?.(data)
             }}
           >
-            {tabChildren ?? (label ? <Text text={label} style={tabTextStyle} /> : null)}
+            {tabChildren}
           </View>
         )
       })}

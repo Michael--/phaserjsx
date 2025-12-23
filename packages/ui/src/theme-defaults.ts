@@ -272,6 +272,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         padding: 10,
         cornerRadius: { tl: 6, tr: 6, bl: 0, br: 0 },
         width: 'fill',
+        gap: 10,
       },
       tabStyle: {
         backgroundColor: colors.surface.medium.toNumber(),
@@ -297,12 +298,6 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         padding: 10,
         cornerRadius: { tl: 0, tr: 0, bl: 6, br: 6 },
         width: 'fill',
-      },
-      tabGap: 10,
-      tabTextStyle: {
-        ...textStyles.DEFAULT,
-        fontSize: '16px',
-        color: colors.text.DEFAULT.toString(),
       },
     },
     NineSliceButton: {},

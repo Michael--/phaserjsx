@@ -84,8 +84,6 @@ export interface CustomComponentThemes {
     tabActiveStyle?: ViewTheme
     tabDisabledStyle?: ViewTheme
     panelStyle?: ViewTheme
-    tabGap?: number
-    tabTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
   }
   NineSliceButton: ViewTheme & {
     effect?: string
