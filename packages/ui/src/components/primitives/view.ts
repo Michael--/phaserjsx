@@ -147,7 +147,7 @@ function normalizeBackgroundProps<T>(props: T): T {
   // This allows users to override with explicit values
   const normalized = { ...props } as T & Partial<BackgroundProps>
 
-  if (hasBackground && (bgProps.backgroundAlpha === undefined || bgProps.backgroundAlpha === 0)) {
+  if (hasBackground && bgProps.backgroundAlpha === undefined) {
     normalized.backgroundAlpha = 1
   }
 
