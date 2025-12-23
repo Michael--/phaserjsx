@@ -41,8 +41,6 @@ export interface TabsProps extends Omit<ViewProps, 'children'> {
   defaultIndex?: number
   /** Called when active tab changes */
   onChange?: (index: number) => void
-  /** Optional gap between tab headers */
-  tabGap?: number
   /** Enable horizontal scrolling for the tab list */
   scrollableTabs?: boolean
   /** ScrollView props applied to the tab list when scrollableTabs is enabled */
@@ -127,21 +125,8 @@ export function Tabs(props: TabsProps): VNodeLike {
   const scrollableTabs = props.scrollableTabs ?? true
   const tabListScrollProps = props.tabListScrollProps ?? {}
 
-  const tabListContentStyle = scrollableTabs
-    ? {
-        height: tabListStyle.height ?? '100%',
-        alignItems: tabListStyle.alignItems ?? 'center',
-      }
-    : {}
-
   const tabListContent = (
-    <View
-      {...tabListStyle}
-      {...tabListContentStyle}
-      direction="row"
-      width={scrollableTabs ? 'auto' : '100%'}
-      height="auto"
-    >
+    <View {...tabListStyle} direction="row" width={scrollableTabs ? 'auto' : '100%'}>
       {tabs.slice(0, panelCount).map((tab, index) => {
         const tabProps = (tab.props as TabProps | undefined) ?? {}
         const { disabled, onTouch, enableGestures, ...tabViewProps } = tabProps

@@ -269,24 +269,25 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     Tabs: {
       tabListStyle: {
         backgroundColor: colors.surface.dark.toNumber(),
-        padding: 10,
+        padding: { left: 8, right: 8, top: 8, bottom: 0 },
         cornerRadius: { tl: 6, tr: 6, bl: 0, br: 0 },
         width: 'fill',
         gap: 10,
+        alignItems: 'end',
+        justifyContent: 'start',
       },
       tabStyle: {
         backgroundColor: colors.surface.medium.toNumber(),
         borderColor: colors.border.medium.toNumber(),
         borderWidth: 1,
-        padding: { left: 14, right: 14, top: 8, bottom: 8 },
-        cornerRadius: 6,
-        alignItems: 'center',
-        justifyContent: 'center',
+        padding: { left: 8, right: 8, top: 8, bottom: 3 },
+        cornerRadius: { tl: 6, tr: 6, bl: 0, br: 0 },
       },
       tabActiveStyle: {
+        padding: { left: 8, right: 8, top: 8, bottom: 8 },
         backgroundColor: colors.primary.DEFAULT.toNumber(),
         borderColor: colors.primary.dark.toNumber(),
-        borderWidth: 1,
+        borderWidth: 2,
       },
       tabDisabledStyle: {
         alpha: 0.4,
