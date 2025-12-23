@@ -196,7 +196,7 @@ export function Tabs(props: TabsProps): VNodeLike {
           height={tabHeight + sliderHeight}
           showHorizontalSlider="auto"
           showVerticalSlider={false}
-          sliderSize="tiny"
+          sliderSize="nano"
           theme={nestedTheme}
           onSliderSize={(size) => setSliderHeight(size.height)}
           {...tabListScrollProps}

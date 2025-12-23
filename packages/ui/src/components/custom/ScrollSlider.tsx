@@ -11,7 +11,7 @@ import type { LayoutSize } from '../index'
 import { View } from '../index'
 
 /** Size variants for the scroll slider */
-export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | undefined
+export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | 'micro' | 'nano' | undefined
 
 /**
  * Calculate slider dimensions based on size variant and theme
@@ -20,7 +20,18 @@ export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | undefined
  */
 export function calculateSliderSize(size: SliderSize) {
   const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
-  const sizeFactor = size === 'large' ? 1.25 : size === 'small' ? 0.75 : size === 'tiny' ? 0.5 : 1 // medium or undefined
+  const sizeFactor =
+    size === 'large'
+      ? 1.25
+      : size === 'small'
+        ? 0.75
+        : size === 'tiny'
+          ? 0.5
+          : size === 'micro'
+            ? 0.25
+            : size === 'nano'
+              ? 0.125
+              : 1 // medium or undefined
   const border = (themed.borderWidth ?? 1) * sizeFactor
   const outer = (themed.size ?? 24) * sizeFactor
   const dimension = outer - border * 2
