@@ -31,7 +31,7 @@ export function HooksApiPage() {
             <strong>State:</strong> <code>useState</code>, <code>useRef</code>
           </li>
           <li>
-            <strong>Effects:</strong> <code>useEffect</code>
+            <strong>Effects:</strong> <code>useEffect</code>, <code>useLayoutEffect</code>
           </li>
           <li>
             <strong>Memoization:</strong> <code>useMemo</code>, <code>useCallback</code>
@@ -40,11 +40,30 @@ export function HooksApiPage() {
             <strong>Signals:</strong> <code>useForceRedraw</code>
           </li>
           <li>
+            <strong>Layout:</strong> <code>useViewportSize</code>, <code>useLayoutSize</code>,{' '}
+            <code>useLayoutRect</code>, <code>useWorldLayoutRect</code>,{' '}
+            <code>useBackgroundGraphics</code>
+          </li>
+          <li>
             <strong>Context:</strong> <code>useTheme</code>, <code>useThemeTokens</code>,{' '}
-            <code>useScene</code>
+            <code>useScene</code>, <code>useColors</code>, <code>useColorMode</code>,{' '}
+            <code>useThemeSubscription</code>
           </li>
           <li>
             <strong>Textures:</strong> <code>useSVGTexture</code>, <code>useSVGTextures</code>
+          </li>
+          <li>
+            <strong>Animation:</strong> <code>useSpring</code>, <code>useSprings</code>
+          </li>
+          <li>
+            <strong>FX:</strong> <code>useFX</code>, <code>useShadow</code>, <code>useGlow</code>,{' '}
+            <code>useBlur</code>
+          </li>
+          <li>
+            <strong>Effects:</strong> <code>useGameObjectEffect</code>
+          </li>
+          <li>
+            <strong>Icons:</strong> <code>useIconPreload</code>
           </li>
           <li>
             <strong>Manual Control:</strong> <code>useRedraw</code>
@@ -376,6 +395,40 @@ function SceneEventListener() {
   return <Text text={isPaused ? 'Paused' : 'Running'} />
 }`}
         </CodeBlock>
+
+        <h3>useLayoutEffect</h3>
+        <p>
+          Runs after layout calculations complete. Use this when you need accurate sizes from
+          <code>useLayoutRect</code> or <code>useLayoutSize</code>.
+        </p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useLayoutEffect(
+  effect: () => void | (() => void),
+  deps?: readonly unknown[]
+): void`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function MeasureCard() {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const rect = useLayoutRect(ref)
+
+  useLayoutEffect(() => {
+    if (rect) {
+      console.log('Measured:', rect.width, rect.height)
+    }
+  }, [rect])
+
+  return (
+    <View ref={ref} width={300} padding={16} backgroundColor={0x2a2a2a}>
+      <Text text="Measured after layout" />
+    </View>
+  )
+}`}
+        </CodeBlock>
       </Section>
 
       <Section title="Memoization Hooks">
@@ -515,6 +568,86 @@ function SearchBox() {
     </View>
   )
 }`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="Layout & Measurement Hooks">
+        <SectionDescription>
+          Read viewport and layout measurements for responsive layouts and positioning.
+        </SectionDescription>
+
+        <h3>useViewportSize</h3>
+        <p>Returns the current scene viewport dimensions.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useViewportSize(): { width: number; height: number }`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function ResponsiveBanner() {
+  const { width } = useViewportSize()
+  const isNarrow = width < 600
+
+  return (
+    <View padding={16} backgroundColor={0x1f2937}>
+      <Text text={isNarrow ? 'Compact layout' : 'Wide layout'} />
+    </View>
+  )
+}`}
+        </CodeBlock>
+
+        <h3>useLayoutSize</h3>
+        <p>Reads computed layout width/height from a container ref.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useLayoutSize(ref: { current: Phaser.GameObjects.Container | null }): LayoutSize | undefined`}
+        </CodeBlock>
+
+        <h3>useLayoutRect</h3>
+        <p>Returns local position plus computed layout dimensions.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useLayoutRect(
+  ref: { current: Phaser.GameObjects.Container | null }
+): { x: number; y: number; width: number; height: number } | undefined`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function LayoutDebug() {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const rect = useLayoutRect(ref)
+
+  return (
+    <View ref={ref} width={240} height={120} backgroundColor={0x333333}>
+      <Text text={rect ? \`w:\${rect.width} h:\${rect.height}\` : 'Measuring...'} />
+    </View>
+  )
+}`}
+        </CodeBlock>
+
+        <h3>useWorldLayoutRect</h3>
+        <p>Returns world-space bounds (includes parent transforms).</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useWorldLayoutRect(
+  ref: { current: Phaser.GameObjects.Container | null }
+): { x: number; y: number; width: number; height: number } | undefined`}
+        </CodeBlock>
+
+        <h3>useBackgroundGraphics</h3>
+        <p>Access the background Graphics object for custom animation or tweaks.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useBackgroundGraphics(
+  ref: { current: Phaser.GameObjects.Container | null }
+): Phaser.GameObjects.Graphics | undefined`}
         </CodeBlock>
       </Section>
 
@@ -705,6 +838,56 @@ function ColorPalette() {
 }`}
         </CodeBlock>
 
+        <h3>useColors</h3>
+        <p>
+          Access color tokens from the current theme.
+          <strong>Deprecated:</strong> prefer <code>useThemeTokens()</code>.
+        </p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useColors(): ColorTokens | undefined`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function LegacyColorBlock() {
+  const colors = useColors()
+  return <View backgroundColor={colors?.primary.DEFAULT ?? 0x4a9eff} />
+}`}
+        </CodeBlock>
+
+        <h3>useColorMode</h3>
+        <p>Manage light/dark mode via the theme registry.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useColorMode(): {
+  colorMode: 'light' | 'dark'
+  setColorMode: (mode: 'light' | 'dark') => void
+  toggleColorMode: () => void
+}`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function ThemeToggle() {
+  const { colorMode, toggleColorMode } = useColorMode()
+
+  return (
+    <Button onClick={toggleColorMode}>
+      <Text text={colorMode === 'light' ? 'Dark Mode' : 'Light Mode'} />
+    </Button>
+  )
+}`}
+        </CodeBlock>
+
+        <h3>useThemeSubscription</h3>
+        <p>Subscribe to theme changes without reading tokens directly.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">{`function useThemeSubscription(): void`}</CodeBlock>
+
         <h3>useScene</h3>
         <p>Access the current Phaser scene from component context.</p>
 
@@ -878,6 +1061,144 @@ function useSVGTextures(configs: SVGTextureConfig[]): boolean`}
     </View>
   )
 }`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="Animation Hooks">
+        <SectionDescription>Physics-based spring animations powered by signals.</SectionDescription>
+
+        <h3>useSpring</h3>
+        <p>Create a single animated signal and update it with a spring.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useSpring(
+  initialValue: number,
+  config?: SpringConfig | keyof typeof SPRING_PRESETS,
+  onComplete?: () => void
+): [AnimatedSignal, (target: number | ((prev: number) => number)) => void]`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function SpringScale() {
+  const [scale, setScale] = useSpring(1, 'wobbly')
+
+  return (
+    <View
+      scale={scale}
+      onTouch={() => setScale((prev) => (prev === 1 ? 1.2 : 1))}
+    >
+      <Text text="Boing" />
+    </View>
+  )
+}`}
+        </CodeBlock>
+
+        <h3>useSprings</h3>
+        <p>Create multiple animated signals with a shared configuration.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useSprings<T extends Record<string, number>>(
+  initialValues: T,
+  config?: SpringConfig | keyof typeof SPRING_PRESETS
+): [
+  { [K in keyof T]: AnimatedSignal },
+  (values: Partial<{ [K in keyof T]: number | ((prev: number) => number) }>) => void
+]`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="FX Hooks">
+        <SectionDescription>
+          Apply Phaser PostFX/PreFX pipelines and convenience effects.
+        </SectionDescription>
+
+        <h3>useFX</h3>
+        <p>Attach FX to a GameObject and clean them up on unmount.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useFX<T extends FXCapableGameObject>(ref: { current: T | null }): {
+  applyFX: <TConfig extends FXConfig>(
+    fxCreator: FXCreatorFn<TConfig>,
+    config: TConfig,
+    type?: FXType
+  ) => void
+  clearFX: () => void
+}`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`function GlowOnHover() {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyFX, clearFX } = useFX(ref)
+
+  return (
+    <View
+      ref={ref}
+      onHover={() => applyFX(createGlowFX, { color: 0x4a9eff, outerStrength: 2 })}
+      onHoverOut={clearFX}
+    >
+      <Text text="Hover me" />
+    </View>
+  )
+}`}
+        </CodeBlock>
+
+        <h3>useShadow / useGlow / useBlur</h3>
+        <p>Convenience hooks that apply FX automatically and update on config changes.</p>
+      </Section>
+
+      <Section title="Effects Hook">
+        <SectionDescription>
+          Trigger built-in effect animations on any GameObject.
+        </SectionDescription>
+
+        <h3>useGameObjectEffect</h3>
+        <p>Apply and clean up tween-based effects.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useGameObjectEffect(
+  ref: { current: Phaser.GameObjects.Container | null }
+): { applyEffect: (effect: EffectFn, config?: EffectConfig) => void; stopEffects: () => void }`}
+        </CodeBlock>
+
+        <h4>Examples</h4>
+        <CodeBlock language="tsx">
+          {`import { createPulseEffect } from '@number10/phaserjsx/effects'
+
+function PulseCard() {
+  const ref = useRef<Phaser.GameObjects.Container | null>(null)
+  const { applyEffect } = useGameObjectEffect(ref)
+
+  return (
+    <View
+      ref={ref}
+      onTouch={() => applyEffect(createPulseEffect, { intensity: 1.1, time: 250 })}
+    >
+      <Text text="Pulse on tap" />
+    </View>
+  )
+}`}
+        </CodeBlock>
+      </Section>
+
+      <Section title="Icon Hook">
+        <SectionDescription>Preload icon assets before rendering.</SectionDescription>
+
+        <h3>useIconPreload</h3>
+        <p>Loads an icon via your loader and returns readiness state.</p>
+
+        <h4>Signature</h4>
+        <CodeBlock language="typescript">
+          {`function useIconPreload<T extends string>(
+  type: T,
+  loader: IconLoaderFn<T>
+): boolean`}
         </CodeBlock>
       </Section>
 
