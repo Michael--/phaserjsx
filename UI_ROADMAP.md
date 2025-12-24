@@ -73,7 +73,7 @@
 - ✅ `Accordion` - Expandable Panels
 - ✅ `Sidebar` - Sidebar Layout
 - ✅ `Divider` - Visual Separator
-- ❌ `Tabs` - Tab Navigation - **FEHLT**
+- ✅ `Tabs` - Tabs Component
 - ❌ `Grid` - CSS Grid Layout - **FEHLT**
 
 **Text & Input:**
@@ -299,9 +299,9 @@
 
 #### 11. Tabs Component
 
-- ❌ `Tabs` - Tab Container
-- ❌ `Tab` - Einzelner Tab
-- ❌ Horizontal/Vertical Orientation
+- ✅ `Tabs` - Tab Container
+- ✅ `Tab` - Einzelner Tab
+- ✅ Horizontal Orientation
 - ❌ Lazy Loading von Tab-Content
 - ❌ Keyboard Navigation (Tab Key)
 - **Aufwand:** 1.5 Tage
