@@ -42,6 +42,7 @@ import {
   PhaserJsxPluginPage,
   SceneBackgroundsPage,
   TestingPage,
+  TooltipsPage,
 } from './pages/Guides'
 import { EffectsPage } from './pages/Guides/EffectsPage'
 import { GesturesPage } from './pages/Guides/GesturesPage'
@@ -115,6 +116,7 @@ createRoot(document.getElementById('root')!).render(
       <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
       <Route path="/guides/effects-animations" element={<EffectsPage />} />
       <Route path="/guides/gestures" element={<GesturesPage />} />
+      <Route path="/guides/tooltips" element={<TooltipsPage />} />
       <Route path="/guides/layout-patterns" element={<LayoutPatternsPage />} />
       <Route path="/guides/performance" element={<PerformancePage />} />
       <Route path="/guides/responsive-design" element={<ResponsiveDesignPage />} />
