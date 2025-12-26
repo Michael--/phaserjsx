@@ -2,7 +2,7 @@
  * Particle utilities shared across hooks/components
  */
 import type Phaser from 'phaser'
-import type { EmitZoneConfig } from './emit-zone'
+import type { DeathZoneConfig, EmitZoneConfig } from './emit-zone'
 import type { ParticleEmitter, ParticleEmitterManagerLike, ParticlesHandle } from './particle-types'
 import type { ParticleEmitterConfig } from './preset-registry'
 
@@ -61,4 +61,63 @@ export function applyEmitZone(
     withZone.setEmitZone(emitZone)
     return
   }
+}
+
+export function applyDeathZone(
+  emitter: ParticleEmitter | null,
+  deathZone: DeathZoneConfig | DeathZoneConfig[] | undefined
+): void {
+  if (!emitter) return
+  const withZone = emitter as Phaser.GameObjects.Particles.ParticleEmitter & {
+    setDeathZone?: (config: DeathZoneConfig | DeathZoneConfig[]) => void
+    addDeathZone?: (config: DeathZoneConfig | DeathZoneConfig[]) => void
+    clearDeathZones?: () => void
+    deathZones?: unknown[]
+  }
+
+  const isDefined = <T>(value: T | null | undefined): value is T =>
+    value !== null && value !== undefined
+  const normalized = Array.isArray(deathZone)
+    ? deathZone.filter(isDefined)
+    : deathZone
+      ? [deathZone]
+      : []
+  const hasZone = normalized.length > 0
+
+  if (hasZone && withZone.setDeathZone) {
+    withZone.setDeathZone(normalized)
+    return
+  }
+
+  if (!hasZone) {
+    if (withZone.clearDeathZones) {
+      withZone.clearDeathZones()
+      return
+    }
+    if (withZone.deathZones) {
+      withZone.deathZones = []
+    }
+    return
+  }
+
+  if (withZone.clearDeathZones) {
+    withZone.clearDeathZones()
+  }
+  if (withZone.addDeathZone) {
+    withZone.addDeathZone(normalized)
+    return
+  }
+  if (withZone.deathZones) {
+    ;(withZone as unknown as { deathZones?: unknown[] }).deathZones = normalized
+  }
+}
+
+export function mergeDeathZones(
+  base: unknown | unknown[] | undefined,
+  extra: unknown[] | undefined
+): unknown[] | undefined {
+  const baseList = Array.isArray(base) ? base : base ? [base] : []
+  const extraList = extra ?? []
+  const merged = [...baseList, ...extraList]
+  return merged.length > 0 ? merged : undefined
 }

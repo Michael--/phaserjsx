@@ -3,10 +3,21 @@
  */
 import { useCallback } from '../hooks'
 import type { RefObject } from '../types'
-import { buildEmitZoneFromLayout, type ParticleZoneConfig } from './emit-zone'
+import {
+  buildDeathZonesFromLayout,
+  buildEmitZoneFromLayout,
+  type ParticleExclusionZoneConfig,
+  type ParticleZoneConfig,
+} from './emit-zone'
 import type { ParticleEmitter, ParticleEmitterManagerLike, ParticlesHandle } from './particle-types'
 import type { ParticleEmitterConfig } from './preset-registry'
-import { applyEmitZone, applyEmitterConfig, getFirstEmitter, isParticleEmitter } from './utils'
+import {
+  applyDeathZone,
+  applyEmitZone,
+  applyEmitterConfig,
+  getFirstEmitter,
+  isParticleEmitter,
+} from './utils'
 
 export function useParticles(ref: RefObject<ParticlesHandle | null>): {
   getManager: () => ParticlesHandle | null
@@ -16,6 +27,11 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
   explode: (count: number, x?: number, y?: number) => void
   setConfig: (config: ParticleEmitterConfig) => void
   setEmitZone: (zone: ParticleZoneConfig, width?: number, height?: number) => void
+  setExcludeZones: (
+    zones: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[],
+    width?: number,
+    height?: number
+  ) => void
 } {
   const getManager = useCallback(() => ref.current ?? null, [ref])
   const getEmitter = useCallback(() => {
@@ -60,5 +76,27 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
     [getEmitter]
   )
 
-  return { getManager, getEmitter, start, stop, explode, setConfig, setEmitZone }
+  const setExcludeZones = useCallback(
+    (
+      zones: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[],
+      width?: number,
+      height?: number
+    ) => {
+      const emitter = getEmitter()
+      const deathZones = buildDeathZonesFromLayout(zones, width, height)
+      applyDeathZone(emitter, deathZones)
+    },
+    [getEmitter]
+  )
+
+  return {
+    getManager,
+    getEmitter,
+    start,
+    stop,
+    explode,
+    setConfig,
+    setEmitZone,
+    setExcludeZones,
+  }
 }

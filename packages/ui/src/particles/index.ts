@@ -11,8 +11,12 @@ export {
   type ParticlePresetName,
 } from './preset-registry'
 export {
+  buildDeathZonesFromLayout,
   buildEmitZone,
   buildEmitZoneFromLayout,
+  type DeathZoneConfig,
+  type ParticleDeathZoneMode,
+  type ParticleExclusionZoneConfig,
   type EmitZoneConfig,
   type ParticleZoneConfig,
   type ParticleZoneShape,

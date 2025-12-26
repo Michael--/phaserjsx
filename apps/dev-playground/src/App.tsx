@@ -97,6 +97,14 @@ function CameraFX() {
 }
 
 function ParticleSystem() {
+  const controlsRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const particleContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
+  const [controlsLayout, setControlsLayout] = useState<{
+    x: number
+    y: number
+    width: number
+    height: number
+  } | null>(null)
   const particlesRef = useRef<ParticlesHandle | null>(null)
   const restartTimerRef = useRef<number | null>(null)
   const [particlePreset, setParticlePreset] = useState<'sparkle' | 'trail' | 'rain' | 'snow'>(
@@ -105,6 +113,15 @@ function ParticleSystem() {
   const [particleTexture, setParticleTexture] = useState<string | null>(null)
   const scene = useScene()
   const { explode, setConfig, start, stop } = useParticles(particlesRef)
+
+  useLayoutEffect(() => {
+    const controlsRect = useWorldLayoutRect(controlsRef)
+    const particleRect = useWorldLayoutRect(particleContainerRef)
+    if (controlsRect) setControlsLayout(controlsRect)
+    if (particleRect) {
+      console.log('Particle container world layout:', particleRect)
+    }
+  }, [controlsRef, particleContainerRef])
 
   useEffect(() => {
     const key = 'particle-blob'
@@ -123,7 +140,7 @@ function ParticleSystem() {
     setParticleTexture(key)
   }, [scene])
 
-  const particleFrequency = particlePreset === 'trail' ? 30 : 60
+  const particleFrequency = particlePreset === 'trail' ? 0.3 : 60
   const particleTint =
     particlePreset === 'rain'
       ? 0x6fd1ff
@@ -140,6 +157,50 @@ function ParticleSystem() {
     () => resolveParticlePreset(particlePreset, particleConfig),
     [particlePreset, particleConfig]
   )
+  const excludeZones = useMemo(() => {
+    if (!controlsLayout || !particleContainerRef.current) return undefined
+
+    // Get particle container world position
+    const containerRect = useWorldLayoutRect(particleContainerRef)
+    if (!containerRect) return undefined
+
+    // Calculate local coordinates relative to particle container
+    const localX = controlsLayout.x - containerRect.x
+    const localY = controlsLayout.y - containerRect.y
+
+    console.log('Controls world layout:', controlsLayout)
+    console.log('Particle container world:', containerRect)
+    console.log('Exclusion zone (container-relative):', {
+      x: localX,
+      y: localY,
+      width: controlsLayout.width,
+      height: controlsLayout.height,
+    })
+
+    return [
+      {
+        shape: 'rect' as const,
+        x: localX,
+        y: localY,
+        width: controlsLayout.width,
+        height: controlsLayout.height,
+      },
+      {
+        shape: 'rect' as const,
+        x: 600,
+        y: 450,
+        width: 100,
+        height: 100,
+      },
+      {
+        shape: 'rect' as const,
+        x: 378,
+        y: 497,
+        width: 100,
+        height: 100,
+      },
+    ]
+  }, [controlsLayout, particleContainerRef])
 
   useEffect(() => {
     setConfig(resolvedParticleConfig)
@@ -156,7 +217,7 @@ function ParticleSystem() {
   }, [])
 
   const handleExplode = () => {
-    explode(50, 0, 0)
+    explode(500, 0, 0)
 
     const resolvedConfig = resolvedParticleConfig
     if (restartTimerRef.current !== null) {
@@ -180,6 +241,7 @@ function ParticleSystem() {
       />
 
       <View
+        ref={particleContainerRef}
         width={680}
         height={180}
         direction="stack"
@@ -192,7 +254,8 @@ function ParticleSystem() {
             ref={particlesRef}
             texture={particleTexture}
             preset={particlePreset}
-            zone={{ shape: 'rect', width: 680, height: 180 }}
+            zone={{ shape: 'rect', x: 50, width: 680 - 100, height: 180 }}
+            excludeZones={excludeZones}
             config={particleConfig}
             depth={0}
           />
@@ -209,7 +272,7 @@ function ParticleSystem() {
             }}
           />
 
-          <View direction="row" gap={8} depth={1000}>
+          <View ref={controlsRef} direction="row" gap={8} depth={1000}>
             <Button onClick={() => setParticlePreset('sparkle')}>
               <Text text="Sparkle" />
             </Button>

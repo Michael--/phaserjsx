@@ -1,7 +1,7 @@
 /**
  * Applier for Particles-specific properties
  */
-import { buildEmitZoneFromLayout } from '../../particles/emit-zone'
+import { buildDeathZonesFromLayout, buildEmitZoneFromLayout } from '../../particles/emit-zone'
 import type {
   ParticleEmitter,
   ParticleEmitterManagerLike,
@@ -9,10 +9,12 @@ import type {
 } from '../../particles/particle-types'
 import { resolveParticlePreset } from '../../particles/preset-registry'
 import {
+  applyDeathZone,
   applyEmitZone,
   applyEmitterConfig,
   getFirstEmitter,
   isParticleEmitter,
+  mergeDeathZones,
 } from '../../particles/utils'
 import type { ParticlesBaseProps } from '../primitives/particles'
 
@@ -35,6 +37,7 @@ export function applyParticlesProps(
     prev.preset !== next.preset ||
     prev.config !== next.config ||
     prev.zone !== next.zone ||
+    prev.excludeZones !== next.excludeZones ||
     prev.width !== next.width ||
     prev.height !== next.height
 
@@ -64,5 +67,12 @@ export function applyParticlesProps(
         applyEmitZone(emitter, emitZone)
       }
     }
+
+    const deathZones = buildDeathZonesFromLayout(next.excludeZones, next.width, next.height)
+    const combined = mergeDeathZones(
+      (resolvedConfig as unknown as { deathZone?: unknown }).deathZone,
+      deathZones
+    ) as Parameters<typeof applyDeathZone>[1]
+    applyDeathZone(emitter, combined)
   }
 }
