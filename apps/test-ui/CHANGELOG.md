@@ -1,5 +1,16 @@
 # @phaserjsx/test-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- Add snap and momentum to ScrollView
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes
