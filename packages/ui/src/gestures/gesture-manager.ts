@@ -403,8 +403,8 @@ export class GestureManager {
           this.activePointerDown = {
             pointerId: pointer.id,
             container: state.container,
-            startX: pointer.x,
-            startY: pointer.y,
+            startX: pointer.worldX,
+            startY: pointer.worldY,
           }
 
           // Reset long press triggered flag
@@ -436,7 +436,7 @@ export class GestureManager {
           }
 
           // Store down position for tracking
-          state.pointerDownPosition = { x: pointer.x, y: pointer.y }
+          state.pointerDownPosition = { x: pointer.worldX, y: pointer.worldY }
         }
       }
     }
@@ -497,8 +497,8 @@ export class GestureManager {
 
     // Send final move event to containers that were hit during pointer down
     const last = this.lastPointerPositions.get(pointer.id)
-    const dx = last ? pointer.x - last.x : 0
-    const dy = last ? pointer.y - last.y : 0
+    const dx = last ? pointer.worldX - last.x : 0
+    const dy = last ? pointer.worldY - last.y : 0
     const hitContainers = this.activeContainersForMove.get(pointer.id)
 
     this.bubbleEvent(
@@ -683,8 +683,8 @@ export class GestureManager {
 
       // Send final move event with 'end' state to all active containers
       const last = this.lastPointerPositions.get(pointer.id)
-      const dx = last ? pointer.x - last.x : 0
-      const dy = last ? pointer.y - last.y : 0
+      const dx = last ? pointer.worldX - last.x : 0
+      const dy = last ? pointer.worldY - last.y : 0
       const hitContainers = this.activeContainersForMove.get(pointer.id)
 
       this.bubbleEvent(
@@ -733,9 +733,9 @@ export class GestureManager {
   private handlePointerMove(pointer: Phaser.Input.Pointer): void {
     // Calculate delta
     const last = this.lastPointerPositions.get(pointer.id)
-    const dx = last ? pointer.x - last.x : 0
-    const dy = last ? pointer.y - last.y : 0
-    this.lastPointerPositions.set(pointer.id, { x: pointer.x, y: pointer.y })
+    const dx = last ? pointer.worldX - last.x : 0
+    const dy = last ? pointer.worldY - last.y : 0
+    this.lastPointerPositions.set(pointer.id, { x: pointer.worldX, y: pointer.worldY })
 
     // Hover detection for all containers (desktop/mouse only)
     this.detectHoverChanges(pointer)
@@ -849,11 +849,11 @@ export class GestureManager {
     pointer: Phaser.Input.Pointer,
     container: Phaser.GameObjects.Container
   ): { x: number; y: number } {
-    // Transform global coordinates to container's local space
+    // Transform world coordinates to container's local space (screen coords break under camera zoom)
     const matrix = container.getWorldTransformMatrix()
     const inverseMatrix = matrix.invert()
 
-    const localPos = inverseMatrix.transformPoint(pointer.x, pointer.y)
+    const localPos = inverseMatrix.transformPoint(pointer.worldX, pointer.worldY)
     return { x: localPos.x, y: localPos.y }
   }
 
@@ -949,6 +949,7 @@ export class GestureManager {
     const scaleY = canvas.height / rect.height
     pointer.x = (event.clientX - rect.left) * scaleX
     pointer.y = (event.clientY - rect.top) * scaleY
+    pointer.updateWorldPoint(pointer.camera ?? this.scene.cameras.main)
 
     // Find all containers under the pointer
     const containersUnderPointer: Array<{
