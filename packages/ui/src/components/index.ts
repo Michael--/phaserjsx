@@ -6,6 +6,7 @@ import { register } from '../host'
 import { graphicsCreator, graphicsPatcher } from './primitives/graphics'
 import { imageCreator, imagePatcher } from './primitives/image'
 import { nineSliceCreator, nineSlicePatcher } from './primitives/nineslice'
+import { particlesCreator, particlesPatcher } from './primitives/particles'
 import { spriteCreator, spritePatcher } from './primitives/sprite'
 import { textCreator, textPatcher } from './primitives/text'
 import { tileSpriteCreator, tileSpritePatcher } from './primitives/tilesprite'
@@ -27,6 +28,7 @@ export function registerBuiltins() {
   register('view' as 'View', { create: viewCreator, patch: viewPatcher })
   register('text' as 'Text', { create: textCreator, patch: textPatcher })
   register('nineslice' as 'NineSlice', { create: nineSliceCreator, patch: nineSlicePatcher })
+  register('particles' as 'Particles', { create: particlesCreator, patch: particlesPatcher })
   register('sprite' as 'Sprite', { create: spriteCreator, patch: spritePatcher })
   register('image' as 'Image', { create: imageCreator, patch: imagePatcher })
   register('graphics' as 'Graphics', { create: graphicsCreator, patch: graphicsPatcher })
@@ -36,6 +38,7 @@ export function registerBuiltins() {
   register('View', { create: viewCreator, patch: viewPatcher })
   register('Text', { create: textCreator, patch: textPatcher })
   register('NineSlice', { create: nineSliceCreator, patch: nineSlicePatcher })
+  register('Particles', { create: particlesCreator, patch: particlesPatcher })
   register('Sprite', { create: spriteCreator, patch: spritePatcher })
   register('Image', { create: imageCreator, patch: imagePatcher })
   register('Graphics', { create: graphicsCreator, patch: graphicsPatcher })
@@ -58,6 +61,7 @@ export { Sprite, type SpriteProps } from './custom/Sprite'
 export { Text, type TextProps } from './custom/Text'
 export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
 export { View, type ViewProps } from './custom/View'
+export { Particles, type ParticlesProps } from './custom/Particles'
 
 // Re-export primitive creators/patchers for advanced use cases
 export { textCreator, textPatcher, type TextBaseProps } from './primitives/text'
@@ -75,6 +79,7 @@ export {
 
 // Re-export Sprite primitive (internal use only - prefer custom wrapper)
 export { spriteCreator, spritePatcher, type SpriteBaseProps } from './primitives/sprite'
+export { particlesCreator, particlesPatcher, type ParticlesBaseProps } from './primitives/particles'
 
 // Re-export Image component (dummy, no wrapper yet)
 export {

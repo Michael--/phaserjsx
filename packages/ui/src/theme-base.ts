@@ -19,7 +19,7 @@ import type {
 export type NestedComponentThemes = {
   [K in Exclude<
     keyof ComponentThemes,
-    'view' | 'text' | 'nineslice' | 'sprite' | 'image' | 'graphics' | 'tilesprite'
+    'view' | 'text' | 'nineslice' | 'sprite' | 'image' | 'graphics' | 'tilesprite' | 'particles'
   >]?: Partial<ComponentThemes[K]>
 }
 
@@ -109,6 +109,17 @@ export interface TileSpriteTheme
   tint?: number
 }
 
+/**
+ * Theme definition for Particles component (minimal support)
+ */
+export interface ParticlesTheme
+  extends Partial<TransformProps>,
+    Partial<PhaserProps>,
+    NestedComponentThemes {
+  visible?: boolean | import('./core-props').Display
+  texture?: string
+}
+
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IconTheme extends Partial<IconProps> {
   // No additional theme props for Icon yet
@@ -126,6 +137,7 @@ export interface BuiltInComponentThemes {
   image: ImageTheme
   graphics: GraphicsTheme
   tilesprite: TileSpriteTheme
+  particles: ParticlesTheme
   // Public API (uppercase)
   View: ViewTheme
   Text: TextTheme
@@ -134,6 +146,7 @@ export interface BuiltInComponentThemes {
   Image: ImageTheme
   Graphics: GraphicsTheme
   TileSprite: TileSpriteTheme
+  Particles: ParticlesTheme
   Icon: IconTheme
 }
 

@@ -6,6 +6,7 @@ import type Phaser from 'phaser'
 import type { GraphicsBaseProps } from './components/primitives/graphics'
 import type { ImageBaseProps } from './components/primitives/image'
 import type { NineSliceBaseProps } from './components/primitives/nineslice'
+import type { ParticlesBaseProps } from './components/primitives/particles'
 import type { SpriteBaseProps } from './components/primitives/sprite'
 import type { TextBaseProps } from './components/primitives/text'
 import type { TileSpriteBaseProps } from './components/primitives/tilesprite'
@@ -19,6 +20,7 @@ export interface NodeMap {
   view: Phaser.GameObjects.Container
   text: Phaser.GameObjects.Text
   nineslice: Phaser.GameObjects.NineSlice
+  particles: import('./particles/particle-types').ParticlesHandle
   sprite: Phaser.GameObjects.Sprite
   image: Phaser.GameObjects.Image
   graphics: Phaser.GameObjects.Graphics
@@ -27,6 +29,7 @@ export interface NodeMap {
   View: Phaser.GameObjects.Container
   Text: Phaser.GameObjects.Text
   NineSlice: Phaser.GameObjects.NineSlice
+  Particles: import('./particles/particle-types').ParticlesHandle
   Sprite: Phaser.GameObjects.Sprite
   Image: Phaser.GameObjects.Image
   Graphics: Phaser.GameObjects.Graphics
@@ -41,6 +44,7 @@ export interface NodePropsMap {
   view: ViewBaseProps
   text: TextBaseProps
   nineslice: NineSliceBaseProps
+  particles: ParticlesBaseProps
   sprite: SpriteBaseProps
   image: ImageBaseProps
   graphics: GraphicsBaseProps
@@ -49,6 +53,7 @@ export interface NodePropsMap {
   View: ViewBaseProps
   Text: TextBaseProps
   NineSlice: NineSliceBaseProps
+  Particles: ParticlesBaseProps
   Sprite: SpriteBaseProps
   Image: ImageBaseProps
   Graphics: GraphicsBaseProps

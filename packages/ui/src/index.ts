@@ -9,6 +9,7 @@ import './jsx-types' // Import JSX type declarations
 registerBuiltins()
 
 export * from './core-types'
+export * from './camera'
 export * from './effects'
 export * from './fx'
 export * from './hooks'
@@ -18,6 +19,7 @@ export * from './memo'
 export * from './theme'
 export * from './types'
 export * from './vdom'
+export * from './particles'
 
 // Export core prop utilities
 export {

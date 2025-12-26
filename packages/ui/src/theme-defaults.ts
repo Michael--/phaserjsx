@@ -51,6 +51,10 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       alpha: 1,
       visible: true,
     },
+    particles: {
+      alpha: 1,
+      visible: true,
+    },
     // Public API (uppercase)
     View: {
       alpha: 1,
@@ -79,6 +83,10 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       visible: true,
     },
     TileSprite: {
+      alpha: 1,
+      visible: true,
+    },
+    Particles: {
       alpha: 1,
       visible: true,
     },

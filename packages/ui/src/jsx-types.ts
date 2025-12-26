@@ -8,6 +8,7 @@ import type { ViewProps as CustomViewProps } from './components/custom/View'
 import type { GraphicsProps } from './components/primitives/graphics'
 import type { ImagePrimitiveProps } from './components/primitives/image'
 import type { NineSlicePrimitiveProps } from './components/primitives/nineslice'
+import type { ParticlesPrimitiveProps } from './components/primitives/particles'
 import type { SpriteProps } from './components/primitives/sprite'
 import type { TextProps as PrimitiveTextProps } from './components/primitives/text'
 import type { TileSpriteProps } from './components/primitives/tilesprite'
@@ -27,6 +28,7 @@ declare global {
       view: PrimitiveViewProps
       text: PrimitiveTextProps
       nineslice: NineSlicePrimitiveProps
+      particles: ParticlesPrimitiveProps
       sprite: SpriteProps
       image: ImagePrimitiveProps
       graphics: GraphicsProps
@@ -37,6 +39,7 @@ declare global {
       Button: ButtonProps
       // Legacy uppercase primitives - for backward compatibility
       NineSlice: NineSlicePrimitiveProps
+      Particles: ParticlesPrimitiveProps
       Sprite: SpriteProps
       Image: ImagePrimitiveProps
       Graphics: GraphicsProps
