@@ -22,8 +22,10 @@ vi.mock('phaser', () => {
         x: number
         y: number
         visible = true
+        list: unknown[] = []
         add = vi.fn()
         remove = vi.fn()
+        removeAll = vi.fn()
         setDepth = vi.fn()
         setAlpha = vi.fn()
         setScale = vi.fn()
@@ -50,6 +52,12 @@ vi.mock('phaser', () => {
       sys = {
         game: { config: {} },
         settings: { active: true },
+        isActive: vi.fn(() => true),
+      }
+      data = {
+        get: vi.fn(),
+        set: vi.fn(),
+        remove: vi.fn(),
       }
       add = {
         container: vi.fn(),

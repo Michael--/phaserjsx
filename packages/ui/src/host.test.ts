@@ -11,6 +11,7 @@ vi.mock('phaser', () => {
   const PhaserMock = {
     GameObjects: {
       Container: class Container {
+        list: unknown[] = []
         add = vi.fn()
         remove = vi.fn()
       },
