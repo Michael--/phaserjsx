@@ -53,7 +53,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "jsx-runtime.d.ts",
+    "jsx-dev-runtime.d.ts"
   ],
   "scripts": {
     "dev": "vite build --watch",
