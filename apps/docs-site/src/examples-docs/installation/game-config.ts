@@ -1,7 +1,7 @@
 /**
  * Complete Phaser game configuration
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { GameScene } from './basic-scene'
 
 const config: Phaser.Types.Core.GameConfig = {

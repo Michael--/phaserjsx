@@ -2,7 +2,7 @@
  * Tooltip applier for component patching
  * Manages native Phaser text tooltip rendering with animations
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { HoverEventData } from '../../gestures/gesture-types'
 import { themeRegistry } from '../../theme'
 import type { TooltipCallback, TooltipConfig } from '../../tooltip/tooltip-types'

@@ -2,7 +2,7 @@
  * Host layer - Generic bridge between VDOM and Phaser GameObjects
  * Provides type-safe creator/patcher pattern for extensible node types
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { NodeInstance, NodeProps, NodeType } from './core-types'
 
 /**

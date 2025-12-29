@@ -48,6 +48,14 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/no-redeclare': 'off',
       'no-redeclare': 'off',
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "ImportDeclaration[source.value='phaser'] > ImportDefaultSpecifier",
+          message:
+            'Default import from "phaser" is not allowed. Use `import * as Phaser from "phaser"` or a dedicated interop wrapper.',
+        },
+      ],
       'prettier/prettier': 'warn',
       // 'no-console': ['warn', { allow: ['warn', 'error'] }],
       'no-undef': 'off',

@@ -4,7 +4,7 @@
  */
 
 import type { VNode } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 /**
  * Gets root VNode from a Phaser scene

@@ -3,7 +3,7 @@
  * Updates gesture registration when props change
  */
 import type { LayoutSize } from '@number10/phaserjsx/layout'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { GestureProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
 import type { GestureCallbacks } from '../../gestures/gesture-types'

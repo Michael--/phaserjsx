@@ -2,7 +2,7 @@
  * Minimal Phaser bootstrap that mounts the JSX tree into a Scene.
  */
 import { mountJSX } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { App, type DemoMode, Switcher } from './App'
 
 let demo: DemoMode = 'Default'

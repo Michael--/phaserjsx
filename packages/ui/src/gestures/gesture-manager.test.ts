@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { GestureManager } from './gesture-manager'
 
 type HitArea = {

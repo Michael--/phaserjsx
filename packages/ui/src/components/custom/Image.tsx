@@ -3,7 +3,7 @@
  * Image component wrapper - strict type-safe wrapper around primitive image
  * This component is the public API for Image, with controlled prop interface
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

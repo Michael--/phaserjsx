@@ -1,7 +1,7 @@
 /**
  * Type definitions for the layout system
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { BackgroundProps, EdgeInsets, LayoutProps, TransformProps } from '../core-props'
 
 /**

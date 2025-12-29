@@ -3,7 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { RefOriginView, Text, useEffect, useRef, View } from '@number10/phaserjsx'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 /**
  * Demonstrates scaling around different origin points

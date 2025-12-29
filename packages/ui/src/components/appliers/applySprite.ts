@@ -1,7 +1,7 @@
 /**
  * Applier for Sprite-specific properties
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { SpriteBaseProps } from '../primitives/sprite'
 
 /**

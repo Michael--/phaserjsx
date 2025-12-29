@@ -3,7 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { Button, Text, View, mountJSX, useState } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 class TestScene extends Phaser.Scene {
   create() {

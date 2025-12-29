@@ -1,7 +1,7 @@
 /**
  * Portal registry - manages portal trees and depth ordering
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { VNode } from '../hooks'
 import type { PortalTree } from './portal-types'
 

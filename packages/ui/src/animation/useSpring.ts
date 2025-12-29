@@ -3,7 +3,7 @@
  * Provides physics-based animations using signals for direct updates
  */
 import { computed, type Signal } from '@preact/signals-core'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { getCurrent, useEffect, useRef } from '../hooks'
 import type { ParentType } from '../types'
 import { animatedSignal, type AnimatedSignal } from './animated-signal'

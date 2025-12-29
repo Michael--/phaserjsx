@@ -1,5 +1,5 @@
 /** @jsxImportSource ../.. */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 /**
  * Sidebar component - High-level container with typical sidebar styling
  */

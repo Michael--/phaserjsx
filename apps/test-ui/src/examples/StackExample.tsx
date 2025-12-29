@@ -8,7 +8,7 @@ import {
   View,
   type GestureEventData,
 } from '@number10/phaserjsx'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { ViewLevel2 } from './Helper/ViewLevel'
 
 interface StackItem {

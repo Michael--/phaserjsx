@@ -3,7 +3,7 @@
  * Demonstrates various uses of the Graphics component
  */
 import { Graphics, ScrollView, Text, View, useState, useThemeTokens } from '@number10/phaserjsx'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { SectionHeader } from './Helper'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 

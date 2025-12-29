@@ -1,7 +1,7 @@
 /**
  * Background applier - updates background and hit area
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout } from '../types'
 

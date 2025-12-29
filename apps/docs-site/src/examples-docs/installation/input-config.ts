@@ -1,7 +1,7 @@
 /**
  * Phaser input configuration
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 const config: Phaser.Types.Core.GameConfig = {
   // ... other config

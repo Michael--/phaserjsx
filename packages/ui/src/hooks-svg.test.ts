@@ -1,7 +1,7 @@
 /**
  * Tests for SVG texture hooks
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { disposeCtx, withHooks, type Ctx } from './hooks'
 import { useSVGTexture, useSVGTextures } from './hooks-svg'

@@ -1,7 +1,7 @@
 /**
  * Utility functions for working with layout children
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { EdgeInsets, LayoutProps } from '../../core-props'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout, LayoutChild, LayoutSize } from '../types'

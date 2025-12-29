@@ -27,7 +27,7 @@ import {
   useWorldLayoutRect,
   View,
 } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 // DevConfig.debug.enabled = true
 // DevConfig.debug.layout = true

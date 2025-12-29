@@ -2,7 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 
 /**

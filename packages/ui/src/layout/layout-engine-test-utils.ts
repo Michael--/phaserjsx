@@ -1,7 +1,7 @@
 /**
  * Shared utilities for layout-engine tests
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { beforeAll } from 'vitest'
 import { LayoutBatchQueue } from './layout-engine'
 

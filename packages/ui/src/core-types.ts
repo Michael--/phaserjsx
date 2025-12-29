@@ -2,7 +2,7 @@
  * Core type system for native Phaser GameObject primitives
  * Defines the mapping between node type names and their corresponding Phaser types
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { GraphicsBaseProps } from './components/primitives/graphics'
 import type { ImageBaseProps } from './components/primitives/image'
 import type { NineSliceBaseProps } from './components/primitives/nineslice'

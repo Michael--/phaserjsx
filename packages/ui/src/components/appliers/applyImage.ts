@@ -1,7 +1,7 @@
 /**
  * Applier for Image-specific properties
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { ImageBaseProps } from '../primitives/image'
 
 /**

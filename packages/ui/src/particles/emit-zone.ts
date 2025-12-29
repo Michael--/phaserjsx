@@ -1,7 +1,7 @@
 /**
  * Emit zone helpers for particle emitters
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { SizeValue } from '../core-props'
 
 /**

@@ -12,7 +12,7 @@ import {
   useThemeTokens,
   View,
 } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**

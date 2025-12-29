@@ -3,7 +3,7 @@
  * View component wrapper - strict type-safe wrapper around primitive view
  * This component is the public API for View, with controlled prop interface
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type {
   BackgroundProps,
   GestureProps,

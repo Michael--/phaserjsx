@@ -1,7 +1,7 @@
 /**
  * Particle utilities shared across hooks/components
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { DeathZoneConfig, EmitZoneConfig } from './emit-zone'
 import type { ParticleEmitter, ParticleEmitterManagerLike, ParticlesHandle } from './particle-types'
 import type { ParticleEmitterConfig } from './preset-registry'

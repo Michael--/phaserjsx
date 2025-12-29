@@ -4,7 +4,7 @@
  * This component is the public API for TileSprite, with controlled prop interface
  */
 import type { VNodeLike } from '@number10/phaserjsx/vdom'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

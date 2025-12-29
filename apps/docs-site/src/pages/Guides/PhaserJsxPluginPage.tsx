@@ -7,7 +7,7 @@ import { CodeBlock } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import { createPluginExampleGame } from '../../examples-docs/installation/plugin-config'
 import pluginConfigCode from '../../examples-docs/installation/plugin-config.tsx?raw'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
 import '@/styles/docs.css'
 

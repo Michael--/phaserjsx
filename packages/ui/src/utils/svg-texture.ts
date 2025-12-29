@@ -2,7 +2,7 @@
  * SVG to Phaser Texture Utilities
  * Provides conversion from SVG strings/URLs to Phaser texture resources
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 /**
  * Preprocesses SVG string to ensure tinting works correctly

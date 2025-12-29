@@ -2,7 +2,7 @@
  * Design token type definitions for PhaserJSX UI
  * Provides semantic tokens for text styles, spacing, sizes, and other design properties
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { ColorTokens } from '../colors'
 
 /**

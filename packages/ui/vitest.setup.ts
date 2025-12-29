@@ -71,6 +71,11 @@ class MockContainerClass {
     this.list.push(child)
     return child
   }
+
+  remove(child: unknown) {
+    this.list = this.list.filter((item) => item !== child)
+    return child
+  }
 }
 
 MockContainer = MockContainerClass
@@ -81,12 +86,23 @@ const PhaserMock = {
   GameObjects: {
     Container: MockContainer,
   },
+  Geom: {
+    Rectangle: class Rectangle {
+      constructor(
+        public x: number,
+        public y: number,
+        public width: number,
+        public height: number
+      ) {}
+      static Contains = vi.fn(() => true)
+    },
+  },
 }
 
 // Mock Phaser to prevent initialization issues in tests
 vi.mock('phaser', () => ({
+  ...PhaserMock,
   default: PhaserMock,
-  Scene: MockScene,
 }))
 
 // Make Phaser available globally for instanceof checks

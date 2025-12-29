@@ -2,7 +2,7 @@
  * Global gesture manager for high-level touch and mouse interactions
  * Uses global Phaser input events to track gestures even when pointer moves outside bounds
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type {
   GestureCallbacks,
   GestureConfig,

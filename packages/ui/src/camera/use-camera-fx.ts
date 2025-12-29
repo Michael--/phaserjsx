@@ -1,7 +1,7 @@
 /**
  * Hook and creators for Phaser camera effects
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { useCallback, useEffect, useRef, useScene } from '../hooks'
 import type { RefObject } from '../types'
 

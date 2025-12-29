@@ -2,7 +2,7 @@
  * SVG Texture Hooks - Per-scene texture management for SVG-based images
  * Each Phaser Scene maintains its own texture registry for isolation
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { getCurrent, useEffect, useMemo, useState } from './hooks'
 import type { ParentType } from './types'
 import { textureRegistry } from './utils/texture-registry'

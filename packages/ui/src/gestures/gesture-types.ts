@@ -1,7 +1,7 @@
 /**
  * Type definitions for the gesture system
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 /**
  * Touch move gesture state

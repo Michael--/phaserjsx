@@ -3,7 +3,7 @@
  * Dropdown/Select component
  * Provides single and multi-select functionality with filtering
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import { useSpring, type AnimationConfig } from '../../animation'
 import type { GestureEventData } from '../../core-props'

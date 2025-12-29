@@ -1,7 +1,7 @@
 /**
  * Layout applier for Sprite components
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutProps } from '../../core-props'
 import type { SpriteBaseProps } from '../primitives/sprite'
 

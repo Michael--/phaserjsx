@@ -13,6 +13,11 @@
     "declaration": true,
     "declarationMap": true,
 
+    // Enforce proper CJS import style for Phaser
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": false,
+    "skipLibCheck": false,
+
     // JSX configuration
     "jsx": "react-jsx",
     "jsxImportSource": ".",

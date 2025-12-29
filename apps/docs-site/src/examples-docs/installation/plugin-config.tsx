@@ -2,7 +2,7 @@
  * PhaserJSX Plugin configuration
  */
 /** @jsxImportSource @number10/phaserjsx */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { Button, Text, View, createPhaserJSXPlugin, useState } from '@number10/phaserjsx'
 
 type CounterProps = {

@@ -2,13 +2,13 @@
  * Tests for host functionality
  * Tests Phaser GameObject creation and management
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerBuiltins } from './components'
 
 // Mock Phaser
-vi.mock('phaser', () => ({
-  default: {
+vi.mock('phaser', () => {
+  const PhaserMock = {
     GameObjects: {
       Container: class Container {
         add = vi.fn()
@@ -26,8 +26,12 @@ vi.mock('phaser', () => ({
         static Contains = vi.fn(() => true)
       },
     },
-  },
-}))
+  }
+  return {
+    ...PhaserMock,
+    default: PhaserMock,
+  }
+})
 
 import { host } from './host'
 

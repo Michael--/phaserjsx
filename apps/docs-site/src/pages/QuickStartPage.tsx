@@ -107,7 +107,7 @@ function Counter() {
         <h2 className="text-2xl font-bold mb-4">4. Create a Phaser Scene</h2>
         <p className="mb-4">Create a scene that mounts your PhaserJSX component:</p>
         <CodeBlock language="typescript">
-          {`import Phaser from 'phaser'
+          {`import * as Phaser from 'phaser'
 import { mountJSX } from '@number10/phaserjsx'
 import { Counter } from './Counter'
 
@@ -143,7 +143,7 @@ export class GameScene extends Phaser.Scene {
         <h2 className="text-2xl font-bold mb-4">5. Initialize Phaser Game</h2>
         <p className="mb-4">Set up your Phaser game config and start the game:</p>
         <CodeBlock language="typescript">
-          {`import Phaser from 'phaser'
+          {`import * as Phaser from 'phaser'
 import { GameScene } from './GameScene'
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -197,7 +197,7 @@ new Phaser.Game(config)`}
         <h3 className="text-xl font-semibold mb-3">src/main.ts</h3>
         <CodeBlock language="typescript">
           {`/** @jsxImportSource @number10/phaserjsx */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { mountJSX, Button, Text, View, useState } from '@number10/phaserjsx'
 
 // Component

@@ -127,7 +127,7 @@
  * [❌] Rich text support - Future feature
  * [❌] Text effects (shadow, outline) - Future feature
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type {
   EdgeInsets,
   LayoutProps,

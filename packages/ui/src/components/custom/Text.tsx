@@ -3,7 +3,7 @@
  * Text component wrapper - strict type-safe wrapper around primitive text
  * This component is the public API for Text, with controlled prop interface
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { EdgeInsets, PhaserProps, TextSpecificProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

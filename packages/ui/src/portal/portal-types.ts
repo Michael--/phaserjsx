@@ -2,7 +2,7 @@
  * Portal system types
  * Defines types for portal-based rendering system
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { VNode } from '../hooks'
 
 /**

@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { registerBuiltins } from '../../components'
 import type { VNode } from '../../hooks'
@@ -9,8 +9,8 @@ import { mount } from '../../vdom'
 import { Portal } from './Portal'
 
 // Mock Phaser
-vi.mock('phaser', () => ({
-  default: {
+vi.mock('phaser', () => {
+  const PhaserMock = {
     GameObjects: {
       Container: class Container {
         constructor(scene: unknown, x: number, y: number) {
@@ -57,8 +57,12 @@ vi.mock('phaser', () => ({
         text: vi.fn(),
       }
     },
-  },
-}))
+  }
+  return {
+    ...PhaserMock,
+    default: PhaserMock,
+  }
+})
 
 // Enable synchronous mode for all tests
 beforeAll(() => {

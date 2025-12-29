@@ -45,7 +45,7 @@ vi.mock('./render-context', () => ({
   })),
 }))
 
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { useEffect, useRedraw, useRef, useState, withHooks, type Ctx } from './hooks'
 import { createElement } from './vdom'
 

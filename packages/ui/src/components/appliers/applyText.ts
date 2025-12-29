@@ -2,7 +2,7 @@
  * Shared property appliers for component patching
  * These functions avoid code duplication when updating node properties
  */
-import equal from 'fast-deep-equal'
+import equal from '../../utils/fast-deep-equal'
 import type { TextSpecificProps } from '../../core-props'
 import { parseSize, resolveSize } from '../../layout/utils/size-resolver'
 import { viewportRegistry } from '../../viewport-context'

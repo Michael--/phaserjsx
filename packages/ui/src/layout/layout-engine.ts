@@ -2,7 +2,7 @@
  * Layout engine - main orchestrator for layout calculations
  * Uses strategy pattern to handle different layout directions
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { LayoutProps } from '../core-props'
 import { normalizeGap } from '../core-props'
 import { DebugLogger, DevConfig } from '../dev-config'

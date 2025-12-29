@@ -1,7 +1,7 @@
 /**
  * Layout creator for Sprite components
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutSize } from '../../layout/index'
 import type { SpriteBaseProps } from '../primitives/sprite'
 

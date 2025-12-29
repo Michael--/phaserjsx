@@ -2,7 +2,7 @@
  * PhaserJSX Plugin for automatic JSX mounting
  * Enables declarative initialization via Phaser game config
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { VNodeLike } from './types'
 import { mountJSX, type MountHandle, type MountProps } from './vdom'
 

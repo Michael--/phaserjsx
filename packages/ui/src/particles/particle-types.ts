@@ -1,7 +1,7 @@
 /**
  * Local particle types to avoid reliance on Phaser type exports
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 export type ParticleEmitter = Phaser.GameObjects.Particles.ParticleEmitter
 

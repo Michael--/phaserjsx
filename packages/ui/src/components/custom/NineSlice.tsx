@@ -3,7 +3,7 @@
  * NineSlice component wrapper - strict type-safe wrapper around primitive nineslice
  * This component is the public API for NineSlice, with controlled prop interface
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import { useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

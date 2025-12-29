@@ -1,7 +1,7 @@
 /**
  * Applier for NineSlice-specific properties
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutProps } from '../../core-props'
 import type { NineSliceSpecificProps } from '../primitives/nineslice'
 

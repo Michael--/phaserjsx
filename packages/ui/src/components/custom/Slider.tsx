@@ -3,7 +3,7 @@
  * Slider/Range component
  * Provides interactive value selection with horizontal/vertical orientation
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData } from '../../core-props'
 import { applyEffectByName, useGameObjectEffect, type EffectDefinition } from '../../effects'

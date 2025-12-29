@@ -2,7 +2,7 @@
 /**
  * ScrollSlider component for scrollable content areas
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
 import { useRef } from '../../hooks'
 import { getThemedProps } from '../../theme'

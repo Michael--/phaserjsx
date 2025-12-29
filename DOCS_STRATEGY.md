@@ -816,7 +816,7 @@ export function ButtonExample() {
 // docs-site/src/components/LiveExample.tsx
 /** @jsxImportSource react */
 import { useEffect, useRef } from 'react'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 interface LiveExampleProps {
   sceneFactory: () => typeof Phaser.Scene
@@ -862,7 +862,7 @@ export function LiveExample({ sceneFactory }: LiveExampleProps) {
 
 ```typescript
 // docs-site/src/utils/phaser-bridge.ts
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { mount } from '@number10/phaserjsx'
 import type { VNode } from '@number10/phaserjsx'
 

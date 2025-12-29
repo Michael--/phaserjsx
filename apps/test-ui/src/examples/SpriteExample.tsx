@@ -12,7 +12,7 @@ import {
   useThemeTokens,
   View,
 } from '@number10/phaserjsx'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { Button } from '../components'
 import { SectionHeader } from './Helper'
 import { ViewLevel1, ViewLevel2 } from './Helper/ViewLevel'

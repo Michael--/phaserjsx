@@ -2,7 +2,7 @@
  * Render context - isolates global state per mount point
  * Stored in scene.data to ensure proper isolation between multiple mounts
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { DebugLogger } from './dev-config'
 import type { Ctx } from './hooks'
 import type { ParentType } from './types'

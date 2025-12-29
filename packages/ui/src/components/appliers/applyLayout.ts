@@ -1,7 +1,7 @@
 /**
  * Layout property applier for updating container layout configuration
  */
-import equal from 'fast-deep-equal'
+import equal from '../../utils/fast-deep-equal'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
 import { calculateLayout, type LayoutSize } from '../../layout/index'

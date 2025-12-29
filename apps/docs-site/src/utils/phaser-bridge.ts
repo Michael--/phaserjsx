@@ -6,7 +6,7 @@ import type { BackgroundAnimation, BackgroundConfig } from '@/types/background'
 import { DEFAULT_BACKGROUND } from '@/types/background'
 import phaserJsxLogo from '@/assets/phaser-jsx-logo.png'
 import { mountJSX, type VNode } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 /**
  * Creates a Phaser Scene class that mounts a PhaserJSX component

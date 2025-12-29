@@ -3,7 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import { Text, View, mountJSX } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 class MultiMountScene extends Phaser.Scene {
   create() {

@@ -2,7 +2,7 @@
  * DOM input element manager for text input overlay
  * Handles creation, positioning, and lifecycle of DOM input elements
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 /**
  * Configuration for DOM input element

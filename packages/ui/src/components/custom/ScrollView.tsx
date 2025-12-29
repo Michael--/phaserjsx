@@ -2,7 +2,7 @@
 /**
  * ScrollView component providing a scrollable area with optional sliders
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
 import { useEffect, useRedraw, useRef, useState } from '../../hooks'

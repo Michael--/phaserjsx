@@ -112,7 +112,7 @@
  * [ ] Test with scrolling, scaling, rotation
  * [ ] Document power-of-2 texture recommendation
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { TransformProps } from '../../core-props'
 import type { HostCreator, HostPatcher } from '../../host'
 import type { PropsDefaultExtension } from '../../types'

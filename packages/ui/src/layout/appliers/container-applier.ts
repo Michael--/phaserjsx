@@ -1,7 +1,7 @@
 /**
  * Container applier - applies dimensions to container
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout, LayoutSize } from '../types'
 

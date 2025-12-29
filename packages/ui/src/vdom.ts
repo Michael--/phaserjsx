@@ -2,8 +2,8 @@
  * VDOM + mount/patch/unmount and host integration.
  * This file glues JSX VNodes to Phaser GameObjects using the host bridge.
  */
-import equal from 'fast-deep-equal'
-import Phaser from 'phaser'
+import equal from './utils/fast-deep-equal'
+import * as Phaser from 'phaser'
 import { SceneWrapper } from './components/internal/SceneWrapper'
 import type { NodeProps, NodeType } from './core-types'
 import { DebugLogger, DevConfig } from './dev-config'

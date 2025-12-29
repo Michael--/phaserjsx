@@ -18,7 +18,7 @@
  * </RefOriginView>
  */
 import type { ChildrenType } from '@number10/phaserjsx/types'
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import { useRef, useState } from '../../hooks'
 import type { VNodeLike } from '../../vdom'

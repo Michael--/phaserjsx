@@ -1,7 +1,7 @@
 /**
  * Graphics layout property appliers
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { GameObjectWithLayout } from '../../layout/types'
 import type { GraphicsBaseProps } from '../primitives/graphics'
 

@@ -2,7 +2,7 @@
  * Shared property creators for component initialization
  * These functions avoid code duplication when creating nodes with initial properties
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { BackgroundProps } from '../../core-props'
 
 /**

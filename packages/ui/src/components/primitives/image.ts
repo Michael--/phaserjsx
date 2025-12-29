@@ -111,7 +111,7 @@
  * [✅] Texture and frame patching
  * [⚠️] Rotation - Only with headless=true (ignored for layout-aware)
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import type { HostCreator, HostPatcher } from '../../host'
 import type { PropsDefaultExtension } from '../../types'

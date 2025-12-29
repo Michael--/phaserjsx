@@ -3,7 +3,7 @@
  * Using PhaserJSX Plugin for automatic mounting
  */
 import { createPhaserJSXPlugin } from '@number10/phaserjsx'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { App } from './App'
 
 /**

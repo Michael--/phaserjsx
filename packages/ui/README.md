@@ -65,7 +65,7 @@ function Counter() {
 ### 3. Mount in Phaser Scene
 
 ```tsx
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { mountJSX } from '@number10/phaserjsx'
 
 class GameScene extends Phaser.Scene {

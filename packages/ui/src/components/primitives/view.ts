@@ -104,7 +104,7 @@
  * [✅] Theme system integration
  * [✅] Deferred layout queue for gesture updates
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import type {
   BackgroundProps,
   GestureProps,

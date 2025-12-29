@@ -2,7 +2,7 @@
  * Imperative Phaser example - manual GameObject management
  * This demonstrates the traditional imperative approach
  */
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 class ImperativeGameScene extends Phaser.Scene {
   private counter: number = 0

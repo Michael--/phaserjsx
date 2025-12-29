@@ -1,7 +1,7 @@
 /**
  * Particle preset registry - typed presets with extension support
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 
 /**
  * Built-in particle preset names

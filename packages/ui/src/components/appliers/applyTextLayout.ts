@@ -1,7 +1,7 @@
 /**
  * Layout applier for text components
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { LayoutSize } from '../../layout/index'
 import type { TextBaseProps } from '../primitives/text'
 

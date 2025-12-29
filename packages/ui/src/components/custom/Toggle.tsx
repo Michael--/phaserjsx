@@ -3,7 +3,7 @@
  * Toggle/Switch component - Binary on/off control with animated thumb
  * Provides smooth animations and flexible theming
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { numberToRgb, rgbToNumber } from '../../colors/color-utils'
 import { useEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'

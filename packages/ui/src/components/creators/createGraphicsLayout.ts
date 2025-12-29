@@ -1,7 +1,7 @@
 /**
  * Layout system initialization for Graphics component
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { GraphicsBaseProps } from '../primitives/graphics'
 
 /**

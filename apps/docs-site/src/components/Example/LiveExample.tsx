@@ -4,7 +4,7 @@
  */
 /** @jsxImportSource react */
 import type { BackgroundConfig } from '@/types/background'
-import Phaser from 'phaser'
+import * as Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
 
 interface LiveExampleProps {

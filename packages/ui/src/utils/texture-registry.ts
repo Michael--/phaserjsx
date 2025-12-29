@@ -2,7 +2,7 @@
  * Texture Registry for managing SVG texture loading and reference counting
  * Prevents race conditions when multiple components request the same texture
  */
-import type Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { svgToTexture } from './svg-texture'
 
 interface TextureRequest {
