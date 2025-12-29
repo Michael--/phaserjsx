@@ -2,6 +2,7 @@
  * Custom hook for Phaser game object effects (shake, pulse, etc.)
  * Manages multiple concurrent effects with proper cleanup
  */
+import * as Phaser from 'phaser'
 import { useEffect, useRef } from '../hooks'
 
 /**

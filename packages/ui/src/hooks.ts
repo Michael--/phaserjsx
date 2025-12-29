@@ -2,6 +2,7 @@
  * Tiny hook runtime to enable function components with local subtree re-render.
  * It is independent from React/Preact renderers.
  */
+import * as Phaser from 'phaser'
 import type { Signal } from '@preact/signals-core'
 import type { BackgroundProps, LayoutProps, TransformProps } from './core-props'
 import type { LayoutSize } from './layout/types'

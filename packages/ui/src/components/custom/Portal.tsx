@@ -3,6 +3,7 @@
  * Portal component - renders children into a separate tree at specified depth
  * Enables overlays, modals, tooltips without affecting parent tree layout
  */
+import * as Phaser from 'phaser'
 import { getGestureManager } from '../../gestures/gesture-manager'
 import type { VNode } from '../../hooks'
 import { useEffect, useMemo, useRef, useScene } from '../../hooks'

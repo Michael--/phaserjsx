@@ -1,6 +1,7 @@
 /**
  * Layout property applier for updating container layout configuration
  */
+import * as Phaser from 'phaser'
 import equal from '../../utils/fast-deep-equal'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
 import { getGestureManager } from '../../gestures/gesture-manager'
