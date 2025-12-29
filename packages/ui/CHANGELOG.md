@@ -1,5 +1,11 @@
 # @number10/phaserjsx
 
+## 0.4.2
+
+### Patch Changes
+
+- Enforce Phaser namespace imports
+
 ## 0.4.1
 
 ### Patch Changes
