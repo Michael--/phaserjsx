@@ -2,7 +2,7 @@
  * Tiny hook runtime to enable function components with local subtree re-render.
  * It is independent from React/Preact renderers.
  */
-import * as Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { Signal } from '@preact/signals-core'
 import type { BackgroundProps, LayoutProps, TransformProps } from './core-props'
 import type { LayoutSize } from './layout/types'
@@ -10,6 +10,7 @@ import { getContextFromParent } from './render-context'
 import type { PartialTheme } from './theme'
 import type { ParentType, VNodeLike } from './types'
 import { normalizeVNodeLike, patchVNode } from './vdom'
+import { isPhaserScene } from './utils/phaser-guards'
 
 type Cleanup = void | (() => void)
 
@@ -73,7 +74,7 @@ export type VNode = {
  */
 export function withHooks<T>(ctx: Ctx, render: () => T): T {
   // Check scene validity before accessing render context
-  const scene = ctx.parent instanceof Phaser.Scene ? ctx.parent : ctx.parent.scene
+  const scene = isPhaserScene(ctx.parent) ? ctx.parent : ctx.parent.scene
   if (!scene || !scene.sys || !scene.sys.settings.active) {
     // Scene is shutting down, return a safe default
     return null as T
@@ -562,7 +563,7 @@ function scheduleUpdate(c: Ctx) {
     }
 
     // Get scene and check if it's still valid
-    const scene = c.parent instanceof Phaser.Scene ? c.parent : c.parent.scene
+    const scene = isPhaserScene(c.parent) ? c.parent : c.parent.scene
     if (!scene || !scene.sys || !scene.sys.settings.active) {
       // Scene is being shut down or destroyed, skip update
       return

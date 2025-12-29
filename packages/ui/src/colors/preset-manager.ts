@@ -2,6 +2,7 @@
  * Dynamic color preset management
  */
 import { themeRegistry } from '../theme'
+import { remountAll } from '../vdom'
 import type { PresetName } from './color-presets'
 import { getPresetWithMode } from './color-presets'
 
@@ -40,10 +41,7 @@ export function setColorPreset(presetName: PresetName, colorMode?: 'light' | 'da
   // Trigger complete remount of all VDOM trees to apply new preset
   // Using setTimeout(0) to ensure all synchronous state updates complete first
   setTimeout(() => {
-    // Import remountAll lazily to avoid circular dependency
-    import('../vdom').then(({ remountAll }) => {
-      remountAll()
-    })
+    remountAll()
   }, 0)
 }
 

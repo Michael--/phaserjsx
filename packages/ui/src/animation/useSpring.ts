@@ -3,9 +3,10 @@
  * Provides physics-based animations using signals for direct updates
  */
 import { computed, type Signal } from '@preact/signals-core'
-import * as Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { getCurrent, useEffect, useRef } from '../hooks'
 import type { ParentType } from '../types'
+import { isPhaserScene } from '../utils/phaser-guards'
 import { animatedSignal, type AnimatedSignal } from './animated-signal'
 import {
   SPRING_PRESETS,
@@ -55,7 +56,7 @@ export function useSpring(
   // Get scene from render context (DURING RENDER, while getCurrent() is available)
   const ctx = getCurrent() as { parent: ParentType } | null
   const scene = ctx
-    ? ctx.parent instanceof Phaser.Scene
+    ? isPhaserScene(ctx.parent)
       ? ctx.parent
       : (ctx.parent as Phaser.GameObjects.GameObject).scene
     : null
@@ -195,7 +196,7 @@ export function useSprings<T extends Record<string, number>>(
   // Get scene from render context (DURING RENDER, while getCurrent() is available)
   const ctx = getCurrent() as { parent: ParentType } | null
   const scene = ctx
-    ? ctx.parent instanceof Phaser.Scene
+    ? isPhaserScene(ctx.parent)
       ? ctx.parent
       : (ctx.parent as Phaser.GameObjects.GameObject).scene
     : null

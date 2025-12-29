@@ -2,8 +2,9 @@
  * Host layer - Generic bridge between VDOM and Phaser GameObjects
  * Provides type-safe creator/patcher pattern for extensible node types
  */
-import * as Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import type { NodeInstance, NodeProps, NodeType } from './core-types'
+import { isPhaserContainer, isPhaserScene } from './utils/phaser-guards'
 
 /**
  * Host creator function type - creates a node instance from props
@@ -99,11 +100,11 @@ export const host = {
    */
   append(parent: unknown, child: unknown) {
     // Parent is a Container
-    if (parent instanceof Phaser.GameObjects.Container) {
+    if (isPhaserContainer(parent)) {
       parent.add(child as Phaser.GameObjects.GameObject)
     }
     // Parent is a Scene
-    else if (parent && typeof parent === 'object' && 'sys' in parent) {
+    else if (isPhaserScene(parent)) {
       const scene = parent as Phaser.Scene
       scene.add.existing(child as Phaser.GameObjects.GameObject)
     }
@@ -128,7 +129,7 @@ export const host = {
     if (!childObj.scene) return
 
     // Remove from parent container first
-    if (parent instanceof Phaser.GameObjects.Container) {
+    if (isPhaserContainer(parent)) {
       parent.remove(childObj, false)
     }
 

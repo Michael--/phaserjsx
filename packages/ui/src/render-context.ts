@@ -2,10 +2,11 @@
  * Render context - isolates global state per mount point
  * Stored in scene.data to ensure proper isolation between multiple mounts
  */
-import * as Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { DebugLogger } from './dev-config'
 import type { Ctx } from './hooks'
 import type { ParentType } from './types'
+import { isPhaserContainer, isPhaserScene } from './utils/phaser-guards'
 
 /**
  * Layout batch entry for deferred recalculation
@@ -184,7 +185,7 @@ export class RenderContext {
 export function getRenderContext(
   parentOrScene: Phaser.Scene | Phaser.GameObjects.Container
 ): RenderContext {
-  const scene = parentOrScene instanceof Phaser.Scene ? parentOrScene : parentOrScene.scene
+  const scene = isPhaserScene(parentOrScene) ? parentOrScene : parentOrScene.scene
 
   if (!scene || !scene.data || !scene.sys || !scene.sys.settings.active) {
     throw new Error('getRenderContext: Invalid scene or scene.data is undefined')
@@ -192,10 +193,9 @@ export function getRenderContext(
 
   // Use unique key per container to support multiple mounts in same scene
   // For scene-level mounts, use a default key
-  const containerKey =
-    parentOrScene instanceof Phaser.GameObjects.Container
-      ? `__renderContext_${parentOrScene.name || (parentOrScene as unknown as { id?: number }).id || 'container'}__`
-      : '__renderContext_scene__'
+  const containerKey = isPhaserContainer(parentOrScene)
+    ? `__renderContext_${parentOrScene.name || (parentOrScene as unknown as { id?: number }).id || 'container'}__`
+    : '__renderContext_scene__'
 
   let context = scene.data.get(containerKey) as RenderContext | undefined
 

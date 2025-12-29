@@ -12,13 +12,16 @@ import {
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
 
+import { DevPresets } from '@number10/phaserjsx'
+DevPresets.debugLayout()
+
 class MainScene extends Phaser.Scene {
   preload() {
     this.load.image('logo', 'https://labs.phaser.io/assets/sprites/phaser3-logo.png')
   }
 
   create() {
-    this.add.image(400, 300, 'logo')
+    this.add.image(400, 200, 'logo')
   }
 }
 
@@ -28,6 +31,7 @@ export interface AppProps extends MountProps {
 }
 
 function Test42(props: AppProps) {
+  console.log('Test42 props:', props)
   return (
     <View
       width={'fill'}
@@ -36,6 +40,7 @@ function Test42(props: AppProps) {
       justifyContent="center"
       gap={10}
       backgroundColor={0x775522}
+      backgroundAlpha={0.3}
     >
       <Button variant="primary" size="large" onClick={() => alert('Hello from PhaserJSX!')}>
         <Text text={props.title} />

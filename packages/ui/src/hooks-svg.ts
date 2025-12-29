@@ -2,10 +2,11 @@
  * SVG Texture Hooks - Per-scene texture management for SVG-based images
  * Each Phaser Scene maintains its own texture registry for isolation
  */
-import * as Phaser from 'phaser'
+import type * as Phaser from 'phaser'
 import { getCurrent, useEffect, useMemo, useState } from './hooks'
 import type { ParentType } from './types'
 import { textureRegistry } from './utils/texture-registry'
+import { isPhaserScene } from './utils/phaser-guards'
 
 /**
  * SVG texture configuration for loading
@@ -103,10 +104,9 @@ export function useSVGTexture(
 
   // Get scene from render context (isolated per mount point)
   const ctx = (getCurrent() as unknown as { parent: ParentType }) || {}
-  const scene =
-    ctx.parent instanceof Phaser.Scene
-      ? ctx.parent
-      : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
+  const scene = isPhaserScene(ctx.parent)
+    ? ctx.parent
+    : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
 
   useEffect(() => {
     if (!scene) return
@@ -167,10 +167,9 @@ export function useSVGTextures(configs: SVGTextureConfig[]): boolean {
 
   // Get scene from render context (isolated per mount point)
   const ctx = (getCurrent() as unknown as { parent: ParentType }) || {}
-  const scene =
-    ctx.parent instanceof Phaser.Scene
-      ? ctx.parent
-      : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
+  const scene = isPhaserScene(ctx.parent)
+    ? ctx.parent
+    : (ctx.parent as Phaser.GameObjects.GameObject | undefined)?.scene
 
   // Create stable key from configs to detect changes
   const configKey = useMemo(

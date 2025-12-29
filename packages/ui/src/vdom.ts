@@ -16,6 +16,7 @@ import { portalRegistry } from './portal'
 import { getRenderContext } from './render-context'
 import { getThemedProps } from './theme'
 import type { ParentType, Ref, VNodeLike } from './types'
+import { isPhaserContainer, isPhaserScene } from './utils/phaser-guards'
 export type { VNodeLike } from './types'
 
 /**
@@ -89,10 +90,9 @@ class MountRegistry {
   findByParentAndKey(parent: ParentType, key?: string): MountRegistryEntry | undefined {
     for (const entry of this.entries.values()) {
       // Validate scene is still active
-      const scene =
-        entry.parent instanceof Phaser.Scene
-          ? entry.parent
-          : (entry.parent as Phaser.GameObjects.GameObject).scene
+      const scene = isPhaserScene(entry.parent)
+        ? entry.parent
+        : (entry.parent as Phaser.GameObjects.GameObject).scene
 
       // Skip if scene is invalid or shutting down
       if (!scene || !scene.sys || !scene.sys.settings.active) {
@@ -185,7 +185,7 @@ class MountRegistry {
       }
 
       // Collect mount info
-      const parentType = entry.parent instanceof Phaser.Scene ? 'Scene' : 'Container'
+      const parentType = isPhaserScene(entry.parent) ? 'Scene' : 'Container'
       const mountInfo: {
         id: number
         type: string
@@ -254,10 +254,9 @@ export function remountAll(): void {
   entries.forEach((entry) => {
     try {
       // Find the current VNode stored in the scene
-      const scene =
-        entry.parent instanceof Phaser.Scene
-          ? entry.parent
-          : (entry.parent as Phaser.GameObjects.GameObject).scene
+      const scene = isPhaserScene(entry.parent)
+        ? entry.parent
+        : (entry.parent as Phaser.GameObjects.GameObject).scene
 
       if (!scene || !scene.sys) {
         console.warn('[REMOUNT] Scene is invalid, skipping remount')
@@ -267,7 +266,7 @@ export function remountAll(): void {
       const currentVNode = (scene as unknown as { __rootVNode?: VNode }).__rootVNode
 
       // Clear all children from the root container first
-      if (entry.rootNode instanceof Phaser.GameObjects.Container) {
+      if (isPhaserContainer(entry.rootNode)) {
         // Remove all children from container
         const children = entry.rootNode.getAll()
         children.forEach((child) => {
@@ -326,7 +325,7 @@ export function remountAll(): void {
       // Mount the new VDOM tree into the EXISTING parent container
       const rootNode = mount(entry.parent, vnode)
 
-      if (rootNode instanceof Phaser.GameObjects.Container) {
+      if (isPhaserContainer(rootNode)) {
         ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
       }
 
@@ -817,10 +816,9 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
     }
 
     // Extract scene early for potential null-return handling
-    const scene =
-      parentOrScene instanceof Phaser.Scene
-        ? parentOrScene
-        : (parentOrScene as Phaser.GameObjects.GameObject).scene
+    const scene = isPhaserScene(parentOrScene)
+      ? parentOrScene
+      : (parentOrScene as Phaser.GameObjects.GameObject).scene
 
     const ctx: Ctx = {
       index: 0,
@@ -986,7 +984,7 @@ export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjec
 
     // Get parent size for percentage/fill resolution
     let parentSize: { width: number; height: number } | undefined
-    if (parentOrScene instanceof Phaser.GameObjects.Container) {
+    if (isPhaserContainer(parentOrScene)) {
       const parentContainer = parentOrScene as Phaser.GameObjects.Container & {
         __layoutProps?: Record<string, unknown>
         __getLayoutSize?: () => { width: number; height: number }
@@ -1448,7 +1446,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
     if (container.__layoutProps) {
       // Get parent content-area (size minus padding) for percentage/fill resolution
       let parentSize: { width: number; height: number } | undefined
-      if (parent instanceof Phaser.GameObjects.Container) {
+      if (isPhaserContainer(parent)) {
         const parentContainer = parent as Phaser.GameObjects.Container & {
           __layoutProps?: Record<string, unknown>
           __getLayoutSize?: () => { width: number; height: number }
@@ -1609,10 +1607,9 @@ export function mountJSX(
   const { width, height, disableAutoSize = false, key: _key, ...componentProps } = props
 
   // Extract scene and set viewport dimensions
-  const scene =
-    parentOrScene instanceof Phaser.Scene
-      ? parentOrScene
-      : (parentOrScene as Phaser.GameObjects.GameObject).scene
+  const scene = isPhaserScene(parentOrScene)
+    ? parentOrScene
+    : (parentOrScene as Phaser.GameObjects.GameObject).scene
 
   if (scene) {
     const renderContext = getRenderContext(parentOrScene)
@@ -1659,7 +1656,7 @@ export function mountJSX(
   // Mark root container with unique mount ID for gesture isolation
   // This ensures different mountJSX calls create separate gesture trees
   const rootNode = mount(parentOrScene, vnode)
-  if (rootNode instanceof Phaser.GameObjects.Container) {
+  if (isPhaserContainer(rootNode)) {
     ;(rootNode as unknown as { __mountRootId?: number }).__mountRootId = generateMountRootId()
   }
 
@@ -1684,7 +1681,7 @@ export function mountJSX(
  * @param target - Root GameObject or Phaser scene that holds the mounted JSX tree
  */
 export function unmountJSX(target: Phaser.Scene | Phaser.GameObjects.GameObject): void {
-  const scene = target instanceof Phaser.Scene ? target : target.scene
+  const scene = isPhaserScene(target) ? target : target.scene
   const targetWithVNode = target as unknown as { __rootVNode?: VNode; __registryId?: number }
   const sceneWithVNode = scene as unknown as { __rootVNode?: VNode }
 

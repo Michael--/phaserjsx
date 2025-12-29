@@ -4,10 +4,12 @@
  */
 import type { ColorTokens } from './colors'
 import type { NodeType } from './core-types'
+import { getPresetWithMode } from './colors/color-presets'
 import { DebugLogger } from './dev-config'
 import type { ComponentThemes, PartialTheme, Theme } from './theme-base'
 import './theme-custom' // Import to activate declaration merging
 import { createDefaultTheme, defaultTheme } from './theme-defaults'
+import { remountAll } from './vdom'
 
 // Re-export all types and interfaces
 export type {
@@ -155,14 +157,11 @@ class ThemeRegistry {
 
       // If a preset is active, reload color tokens with the new mode
       if (this.currentPresetName) {
-        // Import and update color tokens immediately
-        import('./colors/color-presets').then(({ getPresetWithMode }) => {
-          const preset = getPresetWithMode(
-            this.currentPresetName as 'oceanBlue' | 'forestGreen' | 'midnight',
-            mode
-          )
-          this.colorTokens = preset.colors
-        })
+        const preset = getPresetWithMode(
+          this.currentPresetName as 'oceanBlue' | 'forestGreen' | 'midnight',
+          mode
+        )
+        this.colorTokens = preset.colors
       }
 
       // Skip notifyListeners() - we're doing a complete remount instead
@@ -171,10 +170,7 @@ class ThemeRegistry {
       // Trigger complete remount of all VDOM trees to apply new theme
       // Using setTimeout(0) to ensure all synchronous state updates complete first
       setTimeout(() => {
-        // Import remountAll lazily to avoid circular dependency
-        import('./vdom').then(({ remountAll }) => {
-          remountAll()
-        })
+        remountAll()
       }, 0)
     }
   }
