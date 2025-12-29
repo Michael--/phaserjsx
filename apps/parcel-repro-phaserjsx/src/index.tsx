@@ -1,7 +1,7 @@
-/** @jsxImportSource @number10/phaserjsx */
+/** @jsx createElement */
 import './styles.css'
 
-import { Button, Text, createPhaserJSXPlugin } from '@number10/phaserjsx'
+import { Button, Text, createElement, createPhaserJSXPlugin } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
 //;(globalThis as any).Phaser = Phaser
 

@@ -12,8 +12,9 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
-    "jsx": "react-jsx",
-    "jsxImportSource": "@number10/phaserjsx",
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "Fragment",
 
     "noEmit": true
   },
