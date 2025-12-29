@@ -1,5 +1,11 @@
 # @number10/phaserjsx
 
+## 0.4.1
+
+### Patch Changes
+
+- Added typesVersions entries for jsx-runtime and jsx-dev-runtime so older TS resolvers can find the d.ts subpaths while keeping the existing exports map as-is. This targets the TS “react-jsx” consumer error without altering the runtime bundles.
+
 ## 0.4.0
 
 ### Minor Changes

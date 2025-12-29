@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.4.1
+
 ## 0.2.0
 
 ### Minor Changes
