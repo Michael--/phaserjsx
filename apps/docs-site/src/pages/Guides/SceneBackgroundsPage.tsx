@@ -120,6 +120,25 @@ export function SceneBackgroundsPage() {
         />
       </Section>
 
+      <Section title="Direct Scene Usage">
+        <SectionDescription>
+          Minimal scene setup with a background helper and a mounted JSX component.
+        </SectionDescription>
+
+        <CodeBlock language="tsx">
+          {`import * as Phaser from 'phaser'
+import { addSceneBackground, mountJSX } from '@number10/phaserjsx'
+import { DemoComponent } from './DemoComponent'
+
+class MainScene extends Phaser.Scene {
+  create() {
+    addSceneBackground(this, { type: 'grid', animation: 'lemniscate' })
+    mountJSX(this, DemoComponent, { width: this.scale.width, height: this.scale.height })
+  }
+}`}
+        </CodeBlock>
+      </Section>
+
       <Section title="Usage in Examples">
         <SectionDescription>
           Add background configuration to any example definition:

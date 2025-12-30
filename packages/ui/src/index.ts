@@ -20,6 +20,7 @@ export * from './theme'
 export * from './types'
 export * from './vdom'
 export * from './particles'
+export * from './scene-backgrounds'
 
 // Export core prop utilities
 export {
