@@ -1,0 +1,23 @@
+{
+  "name": "rollup-phaserjsx",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.cjs",
+    "build": "rollup -c",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@number10/phaserjsx": "workspace:*",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@types/node": "^24.10.1",
+    "rollup": "^4.35.0",
+    "typescript": "^5.9.3"
+  }
+}
