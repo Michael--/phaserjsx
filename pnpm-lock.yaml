@@ -170,6 +170,25 @@ importers:
         specifier: ^7.2.4
         version: 7.2.6(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)(yaml@2.8.1)
 
+  apps/esbuild-phaserjsx:
+    dependencies:
+      '@number10/phaserjsx':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      phaser:
+        specifier: ^3.90.0
+        version: 3.90.0
+    devDependencies:
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.10.1
+      esbuild:
+        specifier: ^0.25.0
+        version: 0.25.12
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
   apps/parcel-modern-phaserjsx:
     dependencies:
       '@number10/phaserjsx':

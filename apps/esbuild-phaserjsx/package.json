@@ -1,0 +1,20 @@
+{
+  "name": "esbuild-phaserjsx",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "esbuild src/index.tsx --bundle --sourcemap --format=esm --outfile=dist/bundle.js --servedir=. --watch",
+    "build": "esbuild src/index.tsx --bundle --format=esm --minify --outfile=dist/bundle.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@number10/phaserjsx": "workspace:*",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.9.3"
+  }
+}
