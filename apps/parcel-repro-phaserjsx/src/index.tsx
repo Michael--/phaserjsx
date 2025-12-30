@@ -2,49 +2,83 @@
 import './styles.css'
 
 import {
+  addSceneBackground,
   Button,
-  MountProps,
-  Text,
-  View,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createElement,
   createPhaserJSXPlugin,
+  Image,
+  MountProps,
+  setColorPreset,
+  Text,
+  useState,
+  useThemeTokens,
+  View,
+  type SceneBackgroundHandle,
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
 
-import { DevPresets } from '@number10/phaserjsx'
-DevPresets.debugLayout()
+const DEFAULT_LOGO_KEY = 'phaser-logo'
 
 class MainScene extends Phaser.Scene {
+  private backgroundHandle?: SceneBackgroundHandle | null
   preload() {
-    this.load.image('logo', 'https://labs.phaser.io/assets/sprites/phaser3-logo.png')
+    this.load.image(DEFAULT_LOGO_KEY, 'https://labs.phaser.io/assets/sprites/phaser3-logo.png')
   }
 
   create() {
-    this.add.image(400, 200, 'logo')
+    this.backgroundHandle = addSceneBackground(this, { type: 'grid', animation: 'lemniscate' })
+  }
+
+  destroy() {
+    this.backgroundHandle?.destroy()
+    this.backgroundHandle = null
   }
 }
 
-export interface AppProps extends MountProps {
+setColorPreset('oceanBlue', 'dark')
+
+export interface RootUIProps extends MountProps {
   /** Additional props can be defined here if needed */
   title: string
 }
 
-function Test42(props: AppProps) {
-  console.log('Test42 props:', props)
+function RootUI(props: RootUIProps) {
+  const tokens = useThemeTokens()
+  const [value, setValue] = useState(0)
   return (
-    <View
-      width={'fill'}
-      height={'fill'}
-      alignItems="center"
-      justifyContent="center"
-      gap={10}
-      backgroundColor={0x775522}
-      backgroundAlpha={0.3}
-    >
-      <Button variant="primary" size="large" onClick={() => alert('Hello from PhaserJSX!')}>
-        <Text text={props.title} />
-      </Button>
+    <View width={'fill'} height={'fill'} padding={20}>
+      <View
+        width={'fill'}
+        height={'fill'}
+        alignItems="center"
+        justifyContent="start"
+        gap={30}
+        padding={20}
+        borderColor={tokens?.colors.border.lightest.toNumber()}
+        borderAlpha={1}
+        borderWidth={3}
+        cornerRadius={12}
+      >
+        <Text text={props.title} style={tokens?.textStyles.title} />
+        <Image texture={DEFAULT_LOGO_KEY} />
+        <View
+          direction="row"
+          cornerRadius={12}
+          gap={20}
+          padding={10}
+          alignItems="center"
+          backgroundColor={tokens?.colors.background.lightest.toNumber()}
+        >
+          <Button variant="primary" size="large" onClick={() => setValue(value - 1)}>
+            <Text text={'➖'} />
+          </Button>
+          <Text text={`${value}`} style={tokens?.textStyles.title} />
+          <Button variant="primary" size="large" onClick={() => setValue(value + 1)}>
+            <Text text={'➕'} />
+          </Button>
+        </View>
+      </View>
     </View>
   )
 }
@@ -69,8 +103,8 @@ new Phaser.Game({
   plugins: {
     global: [
       createPhaserJSXPlugin({
-        component: Test42,
-        props: { title: '🚀 PhaserJSX Dev Playground' },
+        component: RootUI,
+        props: { title: '🚀 PhaserJSX Parcel Bundler Demo' },
         autoResize: true,
       }),
     ],
