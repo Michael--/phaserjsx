@@ -1,0 +1,25 @@
+{
+  "name": "rspack-phaserjsx",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "rspack serve --mode development",
+    "build": "rspack --mode production",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@number10/phaserjsx": "workspace:*",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "@rspack/cli": "^1.1.0",
+    "@rspack/core": "^1.1.0",
+    "@rspack/dev-server": "^1.1.0",
+    "@types/node": "^24.10.1",
+    "css-loader": "^6.10.0",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.9.3"
+  }
+}
