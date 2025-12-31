@@ -37,6 +37,7 @@ vi.mock('./render-context', () => ({
 }))
 
 import { host } from './host'
+import type { ParentType } from './types'
 import { createElement, mount, mountJSX, patchVNode, unmount, unmountJSX } from './vdom'
 
 describe('VDOM', () => {
@@ -172,11 +173,11 @@ describe('VDOM', () => {
     })
 
     it('exposes an unmount helper on the mount handle', () => {
-      const parent = mockScene
+      const parent = mockScene as ParentType
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(host.create).mockReturnValue({ id: 'root' } as any)
 
-      const handle = mountJSX(parent as any, 'View', {
+      const handle = mountJSX(parent, 'View', {
         width: 100,
         height: 100,
         disableAutoSize: true,
@@ -220,25 +221,29 @@ describe('VDOM', () => {
 
     it('should properly cleanup VDOM when using visible="none"', () => {
       const mockSceneWithSys = { sys: {} }
-      const oldVNode = createElement('View', { visible: true }, [
+      const oldVNode = createElement(
+        'View',
+        { visible: true },
         createElement('View', { key: 'child1' }),
-        createElement('View', { key: 'child2', visible: true }),
-      ])
+        createElement('View', { key: 'child2', visible: true })
+      )
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       oldVNode.__node = { id: 'parent', parentContainer: mockSceneWithSys, list: [] } as any
       oldVNode.__parent = mockSceneWithSys
 
       // Mount children
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      oldVNode.children![0].__node = { id: 'child1' } as any
+      ;(oldVNode.children![0] as any).__node = { id: 'child1' }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      oldVNode.children![1].__node = { id: 'child2' } as any
+      ;(oldVNode.children![1] as any).__node = { id: 'child2' }
 
       // Change child2 to visible="none"
-      const newVNode = createElement('View', { visible: true }, [
+      const newVNode = createElement(
+        'View',
+        { visible: true },
         createElement('View', { key: 'child1' }),
-        createElement('View', { key: 'child2', visible: 'none' }),
-      ])
+        createElement('View', { key: 'child2', visible: 'none' })
+      )
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       patchVNode(mockSceneWithSys as any, oldVNode, newVNode)
@@ -250,26 +255,32 @@ describe('VDOM', () => {
 
     it('should properly cleanup VDOM when using conditional rendering', () => {
       const mockSceneWithSys = { sys: {} }
-      const oldVNode = createElement('View', { visible: true }, [
+      const oldVNode = createElement(
+        'View',
+        { visible: true },
         createElement('View', { key: 'child1' }),
-        createElement('View', { key: 'child2' }),
-      ])
+        createElement('View', { key: 'child2' })
+      )
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       oldVNode.__node = { id: 'parent', parentContainer: mockSceneWithSys, list: [] } as any
       oldVNode.__parent = mockSceneWithSys
 
       // Mount children with proper parent references
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      oldVNode.children![0].__node = { id: 'child1' } as any
-      oldVNode.children![0].__parent = oldVNode.__node
+      ;(oldVNode.children![0] as any).__node = { id: 'child1' } as any
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      oldVNode.children![1].__node = { id: 'child2' } as any
-      oldVNode.children![1].__parent = oldVNode.__node
+      ;(oldVNode.children![0] as any).__parent = oldVNode.__node
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(oldVNode.children![1] as any).__node = { id: 'child2' } as any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(oldVNode.children![1] as any).__parent = oldVNode.__node
 
       // Remove child2 via conditional rendering
-      const newVNode = createElement('View', { visible: true }, [
-        createElement('View', { key: 'child1' }),
-      ])
+      const newVNode = createElement(
+        'View',
+        { visible: true },
+        createElement('View', { key: 'child1' })
+      )
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       patchVNode(mockSceneWithSys as any, oldVNode, newVNode)

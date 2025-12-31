@@ -5,11 +5,11 @@
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
 import { CodeBlock } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
-import { createPluginExampleGame } from '../../examples-docs/installation/plugin-config'
-import pluginConfigCode from '../../examples-docs/installation/plugin-config.tsx?raw'
+import '@/styles/docs.css'
 import type * as Phaser from 'phaser'
 import { useEffect, useRef } from 'react'
-import '@/styles/docs.css'
+import { createPluginExampleGame } from '../../examples-docs/installation/plugin-config'
+import pluginConfigCode from '../../examples-docs/installation/plugin-config.tsx?raw'
 
 const exampleWidth = 800
 const exampleHeight = 320
@@ -32,7 +32,7 @@ function PluginLiveExample() {
       gameRef.current?.destroy(true)
       gameRef.current = null
     }
-  }, [createPluginExampleGame, exampleHeight, exampleWidth])
+  }, [])
 
   return (
     <div

@@ -77,7 +77,7 @@ export interface PhaserJSXPluginEntry<P = Record<string, unknown>> {
  * })
  * ```
  */
-export function createPhaserJSXPlugin<C extends (props: any) => VNodeLike>(config: {
+export function createPhaserJSXPlugin<C extends (props: unknown) => VNodeLike>(config: {
   component: C
   props?: InferCustomProps<C>
   autoMount?: boolean
