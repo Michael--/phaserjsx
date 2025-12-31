@@ -1,5 +1,15 @@
 # @number10/phaserjsx
 
+## 0.5.0
+
+### Minor Changes
+
+- Add some test apps using some bundler to check compatibility with UI
+
+### Patch Changes
+
+- add jsx runtime type fallbacks for TS
+
 ## 0.4.2
 
 ### Patch Changes

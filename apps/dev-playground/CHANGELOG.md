@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0
+
+### Minor Changes
+
+- Add some test apps using some bundler to check compatibility with UI
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+  - @number10/phaserjsx@0.5.0
+
 ## 0.2.2
 
 ### Patch Changes
