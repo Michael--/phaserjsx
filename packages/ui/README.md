@@ -91,6 +91,8 @@ new Phaser.Game(config)
 
 [📖 Full Documentation](https://michael--.github.io/phaserjsx/)
 
+[🎮 Live Examples on StackBlitz](https://stackblitz.com/@Michael--/collections/phaserjsx)
+
 See usage examples below for quick reference.
 
 ## 🎯 Examples
