@@ -4,7 +4,7 @@
  * Eliminates boilerplate for text wrapping by detecting parent dimensions
  * @module components/custom/WrapText
  */
-import { useCallback, useEffect, useRef, useState, useTheme } from '../../hooks'
+import { useCallback, useEffect, useRef, useScene, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
 import { Text, View, type TextProps } from '../index'
@@ -72,6 +72,7 @@ const widthCache = new Map<string, number>()
 export function WrapText(props: WrapTextProps): VNodeLike {
   const localTheme = useTheme()
   const { props: themed } = getThemedProps('WrapText', localTheme, {})
+  const scene = useScene()
 
   const wrap = props.wrap ?? themed.wrap ?? true
   const paddingOffset = themed.paddingOffset ?? 0
@@ -159,6 +160,27 @@ export function WrapText(props: WrapTextProps): VNodeLike {
       measureWidth(container)
     }
   }, [containerWidth, measureWidth, wrap])
+
+  // Listen to scene resize events to re-measure container width
+  useEffect(() => {
+    if (!scene || !wrap) return
+
+    const handleResize = () => {
+      const container = containerRef.current
+      if (container) {
+        // Reset width to trigger re-measurement
+        lastWidthRef.current = 0
+        setContainerWidth(0)
+        // Schedule new measurement
+        measureWidth(container)
+      }
+    }
+
+    scene.scale.on('resize', handleResize)
+    return () => {
+      scene.scale.off('resize', handleResize)
+    }
+  }, [scene, wrap, measureWidth])
 
   useEffect(() => {
     return () => {
