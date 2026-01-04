@@ -26,6 +26,7 @@ import {
   useState,
   useWorldLayoutRect,
   View,
+  WrapText,
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
 
@@ -57,7 +58,7 @@ const scrollTabLabels = [
 function CameraFX() {
   const { applyCameraFX, clearCameraFX } = useCameraFX()
   return (
-    <View width={720} gap={12} padding={16} backgroundColor={0x1e1e1e} cornerRadius={12}>
+    <View width={'50%'} gap={12} padding={16} backgroundColor={0x1e1e1e} cornerRadius={12}>
       <Text
         text="Camera FX"
         style={{
@@ -66,8 +67,13 @@ function CameraFX() {
           color: '#ffffff',
         }}
       />
+      <WrapText
+        text={
+          'Overview panel with a quick summary.\nTabs organize related content into switchable panels. Use <Tab> for headers and <TabPanel> for content, matched by order.'
+        }
+      />
 
-      <View direction="row" gap={8}>
+      <View direction="row" gap={8} flexWrap="wrap" width={'fill'}>
         <Button
           onClick={() => applyCameraFX(createCameraShakeFX, { duration: 260, intensity: 0.02 })}
         >
