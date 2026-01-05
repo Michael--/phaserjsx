@@ -1,6 +1,6 @@
 {
   "name": "@number10/phaserjsx",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "type": "module",
   "description": "Declarative Phaser3 + UI renderer core library",
   "author": "Michael Rieck (Michael--) <mr@number10.de>",

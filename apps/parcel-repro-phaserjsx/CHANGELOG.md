@@ -1,5 +1,12 @@
 # parcel-repro-phaserjsx
 
+## 0.1.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.5.2
+
 ## 0.1.0
 
 ### Minor Changes

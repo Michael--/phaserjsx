@@ -1,5 +1,11 @@
 # @number10/phaserjsx
 
+## 0.5.2
+
+### Patch Changes
+
+- fix WrapText measurement when resized scene
+
 ## 0.5.0
 
 ### Minor Changes

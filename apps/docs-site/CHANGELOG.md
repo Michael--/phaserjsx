@@ -1,5 +1,12 @@
 # docs-site
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.5.2
+
 ## 0.3.0
 
 ### Minor Changes

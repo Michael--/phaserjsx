@@ -1,7 +1,7 @@
 {
   "name": "esbuild-phaserjsx",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "esbuild src/index.tsx --bundle --sourcemap --format=esm --outfile=dist/bundle.js --servedir=. --watch",
