@@ -2,7 +2,11 @@
  * Dev playground for PhaserJSX - focused development environment
  * Using PhaserJSX Plugin for automatic mounting
  */
-import { createPhaserJSXPlugin } from '@number10/phaserjsx'
+import {
+  addSceneBackground,
+  createPhaserJSXPlugin,
+  type SceneBackgroundHandle,
+} from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
 import { App } from './App'
 
@@ -10,43 +14,59 @@ import { App } from './App'
  * Main Phaser scene for dev playground
  */
 class PlaygroundScene extends Phaser.Scene {
-  private graphics: Phaser.GameObjects.Graphics | null = null
-  /**
-   * Preload assets
-   */
-  preload() {
-    // Add asset loading here as needed
+  private backgroundHandle?: SceneBackgroundHandle | null
+  private emitter?: Phaser.GameObjects.Particles.ParticleEmitter
+
+  private getCenterPosition() {
+    const cam = this.cameras.main
+    return {
+      x: cam.scrollX + cam.width / 2,
+      y: cam.scrollY + cam.height / 2,
+    }
   }
 
-  /**
-   * Create scene - only background, JSX mounting handled by plugin
-   */
+  private updateEmitterPosition() {
+    if (!this.emitter) return
+    const pos = this.getCenterPosition()
+    this.emitter.setPosition(pos.x, pos.y)
+  }
+
+  preload() {
+    this.load.image('star', 'assets/star.png')
+  }
+
   create() {
-    console.log('PlaygroundScene.create() dimensions:', this.scale.width, 'x', this.scale.height)
+    this.emitter = this.add.particles(0, 0, 'star', {
+      frequency: 50,
+      speed: { min: 100, max: 300 },
+      angle: { min: 0, max: 360 },
+      scale: { start: 1.5, end: 0 },
+      lifespan: 4000,
+      tint: 0xffffff,
+      blendMode: 'ADD',
+      gravityY: 200,
+    })
+    this.updateEmitterPosition()
 
-    // JSX mounting is handled automatically by PhaserJSXPlugin
-    console.log('[PlaygroundScene] JSX will be mounted by plugin')
-
-    // re-create background on resize
-    this.scale.on('resize', () => this.createBackground(), this)
+    this.scale.on('resize', () => {
+      this.createBackground()
+      this.updateEmitterPosition()
+    })
+    this.createBackground()
   }
 
   createBackground() {
-    if (this.graphics) this.graphics.clear()
-    else this.graphics = this.add.graphics()
+    this.backgroundHandle?.destroy()
+    this.backgroundHandle = addSceneBackground(this, {
+      type: 'grid',
+      animation: 'lemniscate',
+    })
+  }
 
-    this.graphics.lineStyle(1, 0xffffff, 0.5)
-    const gridSize = 50
-
-    for (let x = 0; x < this.scale.width; x += gridSize) {
-      this.graphics.moveTo(x, 0)
-      this.graphics.lineTo(x, this.scale.height)
-    }
-    for (let y = 0; y < this.scale.height; y += gridSize) {
-      this.graphics.moveTo(0, y)
-      this.graphics.lineTo(this.scale.width, y)
-    }
-    this.graphics.strokePath()
+  destroy() {
+    this.emitter?.destroy()
+    this.backgroundHandle?.destroy()
+    this.backgroundHandle = null
   }
 }
 
