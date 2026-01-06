@@ -492,7 +492,7 @@ type LayoutCycleState = {
 }
 
 const LAYOUT_CYCLE_EPSILON = 0.5
-const LAYOUT_CYCLE_TIME_MS = 100
+const LAYOUT_CYCLE_TIME_MS = 20
 const LAYOUT_CYCLE_MAX = 5
 const LAYOUT_MAX_SIZE = 200000
 const layoutCycleGuard = new WeakMap<Phaser.GameObjects.Container, LayoutCycleState>()
