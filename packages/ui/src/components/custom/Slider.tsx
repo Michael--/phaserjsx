@@ -565,13 +565,15 @@ function BaseSlider(props: BaseSliderProps) {
         height={isHorizontal ? trackHeight : trackLength}
         backgroundColor={themed.trackColor ?? 0x444444}
         cornerRadius={themed.trackBorderRadius ?? trackHeight / 2}
+        alignItems="start"
+        padding={0}
         direction="stack"
         onTouch={handleTrackTouch}
         theme={nestedTheme}
       >
         {/* Filled Track */}
         {props.renderTrack ? (
-          <View key={Math.random()}>
+          <View>
             {props.renderTrack(fillStartPercentage, isRange ? fillEndPercentage : undefined)}
           </View>
         ) : (
