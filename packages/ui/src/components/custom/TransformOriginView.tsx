@@ -18,7 +18,6 @@
  * </TransformOriginView>
  */
 import type { ViewProps } from '..'
-import type { VNode } from '../../hooks'
 import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 
@@ -39,7 +38,7 @@ export interface TransformOriginViewProps extends Omit<ViewProps, 'children'> {
   /**
    * Child elements to render with centered origin
    */
-  children?: VNode
+  children?: VNodeLike
 }
 
 /**

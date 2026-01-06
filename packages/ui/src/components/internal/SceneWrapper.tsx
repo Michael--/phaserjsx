@@ -4,7 +4,7 @@
  * Used automatically by mountJSX unless disableAutoSize is true
  */
 /** @jsxImportSource ../.. */
-import type { VNode } from '../../hooks'
+import type { VNodeLike } from '../../vdom'
 import { View } from '../custom/View'
 
 /**
@@ -16,7 +16,7 @@ export interface SceneWrapperProps {
   /** Scene/container height in pixels */
   height: number
   /** Child component to render */
-  children: VNode
+  children: VNodeLike
 }
 
 /**

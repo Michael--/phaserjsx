@@ -14,11 +14,11 @@ import {
   useTheme,
   useThemeTokens,
   View,
-  type VNode,
+  type VNodeLike,
 } from '@number10/phaserjsx'
 import { ViewLevel2, ViewLevel3 } from './Helper'
 
-function CenterOriginLabel(props: { children: VNode }) {
+function CenterOriginLabel(props: { children: VNodeLike }) {
   return (
     <RefOriginView width={0} height={0} originX={0.5} originY={0.5}>
       <View width={100} height={100} x={-50} y={-30} alignItems="center" justifyContent="center">
