@@ -73,6 +73,55 @@ export function numberToRgb(num: number): RGBColor {
 }
 
 /**
+ * HSL color representation
+ */
+export interface HSLColor {
+  /** Hue in normalized range (0.0 to 1.0) */
+  h: number
+  /** Saturation in normalized range (0.0 to 1.0) */
+  s: number
+  /** Lightness in normalized range (0.0 to 1.0) */
+  l: number
+}
+
+/**
+ * Convert RGB values to HSL values (normalized 0.0 to 1.0)
+ * @param r - Red component (0-255)
+ * @param g - Green component (0-255)
+ * @param b - Blue component (0-255)
+ * @returns HSL color values with normalized components
+ * @example
+ * ```typescript
+ * rgbToHsl(255, 0, 0) // returns { h: 0, s: 1, l: 0.5 }
+ * rgbToHsl(0, 255, 0) // returns { h: 0.333..., s: 1, l: 0.5 }
+ * ```
+ */
+export function rgbToHsl(r: number, g: number, b: number): HSLColor {
+  const red = r / 255
+  const green = g / 255
+  const blue = b / 255
+  const max = Math.max(red, green, blue)
+  const min = Math.min(red, green, blue)
+  const delta = max - min
+  const light = (max + min) / 2
+
+  if (delta === 0) {
+    return { h: 0, s: 0, l: light }
+  }
+
+  const saturationValue = light > 0.5 ? delta / (2 - max - min) : delta / (max + min)
+  let hueValue = 0
+  if (max === red) {
+    hueValue = (green - blue) / delta + (green < blue ? 6 : 0)
+  } else if (max === green) {
+    hueValue = (blue - red) / delta + 2
+  } else {
+    hueValue = (red - green) / delta + 4
+  }
+  return { h: hueValue / 6, s: saturationValue, l: light }
+}
+
+/**
  * Lighten a color by a given amount
  * @param color - Phaser color number
  * @param amount - Amount to lighten (0.0 to 1.0, where 1.0 is white)

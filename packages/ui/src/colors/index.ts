@@ -8,11 +8,11 @@ export { HexColor } from './color-types'
 export type { ColorMode, ColorShade, ColorTokens, RGBColor, ShadeLevel } from './color-types'
 
 // Conversion utilities
-export { hexToNumber, numberToHex, numberToRgb, rgbToNumber } from './color-utils'
+export { hexToNumber, numberToHex, numberToRgb, rgbToHsl, rgbToNumber } from './color-utils'
 
 // Color manipulation
 export { alpha, darken, darkenHex, hex, lighten, lightenHex } from './color-utils'
-export type { HexColorWrapper } from './color-utils'
+export type { HexColorWrapper, HSLColor } from './color-utils'
 
 // Contrast utilities
 export { createTextStyle, ensureContrast, getContrastRatio } from './color-utils'
