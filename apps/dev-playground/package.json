@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
-    "phaser": "^3.90.0"
+    "phaser": "^3.90.0",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

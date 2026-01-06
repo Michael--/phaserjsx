@@ -8,7 +8,14 @@ import {
   type SceneBackgroundHandle,
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
+import { BehaviorSubject } from 'rxjs'
 import { App } from './App'
+import type { AppProps } from './types'
+
+const props: AppProps = {
+  title: '🚀 PhaserJSX Dev Playground',
+  tint$: new BehaviorSubject(0xffffff),
+}
 
 /**
  * Main Phaser scene for dev playground
@@ -47,6 +54,9 @@ class PlaygroundScene extends Phaser.Scene {
       gravityY: 200,
     })
     this.updateEmitterPosition()
+    props.tint$.subscribe((tint) => {
+      this.emitter?.setParticleTint(tint)
+    })
 
     this.scale.on('resize', () => {
       this.createBackground()
@@ -95,7 +105,7 @@ const config: Phaser.Types.Core.GameConfig = {
     global: [
       createPhaserJSXPlugin({
         component: App,
-        props: { title: '🚀 PhaserJSX Dev Playground' },
+        props: props,
         autoResize: true,
       }),
     ],
