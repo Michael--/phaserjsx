@@ -5,6 +5,7 @@
  * @module components/custom/WrapText
  */
 import { useCallback, useEffect, useRef, useScene, useState, useTheme } from '../../hooks'
+import { getRenderContext } from '../../render-context'
 import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
 import { Text, View, type TextProps } from '../index'
@@ -118,12 +119,14 @@ export function WrapText(props: WrapTextProps): VNodeLike {
         }
       }
 
-      // Schedule measure on next frame to allow layout to settle
+      // Schedule measure after layout to allow layout to settle
       if (measureRafRef.current !== null) {
         return
       }
 
-      measureRafRef.current = requestAnimationFrame(() => {
+      if (!container.scene) return
+      measureRafRef.current = 1
+      getRenderContext(container.scene).deferLayout(() => {
         measureRafRef.current = null
         performMeasure()
       })
@@ -184,10 +187,7 @@ export function WrapText(props: WrapTextProps): VNodeLike {
 
   useEffect(() => {
     return () => {
-      if (measureRafRef.current !== null) {
-        cancelAnimationFrame(measureRafRef.current)
-        measureRafRef.current = null
-      }
+      measureRafRef.current = null
     }
   }, [])
 

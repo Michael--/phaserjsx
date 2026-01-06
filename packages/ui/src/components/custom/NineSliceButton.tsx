@@ -12,7 +12,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../../effects'
-import { useEffect, useRef, useState } from '../../hooks'
+import { useLayoutEffect, useRef, useState } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
 import { NineSlice } from './NineSlice'
@@ -184,12 +184,9 @@ export function NineSliceButton(props: NineSliceButtonProps): VNodeLike {
   // and show content after that to avoid visual glitches
   const [show, setShow] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // redraw to catch any layout adjustments and slider dimensions
-    const timer = setTimeout(() => setShow(true), 0)
-    return () => {
-      clearTimeout(timer)
-    }
+    setShow(true)
   }, [])
 
   const innerWidth = (ref.current?.width ?? 0) - leftWidth - rightWidth

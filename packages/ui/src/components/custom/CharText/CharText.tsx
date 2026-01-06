@@ -1,7 +1,7 @@
 /** @jsxImportSource ../../.. */
 import type { GestureEventData } from '../../../core-props'
 import { useGameObjectEffect } from '../../../effects'
-import { useEffect, useRef, useState } from '../../../hooks'
+import { useEffect, useLayoutEffect, useRef, useState } from '../../../hooks'
 import { getThemedProps } from '../../../theme'
 import type { VNodeLike } from '../../../vdom'
 import { View } from '../../index'
@@ -254,7 +254,7 @@ export function CharText(props: CharTextProps): VNodeLike {
   /**
    * Create or update character GameObjects based on text prop
    */
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!internalRef.current) return
 
     const container = internalRef.current
@@ -266,125 +266,111 @@ export function CharText(props: CharTextProps): VNodeLike {
     // Check if text has changed
     if (displayedText === prevText) return
 
-    // Wait for container bounds to be available
-    const timeoutId = setTimeout(() => {
-      const startX = padLeft
-      const startY = padTop
+    const startX = padLeft
+    const startY = padTop
 
-      // Get effective max width (use container width if multiline and no explicit maxWidth)
-      // Important: maxWidth is the content area width, not including padding
-      const effectiveMaxWidth =
-        multiline && props.maxWidth !== undefined && typeof props.maxWidth === 'number'
-          ? props.maxWidth - horizontalPadding
-          : multiline && props.width !== undefined && typeof props.width === 'number'
-            ? props.width - horizontalPadding
-            : Infinity
+    // Get effective max width (use container width if multiline and no explicit maxWidth)
+    // Important: maxWidth is the content area width, not including padding
+    const effectiveMaxWidth =
+      multiline && props.maxWidth !== undefined && typeof props.maxWidth === 'number'
+        ? props.maxWidth - horizontalPadding
+        : multiline && props.width !== undefined && typeof props.width === 'number'
+          ? props.width - horizontalPadding
+          : Infinity
 
-      let lines: import('./types').LineInfo[]
-      let allChars: CharInfo[]
+    let lines: import('./types').LineInfo[]
+    let allChars: CharInfo[]
 
-      if (multiline) {
-        // Multi-line layout
-        // TODO: Consider wrapping in ScrollView for better overflow handling
-        // when content exceeds available height. This would allow scrolling
-        // through long text instead of clipping at maxLines.
-        lines = breakIntoLines(
-          displayedText,
-          scene,
-          effectiveMaxWidth,
-          textStyle,
-          charSpacing,
-          multiline,
-          wordWrap
-        )
-        positionLinesVertically(lines, lineHeight)
-        lines = handleOverflow(lines, maxLines, textOverflow)
+    if (multiline) {
+      // Multi-line layout
+      // TODO: Consider wrapping in ScrollView for better overflow handling
+      // when content exceeds available height. This would allow scrolling
+      // through long text instead of clipping at maxLines.
+      lines = breakIntoLines(
+        displayedText,
+        scene,
+        effectiveMaxWidth,
+        textStyle,
+        charSpacing,
+        multiline,
+        wordWrap
+      )
+      positionLinesVertically(lines, lineHeight)
+      lines = handleOverflow(lines, maxLines, textOverflow)
 
-        // Flatten lines to chars array
-        allChars = []
-        for (const line of lines) {
-          for (const charInfo of line.chars) {
-            allChars.push(charInfo)
-          }
-        }
-      } else {
-        // Single-line layout (original logic)
-        allChars = []
-        let currentX = 0
-
-        for (let i = 0; i < displayedText.length; i++) {
-          const char = displayedText.charAt(i)
-          const tempText = scene.add.text(0, 0, char, textStyle ?? {})
-          const charWidth = tempText.width
-          const charHeight = tempText.height
-          tempText.destroy()
-
-          allChars.push({
-            char,
-            textObject: null,
-            x: currentX,
-            y: 0,
-            width: charWidth,
-            height: charHeight,
-            lineIndex: 0,
-            charIndex: i,
-            lineCharIndex: i,
-          })
-
-          currentX += charWidth + charSpacing
-        }
-
-        lines = allChars.length > 0 ? [createLineInfo(allChars, 0, charSpacing)] : []
-      }
-
-      // Assign text objects to characters, reusing from pool
-      const usedTextObjects: Phaser.GameObjects.Text[] = []
-      for (const charInfo of allChars) {
-        const textObj = getTextObject(
-          scene,
-          container,
-          textStyle,
-          textObjectPool,
-          activeTextObjects
-        )
-        textObj.setText(charInfo.char)
-        textObj.setPosition(startX + charInfo.x, startY + charInfo.y)
-        charInfo.textObject = textObj
-        usedTextObjects.push(textObj)
-      }
-
-      // Return unused active text objects to pool
-      const currentActive = [...activeTextObjects.current]
-      for (const textObj of currentActive) {
-        if (!usedTextObjects.includes(textObj)) {
-          returnToPool(textObj, textObjectPool, activeTextObjects)
+      // Flatten lines to chars array
+      allChars = []
+      for (const line of lines) {
+        for (const charInfo of line.chars) {
+          allChars.push(charInfo)
         }
       }
+    } else {
+      // Single-line layout (original logic)
+      allChars = []
+      let currentX = 0
 
-      // Calculate total dimensions
-      const calculatedWidth = lines.length > 0 ? Math.max(...lines.map((l) => l.width)) : 0
+      for (let i = 0; i < displayedText.length; i++) {
+        const char = displayedText.charAt(i)
+        const tempText = scene.add.text(0, 0, char, textStyle ?? {})
+        const charWidth = tempText.width
+        const charHeight = tempText.height
+        tempText.destroy()
 
-      // Calculate height: last line Y position + actual character height (not lineHeight multiplied)
-      // This ensures the container height exactly fits the content without extra spacing after last line
-      let calculatedHeight = 0
-      if (lines.length > 0) {
-        const lastLine = lines[lines.length - 1]
-        if (lastLine) {
-          // Height is Y position of last line + its character height
-          calculatedHeight = lastLine.y + lastLine.height
-        }
+        allChars.push({
+          char,
+          textObject: null,
+          x: currentX,
+          y: 0,
+          width: charWidth,
+          height: charHeight,
+          lineIndex: 0,
+          charIndex: i,
+          lineCharIndex: i,
+        })
+
+        currentX += charWidth + charSpacing
       }
 
-      // Update state
-      setChars(allChars)
-      setWidth(calculatedWidth + horizontalPadding)
-      setHeight(calculatedHeight + verticalPadding)
-    }, 0)
-
-    // Cleanup function - clear timeout
-    return () => {
-      clearTimeout(timeoutId)
+      lines = allChars.length > 0 ? [createLineInfo(allChars, 0, charSpacing)] : []
     }
+
+    // Assign text objects to characters, reusing from pool
+    const usedTextObjects: Phaser.GameObjects.Text[] = []
+    for (const charInfo of allChars) {
+      const textObj = getTextObject(scene, container, textStyle, textObjectPool, activeTextObjects)
+      textObj.setText(charInfo.char)
+      textObj.setPosition(startX + charInfo.x, startY + charInfo.y)
+      charInfo.textObject = textObj
+      usedTextObjects.push(textObj)
+    }
+
+    // Return unused active text objects to pool
+    const currentActive = [...activeTextObjects.current]
+    for (const textObj of currentActive) {
+      if (!usedTextObjects.includes(textObj)) {
+        returnToPool(textObj, textObjectPool, activeTextObjects)
+      }
+    }
+
+    // Calculate total dimensions
+    const calculatedWidth = lines.length > 0 ? Math.max(...lines.map((l) => l.width)) : 0
+
+    // Calculate height: last line Y position + actual character height (not lineHeight multiplied)
+    // This ensures the container height exactly fits the content without extra spacing after last line
+    let calculatedHeight = 0
+    if (lines.length > 0) {
+      const lastLine = lines[lines.length - 1]
+      if (lastLine) {
+        // Height is Y position of last line + its character height
+        calculatedHeight = lastLine.y + lastLine.height
+      }
+    }
+
+    // Update state
+    setChars(allChars)
+    setWidth(calculatedWidth + horizontalPadding)
+    setHeight(calculatedHeight + verticalPadding)
   }, [
     displayedText,
     textStyle,
@@ -405,7 +391,7 @@ export function CharText(props: CharTextProps): VNodeLike {
   /**
    * Update cursor position and visibility
    */
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!internalRef.current || !showCursor) {
       // Hide cursor if not needed
       if (cursorRef.current) {
@@ -424,130 +410,128 @@ export function CharText(props: CharTextProps): VNodeLike {
     // Wait for chars to be ready
     if (chars.length === 0 && displayedText.length > 0) return
 
-    setTimeout(() => {
-      const startX = padLeft
-      const startY = padTop
+    const startX = padLeft
+    const startY = padTop
 
-      // Find the character at cursor position to get correct line Y
-      let cursorX = startX
-      let cursorY = startY
-      const clampedPosition = Math.max(0, Math.min(cursorPosition, displayedText.length))
+    // Find the character at cursor position to get correct line Y
+    let cursorX = startX
+    let cursorY = startY
+    const clampedPosition = Math.max(0, Math.min(cursorPosition, displayedText.length))
 
-      // Find the character right before the cursor position (charIndex < clampedPosition)
-      // The cursor is positioned AFTER this character
-      let charBeforeCursor: CharInfo | null = null
+    // Find the character right before the cursor position (charIndex < clampedPosition)
+    // The cursor is positioned AFTER this character
+    let charBeforeCursor: CharInfo | null = null
 
-      for (const char of chars) {
-        if (char.charIndex < clampedPosition) {
-          if (!charBeforeCursor || char.charIndex > charBeforeCursor.charIndex) {
-            charBeforeCursor = char
-          }
+    for (const char of chars) {
+      if (char.charIndex < clampedPosition) {
+        if (!charBeforeCursor || char.charIndex > charBeforeCursor.charIndex) {
+          charBeforeCursor = char
         }
       }
+    }
 
-      // Check if cursor is after a newline character in the text
-      const charBeforeCursorInText =
-        clampedPosition > 0 ? displayedText.charAt(clampedPosition - 1) : null
-      const isAfterNewline = charBeforeCursorInText === '\n'
+    // Check if cursor is after a newline character in the text
+    const charBeforeCursorInText =
+      clampedPosition > 0 ? displayedText.charAt(clampedPosition - 1) : null
+    const isAfterNewline = charBeforeCursorInText === '\n'
 
-      // Position cursor based on the character before it
-      if (charBeforeCursor) {
-        if (isAfterNewline) {
-          // Cursor should be at start of next line
-          const nextLineIndex = charBeforeCursor.lineIndex + 1
-
-          // Find first char of next line
-          const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
-
-          if (firstCharOfNextLine) {
-            // Next line has content
-            cursorX = startX + firstCharOfNextLine.x
-            cursorY = startY + firstCharOfNextLine.y
-          } else {
-            // Empty line after newline - cursor at start of virtual next line
-            cursorX = startX
-            const lineHeightPx = charBeforeCursor.height * lineHeight
-            cursorY = startY + charBeforeCursor.y + lineHeightPx
-          }
-        } else {
-          // Normal character - cursor goes after it
-          cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
-          cursorY = startY + charBeforeCursor.y
-        }
-      } else if (chars.length > 0 && chars[0]) {
-        // Cursor at position 0 (before first char)
-        const firstChar = chars[0]
-        cursorX = startX + firstChar.x
-        cursorY = startY + firstChar.y
-      } else {
-        // No chars at all
-        cursorX = startX
-        cursorY = startY
-      }
-
-      // Get cursor height
-      let cursorHeight = 20
+    // Position cursor based on the character before it
+    if (charBeforeCursor) {
       if (isAfterNewline) {
-        // For newline, use height of next line if it exists
-        const nextLineIndex = charBeforeCursor ? charBeforeCursor.lineIndex + 1 : 0
+        // Cursor should be at start of next line
+        const nextLineIndex = charBeforeCursor.lineIndex + 1
+
+        // Find first char of next line
         const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
+
         if (firstCharOfNextLine) {
-          cursorHeight = firstCharOfNextLine.height
-        } else if (charBeforeCursor) {
-          // Use height from current line, not doubled
-          cursorHeight = charBeforeCursor.height
-        } else if (chars.length > 0 && chars[0]) {
-          cursorHeight = chars[0].height
+          // Next line has content
+          cursorX = startX + firstCharOfNextLine.x
+          cursorY = startY + firstCharOfNextLine.y
+        } else {
+          // Empty line after newline - cursor at start of virtual next line
+          cursorX = startX
+          const lineHeightPx = charBeforeCursor.height * lineHeight
+          cursorY = startY + charBeforeCursor.y + lineHeightPx
         }
+      } else {
+        // Normal character - cursor goes after it
+        cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
+        cursorY = startY + charBeforeCursor.y
+      }
+    } else if (chars.length > 0 && chars[0]) {
+      // Cursor at position 0 (before first char)
+      const firstChar = chars[0]
+      cursorX = startX + firstChar.x
+      cursorY = startY + firstChar.y
+    } else {
+      // No chars at all
+      cursorX = startX
+      cursorY = startY
+    }
+
+    // Get cursor height
+    let cursorHeight = 20
+    if (isAfterNewline) {
+      // For newline, use height of next line if it exists
+      const nextLineIndex = charBeforeCursor ? charBeforeCursor.lineIndex + 1 : 0
+      const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
+      if (firstCharOfNextLine) {
+        cursorHeight = firstCharOfNextLine.height
       } else if (charBeforeCursor) {
+        // Use height from current line, not doubled
         cursorHeight = charBeforeCursor.height
       } else if (chars.length > 0 && chars[0]) {
         cursorHeight = chars[0].height
       }
+    } else if (charBeforeCursor) {
+      cursorHeight = charBeforeCursor.height
+    } else if (chars.length > 0 && chars[0]) {
+      cursorHeight = chars[0].height
+    }
 
-      // console.log('cursorPosition', cursorPosition, 'cursorX', cursorX, 'cursorY', cursorY)
+    // console.log('cursorPosition', cursorPosition, 'cursorX', cursorX, 'cursorY', cursorY)
 
-      // Create or update cursor rectangle
-      if (!cursorRef.current) {
-        cursorRef.current = scene.add.rectangle(
-          cursorX,
-          cursorY,
-          cursorWidth,
-          cursorHeight,
-          cursorColor
-        )
-        cursorRef.current.setOrigin(0, 0)
-        container.add(cursorRef.current)
+    // Create or update cursor rectangle
+    if (!cursorRef.current) {
+      cursorRef.current = scene.add.rectangle(
+        cursorX,
+        cursorY,
+        cursorWidth,
+        cursorHeight,
+        cursorColor
+      )
+      cursorRef.current.setOrigin(0, 0)
+      container.add(cursorRef.current)
 
-        // Create blinking tween
-        cursorTweenRef.current = scene.tweens.add({
-          targets: cursorRef.current,
-          alpha: { from: 1, to: 0 },
-          duration: cursorBlinkSpeed,
-          yoyo: true,
-          repeat: -1,
-        })
-      } else {
-        // Update existing cursor
-        cursorRef.current.setPosition(cursorX, cursorY)
-        cursorRef.current.setSize(cursorWidth, cursorHeight)
-        cursorRef.current.setFillStyle(cursorColor)
-        cursorRef.current.setVisible(true)
+      // Create blinking tween
+      cursorTweenRef.current = scene.tweens.add({
+        targets: cursorRef.current,
+        alpha: { from: 1, to: 0 },
+        duration: cursorBlinkSpeed,
+        yoyo: true,
+        repeat: -1,
+      })
+    } else {
+      // Update existing cursor
+      cursorRef.current.setPosition(cursorX, cursorY)
+      cursorRef.current.setSize(cursorWidth, cursorHeight)
+      cursorRef.current.setFillStyle(cursorColor)
+      cursorRef.current.setVisible(true)
 
-        // Restart blink animation
-        if (cursorTweenRef.current) {
-          cursorTweenRef.current.stop()
-        }
-        cursorRef.current.setAlpha(1)
-        cursorTweenRef.current = scene.tweens.add({
-          targets: cursorRef.current,
-          alpha: { from: 1, to: 0 },
-          duration: cursorBlinkSpeed,
-          yoyo: true,
-          repeat: -1,
-        })
+      // Restart blink animation
+      if (cursorTweenRef.current) {
+        cursorTweenRef.current.stop()
       }
-    }, 10)
+      cursorRef.current.setAlpha(1)
+      cursorTweenRef.current = scene.tweens.add({
+        targets: cursorRef.current,
+        alpha: { from: 1, to: 0 },
+        duration: cursorBlinkSpeed,
+        yoyo: true,
+        repeat: -1,
+      })
+    }
 
     // Cleanup
     return () => {
@@ -571,7 +555,7 @@ export function CharText(props: CharTextProps): VNodeLike {
   /**
    * Render selection background
    */
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!internalRef.current) return
 
     const container = internalRef.current
@@ -589,57 +573,55 @@ export function CharText(props: CharTextProps): VNodeLike {
     // Wait for chars to be ready
     if (chars.length === 0) return
 
-    setTimeout(() => {
-      const startX = padLeft
-      const startY = padTop
+    const startX = padLeft
+    const startY = padTop
 
-      // Group selected characters by line
-      const lineGroups = new Map<number, CharInfo[]>()
+    // Group selected characters by line
+    const lineGroups = new Map<number, CharInfo[]>()
 
-      // Filter chars by their charIndex (text position), not array index
-      for (const char of chars) {
-        if (char && char.charIndex >= selectionStart && char.charIndex < selectionEnd) {
-          const lineIndex = char.lineIndex
-          if (!lineGroups.has(lineIndex)) {
-            lineGroups.set(lineIndex, [])
-          }
-          lineGroups.get(lineIndex)?.push(char)
+    // Filter chars by their charIndex (text position), not array index
+    for (const char of chars) {
+      if (char && char.charIndex >= selectionStart && char.charIndex < selectionEnd) {
+        const lineIndex = char.lineIndex
+        if (!lineGroups.has(lineIndex)) {
+          lineGroups.set(lineIndex, [])
         }
+        lineGroups.get(lineIndex)?.push(char)
       }
+    }
 
-      // Create one selection rectangle per line
-      for (const [_lineIndex, lineChars] of lineGroups) {
-        if (lineChars.length === 0) continue
+    // Create one selection rectangle per line
+    for (const [_lineIndex, lineChars] of lineGroups) {
+      if (lineChars.length === 0) continue
 
-        const firstChar = lineChars[0]
-        const lastChar = lineChars[lineChars.length - 1]
+      const firstChar = lineChars[0]
+      const lastChar = lineChars[lineChars.length - 1]
 
-        if (firstChar && lastChar) {
-          const selectionX = startX + firstChar.x
-          const selectionY = startY + firstChar.y
-          const selectionWidth =
-            lastChar.x + lastChar.width - firstChar.x + (lineChars.length > 1 ? charSpacing : 0)
-          const selectionHeight = firstChar.height
+      if (firstChar && lastChar) {
+        const selectionX = startX + firstChar.x
+        const selectionY = startY + firstChar.y
+        const selectionWidth =
+          lastChar.x + lastChar.width - firstChar.x + (lineChars.length > 1 ? charSpacing : 0)
+        const selectionHeight = firstChar.height
 
-          // Create selection rectangle for this line
-          const selectionRect = scene.add.rectangle(
-            selectionX,
-            selectionY,
-            selectionWidth,
-            selectionHeight,
-            selectionColor,
-            selectionAlpha
-          )
-          selectionRect.setOrigin(0, 0)
-          container.add(selectionRect)
+        // Create selection rectangle for this line
+        const selectionRect = scene.add.rectangle(
+          selectionX,
+          selectionY,
+          selectionWidth,
+          selectionHeight,
+          selectionColor,
+          selectionAlpha
+        )
+        selectionRect.setOrigin(0, 0)
+        container.add(selectionRect)
 
-          // Move selection behind text
-          container.moveDown(selectionRect)
+        // Move selection behind text
+        container.moveDown(selectionRect)
 
-          selectionRefs.current.push(selectionRect)
-        }
+        selectionRefs.current.push(selectionRect)
       }
-    }, 15)
+    }
 
     // Cleanup
     return () => {

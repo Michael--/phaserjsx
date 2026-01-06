@@ -7,7 +7,7 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../../effects'
-import { useEffect, useForceRedraw, useRef, useState, useTheme } from '../../hooks'
+import { useForceRedraw, useLayoutEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
@@ -61,16 +61,11 @@ export function Accordion(props: AccordionProps): VNodeLike {
   const [measuredHeight, setMeasuredHeight] = useState<number>(maxHeight)
 
   // Measure content height when opened
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (autoHeight && isOpen && measurementRef.current) {
-      // Wait for next frame to ensure rendering
-      setTimeout(() => {
-        if (measurementRef.current) {
-          const height = measurementRef.current.height
-          setMeasuredHeight(height)
-          setContentHeight(height)
-        }
-      }, 0)
+      const height = measurementRef.current.height
+      setMeasuredHeight(height)
+      setContentHeight(height)
     }
   }, [isOpen, autoHeight])
 

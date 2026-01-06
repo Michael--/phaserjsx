@@ -5,7 +5,7 @@
  */
 import type { GestureEventData, SizeValue } from '@number10/phaserjsx/core-props'
 import { RefOriginView } from '.'
-import { getLayoutSize, useEffect, useMemo, useRef, useState } from '../../hooks'
+import { getLayoutSize, useLayoutEffect, useMemo, useRef, useState } from '../../hooks'
 import type { VNodeLike } from '../../vdom'
 import { Graphics, View } from '../index'
 
@@ -367,23 +367,21 @@ export function Joystick(props: JoystickProps): VNodeLike {
   const currentThumbPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   // Determine size and center
-  useEffect(() => {
-    setTimeout(() => {
-      const size = getLayoutSize(outerRef.current)
-      console.log(`Joystick size: ${JSON.stringify(size)}`)
-      if (size != null) {
-        const newCenter = { x: size.width / 2, y: size.height / 2 }
-        setCenter(newCenter)
-        setSize({ width: size.width, height: size.height })
-        // Set initial thumb position only if not dragging
-        if (!isDraggingRef.current && !activeTweenRef.current) {
-          currentThumbPosRef.current = newCenter
-          if (thumbRef.current != null) {
-            thumbRef.current.setPosition(newCenter.x, newCenter.y)
-          }
+  useLayoutEffect(() => {
+    const size = getLayoutSize(outerRef.current)
+    console.log(`Joystick size: ${JSON.stringify(size)}`)
+    if (size != null) {
+      const newCenter = { x: size.width / 2, y: size.height / 2 }
+      setCenter(newCenter)
+      setSize({ width: size.width, height: size.height })
+      // Set initial thumb position only if not dragging
+      if (!isDraggingRef.current && !activeTweenRef.current) {
+        currentThumbPosRef.current = newCenter
+        if (thumbRef.current != null) {
+          thumbRef.current.setPosition(newCenter.x, newCenter.y)
         }
       }
-    }, 0)
+    }
   }, [outerRef])
 
   // Extract theme values to prevent unnecessary re-renders

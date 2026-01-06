@@ -5,7 +5,7 @@
 import * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
-import { useEffect, useRedraw, useRef, useState } from '../../hooks'
+import { useEffect, useLayoutEffect, useRedraw, useRef, useState } from '../../hooks'
 import { getRenderContext } from '../../render-context'
 import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
@@ -163,7 +163,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
       : resolvedSnapThreshold
 
   // Update scroll when props.scroll changes or when layout info is available
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!initialScroll) return
     // console.log('ScrollView: applying initial scroll', initialScroll)
     const allowAnimate = hasMountedRef.current
@@ -578,15 +578,12 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
   const redraw = useRedraw()
   const [visible, setVisible] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Force multiple redraws to ensure container dimensions are properly calculated
     // First redraw after initial mount
-    const timer1 = setTimeout(() => redraw(), 0)
-    // Second redraw to catch any layout adjustments and slider dimensions
-    const timer2 = setTimeout(() => setVisible(true), 2)
+    redraw()
+    setVisible(true)
     return () => {
-      clearTimeout(timer1)
-      clearTimeout(timer2)
       if (wheelSnapTimeoutRef.current) {
         clearTimeout(wheelSnapTimeoutRef.current)
       }

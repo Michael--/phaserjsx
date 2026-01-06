@@ -1,6 +1,6 @@
 /** @jsxImportSource ../.. */
 import type { ViewProps } from '..'
-import { useEffect, useRedraw, useRef, useState } from '../../hooks'
+import { useEffect, useLayoutEffect, useRedraw, useRef, useState } from '../../hooks'
 import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
 import type { VNodeLike } from '../../vdom'
 import { CharText, type CharTextAPI } from './CharText'
@@ -116,13 +116,11 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
 
   const redraw = useRedraw()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Force multiple redraws to ensure container dimensions are properly calculated
     // First redraw after initial mount to have containerRef set and html input created
-    const timer = setTimeout(() => redraw(), 0)
-    return () => {
-      clearTimeout(timer)
-    }
+    if (!containerRef.current) return
+    redraw()
   }, [containerRef.current])
 
   /**

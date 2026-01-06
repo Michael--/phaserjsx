@@ -21,6 +21,7 @@ import type { ChildrenType } from '@number10/phaserjsx/types'
 import type * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import { useRef, useState } from '../../hooks'
+import { getRenderContext } from '../../render-context'
 import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 
@@ -89,7 +90,7 @@ export function RefOriginView({
     if (!container) return
     outerRef.current = container
 
-    setTimeout(() => {
+    getRenderContext(container.scene).deferLayout(() => {
       // Use layout dimensions or fallback to getBounds
       const width = container.width
       const height = container.height
@@ -97,7 +98,7 @@ export function RefOriginView({
       const actualHeight = Number.isNaN(height) ? 0 : height
       if (actualHeight !== numericDimension.y || actualWidth !== numericDimension.x)
         setNumericWidth({ x: actualWidth, y: actualHeight })
-    }, 0)
+    })
   }
 
   // Calculate pivot point position (relative to outer View)
