@@ -59,7 +59,7 @@ export function SliderExample() {
 
   return (
     <ScrollView width="fill" height="fill" padding={20}>
-      <ViewLevel2>
+      <ViewLevel2 width="fill">
         <Text text="Slider Component Examples" style={headingStyle} margin={{ bottom: 20 }} />
 
         {/* Basic Horizontal Slider */}

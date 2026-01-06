@@ -15,7 +15,7 @@ function Example() {
   const [selectionEnd3, setSelectionEnd3] = useState(-1)
 
   return (
-    <ViewLevel2 direction="column" padding={10}>
+    <ViewLevel2 direction="column" padding={10} width="fill">
       <View gap={10} direction="row" alignContent="center">
         <Icon type="bricks" />
         <SectionHeader title="CharText" />
@@ -170,7 +170,7 @@ function Example() {
 export function ChartTextExample() {
   return (
     <View width={'100%'} height={'100%'}>
-      <ScrollView>
+      <ScrollView width="100%" height="100%">
         <Example />
       </ScrollView>
     </View>

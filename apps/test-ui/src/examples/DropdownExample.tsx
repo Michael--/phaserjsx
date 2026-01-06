@@ -300,10 +300,10 @@ export function DropdownExample() {
 
   return (
     <View width={'100%'} height={'100%'}>
-      <ScrollView>
-        <ViewLevel2>
+      <ScrollView width="100%" height="100%">
+        <ViewLevel2 width="fill">
           <Text text="Dropdown/Select Examples" style={tokens?.textStyles.title} />
-          <View direction="stack" width={1500} height={'fill'} gap={20}>
+          <View direction="stack" width={1500} gap={20}>
             {/* here could be view with any background, meed to draw before dropdown */}
             {/** this is necessary because of the current situation in the layout system */}
             <View gap={300}>
