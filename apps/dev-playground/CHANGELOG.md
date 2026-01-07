@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0
+
+### Minor Changes
+
+- Prepare for icon system
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.6.1
+
 ## 0.4.0
 
 ### Minor Changes

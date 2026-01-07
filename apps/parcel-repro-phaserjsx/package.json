@@ -1,7 +1,7 @@
 {
   "name": "parcel-repro-phaserjsx",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.3",
   "scripts": {
     "dev": "parcel index.html --port 1234",
     "build": "parcel build index.html --no-minify",

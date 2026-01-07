@@ -1,5 +1,12 @@
 # rollup-phaserjsx
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@0.6.1
+
 ## 0.1.2
 
 ### Patch Changes

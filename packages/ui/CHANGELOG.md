@@ -1,5 +1,11 @@
 # @number10/phaserjsx
 
+## 0.6.1
+
+### Patch Changes
+
+- Fix SVG support (comments) and tinting (stroke)
+
 ## 0.6.0
 
 ### Minor Changes
