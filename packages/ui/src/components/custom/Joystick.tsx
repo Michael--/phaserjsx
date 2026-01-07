@@ -369,7 +369,6 @@ export function Joystick(props: JoystickProps): VNodeLike {
   // Determine size and center
   useLayoutEffect(() => {
     const size = getLayoutSize(outerRef.current)
-    console.log(`Joystick size: ${JSON.stringify(size)}`)
     if (size != null) {
       const newCenter = { x: size.width / 2, y: size.height / 2 }
       setCenter(newCenter)
