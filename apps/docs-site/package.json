@@ -18,7 +18,7 @@
     "react-dom": "^19.2.0",
     "react-router": "^7.1.1",
     "react-router-dom": "^7.1.1",
-    "phaser": "^3.87.0",
+    "phaser": "^3.90.0",
     "@number10/phaserjsx": "workspace:*",
     "bootstrap-icons": "^1.13.1"
   },
