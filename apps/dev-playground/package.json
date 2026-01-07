@@ -1,6 +1,6 @@
 {
   "name": "@phaserjsx/dev-playground",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Focused development playground for @number10/phaserjsx features",

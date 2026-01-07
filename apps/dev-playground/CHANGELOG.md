@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0
+
+### Minor Changes
+
+- Adjust dev-playground, prepare for develop a sample at stackblitz
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @number10/phaserjsx@0.6.0
+
 ## 0.3.1
 
 ### Patch Changes

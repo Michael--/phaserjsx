@@ -1,5 +1,16 @@
 # @phaserjsx/test-ui
 
+## 0.5.2
+
+### Patch Changes
+
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+- Updated dependencies
+  - @number10/phaserjsx@0.6.0
+
 ## 0.5.1
 
 ### Patch Changes

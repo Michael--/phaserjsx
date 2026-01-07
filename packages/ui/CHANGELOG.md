@@ -1,5 +1,18 @@
 # @number10/phaserjsx
 
+## 0.6.0
+
+### Minor Changes
+
+- add HSL color to color-utils
+- remove and adjust some log messages
+- refactoring regarding layout effect
+
+### Patch Changes
+
+- fix slider track redraw
+- fix some return type and props type (VNodeLike)
+
 ## 0.5.2
 
 ### Patch Changes
