@@ -6,10 +6,10 @@ import type * as Phaser from 'phaser'
 
 /**
  * Preprocesses SVG string to ensure tinting works correctly
- * Replaces fill="currentColor" and other color fills with white (#FFFFFF)
+ * Replaces fill/stroke="currentColor" and other colors with white (#FFFFFF)
  * This allows Phaser's tint to work multiplicatively (white × tint = tint color)
  * @param svg - Raw SVG string
- * @returns Preprocessed SVG string with white fills
+ * @returns Preprocessed SVG string with white fills/strokes
  */
 function preprocessSvgForTinting(svg: string): string {
   return (
@@ -20,11 +20,22 @@ function preprocessSvgForTinting(svg: string): string {
       .replace(/fill='currentColor'/gi, "fill='#FFFFFF'")
       // Replace fill:currentColor in style attributes
       .replace(/fill:\s*currentColor/gi, 'fill: #FFFFFF')
+      // Replace stroke="currentColor" with stroke="#FFFFFF" (for outline icons like Lucide)
+      .replace(/stroke="currentColor"/gi, 'stroke="#FFFFFF"')
+      // Replace stroke='currentColor' with stroke='#FFFFFF'
+      .replace(/stroke='currentColor'/gi, "stroke='#FFFFFF'")
+      // Replace stroke:currentColor in style attributes
+      .replace(/stroke:\s*currentColor/gi, 'stroke: #FFFFFF')
       // Replace black fills (common fallback)
       .replace(/fill="#000000"/gi, 'fill="#FFFFFF"')
       .replace(/fill="#000"/gi, 'fill="#FFFFFF"')
       .replace(/fill='#000000'/gi, "fill='#FFFFFF'")
       .replace(/fill='#000'/gi, "fill='#FFFFFF'")
+      // Replace black strokes
+      .replace(/stroke="#000000"/gi, 'stroke="#FFFFFF"')
+      .replace(/stroke="#000"/gi, 'stroke="#FFFFFF"')
+      .replace(/stroke='#000000'/gi, "stroke='#FFFFFF'")
+      .replace(/stroke='#000'/gi, "stroke='#FFFFFF'")
   )
 }
 
@@ -73,12 +84,6 @@ export async function svgToTexture(
   if (isSvgString && trimmed.includes('<svg')) {
     // Raw SVG string - preprocess for tinting, then create blob URL
     const processedSvg = preprocessSvgForTinting(trimmed)
-    console.log(`[SVG Texture] Processing "${key}"`, {
-      originalLength: trimmed.length,
-      processedLength: processedSvg.length,
-      startsWithSvg: processedSvg.includes('<svg'),
-      first100: processedSvg.substring(0, 100),
-    })
     const blob = new Blob([processedSvg], { type: 'image/svg+xml' })
     finalUrl = URL.createObjectURL(blob)
     shouldRevokeUrl = true
