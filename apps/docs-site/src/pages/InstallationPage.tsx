@@ -53,14 +53,6 @@ export function InstallationPage() {
       <DocSection>
         <SectionTitle>1. Install the Package</SectionTitle>
 
-        <div className="installation-notice">
-          <strong>⚠️ Pre-Release Notice</strong>
-          <p>
-            PhaserJSX is currently in pre-release development and not yet published to npm. Once
-            published, you'll be able to install it via:
-          </p>
-        </div>
-
         <CodeBlock language="bash" title="npm">
           {`npm install @number10/phaserjsx`}
         </CodeBlock>
