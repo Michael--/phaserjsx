@@ -67,9 +67,18 @@ export async function svgToTexture(
   let shouldRevokeUrl = false
 
   // Detect input type: raw SVG string or URL
-  if (trimmed.startsWith('<svg')) {
+  // SVG strings can start with <!-- comment --> or <svg
+  const isSvgString = trimmed.startsWith('<svg') || trimmed.startsWith('<!--')
+
+  if (isSvgString && trimmed.includes('<svg')) {
     // Raw SVG string - preprocess for tinting, then create blob URL
     const processedSvg = preprocessSvgForTinting(trimmed)
+    console.log(`[SVG Texture] Processing "${key}"`, {
+      originalLength: trimmed.length,
+      processedLength: processedSvg.length,
+      startsWithSvg: processedSvg.includes('<svg'),
+      first100: processedSvg.substring(0, 100),
+    })
     const blob = new Blob([processedSvg], { type: 'image/svg+xml' })
     finalUrl = URL.createObjectURL(blob)
     shouldRevokeUrl = true
