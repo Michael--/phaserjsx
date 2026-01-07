@@ -22,15 +22,16 @@ export function applyGesturesProps(
   prev: Partial<GestureProps & LayoutProps>,
   next: Partial<GestureProps & LayoutProps>
 ): void {
-  // Safety check: ensure scene is valid and booted
+  // Safety check: ensure scene is valid and not destroyed
+  // Note: We skip isActive() check because multiple scenes can coexist (e.g., in docs-site)
+  // where only one is "active" at a time, but all need functional gesture management
   if (!scene || !scene.sys || !scene.data) {
     console.warn('applyGesturesProps: Invalid scene or scene not initialized')
     return
   }
 
-  // Check if scene is still active (not shutting down/destroyed)
-  if (!scene.sys.isActive() || scene.sys.game === null) {
-    console.warn('applyGesturesProps: Scene is not active or game is null')
+  // Only skip if scene's game instance is null (scene being destroyed)
+  if (scene.sys.game === null) {
     return
   }
 
