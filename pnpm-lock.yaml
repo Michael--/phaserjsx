@@ -74,6 +74,9 @@ importers:
       '@number10/phaserjsx':
         specifier: workspace:*
         version: link:../../packages/ui
+      lucide-static:
+        specifier: ^0.562.0
+        version: 0.562.0
       phaser:
         specifier: ^3.90.0
         version: 3.90.0
@@ -5622,6 +5625,9 @@ packages:
   lru-cache@6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
+
+  lucide-static@0.562.0:
+    resolution: {integrity: sha512-TM2vNVOEsO3+ijmno7n/VmxUo0Shr9OXC/UqZc5n4xEVyXX4E4NVvXoRPAZiSsIsdvlQ7alGOcIC/QGtR+OgUQ==}
 
   magic-string@0.22.5:
     resolution: {integrity: sha512-oreip9rJZkzvA8Qzk9HFs8fZGF/u7H/gtrE8EN6RjKJ9kh2HlC+yQ2QezifqTZfGyiuAV0dRv5a+y/8gBb1m9w==}
@@ -14199,6 +14205,8 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+
+  lucide-static@0.562.0: {}
 
   magic-string@0.22.5:
     dependencies:

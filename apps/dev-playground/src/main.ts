@@ -8,13 +8,11 @@ import {
   type SceneBackgroundHandle,
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
-import { BehaviorSubject } from 'rxjs'
 import { App } from './App'
 import type { AppProps } from './types'
 
 const props: AppProps = {
   title: '🚀 PhaserJSX Dev Playground',
-  tint$: new BehaviorSubject(0xffffff),
 }
 
 /**
@@ -22,45 +20,10 @@ const props: AppProps = {
  */
 class PlaygroundScene extends Phaser.Scene {
   private backgroundHandle?: SceneBackgroundHandle | null
-  private emitter?: Phaser.GameObjects.Particles.ParticleEmitter
-
-  private getCenterPosition() {
-    const cam = this.cameras.main
-    return {
-      x: cam.scrollX + cam.width / 2,
-      y: cam.scrollY + cam.height / 2,
-    }
-  }
-
-  private updateEmitterPosition() {
-    if (!this.emitter) return
-    const pos = this.getCenterPosition()
-    this.emitter.setPosition(pos.x, pos.y)
-  }
-
-  preload() {
-    this.load.image('star', 'assets/star.png')
-  }
 
   create() {
-    this.emitter = this.add.particles(0, 0, 'star', {
-      frequency: 50,
-      speed: { min: 100, max: 300 },
-      angle: { min: 0, max: 360 },
-      scale: { start: 1.5, end: 0 },
-      lifespan: 4000,
-      tint: 0xffffff,
-      blendMode: 'ADD',
-      gravityY: 200,
-    })
-    this.updateEmitterPosition()
-    props.tint$.subscribe((tint) => {
-      this.emitter?.setParticleTint(tint)
-    })
-
     this.scale.on('resize', () => {
       this.createBackground()
-      this.updateEmitterPosition()
     })
     this.createBackground()
   }
@@ -74,7 +37,6 @@ class PlaygroundScene extends Phaser.Scene {
   }
 
   destroy() {
-    this.emitter?.destroy()
     this.backgroundHandle?.destroy()
     this.backgroundHandle = null
   }

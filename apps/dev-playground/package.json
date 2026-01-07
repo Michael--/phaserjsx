@@ -10,10 +10,12 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate-icons": "tsx ../../packages/ui/src/scripts/generate-icons.ts --config ./icon-generator.config.ts"
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
+    "lucide-static": "^0.562.0",
     "phaser": "^3.90.0",
     "rxjs": "^7.8.2"
   },
