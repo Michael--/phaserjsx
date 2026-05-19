@@ -1,5 +1,12 @@
 # @phaserjsx/test-ui
 
+## 0.6.0
+
+### Major Changes
+
+- Upgraded to Phaser 4 (phaser ^4.1.0)
+- Updated dependency @number10/phaserjsx@4.0.0
+
 ## 0.5.3
 
 ### Patch Changes

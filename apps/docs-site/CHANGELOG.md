@@ -1,5 +1,14 @@
 # docs-site
 
+## 0.5.0
+
+### Major Changes
+
+- Upgraded to Phaser 4 (phaser ^4.1.0)
+- Updated all "Phaser 3" references to Phaser 4 in documentation pages
+- Updated prerequisites: Phaser 4.1.0+
+- Updated dependency @number10/phaserjsx@4.0.0
+
 ## 0.4.1
 
 ### Patch Changes

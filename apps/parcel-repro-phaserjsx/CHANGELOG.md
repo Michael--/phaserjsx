@@ -1,5 +1,12 @@
 # parcel-repro-phaserjsx
 
+## 0.2.0
+
+### Major Changes
+
+- Upgraded to Phaser 4 (phaser ^4.1.0)
+- Updated dependency @number10/phaserjsx@4.0.0
+
 ## 0.1.3
 
 ### Patch Changes
