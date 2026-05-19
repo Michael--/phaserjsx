@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type * as Phaser from 'phaser'
 import { GestureManager } from './gesture-manager'
 
@@ -56,6 +56,10 @@ const createScene = (pointer: Phaser.Input.Pointer) => ({
 describe('GestureManager (zoom-aware)', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('uses world coordinates for hit testing under camera zoom', () => {
@@ -175,5 +179,79 @@ describe('GestureManager (zoom-aware)', () => {
     ).handlePointerMove(pointer)
 
     expect(moves[moves.length - 1]).toEqual({ dx: 10, dy: 10 })
+  })
+
+  it('fires long press for underlying target even with top overlay touch handler', () => {
+    vi.useFakeTimers()
+
+    const pointer = {
+      id: 1,
+      x: 50,
+      y: 50,
+      worldX: 50,
+      worldY: 50,
+    } as Phaser.Input.Pointer
+    const scene = createScene(pointer)
+    const manager = new GestureManager(scene as unknown as Phaser.Scene)
+    const onLongPress = vi.fn()
+
+    manager.registerContainer(
+      createContainer() as unknown as Phaser.GameObjects.Container,
+      { onLongPress },
+      createHitArea(100, 100),
+      { longPressDuration: 500 }
+    )
+
+    manager.registerContainer(
+      createContainer() as unknown as Phaser.GameObjects.Container,
+      { onTouch: vi.fn() },
+      createHitArea(100, 100)
+    )
+    ;(
+      manager as unknown as { handlePointerDown: (p: Phaser.Input.Pointer) => void }
+    ).handlePointerDown(pointer)
+    vi.advanceTimersByTime(550)
+
+    expect(onLongPress).toHaveBeenCalledTimes(1)
+  })
+
+  it('fires double tap for underlying target even with top overlay touch handler', () => {
+    const pointer = {
+      id: 1,
+      x: 50,
+      y: 50,
+      worldX: 50,
+      worldY: 50,
+    } as Phaser.Input.Pointer
+    const scene = createScene(pointer)
+    const manager = new GestureManager(scene as unknown as Phaser.Scene)
+    const onDoubleTap = vi.fn()
+
+    manager.registerContainer(
+      createContainer() as unknown as Phaser.GameObjects.Container,
+      { onDoubleTap },
+      createHitArea(100, 100),
+      { doubleTapDelay: 300 }
+    )
+
+    manager.registerContainer(
+      createContainer() as unknown as Phaser.GameObjects.Container,
+      { onTouch: vi.fn() },
+      createHitArea(100, 100)
+    )
+    ;(
+      manager as unknown as { handlePointerDown: (p: Phaser.Input.Pointer) => void }
+    ).handlePointerDown(pointer)
+    ;(manager as unknown as { handlePointerUp: (p: Phaser.Input.Pointer) => void }).handlePointerUp(
+      pointer
+    )
+    ;(
+      manager as unknown as { handlePointerDown: (p: Phaser.Input.Pointer) => void }
+    ).handlePointerDown(pointer)
+    ;(manager as unknown as { handlePointerUp: (p: Phaser.Input.Pointer) => void }).handlePointerUp(
+      pointer
+    )
+
+    expect(onDoubleTap).toHaveBeenCalledTimes(1)
   })
 })

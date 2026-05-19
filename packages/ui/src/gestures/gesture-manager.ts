@@ -39,6 +39,9 @@ export class GestureManager {
   private activePointerDown: {
     pointerId: number
     container: Phaser.GameObjects.Container
+    touchContainer?: Phaser.GameObjects.Container
+    longPressContainer?: Phaser.GameObjects.Container
+    doubleTapContainer?: Phaser.GameObjects.Container
     startX: number
     startY: number
   } | null = null
@@ -387,6 +390,10 @@ export class GestureManager {
     })
 
     let isFirstHit = true
+    let topmostTouchContainer: Phaser.GameObjects.Container | undefined
+    let topmostLongPressContainer: Phaser.GameObjects.Container | undefined
+    let topmostDoubleTapContainer: Phaser.GameObjects.Container | undefined
+    const pointerDownTime = Date.now()
 
     for (const { state } of containersArray) {
       const isHit = this.isPointerInContainer(pointer, state)
@@ -394,10 +401,26 @@ export class GestureManager {
         // Add to hit set (for move event filtering)
         hitContainers.add(state.container)
 
+        // Track topmost containers per gesture type
+        if (!topmostTouchContainer && state.callbacks.onTouch) {
+          topmostTouchContainer = state.container
+          state.pointerDownTime = pointerDownTime
+          state.longPressTriggered = false
+        }
+        if (!topmostLongPressContainer && state.callbacks.onLongPress) {
+          topmostLongPressContainer = state.container
+          state.pointerDownTime = pointerDownTime
+          state.longPressTriggered = false
+        }
+        if (!topmostDoubleTapContainer && state.callbacks.onDoubleTap) {
+          topmostDoubleTapContainer = state.container
+          state.pointerDownTime = pointerDownTime
+          state.longPressTriggered = false
+        }
+
         // Only the first (topmost) hit gets touch/longpress handling
         if (isFirstHit) {
           isFirstHit = false
-          const localPos = this.getLocalPosition(pointer, state.container)
 
           // Store active pointer down for touch detection
           this.activePointerDown = {
@@ -407,37 +430,58 @@ export class GestureManager {
             startY: pointer.worldY,
           }
 
-          // Reset long press triggered flag
-          state.longPressTriggered = false
-
-          // Store down time for touch duration check
-          state.pointerDownTime = Date.now()
-
-          // Start long press timer if callback exists
-          if (state.callbacks.onLongPress) {
-            state.longPressTimer = setTimeout(() => {
-              if (this.activePointerDown?.container === state.container) {
-                const isInside = this.isPointerInContainer(pointer, state)
-                const data = this.createEventData(
-                  pointer,
-                  localPos.x,
-                  localPos.y,
-                  state.hitArea.width,
-                  state.hitArea.height,
-                  { isInside }
-                )
-                state.callbacks.onLongPress?.(data)
-
-                // Mark that long press was triggered to prevent onTouch
-                state.longPressTriggered = true
-                this.activePointerDown = null
-              }
-            }, state.config.longPressDuration)
+          if (topmostTouchContainer) {
+            this.activePointerDown.touchContainer = topmostTouchContainer
+          }
+          if (topmostLongPressContainer) {
+            this.activePointerDown.longPressContainer = topmostLongPressContainer
+          }
+          if (topmostDoubleTapContainer) {
+            this.activePointerDown.doubleTapContainer = topmostDoubleTapContainer
           }
 
           // Store down position for tracking
           state.pointerDownPosition = { x: pointer.worldX, y: pointer.worldY }
         }
+      }
+    }
+
+    // Update active pointer with final topmost gesture targets (in case first hit had none)
+    if (this.activePointerDown) {
+      if (topmostTouchContainer) {
+        this.activePointerDown.touchContainer = topmostTouchContainer
+      }
+      if (topmostLongPressContainer) {
+        this.activePointerDown.longPressContainer = topmostLongPressContainer
+      }
+      if (topmostDoubleTapContainer) {
+        this.activePointerDown.doubleTapContainer = topmostDoubleTapContainer
+      }
+    }
+
+    // Start long press timer on the topmost container that actually has onLongPress
+    if (topmostLongPressContainer) {
+      const longPressState = this.containers.get(topmostLongPressContainer)
+      if (longPressState?.callbacks.onLongPress) {
+        const localPos = this.getLocalPosition(pointer, longPressState.container)
+
+        longPressState.longPressTimer = setTimeout(() => {
+          if (this.activePointerDown?.longPressContainer === longPressState.container) {
+            const isInside = this.isPointerInContainer(pointer, longPressState)
+            const data = this.createEventData(
+              pointer,
+              localPos.x,
+              localPos.y,
+              longPressState.hitArea.width,
+              longPressState.hitArea.height,
+              { isInside }
+            )
+            longPressState.callbacks.onLongPress?.(data)
+
+            // Mark that long press was triggered to prevent onTouch/onDoubleTap
+            longPressState.longPressTriggered = true
+          }
+        }, longPressState.config.longPressDuration)
       }
     }
 
@@ -479,21 +523,34 @@ export class GestureManager {
       return
     }
 
-    const state = this.containers.get(this.activePointerDown.container)
-    if (!state) {
+    const activeState = this.containers.get(this.activePointerDown.container)
+    if (!activeState) {
       this.activePointerDown = null
       return
     }
 
-    // Clear long press timer if still pending
-    if (state.longPressTimer) {
-      clearTimeout(state.longPressTimer)
-      state.longPressTimer = undefined
+    const touchState =
+      (this.activePointerDown.touchContainer &&
+        this.containers.get(this.activePointerDown.touchContainer)) ||
+      activeState
+    const longPressState =
+      this.activePointerDown.longPressContainer &&
+      this.containers.get(this.activePointerDown.longPressContainer)
+    const doubleTapState =
+      this.activePointerDown.doubleTapContainer &&
+      this.containers.get(this.activePointerDown.doubleTapContainer)
+
+    // Clear long press timer on the actual long-press target
+    if (longPressState?.longPressTimer) {
+      clearTimeout(longPressState.longPressTimer)
+      longPressState.longPressTimer = undefined
     }
 
-    // Calculate touch duration
-    const touchDuration = state.pointerDownTime ? Date.now() - state.pointerDownTime : 0
-    const isTouchTooLong = touchDuration > state.config.maxTouchDuration
+    const now = Date.now()
+    const touchDuration = touchState.pointerDownTime ? now - touchState.pointerDownTime : 0
+    const isTouchTooLong = touchDuration > touchState.config.maxTouchDuration
+    const longPressWasTriggered =
+      !!touchState.longPressTriggered || !!longPressState?.longPressTriggered
 
     // Send final move event to containers that were hit during pointer down
     const last = this.lastPointerPositions.get(pointer.id)
@@ -526,16 +583,16 @@ export class GestureManager {
     )
 
     // Check if pointer is still within the container (basic tap/click detection)
-    const isInside = this.isPointerInContainer(pointer, state)
+    const isInsideTouchTarget = this.isPointerInContainer(pointer, touchState)
 
-    if (isInside) {
+    if (isInsideTouchTarget) {
       // Fire onTouch only if:
       // - Long press wasn't triggered
       // - Touch duration is within acceptable range (not held too long)
-      const shouldFireTouch = !state.longPressTriggered && !isTouchTooLong
+      const shouldFireTouch = !longPressWasTriggered && !isTouchTooLong
 
       // Bubble onTouch event to parent containers
-      if (state.callbacks.onTouch && shouldFireTouch) {
+      if (touchState.callbacks.onTouch && shouldFireTouch) {
         this.bubbleEvent(pointer, 'onTouch', (targetState, targetLocalPos) => {
           const isInside = this.isPointerInContainer(pointer, targetState)
           const data = this.createEventData(
@@ -552,11 +609,12 @@ export class GestureManager {
       }
 
       // Check for double tap (also skip if touch was too long)
-      if (state.callbacks.onDoubleTap && shouldFireTouch) {
-        const now = Date.now()
-        const timeSinceLastTap = state.lastTapTime ? now - state.lastTapTime : Infinity
+      if (doubleTapState && shouldFireTouch && this.isPointerInContainer(pointer, doubleTapState)) {
+        const timeSinceLastTap = doubleTapState.lastTapTime
+          ? now - doubleTapState.lastTapTime
+          : Infinity
 
-        if (timeSinceLastTap <= state.config.doubleTapDelay) {
+        if (timeSinceLastTap <= doubleTapState.config.doubleTapDelay) {
           this.bubbleEvent(pointer, 'onDoubleTap', (targetState, targetLocalPos) => {
             const isInside = this.isPointerInContainer(pointer, targetState)
             const data = this.createEventData(
@@ -570,9 +628,9 @@ export class GestureManager {
             targetState.callbacks.onDoubleTap?.(data)
             return data.isPropagationStopped()
           })
-          state.lastTapTime = undefined // Reset to prevent triple-tap
+          doubleTapState.lastTapTime = undefined // Reset to prevent triple-tap
         } else {
-          state.lastTapTime = now
+          doubleTapState.lastTapTime = now
         }
       }
     }
@@ -598,11 +656,19 @@ export class GestureManager {
     }
 
     // Reset state
-    state.longPressTriggered = false
-    state.pointerDownTime = undefined
+    touchState.longPressTriggered = false
+    touchState.pointerDownTime = undefined
+    if (longPressState && longPressState !== touchState) {
+      longPressState.longPressTriggered = false
+      longPressState.pointerDownTime = undefined
+    }
+    if (doubleTapState && doubleTapState !== touchState && doubleTapState !== longPressState) {
+      doubleTapState.longPressTriggered = false
+      doubleTapState.pointerDownTime = undefined
+    }
 
     this.activePointerDown = null
-    state.pointerDownPosition = undefined
+    activeState.pointerDownPosition = undefined
 
     // Clear active containers for move tracking
     this.activeContainersForMove.delete(pointer.id)
