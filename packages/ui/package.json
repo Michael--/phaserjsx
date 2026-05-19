@@ -60,7 +60,8 @@
   "scripts": {
     "dev": "vite build --watch",
     "build": "tsc --noEmit && vite build && pnpm build:scripts",
-    "build:scripts": "vite build --config scripts.vite.config.ts && chmod +x dist/scripts/*.js",
+    "build:scripts": "vite build --config scripts.vite.config.ts && pnpm build:scripts:types && chmod +x dist/scripts/*.js",
+    "build:scripts:types": "tsc --ignoreConfig src/scripts/icon-generator-config.ts src/vite-plugin-icons.ts --declaration --emitDeclarationOnly --declarationMap false --outDir dist --moduleResolution bundler --module ESNext --target ES2022 --skipLibCheck --types node",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -95,7 +96,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.24",
-    "@types/node": "^24.10.1",
+    "@types/node": "^25.9.0",
     "@typescript-eslint/eslint-plugin": "^8.59.4",
     "@typescript-eslint/parser": "^8.59.4",
     "@vitest/coverage-v8": "4.1.6",
@@ -104,11 +105,11 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unused-imports": "^4.4.1",
     "happy-dom": "^20.9.0",
-    "jsdom": "^27.2.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "vite-plugin-dts": "^4.5.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13",
+    "vite-plugin-dts": "^5.0.1",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {

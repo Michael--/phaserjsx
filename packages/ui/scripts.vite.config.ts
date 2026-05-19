@@ -1,6 +1,5 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-import dts from 'vite-plugin-dts'
 
 /**
  * Vite configuration for CLI scripts build
@@ -45,15 +44,4 @@ export default defineConfig({
     minify: false,
     target: 'node18',
   },
-  plugins: [
-    dts({
-      include: ['src/scripts/icon-generator-config.ts', 'src/vite-plugin-icons.ts'],
-      outDir: 'dist',
-      logLevel: 'silent', // Suppress all dts logs including errors
-      compilerOptions: {
-        composite: false,
-        skipLibCheck: true,
-      },
-    }),
-  ],
 })
