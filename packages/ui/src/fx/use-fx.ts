@@ -70,6 +70,17 @@ export type FXCreatorFn<TConfig extends FXConfig = FXConfig> = (
 export function useFX<T extends FXCapableGameObject>(ref: RefObject<T>) {
   const activeEffectsRef = useRef<Set<(() => void) | Phaser.Filters.Controller>>(new Set())
 
+  // Pre-initialize the Phaser 4 filter pipeline at mount time.
+  // Calling enableFilters() lazily (on first FX application) causes the game object
+  // to resize to 1/4 of its original size. Initializing it eagerly during mount
+  // (before layout settles) prevents this resize behavior.
+  useEffect(() => {
+    const obj = ref.current
+    if (obj && typeof (obj as { enableFilters?: () => void }).enableFilters === 'function') {
+      ;(obj as { enableFilters: () => void }).enableFilters()
+    }
+  }, [])
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {

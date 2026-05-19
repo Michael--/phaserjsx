@@ -9,6 +9,7 @@
 - Replace `NodeJS.Timeout` timer state types with `ReturnType<typeof setTimeout>` for cross-runtime type compatibility.
 - Update script build/type generation flow to emit declarations for `icon-generator-config` and `vite-plugin-icons`.
 - Hide overflow mask graphics in normal rendering to prevent visible white mask overlays in ScrollView, Dropdown, Accordion, and other `overflow="hidden"` containers (debug overlay still available via `DevConfig.visual.showOverflowMasks`).
+- pre-initialize Phaser 4 filter pipeline in useFX to prevent resize on first FX application
 
 ## 4.0.0
 
