@@ -3,3 +3,28 @@
 packages:
   - "packages/*"
   - "apps/*"
+allowBuilds:
+  '@parcel/watcher': true
+  '@swc/core': true
+  core-js: true
+  deasync: true
+  esbuild: true
+  fsevents: true
+  lmdb: true
+  msgpackr-extract: true
+  parcel-bundler: true
+minimumReleaseAgeExclude:
+  - '@types/node@25.9.0'
+  - '@typescript-eslint/eslint-plugin@8.59.4'
+  - '@typescript-eslint/parser@8.59.4'
+  - '@typescript-eslint/project-service@8.59.4'
+  - '@typescript-eslint/scope-manager@8.59.4'
+  - '@typescript-eslint/tsconfig-utils@8.59.4'
+  - '@typescript-eslint/type-utils@8.59.4'
+  - '@typescript-eslint/types@8.59.4'
+  - '@typescript-eslint/typescript-estree@8.59.4'
+  - '@typescript-eslint/utils@8.59.4'
+  - '@typescript-eslint/visitor-keys@8.59.4'
+  - tsx@4.22.3
+  - unplugin-dts@1.0.1
+  - vite-plugin-dts@5.0.1
