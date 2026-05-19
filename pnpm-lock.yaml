@@ -205,14 +205,14 @@ importers:
         version: 4.1.0
     devDependencies:
       '@types/node':
-        specifier: ^24.10.1
-        version: 24.12.4
+        specifier: ^25.9.0
+        version: 25.9.0
       parcel:
-        specifier: ^2.13.3
+        specifier: ^2.16.4
         version: 2.16.4(@swc/helpers@0.5.21)
       typescript:
-        specifier: ^5.9.3
-        version: 5.9.3
+        specifier: ^6.0.3
+        version: 6.0.3
 
   apps/parcel-repro-phaserjsx:
     dependencies:

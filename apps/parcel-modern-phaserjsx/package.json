@@ -13,8 +13,8 @@
     "phaser": "^4.1.0"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "parcel": "^2.13.3",
-    "typescript": "^5.9.3"
+    "@types/node": "^25.9.0",
+    "parcel": "^2.16.4",
+    "typescript": "^6.0.3"
   }
 }
