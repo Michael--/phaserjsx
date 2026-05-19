@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
-    "phaser": "^3.90.0"
+    "phaser": "^4.1.0"
   },
   "devDependencies": {
     "@rspack/cli": "^1.1.0",

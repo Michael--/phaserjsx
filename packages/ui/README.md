@@ -1,8 +1,8 @@
 # @number10/phaserjsx
 
-> Declarative Phaser3 UI framework with React-like components and TypeScript
+> Declarative Phaser 4 UI framework with React-like components and TypeScript
 
-A modern, type-safe framework for building game UIs in Phaser3 using JSX components, hooks, and a powerful theme system.
+A modern, type-safe framework for building game UIs in Phaser 4 using JSX components, hooks, and a powerful theme system.
 
 [![npm version](https://img.shields.io/npm/v/@number10/phaserjsx.svg)](https://www.npmjs.com/package/@number10/phaserjsx)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](../../LICENSE)
@@ -16,7 +16,7 @@ A modern, type-safe framework for building game UIs in Phaser3 using JSX compone
 - 🎭 **Built-in Effects** - 23+ animation effects (pulse, shake, fade, bounce, etc.)
 - 📱 **Responsive Design** - Flexible layout with multiple size value formats (px, %, vw/vh, fill, auto, calc)
 - 🔧 **Custom Components** - Easy to create and integrate custom components
-- 🎮 **Phaser Integration** - Seamless integration with Phaser3 game objects and scenes
+- 🎮 **Phaser Integration** - Seamless integration with Phaser 4 game objects and scenes
 - 📊 **SVG Support** - Convert SVG to Phaser textures with caching
 - 🚀 **Performance** - Optimized VDOM reconciliation with smart dirty checking
 

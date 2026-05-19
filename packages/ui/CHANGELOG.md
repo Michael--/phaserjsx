@@ -1,5 +1,16 @@
 # @number10/phaserjsx
 
+## 4.0.0
+
+### Major Changes
+
+- **Phaser 4.1.0** — upgraded peer dependency from Phaser 3 to Phaser 4 (breaking)
+- Overflow masking: switched from `GeometryMask`/`setMask()` to Phaser 4 WebGL `Mask Filter` via `enableFilters()` + `filters.external.addMask()`; Canvas renderer keeps `GeometryMask` fallback
+- FX system: replaced `postFX`/`preFX` pipelines with `filters.internal`/`filters.external`; `FXType` changed from `'post'|'pre'` to `'internal'|'external'`
+- `Phaser.FX.Controller` renamed to `Phaser.Filters.Controller`
+- `ColorMatrix` filter effects now accessed via `colorMatrixFilter.colorMatrix.*`
+- `addGlow()` gained a new `scale` parameter (4th argument) in Phaser 4
+
 ## 0.6.1
 
 ### Patch Changes

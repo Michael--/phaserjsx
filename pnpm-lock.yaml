@@ -78,8 +78,8 @@ importers:
         specifier: ^0.562.0
         version: 0.562.0
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -124,8 +124,8 @@ importers:
         specifier: ^1.13.1
         version: 1.13.1
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
       react:
         specifier: ^19.2.0
         version: 19.2.1
@@ -182,8 +182,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -201,8 +201,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -220,8 +220,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       parcel-bundler:
         specifier: 1.12.5
@@ -236,8 +236,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@rollup/plugin-commonjs':
         specifier: ^28.0.2
@@ -264,8 +264,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@rspack/cli':
         specifier: ^1.1.0
@@ -347,8 +347,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/ui
       phaser:
-        specifier: ^3.90.0
-        version: 3.90.0
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@types/node':
         specifier: ^24.10.1
@@ -6168,9 +6168,6 @@ packages:
 
   phaser3-rex-plugins@1.80.17:
     resolution: {integrity: sha512-0xNgjA2rbh9323hP1dFwasYgKO1CyYJO6PwznnNTaWnn8ksbg9VQhprpAp4ASxSPkfn1ISgzxw8LqWjNJK8Rew==}
-
-  phaser@3.90.0:
-    resolution: {integrity: sha512-/cziz/5ZIn02uDkC9RzN8VF9x3Gs3XdFFf9nkiMEQT3p7hQlWuyjy4QWosU802qqno2YSLn2BfqwOKLv/sSVfQ==}
 
   phaser@4.1.0:
     resolution: {integrity: sha512-ZXv5Bhyg2BqJGAAxNI2xvmzGXW9q+TwUG1RLri5ZDBYGGtcma6aWUO/eJ7EbozeqRd5fKdpo4ycNMQt+Bi5iYg==}
@@ -14866,10 +14863,6 @@ snapshots:
     transitivePeerDependencies:
       - encoding
       - graphology-types
-
-  phaser@3.90.0:
-    dependencies:
-      eventemitter3: 5.0.1
 
   phaser@4.1.0:
     dependencies:

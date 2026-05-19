@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
-    "phaser": "^3.90.0"
+    "phaser": "^4.1.0"
   },
   "devDependencies": {
     "parcel-bundler": "1.12.5",

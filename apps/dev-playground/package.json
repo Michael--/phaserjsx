@@ -16,7 +16,7 @@
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
     "lucide-static": "^0.562.0",
-    "phaser": "^3.90.0",
+    "phaser": "^4.1.0",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {

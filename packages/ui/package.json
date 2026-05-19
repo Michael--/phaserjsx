@@ -1,8 +1,8 @@
 {
   "name": "@number10/phaserjsx",
-  "version": "0.6.1",
+  "version": "4.0.0",
   "type": "module",
-  "description": "Declarative Phaser3 + UI renderer core library",
+  "description": "Declarative Phaser 4 + UI renderer core library",
   "author": "Michael Rieck (Michael--) <mr@number10.de>",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
