@@ -10,10 +10,7 @@
 
     // JSX configuration
     "jsx": "react-jsx",
-    "jsxImportSource": "@number10/phaserjsx",
-
-    // TS 6: keep legacy baseUrl paths behavior during migration
-    "ignoreDeprecations": "6.0"
+    "jsxImportSource": "@number10/phaserjsx"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],

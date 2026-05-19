@@ -39,10 +39,9 @@
     "forceConsistentCasingInFileNames": true,
 
     // Path mappings for workspace packages
-    "baseUrl": ".",
     "paths": {
-      "@number10/phaserjsx": ["packages/ui/src"],
-      "@number10/phaserjsx/*": ["packages/ui/src/*"]
+      "@number10/phaserjsx": ["./packages/ui/src"],
+      "@number10/phaserjsx/*": ["./packages/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "dist", "coverage", ".changeset"]
