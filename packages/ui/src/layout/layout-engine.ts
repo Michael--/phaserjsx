@@ -295,17 +295,18 @@ function updateMaskWorldPosition(
     maskGraphics.setRotation(worldRotation)
     maskGraphics.setScale(worldScaleX, worldScaleY)
 
-    // WebGL Mask Filter: mask source must be fully opaque — the rendered texture
-    // defines the clip region (opaque = visible, transparent = hidden).
+    // Keep mask source hidden in normal mode to avoid rendering a visible overlay.
+    // For WebGL Mask Filters, alpha still needs to be opaque in the mask texture itself.
+    const showMaskOverlay = DevConfig.visual.showOverflowMasks
+    maskGraphics.setVisible(showMaskOverlay)
+
+    // WebGL Mask Filter: mask source must be fully opaque in the generated mask texture
+    // (opaque = visible, transparent = hidden).
     // Canvas GeometryMask: alpha is irrelevant for clipping, so keep debug control.
     const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
     maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
     maskGraphics.setAlpha(
-      isWebGL
-        ? 1.0
-        : DevConfig.visual.showOverflowMasks
-          ? Math.max(DevConfig.visual.maskAlpha, 0.01)
-          : 0.0
+      isWebGL ? 1.0 : showMaskOverlay ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
     )
 
     // Draw rectangle in local space (will be transformed by graphics properties)
