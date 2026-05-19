@@ -1,5 +1,14 @@
 # @number10/phaserjsx
 
+## Unreleased
+
+### Patch Changes
+
+- Fix WebGL overflow mask behavior by forcing opaque `maskGraphics` alpha when using Phaser 4 Mask Filter.
+- Restore long-press and double-tap target resolution when an overlay handles `onTouch` above another interactive target.
+- Replace `NodeJS.Timeout` timer state types with `ReturnType<typeof setTimeout>` for cross-runtime type compatibility.
+- Update script build/type generation flow to emit declarations for `icon-generator-config` and `vite-plugin-icons`.
+
 ## 4.0.0
 
 ### Major Changes
