@@ -28,7 +28,8 @@ export type NestedComponentThemes = {
  * Includes all visual props that can be themed, plus nested component themes
  */
 export interface ViewTheme
-  extends Partial<TransformProps>,
+  extends
+    Partial<TransformProps>,
     Partial<PhaserProps>,
     Partial<LayoutProps>,
     Partial<BackgroundProps>,
@@ -39,7 +40,8 @@ export interface ViewTheme
  * Includes all text-specific visual props that can be themed, plus nested component themes
  */
 export interface TextTheme
-  extends Partial<TransformProps>,
+  extends
+    Partial<TransformProps>,
     Partial<PhaserProps>,
     Partial<TextSpecificProps>,
     NestedComponentThemes {
@@ -52,9 +54,7 @@ export interface TextTheme
  * Theme definition for NineSlice component
  */
 export interface NineSliceTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
   texture?: string
   leftWidth?: number
@@ -67,9 +67,7 @@ export interface NineSliceTheme
  * Theme definition for Sprite component (dummy - minimal theme support)
  */
 export interface SpriteTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
@@ -79,9 +77,7 @@ export interface SpriteTheme
  * Theme definition for Image component (dummy - minimal theme support)
  */
 export interface ImageTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
@@ -91,9 +87,7 @@ export interface ImageTheme
  * Theme definition for Graphics component (dummy - minimal theme support)
  */
 export interface GraphicsTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
 }
 
@@ -101,9 +95,7 @@ export interface GraphicsTheme
  * Theme definition for TileSprite component (dummy - minimal theme support)
  */
 export interface TileSpriteTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
   texture?: string
   tint?: number
@@ -113,9 +105,7 @@ export interface TileSpriteTheme
  * Theme definition for Particles component (minimal support)
  */
 export interface ParticlesTheme
-  extends Partial<TransformProps>,
-    Partial<PhaserProps>,
-    NestedComponentThemes {
+  extends Partial<TransformProps>, Partial<PhaserProps>, NestedComponentThemes {
   visible?: boolean | import('./core-props').Display
   texture?: string
 }

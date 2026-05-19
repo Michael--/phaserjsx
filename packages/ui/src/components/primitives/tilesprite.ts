@@ -159,8 +159,7 @@ export interface TileSpriteBaseProps extends TransformProps {
  * Props for TileSprite component
  */
 export interface TileSpriteProps
-  extends TileSpriteBaseProps,
-    PropsDefaultExtension<Phaser.GameObjects.TileSprite> {}
+  extends TileSpriteBaseProps, PropsDefaultExtension<Phaser.GameObjects.TileSprite> {}
 
 /**
  * TileSprite creator - NOT IMPLEMENTED YET

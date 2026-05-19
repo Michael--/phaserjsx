@@ -15,9 +15,7 @@ import type { ChildrenType, PropsDefaultExtension } from '../../types'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface TileSpriteProps
-  extends TransformProps,
-    PhaserProps,
-    PropsDefaultExtension<Phaser.GameObjects.TileSprite> {
+  extends TransformProps, PhaserProps, PropsDefaultExtension<Phaser.GameObjects.TileSprite> {
   /** Texture key (loaded via Phaser's texture manager) */
   texture: string
 

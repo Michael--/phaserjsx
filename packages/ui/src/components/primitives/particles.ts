@@ -57,8 +57,7 @@ export interface ParticlesBaseProps extends TransformProps, PhaserProps, LayoutP
  * Props for primitive Particles component (internal use only)
  */
 export interface ParticlesPrimitiveProps
-  extends ParticlesBaseProps,
-    PropsDefaultExtension<ParticlesHandle> {}
+  extends ParticlesBaseProps, PropsDefaultExtension<ParticlesHandle> {}
 
 /**
  * Particles creator - creates a Phaser ParticleEmitterManager with a single emitter

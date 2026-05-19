@@ -48,19 +48,13 @@ export function createGestures(
     __getLayoutSize?: () => LayoutSize
   }
 
-  let width = 100
-  let height = 100
-
-  if (containerWithLayout.__getLayoutSize) {
-    const size = containerWithLayout.__getLayoutSize()
-    width = size.width
-    height = size.height
-  } else {
-    // Fallback to getBounds if __getLayoutSize not available yet
-    const bounds = container.getBounds()
-    width = bounds.width || 100
-    height = bounds.height || 100
-  }
+  const { width, height } = containerWithLayout.__getLayoutSize
+    ? containerWithLayout.__getLayoutSize()
+    : (() => {
+        // Fallback to getBounds if __getLayoutSize not available yet
+        const bounds = container.getBounds()
+        return { width: bounds.width || 100, height: bounds.height || 100 }
+      })()
 
   // Create hit area with origin at (0,0) - matches our component system
   const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)

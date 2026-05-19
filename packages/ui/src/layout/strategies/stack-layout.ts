@@ -52,8 +52,8 @@ export class StackLayoutStrategy extends BaseLayoutStrategy {
     const margin = this.getMarginValues(child)
     const { alignItems } = context.containerProps
 
-    let x = 0
-    let y = 0
+    let x: number
+    let y: number
 
     // Position based on alignItems (applies to both axes for stack)
     switch (alignItems) {

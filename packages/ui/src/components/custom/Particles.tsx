@@ -10,7 +10,8 @@ import type { ParticleEmitterConfig, ParticlePresetName } from '../../particles/
 import type { PropsDefaultExtension } from '../../types'
 
 export interface ParticlesProps
-  extends TransformProps,
+  extends
+    TransformProps,
     PhaserProps,
     Omit<LayoutProps, 'direction' | 'justifyContent' | 'alignItems' | 'gap' | 'flexWrap'>,
     PropsDefaultExtension<ParticlesHandle> {

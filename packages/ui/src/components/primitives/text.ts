@@ -150,10 +150,7 @@ import { createTransform } from '../creators/createTransform'
  * Includes optional margin for layout engine use
  */
 export interface TextBaseProps
-  extends TransformProps,
-    PhaserProps,
-    Pick<LayoutProps, 'headless'>,
-    TextSpecificProps {
+  extends TransformProps, PhaserProps, Pick<LayoutProps, 'headless'>, TextSpecificProps {
   margin?: EdgeInsets
   // Legacy: support Phaser's style object directly
   style?: Phaser.Types.GameObjects.Text.TextStyle | undefined

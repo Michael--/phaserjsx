@@ -158,8 +158,7 @@ export interface SpriteBaseProps extends TransformProps, PhaserProps, LayoutProp
  * Props for Sprite component
  */
 export interface SpriteProps
-  extends SpriteBaseProps,
-    PropsDefaultExtension<Phaser.GameObjects.Sprite> {}
+  extends SpriteBaseProps, PropsDefaultExtension<Phaser.GameObjects.Sprite> {}
 
 /**
  * Sprite creator - creates a Phaser Sprite object with animations

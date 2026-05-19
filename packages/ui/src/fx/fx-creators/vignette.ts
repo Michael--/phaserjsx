@@ -38,7 +38,13 @@ export const createVignetteFX: FXCreatorFn<VignetteFXConfig> = (obj, config, typ
   const { strength = 0.5, radius = 0.5, x = 0.5, y = 0.5 } = config
 
   obj.enableFilters()
-  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
+  const filters = obj.filters
+  if (!filters) {
+    console.warn('[createVignetteFX] Filters not available on this GameObject')
+    return null
+  }
+
+  const pipeline = type === 'internal' ? filters.internal : filters.external
   if (!pipeline) {
     console.warn('[createVignetteFX] FX pipeline not available on this GameObject')
     return null

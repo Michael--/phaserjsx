@@ -70,18 +70,12 @@ export function applyGesturesProps(
       __getLayoutSize?: () => LayoutSize
     }
 
-    let width = 100
-    let height = 100
-
-    if (containerWithLayout.__getLayoutSize) {
-      const size = containerWithLayout.__getLayoutSize()
-      width = size.width
-      height = size.height
-    } else {
-      const bounds = container.getBounds()
-      width = bounds.width || 100
-      height = bounds.height || 100
-    }
+    const { width, height } = containerWithLayout.__getLayoutSize
+      ? containerWithLayout.__getLayoutSize()
+      : (() => {
+          const bounds = container.getBounds()
+          return { width: bounds.width || 100, height: bounds.height || 100 }
+        })()
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 
@@ -143,18 +137,12 @@ export function applyGesturesProps(
       __getLayoutSize?: () => LayoutSize
     }
 
-    let width = 100
-    let height = 100
-
-    if (containerWithLayout.__getLayoutSize) {
-      const size = containerWithLayout.__getLayoutSize()
-      width = size.width
-      height = size.height
-    } else {
-      const bounds = container.getBounds()
-      width = bounds.width || 100
-      height = bounds.height || 100
-    }
+    const { width, height } = containerWithLayout.__getLayoutSize
+      ? containerWithLayout.__getLayoutSize()
+      : (() => {
+          const bounds = container.getBounds()
+          return { width: bounds.width || 100, height: bounds.height || 100 }
+        })()
 
     const hitArea = new Phaser.Geom.Rectangle(0, 0, width, height)
 

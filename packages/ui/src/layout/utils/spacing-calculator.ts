@@ -24,7 +24,7 @@ export function calculateJustifyContent(
   remainingSpace: number,
   childCount: number
 ): JustifyResult {
-  let mainStart = 0
+  let mainStart: number
   let spaceBetween = 0
 
   switch (justifyContent) {

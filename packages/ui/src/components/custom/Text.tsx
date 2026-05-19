@@ -15,7 +15,8 @@ import type { VNodeLike } from '../../vdom'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface TextProps
-  extends Omit<TransformProps, 'scaleX' | 'scaleY' | 'scale' | 'rotation'>,
+  extends
+    Omit<TransformProps, 'scaleX' | 'scaleY' | 'scale' | 'rotation'>,
     PhaserProps,
     TextSpecificProps,
     PropsDefaultExtension<Phaser.GameObjects.Text> {

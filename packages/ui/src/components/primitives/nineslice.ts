@@ -270,18 +270,14 @@ export interface NineSliceSpecificProps {
  * Note: No InteractionProps - interaction should be handled by parent View container
  */
 export interface NineSliceBaseProps
-  extends TransformProps,
-    PhaserProps,
-    LayoutProps,
-    NineSliceSpecificProps {}
+  extends TransformProps, PhaserProps, LayoutProps, NineSliceSpecificProps {}
 
 /**
  * Props for NineSlice primitive - extends base props with JSX-specific props
  * Renamed to avoid conflict with custom NineSlice wrapper
  */
 export interface NineSlicePrimitiveProps
-  extends NineSliceBaseProps,
-    PropsDefaultExtension<Phaser.GameObjects.NineSlice> {}
+  extends NineSliceBaseProps, PropsDefaultExtension<Phaser.GameObjects.NineSlice> {}
 
 /**
  * NineSlice creator - creates a Phaser NineSlice object

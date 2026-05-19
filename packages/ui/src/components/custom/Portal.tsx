@@ -121,27 +121,18 @@ export function Portal(props: PortalProps): VNodeLike {
         if (!firstChild) return
 
         // Get dimensions from layout system
-        let width = 0
-        let height = 0
-        let x = 0
-        let y = 0
-
-        if (firstChild.__cachedLayoutSize) {
-          width = firstChild.__cachedLayoutSize.width
-          height = firstChild.__cachedLayoutSize.height
-        } else if (firstChild.__getLayoutSize) {
-          const size = firstChild.__getLayoutSize()
-          width = size.width
-          height = size.height
-        } else {
-          const bounds = firstChild.getBounds()
-          width = bounds.width
-          height = bounds.height
-        }
+        const { width, height } = firstChild.__cachedLayoutSize
+          ? firstChild.__cachedLayoutSize
+          : firstChild.__getLayoutSize
+            ? firstChild.__getLayoutSize()
+            : (() => {
+                const bounds = firstChild.getBounds()
+                return { width: bounds.width, height: bounds.height }
+              })()
 
         // Position blocker at same location as content
-        x = firstChild.x
-        y = firstChild.y
+        const x = firstChild.x
+        const y = firstChild.y
         blocker.setPosition(x, y)
 
         // Register blocker container (not content!) with event blockers

@@ -414,8 +414,6 @@ export function CharText(props: CharTextProps): VNodeLike {
     const startY = padTop
 
     // Find the character at cursor position to get correct line Y
-    let cursorX = startX
-    let cursorY = startY
     const clampedPosition = Math.max(0, Math.min(cursorPosition, displayedText.length))
 
     // Find the character right before the cursor position (charIndex < clampedPosition)
@@ -436,39 +434,53 @@ export function CharText(props: CharTextProps): VNodeLike {
     const isAfterNewline = charBeforeCursorInText === '\n'
 
     // Position cursor based on the character before it
-    if (charBeforeCursor) {
-      if (isAfterNewline) {
-        // Cursor should be at start of next line
-        const nextLineIndex = charBeforeCursor.lineIndex + 1
+    const { cursorX, cursorY } = (() => {
+      if (charBeforeCursor) {
+        if (isAfterNewline) {
+          // Cursor should be at start of next line
+          const nextLineIndex = charBeforeCursor.lineIndex + 1
 
-        // Find first char of next line
-        const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
+          // Find first char of next line
+          const firstCharOfNextLine = chars.find((c) => c.lineIndex === nextLineIndex)
 
-        if (firstCharOfNextLine) {
-          // Next line has content
-          cursorX = startX + firstCharOfNextLine.x
-          cursorY = startY + firstCharOfNextLine.y
-        } else {
+          if (firstCharOfNextLine) {
+            // Next line has content
+            return {
+              cursorX: startX + firstCharOfNextLine.x,
+              cursorY: startY + firstCharOfNextLine.y,
+            }
+          }
+
           // Empty line after newline - cursor at start of virtual next line
-          cursorX = startX
           const lineHeightPx = charBeforeCursor.height * lineHeight
-          cursorY = startY + charBeforeCursor.y + lineHeightPx
+          return {
+            cursorX: startX,
+            cursorY: startY + charBeforeCursor.y + lineHeightPx,
+          }
         }
-      } else {
+
         // Normal character - cursor goes after it
-        cursorX = startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing
-        cursorY = startY + charBeforeCursor.y
+        return {
+          cursorX: startX + charBeforeCursor.x + charBeforeCursor.width + charSpacing,
+          cursorY: startY + charBeforeCursor.y,
+        }
       }
-    } else if (chars.length > 0 && chars[0]) {
-      // Cursor at position 0 (before first char)
-      const firstChar = chars[0]
-      cursorX = startX + firstChar.x
-      cursorY = startY + firstChar.y
-    } else {
+
+      if (chars.length > 0 && chars[0]) {
+        // Cursor at position 0 (before first char)
+        const firstChar = chars[0]
+        return {
+          cursorX: startX + firstChar.x,
+          cursorY: startY + firstChar.y,
+        }
+      }
+
       // No chars at all
-      cursorX = startX
-      cursorY = startY
-    }
+      return {
+        cursorX: startX,
+        cursorY: startY,
+      }
+    })()
 
     // Get cursor height
     let cursorHeight = 20

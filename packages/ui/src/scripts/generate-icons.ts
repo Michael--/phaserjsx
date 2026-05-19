@@ -505,12 +505,13 @@ export async function loadConfig(
       } catch (tsxError) {
         const tsxMessage = tsxError instanceof Error ? tsxError.message : String(tsxError)
         throw new Error(
-          `Failed to load config from ${configPath}: ${tsxMessage} (after tsx fallback)`
+          `Failed to load config from ${configPath}: ${tsxMessage} (after tsx fallback)`,
+          { cause: tsxError }
         )
       }
     }
 
-    throw new Error(`Failed to load config from ${configPath}: ${errorMessage}`)
+    throw new Error(`Failed to load config from ${configPath}: ${errorMessage}`, { cause: error })
   }
 }
 

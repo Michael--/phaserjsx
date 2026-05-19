@@ -15,7 +15,8 @@ import type { VNodeLike } from '../../vdom'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface NineSliceProps
-  extends Omit<TransformProps, 'scaleX' | 'scaleY' | 'scale'>,
+  extends
+    Omit<TransformProps, 'scaleX' | 'scaleY' | 'scale'>,
     PhaserProps,
     Omit<LayoutProps, 'direction' | 'justifyContent' | 'alignItems' | 'gap' | 'flexWrap'>,
     PropsDefaultExtension<Phaser.GameObjects.NineSlice> {

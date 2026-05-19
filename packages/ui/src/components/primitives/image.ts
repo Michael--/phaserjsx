@@ -162,8 +162,7 @@ export interface ImageBaseProps extends TransformProps, PhaserProps, LayoutProps
  * For public API, use ImageProps from custom/Image.tsx
  */
 export interface ImagePrimitiveProps
-  extends ImageBaseProps,
-    PropsDefaultExtension<Phaser.GameObjects.Image> {}
+  extends ImageBaseProps, PropsDefaultExtension<Phaser.GameObjects.Image> {}
 
 /**
  * Image creator - creates a Phaser Image object

@@ -15,7 +15,8 @@ import type { VNodeLike } from '@number10/phaserjsx/vdom'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface GraphicsProps
-  extends TransformProps,
+  extends
+    TransformProps,
     PhaserProps,
     Omit<LayoutProps, 'direction' | 'justifyContent' | 'alignItems' | 'gap' | 'flexWrap'>,
     PropsDefaultExtension<Phaser.GameObjects.Graphics> {

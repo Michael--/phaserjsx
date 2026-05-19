@@ -15,7 +15,8 @@ import type { ChildrenType, PropsDefaultExtension } from '../../types'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface SpriteProps
-  extends TransformProps,
+  extends
+    TransformProps,
     PhaserProps,
     Omit<LayoutProps, 'direction' | 'justifyContent' | 'alignItems' | 'gap' | 'flexWrap'>,
     PropsDefaultExtension<Phaser.GameObjects.Sprite> {

@@ -19,8 +19,10 @@ export interface IconLoaderFn<T extends string = string> {
 /**
  * Props for the generic Icon component
  */
-export interface IconProps<T extends string = string>
-  extends Omit<ImageProps, 'texture' | 'displayWidth' | 'displayHeight'> {
+export interface IconProps<T extends string = string> extends Omit<
+  ImageProps,
+  'texture' | 'displayWidth' | 'displayHeight'
+> {
   /** The icon type/name to load */
   type: T | undefined
   /** Loader function that fetches the icon SVG */

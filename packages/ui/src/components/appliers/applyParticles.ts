@@ -43,13 +43,13 @@ export function applyParticlesProps(
 
   if (configChanged) {
     const resolvedConfig = resolveParticlePreset(next.preset, next.config)
-    let emitter: ParticleEmitter | null = null
+    let emitter: ParticleEmitter | null
 
     if (isParticleEmitter(manager)) {
       emitter = manager
     } else {
       const managerLike = manager as ParticleEmitterManagerLike
-      emitter = managerLike.__emitter ?? getFirstEmitter(managerLike)
+      emitter = managerLike.__emitter ?? getFirstEmitter(managerLike) ?? null
       if (!emitter && managerLike.createEmitter) {
         const created = managerLike.createEmitter(resolvedConfig)
         emitter = (created as ParticleEmitter | void) ?? null

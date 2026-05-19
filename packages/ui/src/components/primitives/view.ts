@@ -167,17 +167,14 @@ function normalizeBackgroundProps<T>(props: T): T {
  * Base props for View - composing shared prop groups
  */
 export interface ViewBaseProps
-  extends TransformProps,
-    PhaserProps,
-    LayoutProps,
-    BackgroundProps,
-    GestureProps {}
+  extends TransformProps, PhaserProps, LayoutProps, BackgroundProps, GestureProps {}
 
 /**
  * Props for View (Container) component - extends base props with JSX-specific props
  */
 export interface ViewProps
-  extends ViewBaseProps,
+  extends
+    ViewBaseProps,
     PropsDefaultExtension<Phaser.GameObjects.Container>,
     PropsContainerExtension {}
 

@@ -422,7 +422,14 @@ function applyOverflowMask(
       const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
       if (isWebGL) {
         container.enableFilters()
-        extendedContainer.__overflowMaskFilter = container.filters!.external.addMask(maskGraphics)
+        const filters = container.filters
+        if (filters?.external) {
+          extendedContainer.__overflowMaskFilter = filters.external.addMask(maskGraphics)
+        } else {
+          // Fallback if filters are unexpectedly unavailable
+          const mask = maskGraphics.createGeometryMask()
+          container.setMask(mask)
+        }
       } else {
         const mask = maskGraphics.createGeometryMask()
         container.setMask(mask)
@@ -477,7 +484,7 @@ function applyOverflowMask(
     const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
     if (isWebGL) {
       if (extendedContainer.__overflowMaskFilter) {
-        container.filters!.external.remove(extendedContainer.__overflowMaskFilter, true)
+        container.filters?.external?.remove(extendedContainer.__overflowMaskFilter, true)
         extendedContainer.__overflowMaskFilter = undefined
       }
     } else {

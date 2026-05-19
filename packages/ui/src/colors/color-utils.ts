@@ -110,7 +110,7 @@ export function rgbToHsl(r: number, g: number, b: number): HSLColor {
   }
 
   const saturationValue = light > 0.5 ? delta / (2 - max - min) : delta / (max + min)
-  let hueValue = 0
+  let hueValue: number
   if (max === red) {
     hueValue = (green - blue) / delta + (green < blue ? 6 : 0)
   } else if (max === green) {

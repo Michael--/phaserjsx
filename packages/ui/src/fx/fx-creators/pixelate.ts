@@ -29,7 +29,13 @@ export const createPixelateFX: FXCreatorFn<PixelateFXConfig> = (obj, config, typ
   const { amount = 1 } = config
 
   obj.enableFilters()
-  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
+  const filters = obj.filters
+  if (!filters) {
+    console.warn('[createPixelateFX] Filters not available on this GameObject')
+    return null
+  }
+
+  const pipeline = type === 'internal' ? filters.internal : filters.external
   if (!pipeline) {
     console.warn('[createPixelateFX] FX pipeline not available on this GameObject')
     return null

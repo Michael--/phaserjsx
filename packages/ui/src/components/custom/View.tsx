@@ -21,7 +21,8 @@ import type { VNodeLike } from '../../vdom'
  * Explicitly defined to ensure type safety in JSX usage
  */
 export interface ViewProps
-  extends TransformProps,
+  extends
+    TransformProps,
     PhaserProps,
     LayoutProps,
     BackgroundProps,

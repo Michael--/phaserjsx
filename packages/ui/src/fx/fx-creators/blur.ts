@@ -42,7 +42,13 @@ export const createBlurFX: FXCreatorFn<BlurFXConfig> = (obj, config, type = 'int
   const { quality = 0, x = 2, y = 2, strength = 1, color = 0xffffff, steps = 4 } = config
 
   obj.enableFilters()
-  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
+  const filters = obj.filters
+  if (!filters) {
+    console.warn('[createBlurFX] Filters not available on this GameObject')
+    return null
+  }
+
+  const pipeline = type === 'internal' ? filters.internal : filters.external
   if (!pipeline) {
     console.warn('[createBlurFX] FX pipeline not available on this GameObject')
     return null

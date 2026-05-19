@@ -145,8 +145,7 @@ export interface GraphicsBaseProps extends TransformProps, PhaserProps, LayoutPr
  * Props for Graphics component
  */
 export interface GraphicsProps
-  extends GraphicsBaseProps,
-    PropsDefaultExtension<Phaser.GameObjects.Graphics> {}
+  extends GraphicsBaseProps, PropsDefaultExtension<Phaser.GameObjects.Graphics> {}
 
 /**
  * Graphics creator - creates a Phaser Graphics object
