@@ -20,7 +20,7 @@ export function IntroductionPage() {
       <DocTitle>Introduction to PhaserJSX</DocTitle>
 
       <DocParagraph>
-        PhaserJSX is a modern, declarative UI framework for Phaser 3 that brings React-like
+        PhaserJSX is a modern, declarative UI framework for Phaser 4 that brings React-like
         development patterns to game and interactive application development. It transforms the way
         you build user interfaces in Phaser by introducing JSX syntax, hooks, and a component-based
         architecture.

@@ -24,7 +24,7 @@ export function HomePage() {
         />
       </div>
       <Hero title="Welcome to PhaserJSX UI">
-        A React-like component library for Phaser 3, featuring JSX syntax, hooks, flexbox layout,
+        A React-like component library for Phaser 4, featuring JSX syntax, hooks, flexbox layout,
         and a complete theme system.
       </Hero>
 

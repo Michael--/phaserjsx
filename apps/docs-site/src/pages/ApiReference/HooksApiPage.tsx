@@ -1112,7 +1112,7 @@ function useSVGTextures(configs: SVGTextureConfig[]): boolean`}
 
       <Section title="FX Hooks">
         <SectionDescription>
-          Apply Phaser PostFX/PreFX pipelines and convenience effects.
+          Apply Phaser filter effects (blur, glow, shadow, color matrix, etc.) to GameObjects.
         </SectionDescription>
 
         <h3>useFX</h3>

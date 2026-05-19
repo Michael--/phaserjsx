@@ -23,7 +23,7 @@ export function QuickStartPage() {
       {/* Step 1: Installation */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">1. Installation</h2>
-        <p className="mb-4">Install PhaserJSX and Phaser 3 via your package manager:</p>
+        <p className="mb-4">Install PhaserJSX and Phaser 4 via your package manager:</p>
         <CodeBlock language="bash">{`npm install @number10/phaserjsx phaser`}</CodeBlock>
         <p className="mt-4 text-sm text-gray-600">
           Or use <code>yarn add</code> or <code>pnpm add</code>

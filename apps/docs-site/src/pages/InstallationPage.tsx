@@ -27,7 +27,7 @@ export function InstallationPage() {
       <DocTitle>Installation</DocTitle>
 
       <DocParagraph>
-        Get started with PhaserJSX in your Phaser 3 project. This guide covers package installation
+        Get started with PhaserJSX in your Phaser 4 project. This guide covers package installation
         and basic setup to integrate PhaserJSX into your game or application.
       </DocParagraph>
 
@@ -45,7 +45,7 @@ export function InstallationPage() {
             <strong>TypeScript:</strong> Version 5.0+ recommended (for best type safety)
           </div>
           <div className="doc-list-item">
-            <strong>Phaser 3:</strong> Version 3.80.0 or higher
+            <strong>Phaser 4:</strong> Version 4.1.0 or higher
           </div>
         </div>
       </DocSection>
@@ -66,7 +66,7 @@ export function InstallationPage() {
         </CodeBlock>
 
         <DocParagraph>
-          PhaserJSX will automatically install Phaser 3 as a peer dependency if it's not already in
+          PhaserJSX will automatically install Phaser 4 as a peer dependency if it's not already in
           your project.
         </DocParagraph>
       </DocSection>
