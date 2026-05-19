@@ -14,9 +14,9 @@ interface TooltipState {
   isVisible: boolean
   tooltip: Phaser.GameObjects.Container | null
   activeTweens: Phaser.Tweens.Tween[]
-  showTimer: NodeJS.Timeout | null
-  hideTimer: NodeJS.Timeout | null
-  autoDismissTimer: NodeJS.Timeout | null
+  showTimer: ReturnType<typeof setTimeout> | null
+  hideTimer: ReturnType<typeof setTimeout> | null
+  autoDismissTimer: ReturnType<typeof setTimeout> | null
   currentConfig: TooltipConfig | null
 }
 

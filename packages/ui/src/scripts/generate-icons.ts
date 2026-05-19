@@ -557,7 +557,7 @@ async function watchMode(config: IconGeneratorConfig, cwd: string): Promise<void
     }
   }
 
-  let regenerateTimeout: NodeJS.Timeout | null = null
+  let regenerateTimeout: ReturnType<typeof setTimeout> | null = null
 
   const scheduleRegenerate = () => {
     if (regenerateTimeout) {

@@ -250,7 +250,7 @@ export interface GestureContainerState {
 
   // State for gesture detection
   lastTapTime?: number | undefined
-  longPressTimer?: NodeJS.Timeout | undefined
+  longPressTimer?: ReturnType<typeof setTimeout> | undefined
   pointerDownPosition?: { x: number; y: number } | undefined
   pointerDownTime?: number | undefined
   longPressTriggered?: boolean | undefined
