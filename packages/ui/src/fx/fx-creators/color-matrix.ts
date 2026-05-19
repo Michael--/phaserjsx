@@ -44,45 +44,47 @@ export interface ColorMatrixFXConfig extends FXConfig {
 export const createColorMatrixFX: FXCreatorFn<ColorMatrixFXConfig> = (
   obj,
   config,
-  type = 'post'
+  type = 'internal'
 ) => {
   const { effect = 'grayscale', amount = 1 } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createColorMatrixFX] FX pipeline not available on this GameObject')
     return null
   }
 
-  const colorMatrix = pipeline.addColorMatrix()
+  const colorMatrixFilter = pipeline.addColorMatrix()
+  const cm = colorMatrixFilter.colorMatrix
 
   // Apply the selected effect
   switch (effect) {
     case 'grayscale':
-      colorMatrix.grayscale(amount)
+      cm.grayscale(amount)
       break
     case 'sepia':
-      colorMatrix.sepia()
+      cm.sepia()
       break
     case 'negative':
-      colorMatrix.negative()
+      cm.negative()
       break
     case 'blackWhite':
-      colorMatrix.blackWhite()
+      cm.blackWhite()
       break
     case 'brown':
-      colorMatrix.brown()
+      cm.brown()
       break
     case 'kodachrome':
-      colorMatrix.kodachrome()
+      cm.kodachrome()
       break
     case 'technicolor':
-      colorMatrix.technicolor()
+      cm.technicolor()
       break
     case 'polaroid':
-      colorMatrix.polaroid()
+      cm.polaroid()
       break
   }
 
-  return colorMatrix
+  return colorMatrixFilter
 }

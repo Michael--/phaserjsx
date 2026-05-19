@@ -392,6 +392,7 @@ function applyOverflowMask(
           __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
         })
       | undefined
+    __overflowMaskFilter?: Phaser.Filters.Mask | undefined
   }
 
   if (containerProps.overflow === 'hidden') {
@@ -410,15 +411,22 @@ function applyOverflowMask(
       // DO NOT add as child - mask needs to be independent for Phaser's mask system
       // Phaser containers with masks cannot have masked children (Phaser limitation)
 
-      // Create geometry mask
-      const mask = maskGraphics.createGeometryMask()
-      container.setMask(mask)
+      // WebGL uses Mask Filters; Canvas uses GeometryMask (Phaser 4 split)
+      const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
+      if (isWebGL) {
+        container.enableFilters()
+        extendedContainer.__overflowMaskFilter = container.filters!.external.addMask(maskGraphics)
+      } else {
+        const mask = maskGraphics.createGeometryMask()
+        container.setMask(mask)
+      }
 
       // Destroy mask when container is destroyed
       container.once('destroy', () => {
         const extendedContainer = container as typeof container & {
           __overflowMask?: Phaser.GameObjects.Graphics | undefined
           __overflowMaskUpdateListener?: (() => void) | undefined
+          __overflowMaskFilter?: Phaser.Filters.Mask | undefined
         }
 
         // Remove postupdate listener from scene
@@ -430,6 +438,7 @@ function applyOverflowMask(
           extendedContainer.__overflowMask.destroy()
           extendedContainer.__overflowMask = undefined
         }
+        extendedContainer.__overflowMaskFilter = undefined
         extendedContainer.__overflowMaskUpdateListener = undefined
       })
 
@@ -458,7 +467,15 @@ function applyOverflowMask(
     }
   } else if (extendedContainer.__overflowMask) {
     // Remove mask if overflow is not hidden
-    container.clearMask()
+    const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
+    if (isWebGL) {
+      if (extendedContainer.__overflowMaskFilter) {
+        container.filters!.external.remove(extendedContainer.__overflowMaskFilter, true)
+        extendedContainer.__overflowMaskFilter = undefined
+      }
+    } else {
+      container.clearMask()
+    }
     extendedContainer.__overflowMask.destroy()
     extendedContainer.__overflowMask = undefined
 

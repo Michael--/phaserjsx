@@ -112,7 +112,7 @@
     "vitest": "^4.0.8"
   },
   "peerDependencies": {
-    "phaser": "^3.90.0"
+    "phaser": "^4.1.0"
   },
   "peerDependenciesMeta": {
     "phaser": {

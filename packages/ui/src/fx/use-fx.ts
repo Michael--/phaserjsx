@@ -19,9 +19,9 @@ export interface FXConfig {
 }
 
 /**
- * FX type discriminator (postFX vs preFX)
+ * FX type discriminator (internal vs external filter context)
  */
-export type FXType = 'post' | 'pre'
+export type FXType = 'internal' | 'external'
 
 /**
  * GameObject with FX pipeline support
@@ -48,7 +48,7 @@ export type FXCreatorFn<TConfig extends FXConfig = FXConfig> = (
   config: TConfig,
   type?: FXType
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-) => (() => void) | Phaser.FX.Controller | any | null
+) => (() => void) | Phaser.Filters.Controller | any | null
 
 /**
  * Hook for applying FX to GameObject
@@ -68,7 +68,7 @@ export type FXCreatorFn<TConfig extends FXConfig = FXConfig> = (
  * ```
  */
 export function useFX<T extends FXCapableGameObject>(ref: RefObject<T>) {
-  const activeEffectsRef = useRef<Set<(() => void) | Phaser.FX.Controller>>(new Set())
+  const activeEffectsRef = useRef<Set<(() => void) | Phaser.Filters.Controller>>(new Set())
 
   // Cleanup on unmount
   useEffect(() => {
@@ -87,7 +87,7 @@ export function useFX<T extends FXCapableGameObject>(ref: RefObject<T>) {
   const applyFX = <TConfig extends FXConfig>(
     fxCreator: FXCreatorFn<TConfig>,
     config: TConfig,
-    type: FXType = 'post'
+    type: FXType = 'internal'
   ) => {
     const obj = ref.current
     if (!obj) {
@@ -111,13 +111,11 @@ export function useFX<T extends FXCapableGameObject>(ref: RefObject<T>) {
     })
     activeEffectsRef.current.clear()
 
-    // Clear FX pipeline
+    // Clear filters
     const obj = ref.current
-    if (obj && 'postFX' in obj && obj.postFX) {
-      obj.postFX.clear()
-    }
-    if (obj && 'preFX' in obj && obj.preFX) {
-      obj.preFX.clear()
+    if (obj?.filters) {
+      obj.filters.internal.clear()
+      obj.filters.external.clear()
     }
   }
 

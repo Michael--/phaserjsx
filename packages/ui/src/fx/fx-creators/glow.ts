@@ -37,7 +37,7 @@ export interface GlowFXConfig extends FXConfig {
  * })
  * ```
  */
-export const createGlowFX: FXCreatorFn<GlowFXConfig> = (obj, config, type = 'post') => {
+export const createGlowFX: FXCreatorFn<GlowFXConfig> = (obj, config, type = 'internal') => {
   const {
     color = 0xffffff,
     outerStrength = 4,
@@ -47,14 +47,15 @@ export const createGlowFX: FXCreatorFn<GlowFXConfig> = (obj, config, type = 'pos
     distance = 10,
   } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createGlowFX] FX pipeline not available on this GameObject')
     return null
   }
 
-  // Phaser API: addGlow(color, outerStrength, innerStrength, knockout, quality, distance)
-  const glow = pipeline.addGlow(color, outerStrength, innerStrength, knockout, quality, distance)
+  // Phaser 4 API: addGlow(color, outerStrength, innerStrength, scale, knockout, quality, distance)
+  const glow = pipeline.addGlow(color, outerStrength, innerStrength, 1, knockout, quality, distance)
 
   return glow
 }

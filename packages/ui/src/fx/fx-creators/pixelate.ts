@@ -25,10 +25,11 @@ export interface PixelateFXConfig extends FXConfig {
  * })
  * ```
  */
-export const createPixelateFX: FXCreatorFn<PixelateFXConfig> = (obj, config, type = 'post') => {
+export const createPixelateFX: FXCreatorFn<PixelateFXConfig> = (obj, config, type = 'internal') => {
   const { amount = 1 } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createPixelateFX] FX pipeline not available on this GameObject')
     return null

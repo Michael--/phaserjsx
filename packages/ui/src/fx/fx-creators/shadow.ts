@@ -47,7 +47,7 @@ export interface ShadowFXConfig extends FXConfig {
  * })
  * ```
  */
-export const createShadowFX: FXCreatorFn<ShadowFXConfig> = (obj, config, type = 'post') => {
+export const createShadowFX: FXCreatorFn<ShadowFXConfig> = (obj, config, type = 'internal') => {
   const {
     x = 0,
     y = 1,
@@ -58,7 +58,8 @@ export const createShadowFX: FXCreatorFn<ShadowFXConfig> = (obj, config, type = 
     intensity = 1,
   } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createShadowFX] FX pipeline not available on this GameObject')
     return null

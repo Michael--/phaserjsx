@@ -38,10 +38,11 @@ export interface BlurFXConfig extends FXConfig {
  * })
  * ```
  */
-export const createBlurFX: FXCreatorFn<BlurFXConfig> = (obj, config, type = 'post') => {
+export const createBlurFX: FXCreatorFn<BlurFXConfig> = (obj, config, type = 'internal') => {
   const { quality = 0, x = 2, y = 2, strength = 1, color = 0xffffff, steps = 4 } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createBlurFX] FX pipeline not available on this GameObject')
     return null

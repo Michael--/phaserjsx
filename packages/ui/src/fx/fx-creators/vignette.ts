@@ -34,10 +34,11 @@ export interface VignetteFXConfig extends FXConfig {
  * })
  * ```
  */
-export const createVignetteFX: FXCreatorFn<VignetteFXConfig> = (obj, config, type = 'post') => {
+export const createVignetteFX: FXCreatorFn<VignetteFXConfig> = (obj, config, type = 'internal') => {
   const { strength = 0.5, radius = 0.5, x = 0.5, y = 0.5 } = config
 
-  const pipeline = type === 'post' ? obj.postFX : obj.preFX
+  obj.enableFilters()
+  const pipeline = type === 'internal' ? obj.filters!.internal : obj.filters!.external
   if (!pipeline) {
     console.warn('[createVignetteFX] FX pipeline not available on this GameObject')
     return null
