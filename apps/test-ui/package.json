@@ -19,19 +19,20 @@
     "@number10/phaserjsx": "workspace:*",
     "bootstrap-icons": "^1.13.1",
     "phaser": "^4.1.0",
-    "phaser3-rex-plugins": "^1.80.17"
+    "phaser3-rex-plugins": "^1.80.20"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.46.4",
-    "@typescript-eslint/parser": "^8.46.4",
-    "eslint": "^9.39.1",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.4",
+    "@typescript-eslint/parser": "^8.59.4",
+    "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-unused-imports": "^4.3.0",
-    "prettier": "^3.6.2",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "vitest": "^4.0.8"
+    "eslint-plugin-unused-imports": "^4.4.1",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13",
+    "vitest": "^4.1.6"
   }
 }
