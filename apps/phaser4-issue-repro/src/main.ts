@@ -1,128 +1,160 @@
 import * as Phaser from 'phaser'
 
-const BACKGROUND_COLOR = 0x10141f
-const GRID_COLOR = 0x2a3144
-const PANEL_COLOR = 0x3a86ff
+const COLS = 4
+const ROWS = 4
+const MASKS_PER_CELL = 1
+const HUD_TOP = 12
+const HUD_CLEARANCE = 170
 
-const mountNode = document.getElementById('app')
-if (!mountNode) {
-  throw new Error('Missing #app root element')
+const root = document.getElementById('app')
+if (!root) throw new Error('Missing #app root element')
+
+Object.assign(document.body.style, { margin: '0', overflow: 'hidden', background: '#0d111a' })
+Object.assign(root.style, { width: '100vw', height: '100vh' })
+
+type Cell = {
+  container: Phaser.GameObjects.Container
+  extras: Phaser.GameObjects.GameObject[]
 }
 
-Object.assign(document.body.style, {
-  margin: '0',
-  overflow: 'hidden',
-  background: '#0d111a',
-})
-
-Object.assign(mountNode.style, {
-  width: '100vw',
-  height: '100vh',
-})
-
-class IssueReproScene extends Phaser.Scene {
-  private grid?: Phaser.GameObjects.Graphics
-  private frame?: Phaser.GameObjects.Rectangle
-  private panel?: Phaser.GameObjects.Rectangle
+class ReproScene extends Phaser.Scene {
   private info?: Phaser.GameObjects.Text
-  private cursorDot?: Phaser.GameObjects.Arc
+  private startBtn?: Phaser.GameObjects.Text
+  private stopBtn?: Phaser.GameObjects.Text
+  private cells: Cell[] = []
+  private running = false
 
   create(): void {
-    this.grid = this.add.graphics()
-
-    this.frame = this.add.rectangle(0, 0, 0, 0).setOrigin(0).setStrokeStyle(2, 0x8ecae6, 0.8)
-
-    this.panel = this.add.rectangle(0, 0, 180, 180, PANEL_COLOR, 1).setStrokeStyle(3, 0xffffff, 0.9)
-
-    this.info = this.add.text(0, 0, '', {
+    this.info = this.add.text(12, HUD_TOP, '', {
       fontFamily: 'monospace',
       fontSize: '14px',
       color: '#e2e8f0',
       backgroundColor: '#111827cc',
       padding: { x: 8, y: 6 },
     })
+    this.info.setDepth(1000)
 
-    this.cursorDot = this.add.circle(0, 0, 5, 0xffbe0b)
+    this.startBtn = this.makeButton('START', '#14532d', () => this.start())
+    this.stopBtn = this.makeButton('STOP', '#7f1d1d', () => this.stop())
 
-    this.panel.setInteractive({ useHandCursor: true })
-    this.panel.on('pointerdown', () => {
-      const nextColor = this.panel?.fillColor === PANEL_COLOR ? 0xfb5607 : PANEL_COLOR
-      this.panel?.setFillStyle(nextColor, 1)
+    this.scale.on('resize', this.onResize, this)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.stop()
+      this.scale.off('resize', this.onResize, this)
     })
 
-    this.input.on('pointermove', this.handlePointerMove, this)
-    this.scale.on('resize', this.handleResize, this)
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.cleanup, this)
-
-    this.handleResize()
-    this.handlePointerMove(this.input.activePointer)
+    this.onResize()
+    this.start()
   }
 
-  override update(time: number): void {
-    if (!this.panel) {
-      return
-    }
-
-    this.panel.rotation = time * 0.001
-  }
-
-  private handleResize(): void {
-    const width = this.scale.width
-    const height = this.scale.height
-
-    this.cameras.main.setBackgroundColor(BACKGROUND_COLOR)
-
-    this.grid?.clear()
-    this.grid?.lineStyle(1, GRID_COLOR, 1)
-    for (let x = 0; x <= width; x += 40) {
-      this.grid?.moveTo(x, 0)
-      this.grid?.lineTo(x, height)
-    }
-    for (let y = 0; y <= height; y += 40) {
-      this.grid?.moveTo(0, y)
-      this.grid?.lineTo(width, y)
-    }
-    this.grid?.strokePath()
-
-    this.frame?.setSize(width, height)
-    this.panel?.setPosition(width * 0.5, height * 0.5)
-    this.info?.setPosition(12, 12)
-
-    this.updateInfoText(this.input.activePointer)
-  }
-
-  private handlePointerMove(pointer: Phaser.Input.Pointer): void {
-    this.cursorDot?.setPosition(pointer.worldX, pointer.worldY)
-    this.updateInfoText(pointer)
-  }
-
-  private updateInfoText(pointer: Phaser.Input.Pointer): void {
+  override update(): void {
     this.info?.setText([
-      'Phaser 4 Native Issue Repro',
-      `viewport: ${Math.round(this.scale.width)} x ${Math.round(this.scale.height)}`,
-      `pointer: ${Math.round(pointer.worldX)}, ${Math.round(pointer.worldY)}`,
+      'Phaser 4 Mask Repro',
+      `renderer: ${this.game.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'}`,
+      `running: ${this.running ? 'yes' : 'no'}`,
+      `containers: ${this.cells.length}`,
+      `masks via addMask(): ${this.cells.length * MASKS_PER_CELL}`,
       `fps: ${Math.round(this.game.loop.actualFps)}`,
-      'click square to switch fill color',
     ])
   }
 
-  private cleanup(): void {
-    this.input.off('pointermove', this.handlePointerMove, this)
-    this.scale.off('resize', this.handleResize, this)
+  private makeButton(label: string, bg: string, onClick: () => void): Phaser.GameObjects.Text {
+    const btn = this.add
+      .text(0, 0, label, {
+        fontFamily: 'monospace',
+        fontSize: '13px',
+        color: '#f8fafc',
+        backgroundColor: bg,
+        padding: { x: 9, y: 6 },
+      })
+      .setInteractive({ useHandCursor: true })
+    btn.setDepth(1000)
+    btn.on('pointerdown', onClick)
+    return btn
+  }
+
+  private start(): void {
+    if (this.running) return
+
+    const w = this.scale.width
+    const h = this.scale.height
+    const padX = Math.max(20, w * 0.04)
+    const top = HUD_CLEARANCE
+    const bottom = 20
+    const gap = 14
+
+    const cellW = (w - padX * 2 - gap * (COLS - 1)) / COLS
+    const cellH = (h - top - bottom - gap * (ROWS - 1)) / ROWS
+
+    for (let r = 0; r < ROWS; r += 1) {
+      for (let c = 0; c < COLS; c += 1) {
+        const cx = padX + c * (cellW + gap) + cellW * 0.5
+        const cy = top + r * (cellH + gap) + cellH * 0.5
+
+        const box = this.add
+          .rectangle(0, 0, cellW * 0.86, cellH * 0.86, 0x3a86ff, 0.9)
+          .setStrokeStyle(2, 0xffffff, 0.7)
+        const label = this.add.text(-cellW * 0.4, -cellH * 0.39, `C${r}${c}`, {
+          fontFamily: 'monospace',
+          fontSize: '12px',
+          color: '#dbeafe',
+        })
+
+        const container = this.add.container(cx, cy, [box, label])
+        const maskCircle = this.add.circle(cx, cy, Math.min(cellW, cellH) * 0.26, 0xffffff, 0.24)
+        const maskBar = this.add
+          .rectangle(cx, cy, cellW * 0.36, cellH * 0.9, 0xffffff, 0.24)
+          .setRotation(0.4)
+        const maskHole = this.add.circle(cx, cy, Math.min(cellW, cellH) * 0.1, 0xffffff, 0.24)
+
+        container.enableFilters()
+        container.filters?.internal.addMask(maskHole, true, this.cameras.main, 'world')
+
+        this.cells.push({ container, extras: [maskCircle, maskBar, maskHole] })
+      }
+    }
+
+    this.running = true
+    this.syncButtons()
+  }
+
+  private stop(): void {
+    if (!this.running && this.cells.length === 0) return
+
+    for (const cell of this.cells) {
+      cell.container.destroy(true)
+      for (const obj of cell.extras) obj.destroy()
+    }
+
+    this.cells.length = 0
+    this.running = false
+    this.syncButtons()
+  }
+
+  private onResize(): void {
+    const w = this.scale.width
+    this.cameras.main.setBackgroundColor(0x10141f)
+    this.startBtn?.setPosition(w - 170, 14)
+    this.stopBtn?.setPosition(w - 86, 14)
+
+    const wasRunning = this.running
+    this.stop()
+    if (wasRunning) this.start()
+  }
+
+  private syncButtons(): void {
+    this.startBtn?.setAlpha(this.running ? 0.45 : 1)
+    this.stopBtn?.setAlpha(this.running ? 1 : 0.45)
   }
 }
 
 const game = new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: mountNode,
+  type: Phaser.WEBGL,
+  parent: root,
   width: '100%',
   height: '100%',
-  backgroundColor: '#10141f',
-  scene: [IssueReproScene],
-  scale: {
-    mode: Phaser.Scale.RESIZE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
+  scene: [ReproScene],
+  scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH },
 })
 
 ;(window as Window & { phaser4IssueRepro?: Phaser.Game }).phaser4IssueRepro = game
