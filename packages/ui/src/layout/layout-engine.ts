@@ -521,6 +521,12 @@ function applyOverflowMask(
           cornerRadiusKey,
         })
         publishMaskStats()
+
+        // Trigger one-shot DynamicTexture update for filter-backend masks
+        // autoUpdate is false, so Phaser only re-renders the mask texture when needsUpdate=true
+        if (extendedContainer.__overflowMaskFilter) {
+          extendedContainer.__overflowMaskFilter.needsUpdate = true
+        }
       }
 
       maskState.updateListener = updateMask
@@ -538,6 +544,7 @@ function applyOverflowMask(
         const filters = container.filters
         if (filters?.external) {
           extendedContainer.__overflowMaskFilter = filters.external.addMask(maskGraphics)
+          extendedContainer.__overflowMaskFilter.autoUpdate = false
           extendedContainer.__overflowMaskBackend = 'filter'
         } else {
           // Fallback if external filters are unexpectedly unavailable.
