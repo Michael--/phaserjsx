@@ -102,8 +102,10 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
   const [contentWidth, setContentWidth] = useState(0)
 
   // State for momentum scrolling
-  const [velocity, setVelocity] = useState({ vx: 0, vy: 0 })
-  const [lastTime, setLastTime] = useState(0)
+  const velocityRef = useRef({ vx: 0, vy: 0 })
+  const lastTimeRef = useRef(0)
+  const pendingDeltaRef = useRef({ dx: 0, dy: 0 })
+  const scheduledFrameRef = useRef<number | null>(null)
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
   const wheelSnapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const WHEEL_SNAP_DELAY = 200
@@ -141,6 +143,10 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
   ) => {
     setScroll((prev) => {
       const next = typeof value === 'function' ? value(prev) : value
+      if (Math.abs(next.dx - prev.dx) < 0.001 && Math.abs(next.dy - prev.dy) < 0.001) {
+        scrollRef.current = prev
+        return prev
+      }
       scrollRef.current = next
       return next
     })
@@ -317,19 +323,52 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     const viewportWidth = viewportRef.current.width
     const contentHeight = contentRef.current.height
     const contentWidth = contentRef.current.width
+    const currentScroll = scrollRef.current
     // Calculate new scroll position
     const maxScrollY = Math.max(0, contentHeight - viewportHeight)
     const maxScrollX = Math.max(0, contentWidth - viewportWidth)
-    const newScrollY = Math.max(0, Math.min(maxScrollY, scroll.dy - deltaY))
-    const newScrollX = Math.max(0, Math.min(maxScrollX, scroll.dx - deltaX))
+    const newScrollY = Math.max(0, Math.min(maxScrollY, currentScroll.dy - deltaY))
+    const newScrollX = Math.max(0, Math.min(maxScrollX, currentScroll.dx - deltaX))
+
+    if (
+      Math.abs(newScrollX - currentScroll.dx) < 0.001 &&
+      Math.abs(newScrollY - currentScroll.dy) < 0.001
+    ) {
+      return
+    }
 
     updateScroll({ dx: newScrollX, dy: newScrollY })
+  }
+
+  const flushPendingScroll = () => {
+    scheduledFrameRef.current = null
+    const pending = pendingDeltaRef.current
+    if (pending.dx === 0 && pending.dy === 0) return
+
+    const dx = pending.dx
+    const dy = pending.dy
+    pendingDeltaRef.current = { dx: 0, dy: 0 }
+    calc(dx, dy)
+  }
+
+  const queueScrollDelta = (deltaX: number, deltaY: number) => {
+    if (deltaX === 0 && deltaY === 0) return
+
+    pendingDeltaRef.current = {
+      dx: pendingDeltaRef.current.dx + deltaX,
+      dy: pendingDeltaRef.current.dy + deltaY,
+    }
+
+    if (scheduledFrameRef.current === null) {
+      scheduledFrameRef.current = requestAnimationFrame(flushPendingScroll)
+    }
   }
 
   const startMomentum = () => {
     if (!contentRef.current?.scene) return
 
     const scene = contentRef.current.scene
+    const velocity = velocityRef.current
     const duration = Math.min(1000, Math.max(200, Math.abs(velocity.vx) + Math.abs(velocity.vy))) // 200-1000ms
     const currentScroll = scrollRef.current
     const baseTargetDx = Math.max(
@@ -526,6 +565,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
   const handleTouchMove = (data: GestureEventData) => {
     // Process start and move events, ignore end
     if (data.state === 'end') {
+      const velocity = velocityRef.current
       if (momentum && (Math.abs(velocity.vx) > 0.1 || Math.abs(velocity.vy) > 0.1)) {
         startMomentum()
       } else if (snap) {
@@ -535,8 +575,13 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     }
     if (data.state === 'start') {
       stopActiveTween()
-      setVelocity({ vx: 0, vy: 0 })
-      setLastTime(Date.now())
+      if (scheduledFrameRef.current !== null) {
+        cancelAnimationFrame(scheduledFrameRef.current)
+        scheduledFrameRef.current = null
+      }
+      pendingDeltaRef.current = { dx: 0, dy: 0 }
+      velocityRef.current = { vx: 0, vy: 0 }
+      lastTimeRef.current = Date.now()
       data.stopPropagation()
       return
     }
@@ -547,15 +592,15 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
 
     // Calculate velocity for momentum
     const now = Date.now()
-    const deltaTime = now - lastTime
+    const deltaTime = now - lastTimeRef.current
     if (deltaTime > 0) {
       const newVx = (deltaX / deltaTime) * 1000 // pixels per second
       const newVy = (deltaY / deltaTime) * 1000
-      setVelocity({ vx: newVx, vy: newVy })
-      setLastTime(now)
+      velocityRef.current = { vx: newVx, vy: newVy }
+      lastTimeRef.current = now
     }
 
-    calc(deltaX, deltaY)
+    queueScrollDelta(deltaX, deltaY)
   }
 
   const handleWheel = (data: WheelEventData) => {
@@ -563,7 +608,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     data.preventDefault()
 
     stopActiveTween()
-    calc(-data.deltaX, -data.deltaY)
+    queueScrollDelta(-data.deltaX, -data.deltaY)
 
     if (snap) {
       if (wheelSnapTimeoutRef.current) {
@@ -584,6 +629,11 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     redraw()
     setVisible(true)
     return () => {
+      if (scheduledFrameRef.current !== null) {
+        cancelAnimationFrame(scheduledFrameRef.current)
+        scheduledFrameRef.current = null
+      }
+      pendingDeltaRef.current = { dx: 0, dy: 0 }
       if (wheelSnapTimeoutRef.current) {
         clearTimeout(wheelSnapTimeoutRef.current)
       }
