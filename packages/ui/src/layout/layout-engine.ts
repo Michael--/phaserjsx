@@ -218,6 +218,91 @@ function getContainerDepth(container: Phaser.GameObjects.Container): number {
   return depth
 }
 
+type OverflowMaskCornerRadius = number | { tl?: number; tr?: number; bl?: number; br?: number }
+
+type OverflowMaskState = {
+  debugId: number
+  width: number
+  height: number
+  cornerRadius: OverflowMaskCornerRadius | undefined
+  updateListener: () => void
+  lastTx: number
+  lastTy: number
+  lastRotation: number
+  lastScaleX: number
+  lastScaleY: number
+  lastWidth: number
+  lastHeight: number
+  lastCornerRadiusKey: string
+  lastShowMaskOverlay: boolean
+  lastMaskFillColor: number
+  lastMaskAlpha: number
+  lastIsWebGL: boolean
+}
+
+const MASK_CHANGE_EPSILON = 0.01
+const MASK_SUSPICIOUS_AREA = 1_000_000
+const MASK_SUSPICIOUS_DIMENSION = 4096
+const MASK_SUSPICIOUS_SCALE = 8
+let nextMaskDebugId = 1
+
+type MaskDebugEntry = {
+  id: number
+  width: number
+  height: number
+  scaleX: number
+  scaleY: number
+  rotation: number
+  estimatedPixelArea: number
+  cornerRadiusKey: string
+}
+
+const activeMaskDebug = new Map<number, MaskDebugEntry>()
+const maskStats = {
+  created: 0,
+  destroyed: 0,
+  active: 0,
+}
+
+function publishMaskStats(): void {
+  if (typeof window === 'undefined') return
+  const masks = Array.from(activeMaskDebug.values())
+  const suspicious = masks.filter(
+    (entry) =>
+      !Number.isFinite(entry.width) ||
+      !Number.isFinite(entry.height) ||
+      entry.width <= 0 ||
+      entry.height <= 0 ||
+      entry.width > MASK_SUSPICIOUS_DIMENSION ||
+      entry.height > MASK_SUSPICIOUS_DIMENSION ||
+      Math.abs(entry.scaleX) > MASK_SUSPICIOUS_SCALE ||
+      Math.abs(entry.scaleY) > MASK_SUSPICIOUS_SCALE ||
+      entry.estimatedPixelArea > MASK_SUSPICIOUS_AREA
+  )
+  ;(
+    window as unknown as {
+      __phaserjsxMaskStats?: typeof maskStats & {
+        masks: MaskDebugEntry[]
+        suspicious: MaskDebugEntry[]
+      }
+    }
+  ).__phaserjsxMaskStats = {
+    ...maskStats,
+    masks,
+    suspicious,
+  }
+}
+
+function isNearlyEqual(a: number, b: number, epsilon = MASK_CHANGE_EPSILON): boolean {
+  return Math.abs(a - b) <= epsilon
+}
+
+function getCornerRadiusCacheKey(cornerRadius: OverflowMaskCornerRadius | undefined): string {
+  if (cornerRadius === undefined || cornerRadius === 0) return 'none'
+  if (typeof cornerRadius === 'number') return `n:${cornerRadius}`
+  return `o:${cornerRadius.tl ?? 0},${cornerRadius.tr ?? 0},${cornerRadius.bl ?? 0},${cornerRadius.br ?? 0}`
+}
+
 /**
  * Updates mask position using world coordinates
  * Called during batch processing or immediate updates
@@ -232,120 +317,19 @@ function updateMaskWorldPosition(
 ): void {
   const extendedContainer = container as typeof container & {
     __overflowMask?: Phaser.GameObjects.Graphics | undefined
-    __overflowMaskUpdateListener?: (() => void) | undefined
+    __overflowMaskState?: OverflowMaskState | undefined
   }
 
-  if (!extendedContainer.__overflowMask) return
+  if (!extendedContainer.__overflowMask || !extendedContainer.__overflowMaskState) return
 
-  // Remove existing listener to avoid duplicates
-  if (extendedContainer.__overflowMaskUpdateListener) {
-    container.scene.events.off('postupdate', extendedContainer.__overflowMaskUpdateListener)
-  }
-
-  // Create update function that recalculates mask position when container moves
-  const updateMask = () => {
-    // Build parent chain from container to root (bottom-up)
-    const parentChain: Phaser.GameObjects.Container[] = []
-    let current: Phaser.GameObjects.Container | null = container
-    while (current) {
-      parentChain.push(current)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      current = (current as any).parentContainer || null
+  extendedContainer.__overflowMaskState.width = width
+  extendedContainer.__overflowMaskState.height = height
+  extendedContainer.__overflowMaskState.cornerRadius = (
+    extendedContainer.__overflowMask as Phaser.GameObjects.Graphics & {
+      __cornerRadius?: OverflowMaskCornerRadius
     }
-
-    // Reverse to get root-to-container order (top-down)
-    parentChain.reverse()
-
-    // Apply transforms cumulatively from root to container
-    let worldX = 0
-    let worldY = 0
-    let worldRotation = 0
-    let worldScaleX = 1
-    let worldScaleY = 1
-
-    for (const parent of parentChain) {
-      // Apply parent's rotation to current position (rotate around origin)
-      if (worldRotation !== 0) {
-        const cos = Math.cos(worldRotation)
-        const sin = Math.sin(worldRotation)
-        const rotatedX = parent.x * cos - parent.y * sin
-        const rotatedY = parent.x * sin + parent.y * cos
-        worldX += rotatedX * worldScaleX
-        worldY += rotatedY * worldScaleY
-      } else {
-        // No rotation yet, simple addition
-        worldX += parent.x * worldScaleX
-        worldY += parent.y * worldScaleY
-      }
-
-      // Accumulate rotation and scale
-      worldRotation += parent.rotation
-      worldScaleX *= parent.scaleX
-      worldScaleY *= parent.scaleY
-    }
-
-    // Update mask geometry with accumulated world transform
-    const maskGraphics = extendedContainer.__overflowMask
-    if (!maskGraphics) return
-
-    maskGraphics.clear()
-
-    // Apply world transform to mask graphics
-    maskGraphics.setPosition(worldX, worldY)
-    maskGraphics.setRotation(worldRotation)
-    maskGraphics.setScale(worldScaleX, worldScaleY)
-
-    // Keep mask source hidden in normal mode to avoid rendering a visible overlay.
-    // For WebGL Mask Filters, alpha still needs to be opaque in the mask texture itself.
-    const showMaskOverlay = DevConfig.visual.showOverflowMasks
-    maskGraphics.setVisible(showMaskOverlay)
-
-    // WebGL Mask Filter: mask source must be fully opaque in the generated mask texture
-    // (opaque = visible, transparent = hidden).
-    // Canvas GeometryMask: alpha is irrelevant for clipping, so keep debug control.
-    const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
-    maskGraphics.fillStyle(DevConfig.visual.maskFillColor)
-    maskGraphics.setAlpha(
-      isWebGL ? 1.0 : showMaskOverlay ? Math.max(DevConfig.visual.maskAlpha, 0.01) : 0.0
-    )
-
-    // Draw rectangle in local space (will be transformed by graphics properties)
-    // Expand by 1px on each side to prevent edge artifacts
-    const expandedWidth = width + 2
-    const expandedHeight = height + 2
-
-    // Check if mask has cornerRadius metadata
-    const maskWithRadius = maskGraphics as Phaser.GameObjects.Graphics & {
-      __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
-    }
-    const cornerRadius = maskWithRadius.__cornerRadius
-
-    if (cornerRadius !== undefined && cornerRadius !== 0) {
-      // Use rounded rectangle for mask
-      if (typeof cornerRadius === 'number') {
-        maskGraphics.fillRoundedRect(-1, -1, expandedWidth, expandedHeight, cornerRadius)
-      } else {
-        // Handle individual corner radii
-        maskGraphics.fillRoundedRect(-1, -1, expandedWidth, expandedHeight, cornerRadius)
-      }
-    } else {
-      // Standard rectangular mask
-      maskGraphics.fillRect(-1, -1, expandedWidth, expandedHeight)
-    }
-
-    //console.log('Updated overflow mask position:')
-  }
-
-  // Store reference to update function
-  extendedContainer.__overflowMaskUpdateListener = updateMask
-
-  // Listen for postupdate event (fires every frame after all updates)
-  container.scene.events.on('postupdate', updateMask)
-
-  // Initial update
-  updateMask()
-
-  DebugLogger.log('overflowMask', 'Set up dynamic mask updates for container and parents')
+  ).__cornerRadius
+  extendedContainer.__overflowMaskState.updateListener()
 }
 
 /**
@@ -354,7 +338,7 @@ function updateMaskWorldPosition(
  *
  * IMPLEMENTATION NOTES:
  * - Mask Graphics is NOT added as child (must be independent for Phaser masks)
- * - Uses absolute world coordinates calculated from parent chain
+ * - Uses cached world-transform sampling with per-frame change detection
  * - Defers position update to next frame for nested containers via DeferredLayoutQueue
  * - All deferred updates are batched in single requestAnimationFrame for optimal performance
  *
@@ -401,6 +385,9 @@ function applyOverflowMask(
         })
       | undefined
     __overflowMaskFilter?: Phaser.Filters.Mask | undefined
+    __overflowMaskBackend?: 'filter' | 'geometry' | undefined
+    __overflowMaskState?: OverflowMaskState | undefined
+    __overflowMaskUpdateListener?: (() => void) | undefined
   }
 
   if (containerProps.overflow === 'hidden') {
@@ -410,31 +397,164 @@ function applyOverflowMask(
         __cornerRadius?: number | { tl?: number; tr?: number; bl?: number; br?: number }
       }
       extendedContainer.__overflowMask = maskGraphics
+      maskStats.created += 1
+      maskStats.active += 1
+      publishMaskStats()
 
       // Store cornerRadius for use in updateMaskWorldPosition
       if (containerProps.cornerRadius !== undefined) {
         maskGraphics.__cornerRadius = containerProps.cornerRadius
       }
 
+      const maskState: OverflowMaskState = {
+        debugId: nextMaskDebugId++,
+        width,
+        height,
+        cornerRadius: containerProps.cornerRadius,
+        updateListener: () => {},
+        lastTx: Number.NaN,
+        lastTy: Number.NaN,
+        lastRotation: Number.NaN,
+        lastScaleX: Number.NaN,
+        lastScaleY: Number.NaN,
+        lastWidth: Number.NaN,
+        lastHeight: Number.NaN,
+        lastCornerRadiusKey: '',
+        lastShowMaskOverlay: false,
+        lastMaskFillColor: Number.NaN,
+        lastMaskAlpha: Number.NaN,
+        lastIsWebGL: false,
+      }
+
+      const updateMask = () => {
+        if (!container.active || !maskGraphics.active) return
+
+        const worldMatrix = container.getWorldTransformMatrix()
+        const worldX = worldMatrix.tx
+        const worldY = worldMatrix.ty
+        const worldRotation = worldMatrix.rotationNormalized
+        const worldScaleX = worldMatrix.scaleX
+        const worldScaleY = worldMatrix.scaleY
+
+        const showMaskOverlay = DevConfig.visual.showOverflowMasks
+        const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
+        const maskAlpha = isWebGL
+          ? 1.0
+          : showMaskOverlay
+            ? Math.max(DevConfig.visual.maskAlpha, 0.01)
+            : 0.0
+        const maskFillColor = DevConfig.visual.maskFillColor
+        const cornerRadiusKey = getCornerRadiusCacheKey(maskState.cornerRadius)
+
+        const transformChanged =
+          !isNearlyEqual(maskState.lastTx, worldX) ||
+          !isNearlyEqual(maskState.lastTy, worldY) ||
+          !isNearlyEqual(maskState.lastRotation, worldRotation) ||
+          !isNearlyEqual(maskState.lastScaleX, worldScaleX) ||
+          !isNearlyEqual(maskState.lastScaleY, worldScaleY)
+        const styleChanged =
+          maskState.lastShowMaskOverlay !== showMaskOverlay ||
+          maskState.lastMaskFillColor !== maskFillColor ||
+          !isNearlyEqual(maskState.lastMaskAlpha, maskAlpha) ||
+          maskState.lastIsWebGL !== isWebGL
+        const geometryChanged =
+          !isNearlyEqual(maskState.lastWidth, maskState.width) ||
+          !isNearlyEqual(maskState.lastHeight, maskState.height) ||
+          maskState.lastCornerRadiusKey !== cornerRadiusKey
+
+        if (!transformChanged && !styleChanged && !geometryChanged) {
+          return
+        }
+
+        if (transformChanged) {
+          maskGraphics.setPosition(worldX, worldY)
+          maskGraphics.setRotation(worldRotation)
+          maskGraphics.setScale(worldScaleX, worldScaleY)
+        }
+
+        if (styleChanged) {
+          maskGraphics.setVisible(showMaskOverlay)
+          maskGraphics.fillStyle(maskFillColor)
+          maskGraphics.setAlpha(maskAlpha)
+        }
+
+        if (geometryChanged) {
+          maskGraphics.clear()
+
+          // Draw rectangle in local space (transforms applied via graphics transform)
+          // Expand by 1px on each side to prevent edge artifacts.
+          const expandedWidth = maskState.width + 2
+          const expandedHeight = maskState.height + 2
+          if (expandedWidth > 0 && expandedHeight > 0) {
+            const cornerRadius = maskState.cornerRadius
+            if (cornerRadius !== undefined && cornerRadius !== 0) {
+              maskGraphics.fillRoundedRect(-1, -1, expandedWidth, expandedHeight, cornerRadius)
+            } else {
+              maskGraphics.fillRect(-1, -1, expandedWidth, expandedHeight)
+            }
+          }
+
+          maskState.lastWidth = maskState.width
+          maskState.lastHeight = maskState.height
+          maskState.lastCornerRadiusKey = cornerRadiusKey
+        }
+
+        maskState.lastTx = worldX
+        maskState.lastTy = worldY
+        maskState.lastRotation = worldRotation
+        maskState.lastScaleX = worldScaleX
+        maskState.lastScaleY = worldScaleY
+        maskState.lastShowMaskOverlay = showMaskOverlay
+        maskState.lastMaskFillColor = maskFillColor
+        maskState.lastMaskAlpha = maskAlpha
+        maskState.lastIsWebGL = isWebGL
+
+        const expandedWidth = Math.max(0, maskState.width + 2)
+        const expandedHeight = Math.max(0, maskState.height + 2)
+        activeMaskDebug.set(maskState.debugId, {
+          id: maskState.debugId,
+          width: maskState.width,
+          height: maskState.height,
+          scaleX: worldScaleX,
+          scaleY: worldScaleY,
+          rotation: worldRotation,
+          estimatedPixelArea: expandedWidth * expandedHeight * Math.abs(worldScaleX * worldScaleY),
+          cornerRadiusKey,
+        })
+        publishMaskStats()
+      }
+
+      maskState.updateListener = updateMask
+      extendedContainer.__overflowMaskState = maskState
+      extendedContainer.__overflowMaskUpdateListener = updateMask
+
       // DO NOT add as child - mask needs to be independent for Phaser's mask system
       // Phaser containers with masks cannot have masked children (Phaser limitation)
 
-      // WebGL uses Mask Filters; Canvas uses GeometryMask (Phaser 4 split)
+      // WebGL path uses EXTERNAL filter-mask.
+      // If external filters are unavailable, fallback to GeometryMask.
       const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
-      if (isWebGL) {
+      const useFilterMask = isWebGL
+      if (useFilterMask) {
         container.enableFilters()
         const filters = container.filters
         if (filters?.external) {
           extendedContainer.__overflowMaskFilter = filters.external.addMask(maskGraphics)
+          extendedContainer.__overflowMaskBackend = 'filter'
         } else {
-          // Fallback if filters are unexpectedly unavailable
+          // Fallback if external filters are unexpectedly unavailable.
           const mask = maskGraphics.createGeometryMask()
           container.setMask(mask)
+          extendedContainer.__overflowMaskBackend = 'geometry'
         }
       } else {
         const mask = maskGraphics.createGeometryMask()
         container.setMask(mask)
+        extendedContainer.__overflowMaskBackend = 'geometry'
       }
+
+      // Listen once and let the cached update function bail out if no changes occurred.
+      container.scene.events.on('postupdate', updateMask)
 
       // Destroy mask when container is destroyed
       container.once('destroy', () => {
@@ -442,6 +562,8 @@ function applyOverflowMask(
           __overflowMask?: Phaser.GameObjects.Graphics | undefined
           __overflowMaskUpdateListener?: (() => void) | undefined
           __overflowMaskFilter?: Phaser.Filters.Mask | undefined
+          __overflowMaskBackend?: 'filter' | 'geometry' | undefined
+          __overflowMaskState?: OverflowMaskState | undefined
         }
 
         // Remove postupdate listener from scene
@@ -450,14 +572,44 @@ function applyOverflowMask(
         }
 
         if (extendedContainer.__overflowMask) {
+          if (extendedContainer.__overflowMaskState) {
+            activeMaskDebug.delete(extendedContainer.__overflowMaskState.debugId)
+          }
           extendedContainer.__overflowMask.destroy()
           extendedContainer.__overflowMask = undefined
+          maskStats.destroyed += 1
+          maskStats.active = Math.max(0, maskStats.active - 1)
+          publishMaskStats()
         }
-        extendedContainer.__overflowMaskFilter = undefined
+        if (
+          extendedContainer.__overflowMaskBackend === 'filter' &&
+          extendedContainer.__overflowMaskFilter
+        ) {
+          container.filters?.external?.remove(extendedContainer.__overflowMaskFilter, true)
+          extendedContainer.__overflowMaskFilter = undefined
+        }
+        if (extendedContainer.__overflowMaskBackend === 'geometry') {
+          container.clearMask()
+        }
+        extendedContainer.__overflowMaskBackend = undefined
         extendedContainer.__overflowMaskUpdateListener = undefined
+        extendedContainer.__overflowMaskState = undefined
       })
 
       DebugLogger.log('overflowMask', 'Created overflow mask')
+    }
+
+    if (extendedContainer.__overflowMask) {
+      if (containerProps.cornerRadius === undefined) {
+        delete extendedContainer.__overflowMask.__cornerRadius
+      } else {
+        extendedContainer.__overflowMask.__cornerRadius = containerProps.cornerRadius
+      }
+    }
+    if (extendedContainer.__overflowMaskState) {
+      extendedContainer.__overflowMaskState.cornerRadius = containerProps.cornerRadius
+      extendedContainer.__overflowMaskState.width = width
+      extendedContainer.__overflowMaskState.height = height
     }
 
     // Check if this is a nested container (has parent container)
@@ -482,17 +634,25 @@ function applyOverflowMask(
     }
   } else if (extendedContainer.__overflowMask) {
     // Remove mask if overflow is not hidden
-    const isWebGL = container.scene.sys.renderer.type === Phaser.WEBGL
-    if (isWebGL) {
-      if (extendedContainer.__overflowMaskFilter) {
-        container.filters?.external?.remove(extendedContainer.__overflowMaskFilter, true)
-        extendedContainer.__overflowMaskFilter = undefined
-      }
+    if (
+      extendedContainer.__overflowMaskBackend === 'filter' &&
+      extendedContainer.__overflowMaskFilter
+    ) {
+      container.filters?.external?.remove(extendedContainer.__overflowMaskFilter, true)
+      extendedContainer.__overflowMaskFilter = undefined
     } else {
       container.clearMask()
     }
     extendedContainer.__overflowMask.destroy()
+    if (extendedContainer.__overflowMaskState) {
+      activeMaskDebug.delete(extendedContainer.__overflowMaskState.debugId)
+    }
     extendedContainer.__overflowMask = undefined
+    extendedContainer.__overflowMaskState = undefined
+    maskStats.destroyed += 1
+    maskStats.active = Math.max(0, maskStats.active - 1)
+    publishMaskStats()
+    extendedContainer.__overflowMaskBackend = undefined
 
     DebugLogger.log('overflowMask', 'Removed overflow mask')
   }
@@ -1197,6 +1357,7 @@ function calculateLayoutImmediate(
 
   // 13. Update background and hit area
   updateBackground(container, adjustedContainerWidth, adjustedContainerHeight)
+
   updateHitArea(container, adjustedContainerWidth, adjustedContainerHeight)
 
   // 14. Apply overflow mask if needed

@@ -2,7 +2,10 @@
  * Main app component for dev playground
  */
 import {
+  Button,
   createDefaultTheme,
+  Dropdown,
+  type DropdownOption,
   type MountProps,
   RadioGroup,
   ScrollView,
@@ -250,6 +253,279 @@ function InfoSection() {
   )
 }
 
+const PERF_DROPDOWN_OPTIONS: DropdownOption<string>[] = Array.from({ length: 80 }, (_, i) => ({
+  value: `opt-${i + 1}`,
+  label: `Option ${i + 1}`,
+}))
+
+const PERF_LIST_ITEMS = Array.from({ length: 50 }, (_, i) => `Row ${i + 1}`)
+
+type PerfScenario = 'baseline' | 'mask' | 'scroll' | 'dropdown'
+type PerfDensity = '1' | '4' | '9' | '16'
+type PerfRunConfig = {
+  scenario: PerfScenario
+  density: PerfDensity
+  scrollOffset: number
+}
+
+function PerfLab() {
+  const tokens = useThemeTokens()
+  const [scenario, setScenario] = useState<PerfScenario>('mask')
+  const [density, setDensity] = useState<PerfDensity>('4')
+  const [selectedDropdownValues, setSelectedDropdownValues] = useState<Record<string, string>>({})
+  const [scrollOffset, setScrollOffset] = useState(0)
+  const [runConfig, setRunConfig] = useState<PerfRunConfig | null>(null)
+
+  const isRunning = runConfig !== null
+  const activeScenario = runConfig?.scenario ?? 'baseline'
+  const activeDensity = runConfig?.density ?? '1'
+  const activeScrollOffset = runConfig?.scrollOffset ?? 0
+
+  const cellCount = Number(activeDensity)
+  const cells = Array.from({ length: cellCount }, (_, i) => i)
+
+  const scenarioOptions = [
+    { value: 'baseline', label: 'Baseline' },
+    { value: 'mask', label: 'Mask Only' },
+    { value: 'scroll', label: 'ScrollView' },
+    { value: 'dropdown', label: 'Dropdown' },
+  ]
+  const densityOptions = [
+    { value: '1', label: '1' },
+    { value: '4', label: '4' },
+    { value: '9', label: '9' },
+    { value: '16', label: '16' },
+  ]
+
+  const startRun = () => {
+    setSelectedDropdownValues({})
+    setRunConfig({
+      scenario,
+      density,
+      scrollOffset,
+    })
+  }
+
+  const stopRun = () => {
+    setRunConfig(null)
+    setSelectedDropdownValues({})
+  }
+
+  const cellContent = (index: number) => {
+    if (activeScenario === 'baseline') {
+      return (
+        <View
+          width={'fill'}
+          height={'fill'}
+          cornerRadius={8}
+          backgroundColor={tokens?.colors.background.lightest.toNumber()}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
+          borderWidth={1}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text text={`Cell ${index + 1}`} style={tokens?.textStyles.small} />
+        </View>
+      )
+    }
+
+    if (activeScenario === 'mask') {
+      const offset = ((index % 4) - 1.5) * 22 + activeScrollOffset
+      return (
+        <View width={'fill'} height={'fill'} overflow="hidden" cornerRadius={10}>
+          <View
+            width={260}
+            height={180}
+            x={offset}
+            y={-offset * 0.6}
+            backgroundColor={tokens?.colors.accent.DEFAULT.toNumber()}
+            alpha={0.75}
+            cornerRadius={12}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text text={`Masked ${index + 1}`} style={tokens?.textStyles.small} />
+          </View>
+          <View
+            width={180}
+            height={90}
+            x={20 - offset * 0.4}
+            y={24 + offset * 0.3}
+            overflow="hidden"
+            cornerRadius={8}
+            backgroundColor={tokens?.colors.background.lightest.toNumber()}
+          >
+            <View
+              width={220}
+              height={120}
+              x={-40}
+              y={-12}
+              backgroundColor={tokens?.colors.warning.DEFAULT.toNumber()}
+              alpha={0.7}
+            />
+          </View>
+        </View>
+      )
+    }
+
+    if (activeScenario === 'scroll') {
+      return (
+        <View
+          width={'fill'}
+          height={'fill'}
+          backgroundColor={tokens?.colors.background.lightest.toNumber()}
+        >
+          <ScrollView showVerticalSlider="auto" sliderSize="small">
+            <View gap={4} padding={8}>
+              {PERF_LIST_ITEMS.map((label) => (
+                <View
+                  key={`${index}-${label}`}
+                  padding={6}
+                  cornerRadius={4}
+                  backgroundColor={tokens?.colors.background.DEFAULT.toNumber()}
+                >
+                  <Text text={`${label} • Cell ${index + 1}`} style={tokens?.textStyles.small} />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      )
+    }
+
+    return (
+      <View
+        width={'fill'}
+        height={'fill'}
+        padding={8}
+        gap={8}
+        backgroundColor={tokens?.colors.background.lightest.toNumber()}
+      >
+        <Dropdown
+          options={PERF_DROPDOWN_OPTIONS}
+          value={selectedDropdownValues[index] ?? ''}
+          onChange={(value) =>
+            setSelectedDropdownValues((prev) => ({ ...prev, [index]: String(value) }))
+          }
+          placeholder={`Pick #${index + 1}`}
+          isFilterable={true}
+          maxHeight={180}
+          width="fill"
+        />
+        <Text
+          text={`Selected: ${selectedDropdownValues[index] ?? 'none'}`}
+          style={tokens?.textStyles.small}
+          alpha={0.8}
+        />
+      </View>
+    )
+  }
+
+  return (
+    <View gap={14} width={'fill'} alignItems="center">
+      <View
+        width={920}
+        gap={10}
+        padding={12}
+        cornerRadius={10}
+        borderColor={tokens?.colors.border.DEFAULT.toNumber()}
+        backgroundColor={tokens?.colors.background.lightest.toNumber()}
+      >
+        <Text text="Performance Lab" style={tokens?.textStyles.large} />
+        <View direction="row" gap={10} alignItems="center">
+          <Text text="Scenario:" style={tokens?.textStyles.small} />
+          <RadioGroup
+            direction="row"
+            options={scenarioOptions}
+            value={scenario}
+            onChange={(value) => setScenario(value as PerfScenario)}
+          />
+        </View>
+        <View direction="row" gap={10} alignItems="center">
+          <Text text="Cells:" style={tokens?.textStyles.small} />
+          <RadioGroup
+            direction="row"
+            options={densityOptions}
+            value={density}
+            onChange={(value) => setDensity(value as PerfDensity)}
+          />
+        </View>
+        <View direction="row" gap={10} alignItems="center">
+          <Text text="Mask Offset:" style={tokens?.textStyles.small} />
+          <RadioGroup
+            direction="row"
+            options={[
+              { value: '-20', label: '-20' },
+              { value: '0', label: '0' },
+              { value: '20', label: '+20' },
+              { value: '40', label: '+40' },
+            ]}
+            value={String(scrollOffset)}
+            onChange={(value) => setScrollOffset(Number(value))}
+          />
+        </View>
+        <View direction="row" gap={10} alignItems="center">
+          <Button variant="primary" onClick={startRun}>
+            <Text text="Start" />
+          </Button>
+          <Button variant="secondary" onClick={stopRun}>
+            <Text text="Stop" />
+          </Button>
+          <Text
+            text={
+              isRunning
+                ? `Running: ${runConfig.scenario} / cells=${runConfig.density} / offset=${runConfig.scrollOffset}`
+                : 'Idle: no active test. Settings apply on next Start.'
+            }
+            style={tokens?.textStyles.small}
+            alpha={0.85}
+          />
+        </View>
+      </View>
+
+      {isRunning ? (
+        <View
+          width={920}
+          direction="row"
+          gap={12}
+          flexWrap="wrap"
+          alignItems="start"
+          justifyContent="start"
+        >
+          {cells.map((index) => (
+            <View
+              key={`perf-cell-${index}`}
+              width={220}
+              height={170}
+              cornerRadius={10}
+              borderColor={tokens?.colors.border.DEFAULT.toNumber()}
+              borderWidth={1}
+            >
+              {cellContent(index)}
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View
+          width={920}
+          height={160}
+          cornerRadius={10}
+          borderColor={tokens?.colors.border.DEFAULT.toNumber()}
+          borderWidth={1}
+          alignItems="center"
+          justifyContent="center"
+          backgroundColor={tokens?.colors.background.lightest.toNumber()}
+        >
+          <Text
+            text="Idle. Press Start to mount the selected scenario."
+            style={tokens?.textStyles.DEFAULT}
+          />
+        </View>
+      )}
+    </View>
+  )
+}
+
 function TestUI() {
   return (
     <View width={'fill'} flex={1} gap={30} alignItems="center">
@@ -265,6 +541,7 @@ function TestUI() {
  */
 export function App(props: AppProps & MountProps) {
   const tokens = useThemeTokens()
+  const [mode, setMode] = useState<'perf' | 'showcase'>('perf')
 
   return (
     <View width={'fill'} height={'fill'}>
@@ -280,10 +557,19 @@ export function App(props: AppProps & MountProps) {
               text="Type-safe icon system with lucide-static"
               style={tokens?.textStyles.DEFAULT}
             />
+            <RadioGroup
+              direction="row"
+              options={[
+                { value: 'perf', label: 'Perf Lab' },
+                { value: 'showcase', label: 'Showcase' },
+              ]}
+              value={mode}
+              onChange={(value) => setMode(value as 'perf' | 'showcase')}
+            />
           </View>
 
           {/* Main Content */}
-          <TestUI />
+          {mode === 'perf' ? <PerfLab /> : <TestUI />}
         </View>
       </ScrollView>
     </View>
