@@ -387,7 +387,6 @@ function applyOverflowMask(
     __overflowMaskFilter?: Phaser.Filters.Mask | undefined
     __overflowMaskBackend?: 'filter' | 'geometry' | undefined
     __overflowMaskState?: OverflowMaskState | undefined
-    __overflowMaskUpdateListener?: (() => void) | undefined
   }
 
   if (containerProps.overflow === 'hidden') {
@@ -526,7 +525,6 @@ function applyOverflowMask(
 
       maskState.updateListener = updateMask
       extendedContainer.__overflowMaskState = maskState
-      extendedContainer.__overflowMaskUpdateListener = updateMask
 
       // DO NOT add as child - mask needs to be independent for Phaser's mask system
       // Phaser containers with masks cannot have masked children (Phaser limitation)
@@ -553,22 +551,13 @@ function applyOverflowMask(
         extendedContainer.__overflowMaskBackend = 'geometry'
       }
 
-      // Listen once and let the cached update function bail out if no changes occurred.
-      container.scene.events.on('postupdate', updateMask)
-
       // Destroy mask when container is destroyed
       container.once('destroy', () => {
         const extendedContainer = container as typeof container & {
           __overflowMask?: Phaser.GameObjects.Graphics | undefined
-          __overflowMaskUpdateListener?: (() => void) | undefined
           __overflowMaskFilter?: Phaser.Filters.Mask | undefined
           __overflowMaskBackend?: 'filter' | 'geometry' | undefined
           __overflowMaskState?: OverflowMaskState | undefined
-        }
-
-        // Remove postupdate listener from scene
-        if (extendedContainer.__overflowMaskUpdateListener) {
-          container.scene.events.off('postupdate', extendedContainer.__overflowMaskUpdateListener)
         }
 
         if (extendedContainer.__overflowMask) {
@@ -592,7 +581,6 @@ function applyOverflowMask(
           container.clearMask()
         }
         extendedContainer.__overflowMaskBackend = undefined
-        extendedContainer.__overflowMaskUpdateListener = undefined
         extendedContainer.__overflowMaskState = undefined
       })
 
