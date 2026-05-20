@@ -26,16 +26,6 @@ class PlaygroundScene extends Phaser.Scene {
       this.createBackground()
     })
     this.createBackground()
-    /*const tx = */ setInterval(() => {
-      // console.log(`fps: ${scene.game.loop.actualFps}`)
-
-      const game = (window as { game?: Phaser.Game }).game
-      if (!game) return
-      const l = game.loop
-      console.log(
-        `actualFps=${l.actualFps.toFixed(2)} framesThisSecond=${l.framesThisSecond} rawDeltaMs=${l.rawDelta.toFixed(2)} deltaMs=${l.delta.toFixed(2)} hidden=${document.hidden} focus=${document.hasFocus()} running=${l.running}`
-      )
-    }, 1000)
   }
 
   createBackground() {

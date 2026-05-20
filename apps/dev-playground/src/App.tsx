@@ -12,6 +12,8 @@ import {
   setColorPreset,
   Text,
   themeRegistry,
+  useEffect,
+  useScene,
   useState,
   useThemeTokens,
   View,
@@ -270,11 +272,20 @@ type PerfRunConfig = {
 
 function PerfLab() {
   const tokens = useThemeTokens()
+  const scene = useScene()
+  const [fps, setFps] = useState(0)
   const [scenario, setScenario] = useState<PerfScenario>('mask')
   const [density, setDensity] = useState<PerfDensity>('4')
   const [selectedDropdownValues, setSelectedDropdownValues] = useState<Record<string, string>>({})
   const [scrollOffset, setScrollOffset] = useState(0)
   const [runConfig, setRunConfig] = useState<PerfRunConfig | null>(null)
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setFps(Math.round(scene.game.loop.actualFps))
+    }, 500)
+    return () => clearInterval(id)
+  }, [])
 
   const isRunning = runConfig !== null
   const activeScenario = runConfig?.scenario ?? 'baseline'
@@ -480,6 +491,25 @@ function PerfLab() {
             style={tokens?.textStyles.small}
             alpha={0.85}
           />
+          <View
+            direction="row"
+            gap={4}
+            alignItems="center"
+            padding={{ left: 8, right: 8, top: 3, bottom: 3 }}
+            cornerRadius={6}
+            backgroundColor={
+              fps >= 55
+                ? tokens?.colors.success.DEFAULT.toNumber()
+                : fps >= 30
+                  ? tokens?.colors.warning.DEFAULT.toNumber()
+                  : tokens?.colors.error.DEFAULT.toNumber()
+            }
+            alpha={0.9}
+          >
+            <View backgroundColor={0}>
+              <Text text={`${fps} FPS`} style={tokens?.textStyles.small} />
+            </View>
+          </View>
         </View>
       </View>
 
