@@ -887,7 +887,9 @@ export class GestureManager {
 
   /**
    * Check if pointer is within a container's hit area
-   * Also checks parent visibility chain to handle collapsed accordions
+   * Also checks parent visibility chain to handle collapsed accordions,
+   * and ancestor overflow clip regions to prevent clipped-out children
+   * from consuming pointer events outside their visible area.
    */
   private isPointerInContainer(
     pointer: Phaser.Input.Pointer,
@@ -902,6 +904,30 @@ export class GestureManager {
     while (parent) {
       if (!parent.visible || parent.alpha === 0) return false
       parent = parent.parentContainer
+    }
+
+    // Check overflow clip ancestors: if any ancestor has overflow='hidden',
+    // the pointer must be within that ancestor's bounds to register a hit.
+    // This prevents scrolled-out children from consuming pointer events.
+    let clipAncestor = container.parentContainer
+    while (clipAncestor) {
+      const ext = clipAncestor as Phaser.GameObjects.Container & {
+        __layoutProps?: { overflow?: string }
+        __getLayoutSize?: () => { width: number; height: number }
+      }
+      if (ext.__layoutProps?.overflow === 'hidden' && ext.__getLayoutSize) {
+        const clipSize = ext.__getLayoutSize()
+        const clipLocal = this.getLocalPosition(pointer, clipAncestor)
+        if (
+          clipLocal.x < 0 ||
+          clipLocal.y < 0 ||
+          clipLocal.x > clipSize.width ||
+          clipLocal.y > clipSize.height
+        ) {
+          return false
+        }
+      }
+      clipAncestor = clipAncestor.parentContainer
     }
 
     const localPos = this.getLocalPosition(pointer, container)
