@@ -131,7 +131,7 @@ class ReproScene extends Phaser.Scene {
         if (masked) {
           if (this.useScissor) {
             // Clip = container's own bounds, centered on its origin.
-            applyScissorClip(container, cellW, cellH, 0, 0)
+            applyScissorClip(container, cellW, cellH)
           } else {
             // Mask filter: opaque rect matching container bounds exactly.
             // camera.ignore() hides the mask shape from the visible camera while
