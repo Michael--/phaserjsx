@@ -90,7 +90,7 @@ class ReproScene extends Phaser.Scene {
 
     for (let r = 0; r < ROWS; r += 1) {
       for (let c = 0; c < COLS; c += 1) {
-        const masked = (r + c) % 2 === 0
+        const masked = (r + c) % 3 !== 0
         const cx = padX + c * (cellW + gap) + cellW * 0.5
         const cy = top + r * (cellH + gap) + cellH * 0.5
 
@@ -107,7 +107,7 @@ class ReproScene extends Phaser.Scene {
             color: '#ffff00',
           }
         )
-        const labelOverflow = this.add.text(0, 0, 'overflow', {
+        const labelOverflow = this.add.text(cellH * 0.5, 0, 'overflow', {
           fontFamily: 'monospace',
           fontSize: '48px',
           color: '#ff006e',
@@ -118,7 +118,7 @@ class ReproScene extends Phaser.Scene {
         const overflowBar = this.add.rectangle(
           0,
           cellH * 0.4,
-          cellW * 1.2,
+          cellW * 1.1,
           cellH * 0.35,
           0xffff00,
           0.5
