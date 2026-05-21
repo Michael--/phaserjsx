@@ -1,8 +1,11 @@
 import * as Phaser from 'phaser'
+import { applyScissorClip } from './scissor'
 
 const COLS = 4
 const ROWS = 4
 const MASKS_PER_CELL = 1
+/** Toggle: true = WebGL scissor test, false = Mask filter */
+const USE_SCISSOR = false
 const HUD_TOP = 12
 const HUD_CLEARANCE = 170
 
@@ -49,11 +52,13 @@ class ReproScene extends Phaser.Scene {
 
   override update(): void {
     this.info?.setText([
-      'Phaser 4 Mask Repro',
+      `Phaser 4 Clip Repro — mode: ${USE_SCISSOR ? 'scissor' : 'mask'}`,
       `renderer: ${this.game.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'}`,
       `running: ${this.running ? 'yes' : 'no'}`,
       `containers: ${this.cells.length}`,
-      `masks via addMask(): ${this.cells.length * MASKS_PER_CELL}`,
+      USE_SCISSOR
+        ? `clipped via scissor: ${this.cells.length * MASKS_PER_CELL}`
+        : `masks via addMask(): ${this.cells.length * MASKS_PER_CELL}`,
       `fps: ${Math.round(this.game.loop.actualFps)}`,
     ])
   }
@@ -108,18 +113,30 @@ class ReproScene extends Phaser.Scene {
         const extras: Phaser.GameObjects.GameObject[] = [maskBar]
 
         if ((r + c) % 2 === 0) {
-          // Clone maskBar geometry but with alpha=1 so the filter only clips
-          // (alpha multiply = 1.0) without dimming the content.
-          // camera.ignore() hides it from normal rendering while the Mask
-          // filter's DynamicTexture capture still sees it.
-          const maskShape = this.add
-            .rectangle(maskBar.x, maskBar.y, maskBar.width, maskBar.height, maskBar.fillColor, 1)
-            .setRotation(maskBar.rotation)
-          this.cameras.main.ignore(maskShape)
-          extras.push(maskShape)
+          if (USE_SCISSOR) {
+            // Axis-aligned scissor clip — no filter overhead, binary clip edge.
+            // Derive clip dimensions and offset directly from maskBar so any
+            // geometry change only needs to be made in one place.
+            applyScissorClip(
+              container,
+              maskBar.width,
+              maskBar.height,
+              maskBar.x - container.x,
+              maskBar.y - container.y
+            )
+          } else {
+            // Mask filter approach: clone maskBar geometry at alpha=1 so the
+            // filter multiplies by 1.0 (no dimming). camera.ignore() hides the
+            // opaque clone while the Mask filter's DynamicTexture still sees it.
+            const maskShape = this.add
+              .rectangle(maskBar.x, maskBar.y, maskBar.width, maskBar.height, maskBar.fillColor, 1)
+              .setRotation(maskBar.rotation)
+            this.cameras.main.ignore(maskShape)
+            extras.push(maskShape)
 
-          container.enableFilters()
-          container.filters?.external.addMask(maskShape)
+            container.enableFilters()
+            container.filters?.external.addMask(maskShape)
+          }
         }
 
         this.cells.push({ container, extras })
