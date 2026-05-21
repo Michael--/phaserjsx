@@ -93,81 +93,83 @@ class ReproScene extends Phaser.Scene {
     const cellW = ((w - padX * 2 - gap * (COLS - 1)) / COLS) * 0.8
     const cellH = ((h - top - bottom - gap * (ROWS - 1)) / ROWS) * 0.8
 
-    for (let r = 0; r < ROWS; r += 1) {
-      for (let c = 0; c < COLS; c += 1) {
-        const masked = (r + c) % 3 !== 0
-        const cx = padX + c * (cellW + gap) + cellW * 0.5
-        const cy = top + r * (cellH + gap) + cellH * 0.5
+    for (let n = 0; n < 1; n += 1) {
+      for (let r = 0; r < ROWS; r += 1) {
+        for (let c = 0; c < COLS; c += 1) {
+          const masked = (r + c) % 3 !== 0
+          const cx = padX + c * (cellW + gap) + cellW * 0.5 + n
+          const cy = top + r * (cellH + gap) + cellH * 0.5 + n
 
-        const box = this.add
-          .rectangle(0, 0, cellW * 1, cellH * 1, 0x3a86ff, 0.9)
-          .setStrokeStyle(2, 0xffffff, 0.7)
-        const label = this.add.text(
-          -cellW * 0.4,
-          -cellH * 0.39,
-          `C${r}${c} ${masked ? 'masked' : ''}`,
-          {
+          const box = this.add
+            .rectangle(0, 0, cellW * 1, cellH * 1, 0x3a86ff, 0.9)
+            .setStrokeStyle(2, 0xffffff, 0.7)
+          const label = this.add.text(
+            -cellW * 0.4,
+            -cellH * 0.39,
+            `C${r}${c} ${masked ? 'masked' : ''}`,
+            {
+              fontFamily: 'monospace',
+              fontSize: '24px',
+              color: '#ffff00',
+            }
+          )
+          const labelOverflow = this.add.text(cellH * 0.5, 0, 'overflow', {
             fontFamily: 'monospace',
-            fontSize: '24px',
-            color: '#ffff00',
-          }
-        )
-        const labelOverflow = this.add.text(cellH * 0.5, 0, 'overflow', {
-          fontFamily: 'monospace',
-          fontSize: '48px',
-          color: '#ff006e',
-        })
+            fontSize: '48px',
+            color: '#ff006e',
+          })
 
-        // Children that intentionally overflow the container bounds (cellW × cellH).
-        // Clipped cells will have these cut off; unclipped cells show them in full.
-        const overflowBar = this.add.rectangle(
-          0,
-          cellH * 0.4,
-          cellW * 1.1,
-          cellH * 0.35,
-          0xffff00,
-          0.5
-        )
+          // Children that intentionally overflow the container bounds (cellW × cellH).
+          // Clipped cells will have these cut off; unclipped cells show them in full.
+          const overflowBar = this.add.rectangle(
+            0,
+            cellH * 0.4,
+            cellW * 1.1,
+            cellH * 0.35,
+            0xffff00,
+            0.5
+          )
 
-        const container = this.add.container(cx, cy, [box, label, labelOverflow, overflowBar])
+          const container = this.add.container(cx, cy, [box, label, labelOverflow, overflowBar])
 
-        const extras: Phaser.GameObjects.GameObject[] = []
+          const extras: Phaser.GameObjects.GameObject[] = []
 
-        let clipHandle: { destroy: () => void } | undefined
+          let clipHandle: { destroy: () => void } | undefined
 
-        if (masked && this.clipMode !== 'none') {
-          switch (this.clipMode) {
-            case 'scissor':
-              // Clip = container's own bounds, centered on its origin.
-              clipHandle = applyScissorClip(container, cellW, cellH)
-              break
+          if (masked && this.clipMode !== 'none') {
+            switch (this.clipMode) {
+              case 'scissor':
+                // Clip = container's own bounds, centered on its origin.
+                clipHandle = applyScissorClip(container, cellW, cellH)
+                break
 
-            case 'shader':
-              // Shader filter clip using the same logical bounds as scissor.
-              clipHandle = applyShaderClip(container, cellW, cellH)
-              break
+              case 'shader':
+                // Shader filter clip using the same logical bounds as scissor.
+                clipHandle = applyShaderClip(container, cellW, cellH)
+                break
 
-            case 'filter':
-            default: {
-              // Mask filter: opaque rect matching container bounds exactly.
-              // camera.ignore() hides the mask shape from the visible camera while
-              // the Mask filter's DynamicTexture still renders it.
-              const maskShape = this.add.rectangle(cx, cy, cellW, cellH, 0xffffff, 1)
-              this.cameras.main.ignore(maskShape)
-              extras.push(maskShape)
+              case 'filter':
+              default: {
+                // Mask filter: opaque rect matching container bounds exactly.
+                // camera.ignore() hides the mask shape from the visible camera while
+                // the Mask filter's DynamicTexture still renders it.
+                const maskShape = this.add.rectangle(cx, cy, cellW, cellH, 0xffffff, 1)
+                this.cameras.main.ignore(maskShape)
+                extras.push(maskShape)
 
-              container.enableFilters()
-              container.filters?.external.addMask(maskShape)
+                container.enableFilters()
+                container.filters?.external.addMask(maskShape)
+              }
             }
           }
-        }
 
-        const cell: Cell = { container, extras }
-        if (clipHandle) {
-          cell.clipHandle = clipHandle
-        }
+          const cell: Cell = { container, extras }
+          if (clipHandle) {
+            cell.clipHandle = clipHandle
+          }
 
-        this.cells.push(cell)
+          this.cells.push(cell)
+        }
       }
     }
 
