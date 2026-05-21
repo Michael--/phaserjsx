@@ -96,21 +96,21 @@ class ReproScene extends Phaser.Scene {
           .setStrokeStyle(2, 0xffffff, 0.7)
         const label = this.add.text(-cellW * 0.4, -cellH * 0.39, `C${r}${c}`, {
           fontFamily: 'monospace',
-          fontSize: '12px',
-          color: '#dbeafe',
+          fontSize: '24px',
+          color: '#ffff00',
         })
 
         const container = this.add.container(cx, cy, [box, label])
-        const maskCircle = this.add.circle(cx, cy, Math.min(cellW, cellH) * 0.26, 0xffffff, 0.24)
         const maskBar = this.add
-          .rectangle(cx, cy, cellW * 0.36, cellH * 0.9, 0xffffff, 0.24)
-          .setRotation(0.4)
-        const maskHole = this.add.circle(cx, cy, Math.min(cellW, cellH) * 0.1, 0xffffff, 0.24)
+          .rectangle(cx - 50, cy, cellW * 0.75, cellH, 0xffffff, 0.1)
+          .setRotation(0.1)
 
-        container.enableFilters()
-        container.filters?.internal.addMask(maskHole, true, this.cameras.main, 'world')
+        if ((r + c) % 2 === 0) {
+          container.enableFilters()
+          container.filters?.external.addMask(maskBar)
+        }
 
-        this.cells.push({ container, extras: [maskCircle, maskBar, maskHole] })
+        this.cells.push({ container, extras: [maskBar] })
       }
     }
 
