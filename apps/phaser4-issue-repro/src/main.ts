@@ -105,12 +105,24 @@ class ReproScene extends Phaser.Scene {
           .rectangle(cx - 50, cy, cellW * 0.75, cellH, 0xffffff, 0.1)
           .setRotation(0.1)
 
+        const extras: Phaser.GameObjects.GameObject[] = [maskBar]
+
         if ((r + c) % 2 === 0) {
+          // Separate fully-opaque shape for the actual mask so the filter
+          // only clips (alpha multiply = 1.0) without dimming the content.
+          // camera.ignore() hides it from normal rendering while the Mask
+          // filter's DynamicTexture capture still sees it.
+          const maskShape = this.add
+            .rectangle(cx - 50, cy, cellW * 0.75, cellH, 0xffffff, 1)
+            .setRotation(0.1)
+          this.cameras.main.ignore(maskShape)
+          extras.push(maskShape)
+
           container.enableFilters()
-          container.filters?.external.addMask(maskBar)
+          container.filters?.external.addMask(maskShape)
         }
 
-        this.cells.push({ container, extras: [maskBar] })
+        this.cells.push({ container, extras })
       }
     }
 
