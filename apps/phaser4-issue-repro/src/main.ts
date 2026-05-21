@@ -3,9 +3,6 @@ import { applyScissorClip } from './scissor'
 
 const COLS = 4
 const ROWS = 4
-const MASKS_PER_CELL = 1
-/** Toggle: true = WebGL scissor test, false = Mask filter */
-const USE_SCISSOR = false
 const HUD_TOP = 12
 const HUD_CLEARANCE = 170
 
@@ -24,8 +21,10 @@ class ReproScene extends Phaser.Scene {
   private info?: Phaser.GameObjects.Text
   private startBtn?: Phaser.GameObjects.Text
   private stopBtn?: Phaser.GameObjects.Text
+  private modeBtn?: Phaser.GameObjects.Text
   private cells: Cell[] = []
   private running = false
+  private useScissor = false
 
   create(): void {
     this.info = this.add.text(12, HUD_TOP, '', {
@@ -39,6 +38,7 @@ class ReproScene extends Phaser.Scene {
 
     this.startBtn = this.makeButton('START', '#14532d', () => this.start())
     this.stopBtn = this.makeButton('STOP', '#7f1d1d', () => this.stop())
+    this.modeBtn = this.makeButton('SCISSOR', '#374151', () => this.toggleMode())
 
     this.scale.on('resize', this.onResize, this)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -52,13 +52,10 @@ class ReproScene extends Phaser.Scene {
 
   override update(): void {
     this.info?.setText([
-      `Phaser 4 Clip Repro — mode: ${USE_SCISSOR ? 'scissor' : 'mask'}`,
+      `Phaser 4 Clip Repro — mode: ${this.useScissor ? 'scissor' : 'mask'}`,
       `renderer: ${this.game.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'}`,
       `running: ${this.running ? 'yes' : 'no'}`,
-      `containers: ${this.cells.length}`,
-      USE_SCISSOR
-        ? `clipped via scissor: ${this.cells.length * MASKS_PER_CELL}`
-        : `masks via addMask(): ${this.cells.length * MASKS_PER_CELL}`,
+      `containers: ${this.cells.length}  clipped: ${Math.ceil(this.cells.length / 2)}`,
       `fps: ${Math.round(this.game.loop.actualFps)}`,
     ])
   }
@@ -86,51 +83,60 @@ class ReproScene extends Phaser.Scene {
     const padX = Math.max(20, w * 0.04)
     const top = HUD_CLEARANCE
     const bottom = 20
-    const gap = 14
+    const gap = 50
 
-    const cellW = (w - padX * 2 - gap * (COLS - 1)) / COLS
-    const cellH = (h - top - bottom - gap * (ROWS - 1)) / ROWS
+    const cellW = ((w - padX * 2 - gap * (COLS - 1)) / COLS) * 0.8
+    const cellH = ((h - top - bottom - gap * (ROWS - 1)) / ROWS) * 0.8
 
     for (let r = 0; r < ROWS; r += 1) {
       for (let c = 0; c < COLS; c += 1) {
+        const masked = (r + c) % 2 === 0
         const cx = padX + c * (cellW + gap) + cellW * 0.5
         const cy = top + r * (cellH + gap) + cellH * 0.5
 
         const box = this.add
-          .rectangle(0, 0, cellW * 0.86, cellH * 0.86, 0x3a86ff, 0.9)
+          .rectangle(0, 0, cellW * 1, cellH * 1, 0x3a86ff, 0.9)
           .setStrokeStyle(2, 0xffffff, 0.7)
-        const label = this.add.text(-cellW * 0.4, -cellH * 0.39, `C${r}${c}`, {
+        const label = this.add.text(
+          -cellW * 0.4,
+          -cellH * 0.39,
+          `C${r}${c} ${masked ? 'masked' : ''}`,
+          {
+            fontFamily: 'monospace',
+            fontSize: '24px',
+            color: '#ffff00',
+          }
+        )
+        const labelOverflow = this.add.text(0, 0, 'overflow', {
           fontFamily: 'monospace',
-          fontSize: '24px',
-          color: '#ffff00',
+          fontSize: '48px',
+          color: '#ff006e',
         })
 
-        const container = this.add.container(cx, cy, [box, label])
-        const maskBar = this.add
-          .rectangle(cx - 50, cy, cellW * 0.75, cellH, 0xffffff, 0.1)
-          .setRotation(0.1)
+        // Children that intentionally overflow the container bounds (cellW × cellH).
+        // Clipped cells will have these cut off; unclipped cells show them in full.
+        const overflowBar = this.add.rectangle(
+          0,
+          cellH * 0.4,
+          cellW * 1.2,
+          cellH * 0.35,
+          0xffff00,
+          0.5
+        )
 
-        const extras: Phaser.GameObjects.GameObject[] = [maskBar]
+        const container = this.add.container(cx, cy, [box, label, labelOverflow, overflowBar])
 
-        if ((r + c) % 2 === 0) {
-          if (USE_SCISSOR) {
-            // Axis-aligned scissor clip — no filter overhead, binary clip edge.
-            // Derive clip dimensions and offset directly from maskBar so any
-            // geometry change only needs to be made in one place.
-            applyScissorClip(
-              container,
-              maskBar.width,
-              maskBar.height,
-              maskBar.x - container.x,
-              maskBar.y - container.y
-            )
+        const extras: Phaser.GameObjects.GameObject[] = []
+
+        if (masked) {
+          if (this.useScissor) {
+            // Clip = container's own bounds, centered on its origin.
+            applyScissorClip(container, cellW, cellH, 0, 0)
           } else {
-            // Mask filter approach: clone maskBar geometry at alpha=1 so the
-            // filter multiplies by 1.0 (no dimming). camera.ignore() hides the
-            // opaque clone while the Mask filter's DynamicTexture still sees it.
-            const maskShape = this.add
-              .rectangle(maskBar.x, maskBar.y, maskBar.width, maskBar.height, maskBar.fillColor, 1)
-              .setRotation(maskBar.rotation)
+            // Mask filter: opaque rect matching container bounds exactly.
+            // camera.ignore() hides the mask shape from the visible camera while
+            // the Mask filter's DynamicTexture still renders it.
+            const maskShape = this.add.rectangle(cx, cy, cellW, cellH, 0xffffff, 1)
             this.cameras.main.ignore(maskShape)
             extras.push(maskShape)
 
@@ -163,6 +169,7 @@ class ReproScene extends Phaser.Scene {
   private onResize(): void {
     const w = this.scale.width
     this.cameras.main.setBackgroundColor(0x10141f)
+    this.modeBtn?.setPosition(w - 262, 14)
     this.startBtn?.setPosition(w - 170, 14)
     this.stopBtn?.setPosition(w - 86, 14)
 
@@ -174,6 +181,15 @@ class ReproScene extends Phaser.Scene {
   private syncButtons(): void {
     this.startBtn?.setAlpha(this.running ? 0.45 : 1)
     this.stopBtn?.setAlpha(this.running ? 1 : 0.45)
+    this.modeBtn?.setBackgroundColor(this.useScissor ? '#065f46' : '#374151')
+  }
+
+  private toggleMode(): void {
+    const wasRunning = this.running
+    this.stop()
+    this.useScissor = !this.useScissor
+    if (wasRunning) this.start()
+    this.syncButtons()
   }
 }
 

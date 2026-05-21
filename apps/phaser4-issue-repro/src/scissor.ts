@@ -8,7 +8,7 @@ type DC = Phaser.Renderer.WebGL.DrawingContext & {
   state: {
     scissor: {
       /** Scissor rect in WebGL bottom-left coords: [x, y_gl, w, h] */
-      box: number[]
+      box: [number, number, number, number]
       enable: boolean
     }
   }
@@ -85,10 +85,18 @@ export function applyScissorClip(
   offsetX = 0,
   offsetY = 0
 ): void {
-  const obj = container as unknown as { renderWebGL: ContainerRenderFn }
-  const original = obj.renderWebGL.bind(container)
+  const obj = container as unknown as {
+    renderWebGL: ContainerRenderFn
+    _renderSteps: Array<ContainerRenderFn | undefined>
+  }
 
-  obj.renderWebGL = (
+  // In Phaser 4, renderWebGLStep dispatches via _renderSteps[], NOT renderWebGL directly.
+  // The constructor captures `this.renderWebGL` into _renderSteps[0] at creation time,
+  // so patching the property alone is invisible to the render loop.
+  const original = obj._renderSteps[0]
+  if (!original) return
+
+  const wrapper: ContainerRenderFn = (
     renderer,
     go,
     drawingContext,
@@ -98,7 +106,19 @@ export function applyScissorClip(
     displayListIndex
   ) => {
     const dc = drawingContext as DC
-    const cam = dc.camera!
+    const cam = dc.camera
+    if (!cam) {
+      original(
+        renderer,
+        go,
+        drawingContext,
+        parentMatrix,
+        renderStep,
+        displayList,
+        displayListIndex
+      )
+      return
+    }
     const zoom = cam.zoom
 
     // World position of the clip center
@@ -141,4 +161,7 @@ export function applyScissorClip(
 
     cloned.release() // flush last batch of children; scissor restores automatically
   }
+
+  obj._renderSteps[0] = wrapper
+  obj.renderWebGL = wrapper // keep the property in sync for any direct callers
 }
