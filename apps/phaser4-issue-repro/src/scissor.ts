@@ -1,4 +1,4 @@
-import type * as Phaser from 'phaser'
+import * as Phaser from 'phaser'
 
 type DC = Phaser.Renderer.WebGL.DrawingContext & {
   state: {
@@ -43,6 +43,13 @@ export interface ScissorClipHandle {
   destroy(): void
 }
 
+export interface ShaderClipHandle {
+  modify(options: { width?: number; height?: number; offsetX?: number; offsetY?: number }): void
+
+  invalidate(): void
+  destroy(): void
+}
+
 function intersectScissor(
   dc: DC,
   left: number,
@@ -79,6 +86,90 @@ function intersectScissor(
 }
 
 const SCISSOR_HANDLE = Symbol('scissorClipHandle')
+const SHADER_HANDLE = Symbol('shaderClipHandle')
+
+const SHADER_CLIP_NODE = 'FilterShaderClipRect'
+
+const SHADER_CLIP_FRAGMENT_SOURCE = `
+#pragma phaserTemplate(shaderName)
+
+precision mediump float;
+
+uniform sampler2D uMainSampler;
+uniform vec4 uClipRect;
+uniform vec2 uFramebufferSize;
+
+varying vec2 outTexCoord;
+
+void main ()
+{
+    vec2 p = floor(outTexCoord * uFramebufferSize);
+
+    if (
+        p.x < uClipRect.x ||
+        p.y < uClipRect.y ||
+        p.x >= uClipRect.x + uClipRect.z ||
+        p.y >= uClipRect.y + uClipRect.w
+    )
+    {
+        discard;
+    }
+
+    gl_FragColor = texture2D(uMainSampler, outTexCoord);
+}
+`.trim()
+
+type RenderNodeManagerLike = {
+  addNodeConstructor: (name: string, ctor: new (...args: never[]) => unknown) => void
+  _nodeConstructors?: Record<string, unknown>
+}
+
+class ShaderClipFilter extends Phaser.Filters.Controller {
+  readonly clipRect: [number, number, number, number]
+
+  constructor(camera: Phaser.Cameras.Scene2D.Camera, width: number, height: number) {
+    super(camera, SHADER_CLIP_NODE)
+    this.clipRect = [0, 0, width, height]
+    this.setPaddingOverride(0, 0, 0, 0)
+  }
+
+  setClipRect(x: number, y: number, width: number, height: number): void {
+    this.clipRect[0] = x
+    this.clipRect[1] = y
+    this.clipRect[2] = width
+    this.clipRect[3] = height
+  }
+}
+
+class FilterShaderClipRect extends Phaser.Renderer.WebGL.RenderNodes.BaseFilterShader {
+  constructor(manager: Phaser.Renderer.WebGL.RenderNodes.RenderNodeManager) {
+    super(SHADER_CLIP_NODE, manager, undefined, SHADER_CLIP_FRAGMENT_SOURCE)
+  }
+
+  override setupUniforms(
+    controller: ShaderClipFilter,
+    drawingContext: Phaser.Renderer.WebGL.DrawingContext
+  ): void {
+    this.programManager.setUniform('uClipRect', controller.clipRect)
+    this.programManager.setUniform('uFramebufferSize', [
+      drawingContext.width,
+      drawingContext.height,
+    ])
+  }
+}
+
+function ensureShaderClipNode(renderer: Phaser.Renderer.WebGL.WebGLRenderer): void {
+  const manager = renderer.renderNodes as unknown as RenderNodeManagerLike
+
+  if (manager._nodeConstructors?.[SHADER_CLIP_NODE]) {
+    return
+  }
+
+  manager.addNodeConstructor(
+    SHADER_CLIP_NODE,
+    FilterShaderClipRect as unknown as new (...args: never[]) => unknown
+  )
+}
 
 export function applyScissorClip(
   container: Phaser.GameObjects.Container,
@@ -296,6 +387,130 @@ export function applyScissorClip(
   obj._renderSteps[0] = wrapper
   obj.renderWebGL = wrapper
   obj[SCISSOR_HANDLE] = handle
+
+  return handle
+}
+
+export function applyShaderClip(
+  container: Phaser.GameObjects.Container,
+  width: number,
+  height: number,
+  offsetX = 0,
+  offsetY = 0
+): ShaderClipHandle {
+  const obj = container as unknown as {
+    renderWebGL: ContainerRenderFn
+    _renderSteps: Array<ContainerRenderFn | undefined>
+    filterCamera?: Phaser.Cameras.Scene2D.Camera
+    filters?: {
+      internal?: {
+        add: (filter: Phaser.Filters.Controller, index?: number) => Phaser.Filters.Controller
+        remove: (filter: Phaser.Filters.Controller, forceDestroy?: boolean) => unknown
+      }
+    } | null
+    [SHADER_HANDLE]?: ShaderClipHandle
+  }
+
+  if (obj[SHADER_HANDLE]) {
+    obj[SHADER_HANDLE].modify({ width, height, offsetX, offsetY })
+    return obj[SHADER_HANDLE]
+  }
+
+  const rendererType = container.scene.renderer.type
+  if (rendererType !== Phaser.WEBGL) {
+    return {
+      modify() {},
+      invalidate() {},
+      destroy() {},
+    }
+  }
+
+  container.enableFilters()
+
+  const renderer = container.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer
+  ensureShaderClipNode(renderer)
+
+  const internalFilters = obj.filters?.internal
+  const filterCamera = obj.filterCamera
+
+  const original = obj._renderSteps[0]
+
+  if (!internalFilters || !filterCamera || !original) {
+    return {
+      modify() {},
+      invalidate() {},
+      destroy() {},
+    }
+  }
+
+  let clipW = width
+  let clipH = height
+  let clipOffsetX = offsetX
+  let clipOffsetY = offsetY
+  let destroyed = false
+
+  const prevWidth = container.width
+  const prevHeight = container.height
+  const prevFiltersFocusContext = container.filtersFocusContext
+  const prevFiltersAutoFocus = container.filtersAutoFocus
+
+  const clipFilter = new ShaderClipFilter(filterCamera, clipW, clipH)
+  internalFilters.add(clipFilter)
+
+  function syncClip(): void {
+    const safeW = Math.max(1, Math.round(clipW) + 1)
+    const safeH = Math.max(1, Math.round(clipH) + 1)
+    const clipLeft = Math.round(clipOffsetX)
+    const clipTop = Math.round(clipOffsetY)
+
+    // Container defaults to width/height = 0, which makes Phaser focus filters on the whole context.
+    // For shader clipping we need object-space filtering to keep per-container locality and nesting behavior.
+    container.setSize(safeW, safeH)
+    container.setFiltersFocusContext(false)
+    container.setFiltersAutoFocus(true)
+
+    // Offset uses the same semantics as scissor:
+    // clip center is shifted in container local space by (offsetX, offsetY).
+    clipFilter.setClipRect(clipLeft, clipTop, safeW, safeH)
+  }
+
+  function invalidate(): void {
+    syncClip()
+  }
+
+  syncClip()
+
+  const handle: ShaderClipHandle = {
+    modify(options) {
+      if (options.width !== undefined) clipW = options.width
+      if (options.height !== undefined) clipH = options.height
+      if (options.offsetX !== undefined) clipOffsetX = options.offsetX
+      if (options.offsetY !== undefined) clipOffsetY = options.offsetY
+
+      invalidate()
+    },
+
+    invalidate,
+
+    destroy() {
+      if (destroyed) return
+      destroyed = true
+
+      internalFilters.remove(clipFilter, true)
+
+      container.setSize(prevWidth, prevHeight)
+      container.setFiltersFocusContext(prevFiltersFocusContext)
+      container.setFiltersAutoFocus(prevFiltersAutoFocus)
+
+      obj._renderSteps[0] = original
+      obj.renderWebGL = original
+      delete obj[SHADER_HANDLE]
+    },
+  }
+
+  obj._renderSteps[0] = original
+  obj.renderWebGL = original
+  obj[SHADER_HANDLE] = handle
 
   return handle
 }
