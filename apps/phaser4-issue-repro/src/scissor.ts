@@ -46,6 +46,11 @@ function intersectWithContextScissor(
   w: number,
   h: number
 ): [number, number, number, number] {
+  // If no parent scissor is active the full viewport is visible — no intersection needed.
+  if (!dc.state.scissor.enable) {
+    return [left, top, w, h]
+  }
+
   // state.scissor.box is stored in WebGL space (y from bottom) → convert to screen
   const prev = dc.state.scissor.box
   const pLeft = prev[0]
@@ -125,11 +130,18 @@ export function applyScissorClip(
     const worldCX = container.x + offsetX
     const worldCY = container.y + offsetY
 
-    // World → screen-space (top-left origin, game/CSS pixels)
-    const screenLeft = Math.round((worldCX - cam.scrollX) * zoom + cam.x - (clipW * zoom) / 2)
-    const screenTop = Math.round((worldCY - cam.scrollY) * zoom + cam.y - (clipH * zoom) / 2)
-    const screenW = Math.round(clipW * zoom)
-    const screenH = Math.round(clipH * zoom)
+    // World → screen-space (top-left origin, game/CSS pixels).
+    // Round the four edges independently, then derive W/H from them so that
+    // adjacent cells never have a 1-pixel gap or overlap caused by the
+    // individual rounding of center and size.
+    const cx = (worldCX - cam.scrollX) * zoom + cam.x
+    const cy = (worldCY - cam.scrollY) * zoom + cam.y
+    const hw = (clipW * zoom) / 2
+    const hh = (clipH * zoom) / 2
+    const screenLeft = Math.round(cx - hw)
+    const screenTop = Math.round(cy - hh)
+    const screenW = Math.round(cx + hw) - screenLeft
+    const screenH = Math.round(cy + hh) - screenTop
 
     // Intersect with the parent scissor so nested clips are correct
     const [iLeft, iTop, iW, iH] = intersectWithContextScissor(
