@@ -257,9 +257,11 @@ function applyOverflowMask(
       })
       DebugLogger.log('overflowMask', 'Created stencil clip')
     } else {
-      const update: Partial<StencilClipShape> = { width, height }
-      if (containerProps.cornerRadius !== undefined)
-        update.cornerRadius = containerProps.cornerRadius
+      const update: Partial<StencilClipShape> = {
+        width,
+        height,
+        cornerRadius: containerProps.cornerRadius ?? 0,
+      }
       ext.__overflowClip.update(update)
     }
   } else if (ext.__overflowClip) {
