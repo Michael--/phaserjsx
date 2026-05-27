@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser'
-import { applyScissorClip, applyShaderClip } from './customClip'
+import { applyScissorClip, applyShaderClip, applyStencilClip } from './clip'
 
 const COLS = 4
 const ROWS = 4
@@ -18,9 +18,9 @@ type Cell = {
   clipHandle?: { destroy: () => void }
 }
 
-type ClipMode = 'none' | 'filter' | 'scissor' | 'shader'
+type ClipMode = 'none' | 'filter' | 'scissor' | 'shader' | 'stencil'
 const DEFAULT_CLIP_MODE: ClipMode = 'none'
-const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader']
+const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader', 'stencil']
 
 class ReproScene extends Phaser.Scene {
   private info?: Phaser.GameObjects.Text
@@ -148,6 +148,11 @@ class ReproScene extends Phaser.Scene {
                 clipHandle = applyShaderClip(container, cellW, cellH)
                 break
 
+              case 'stencil':
+                // WebGL stencil-buffer clip with INCR/DECR nesting support.
+                clipHandle = applyStencilClip(container, cellW, cellH)
+                break
+
               case 'filter':
               default: {
                 // Mask filter: opaque rect matching container bounds exactly.
@@ -214,9 +219,11 @@ class ReproScene extends Phaser.Scene {
         ? '#065f46'
         : this.clipMode === 'shader'
           ? '#7c3aed'
-          : this.clipMode === 'none'
-            ? '#1f2937'
-            : '#374151'
+          : this.clipMode === 'stencil'
+            ? '#92400e'
+            : this.clipMode === 'none'
+              ? '#1f2937'
+              : '#374151'
     this.modeBtn.setBackgroundColor(modeColor)
   }
 

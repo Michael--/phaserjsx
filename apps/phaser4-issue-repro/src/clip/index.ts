@@ -1,4 +1,6 @@
 export type { ScissorClipHandle } from './scissorClip'
 export type { ShaderClipHandle } from './shaderClip'
+export type { StencilClipHandle } from './stencilClip'
 export { applyScissorClip } from './scissorClip'
 export { applyShaderClip } from './shaderClip'
+export { applyStencilClip } from './stencilClip'
