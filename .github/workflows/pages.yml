@@ -18,30 +18,30 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      # pnpm bereitstellen (Version aus packageManager)
+      # pnpm bereitstellen (Version aus packageManager im Root-package.json)
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           # kein pnpm-Cache, um Integrity-Stress zu vermeiden
 
       # Dependencies im Monorepo-Root (workspace:*)
       - name: Install dependencies (workspace)
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       # Important: build fully from workspace root to ensure all packages are built
       - name: Build workspace
         run: pnpm run build
 
       - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./apps/docs-site/dist
 
@@ -54,4 +54,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
