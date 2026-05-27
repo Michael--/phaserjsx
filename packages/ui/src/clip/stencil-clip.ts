@@ -453,8 +453,8 @@ export function applyStencilClip(
   shape: StencilClipShape
 ): StencilClipHandle {
   const obj = container as unknown as {
-    renderWebGL: ContainerRenderFn
     _renderSteps: Array<ContainerRenderFn | undefined>
+    addRenderStep(fn: ContainerRenderFn, index?: number): Phaser.GameObjects.Container
     [STENCIL_HANDLE]?: StencilClipHandle
   }
 
@@ -466,11 +466,6 @@ export function applyStencilClip(
 
   // No-op for non-WebGL renderers.
   if (container.scene.renderer.type !== Phaser.WEBGL) {
-    return { update() {}, destroy() {} }
-  }
-
-  const original = obj._renderSteps[0]
-  if (!original) {
     return { update() {}, destroy() {} }
   }
 
@@ -495,9 +490,29 @@ export function applyStencilClip(
   let radii = resolveRadii(shape.cornerRadius)
   let destroyed = false
 
-  const wrapper: ContainerRenderFn = (webglRenderer, go, ...rest) => {
+  const wrapper: ContainerRenderFn = (
+    webglRenderer,
+    go,
+    drawingContext,
+    parentMatrix,
+    renderStep = 0,
+    displayList,
+    displayListIndex
+  ) => {
+    const renderNext = () => {
+      go.renderWebGLStep(
+        webglRenderer,
+        go,
+        drawingContext,
+        parentMatrix,
+        renderStep + 1,
+        displayList,
+        displayListIndex
+      )
+    }
+
     if (destroyed) {
-      original(webglRenderer, go, ...rest)
+      renderNext()
       return
     }
 
@@ -540,7 +555,7 @@ export function applyStencilClip(
     gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP)
     gl.stencilMask(0x00)
 
-    original(webglRenderer, go, ...rest)
+    renderNext()
 
     // ── Pop: restore parent depth via DECR ────────────────────────────────
     rn.finishBatch()
@@ -592,14 +607,13 @@ export function applyStencilClip(
       if (destroyed) return
       destroyed = true
       gl.deleteBuffer(vertBuf)
-      obj._renderSteps[0] = original
-      obj.renderWebGL = original
+      const index = obj._renderSteps.indexOf(wrapper)
+      if (index !== -1) obj._renderSteps.splice(index, 1)
       delete obj[STENCIL_HANDLE]
     },
   }
 
-  obj._renderSteps[0] = wrapper
-  obj.renderWebGL = wrapper
+  obj.addRenderStep(wrapper, 0)
   obj[STENCIL_HANDLE] = handle
 
   return handle
