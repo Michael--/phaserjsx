@@ -8,6 +8,7 @@
 - Updated all "Phaser 3" references to Phaser 4 in documentation pages
 - Updated prerequisites: Phaser 4.1.0+
 - Updated dependency @number10/phaserjsx@4.0.0
+- Added compatibility guidance: Phaser 3 projects should use @number10/phaserjsx@0.6.1; the 4.x UI line targets Phaser 4.
 
 ## 0.4.1
 

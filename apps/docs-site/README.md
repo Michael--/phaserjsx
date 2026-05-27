@@ -2,6 +2,8 @@
 
 Documentation and showcase site for @number10/phaserjsx component library.
 
+This docs site documents the PhaserJSX 4.x line for Phaser 4. Phaser 3 projects should use `@number10/phaserjsx@0.6.1`.
+
 ## Architecture
 
 This is a **React-based** documentation site that demonstrates PhaserJSX components in live, interactive examples.

@@ -1,26 +1,28 @@
 # @number10/phaserjsx
 
-## Unreleased
-
-### Patch Changes
-
-- Fix WebGL overflow mask behavior by forcing opaque `maskGraphics` alpha when using Phaser 4 Mask Filter.
-- Restore long-press and double-tap target resolution when an overlay handles `onTouch` above another interactive target.
-- Replace `NodeJS.Timeout` timer state types with `ReturnType<typeof setTimeout>` for cross-runtime type compatibility.
-- Update script build/type generation flow to emit declarations for `icon-generator-config` and `vite-plugin-icons`.
-- Hide overflow mask graphics in normal rendering to prevent visible white mask overlays in ScrollView, Dropdown, Accordion, and other `overflow="hidden"` containers (debug overlay still available via `DevConfig.visual.showOverflowMasks`).
-- pre-initialize Phaser 4 filter pipeline in useFX to prevent resize on first FX application
-
 ## 4.0.0
 
 ### Major Changes
 
 - **Phaser 4.1.0** — upgraded peer dependency from Phaser 3 to Phaser 4 (breaking)
-- Overflow masking: switched from `GeometryMask`/`setMask()` to Phaser 4 WebGL `Mask Filter` via `enableFilters()` + `filters.external.addMask()`; Canvas renderer keeps `GeometryMask` fallback
+- Phaser 3 projects should stay on `@number10/phaserjsx@0.6.1`; the 4.x line targets Phaser 4 and no longer aims to preserve Phaser 3 compatibility.
+- Overflow masking: replaced `GeometryMask`/`setMask()` with a WebGL stencil-buffer clip; no separate Graphics game object or per-frame world-position tracking needed; supports arbitrary nesting via INCR/DECR and optional rounded corners via SDF shader
 - FX system: replaced `postFX`/`preFX` pipelines with `filters.internal`/`filters.external`; `FXType` changed from `'post'|'pre'` to `'internal'|'external'`
 - `Phaser.FX.Controller` renamed to `Phaser.Filters.Controller`
 - `ColorMatrix` filter effects now accessed via `colorMatrixFilter.colorMatrix.*`
 - `addGlow()` gained a new `scale` parameter (4th argument) in Phaser 4
+
+### Patch Changes
+
+- Replace Phaser 4 overflow masking with a faster WebGL stencil-clip path for `overflow="hidden"` containers, including nested clip support.
+- Fix stencil overflow clips when `cornerRadius` is removed from an existing container.
+- Chain stencil clipping through Phaser render steps instead of replacing `_renderSteps[0]`, improving compatibility with Phaser filters and other render steps.
+- Track actual framebuffer transitions in the stencil/FBO bridge so PostFX and RenderTexture rendering restore stencil state correctly.
+- Fix PostFX effects on children inside stencil-clipped containers by patching `gl.bindFramebuffer` to disable the stencil test when entering an off-screen FBO and restore it on return to the main framebuffer.
+- Restore long-press and double-tap target resolution when an overlay handles `onTouch` above another interactive target.
+- Replace `NodeJS.Timeout` timer state types with `ReturnType<typeof setTimeout>` for cross-runtime type compatibility.
+- Update script build/type generation flow to emit declarations for `icon-generator-config` and `vite-plugin-icons`.
+- Pre-initialize Phaser 4 filter pipeline in `useFX` to prevent resize on first FX application.
 
 ## 0.6.1
 

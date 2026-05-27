@@ -1,8 +1,8 @@
 # PhaserJSX
 
-> Declarative Phaser3 UI framework with React-like components and TypeScript
+> Declarative Phaser 4 UI framework with React-like components and TypeScript
 
-A modern, type-safe framework for building game UIs in Phaser3 using JSX components, hooks, and a powerful theme system.
+A modern, type-safe framework for building game UIs in Phaser 4 using JSX components, hooks, and a powerful theme system.
 
 [![npm version](https://img.shields.io/npm/v/@number10/phaserjsx.svg)](https://www.npmjs.com/package/@number10/phaserjsx)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
@@ -20,6 +20,14 @@ A modern, type-safe framework for building game UIs in Phaser3 using JSX compone
 ## 📚 Documentation
 
 [📖 Full Documentation](https://michael--.github.io/phaserjsx/)
+
+## Compatibility
+
+`@number10/phaserjsx` 4.x targets Phaser 4 (`phaser@^4.1.0`). Phaser 3 projects should use the previous UI line:
+
+```bash
+npm install @number10/phaserjsx@0.6.1 phaser@^3
+```
 
 ## 📦 Packages
 
@@ -135,4 +143,4 @@ GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--)
 - [GitHub Repository](https://github.com/Michael--/phaserjsx)
 - [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)
 - [Issue Tracker](https://github.com/Michael--/phaserjsx/issues)
-- [Phaser 3 Documentation](https://photonstorm.github.io/phaser3-docs/)
+- [Phaser Documentation](https://docs.phaser.io/)

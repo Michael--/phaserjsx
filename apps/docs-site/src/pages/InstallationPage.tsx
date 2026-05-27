@@ -32,6 +32,19 @@ export function InstallationPage() {
       </DocParagraph>
 
       <DocSection>
+        <SectionTitle>Version Compatibility</SectionTitle>
+        <DocParagraph>
+          PhaserJSX 4.x targets Phaser 4 and requires <code>phaser@^4.1.0</code>. If your project is
+          still on Phaser 3, use the previous UI line instead:
+        </DocParagraph>
+        <CodeBlock language="bash">{`npm install @number10/phaserjsx@0.6.1 phaser@^3`}</CodeBlock>
+        <DocParagraph>
+          The Phaser 4 UI line uses Phaser 4 render steps, filters, and WebGL behavior and is not
+          intended to be a drop-in upgrade for Phaser 3 projects.
+        </DocParagraph>
+      </DocSection>
+
+      <DocSection>
         <SectionTitle>Prerequisites</SectionTitle>
         <DocParagraph>Before installing PhaserJSX, ensure you have the following:</DocParagraph>
         <div className="doc-list">

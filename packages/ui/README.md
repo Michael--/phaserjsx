@@ -7,6 +7,16 @@ A modern, type-safe framework for building game UIs in Phaser 4 using JSX compon
 [![npm version](https://img.shields.io/npm/v/@number10/phaserjsx.svg)](https://www.npmjs.com/package/@number10/phaserjsx)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](../../LICENSE)
 
+## Compatibility
+
+`@number10/phaserjsx` 4.x is built for Phaser 4 and has a `phaser@^4.1.0` peer dependency. Phaser 3 projects should stay on the previous UI line:
+
+```bash
+npm install @number10/phaserjsx@0.6.1 phaser@^3
+```
+
+The 4.x line uses Phaser 4 render steps, filters, and WebGL behavior and is not intended to be a drop-in upgrade for Phaser 3 projects.
+
 ## ✨ Features
 
 - 🎨 **React-like API** - Familiar JSX syntax with hooks (useState, useEffect, useMemo, etc.)
