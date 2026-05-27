@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser'
-import { applyScissorClip, applyShaderClip } from './scissor'
+import { applyScissorClip, applyShaderClip } from './customClip'
 
 const COLS = 4
 const ROWS = 4
