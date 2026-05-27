@@ -19,18 +19,24 @@ type Cell = {
   innerClipHandles?: { destroy: () => void }[]
 }
 
-type ClipMode = 'none' | 'filter' | 'scissor' | 'shader' | 'stencil' | 'nested'
+type ClipMode = 'none' | 'filter' | 'scissor' | 'shader' | 'stencil'
 const DEFAULT_CLIP_MODE: ClipMode = 'none'
-const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader', 'stencil', 'nested']
+const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader', 'stencil']
+
+type GraphicMode = 'grid' | 'nested'
+const DEFAULT_GRAPHIC_MODE: GraphicMode = 'grid'
+const GRAPHIC_MODES: GraphicMode[] = ['grid', 'nested']
 
 class ReproScene extends Phaser.Scene {
   private info?: Phaser.GameObjects.Text
   private startBtn?: Phaser.GameObjects.Text
   private stopBtn?: Phaser.GameObjects.Text
   private modeBtn?: Phaser.GameObjects.Text
+  private graphicBtn?: Phaser.GameObjects.Text
   private cells: Cell[] = []
   private running = false
   private clipMode: ClipMode = DEFAULT_CLIP_MODE
+  private graphicMode: GraphicMode = DEFAULT_GRAPHIC_MODE
 
   create(): void {
     this.info = this.add.text(12, HUD_TOP, '', {
@@ -45,6 +51,7 @@ class ReproScene extends Phaser.Scene {
     this.startBtn = this.makeButton('START', '#14532d', () => this.start())
     this.stopBtn = this.makeButton('STOP', '#7f1d1d', () => this.stop())
     this.modeBtn = this.makeButton('MODE', '#374151', () => this.toggleMode())
+    this.graphicBtn = this.makeButton('GRAPHIC', '#374151', () => this.toggleGraphic())
 
     this.scale.on('resize', this.onResize, this)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -58,7 +65,8 @@ class ReproScene extends Phaser.Scene {
 
   override update(): void {
     this.info?.setText([
-      `Phaser 4 Clip Repro — mode: ${this.clipMode}`,
+      `Phaser 4 Clip Repro — graphic: ${this.graphicMode}  clip: ${this.clipMode}`,
+
       `renderer: ${this.game.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'}`,
       `running: ${this.running ? 'yes' : 'no'}`,
       `containers: ${this.cells.length}  clipped: ${this.clipMode === 'none' ? 0 : Math.round(this.cells.length * 0.6)}`,
@@ -84,7 +92,7 @@ class ReproScene extends Phaser.Scene {
   private start(): void {
     if (this.running) return
 
-    if (this.clipMode === 'nested') {
+    if (this.graphicMode === 'nested') {
       this.startNestedDemo()
       this.running = true
       this.syncButtons()
@@ -210,6 +218,7 @@ class ReproScene extends Phaser.Scene {
   private onResize(): void {
     const w = this.scale.width
     this.cameras.main.setBackgroundColor(0x10141f)
+    this.graphicBtn?.setPosition(w - 450, 14)
     this.modeBtn?.setPosition(w - 300, 14)
     this.startBtn?.setPosition(w - 170, 14)
     this.stopBtn?.setPosition(w - 86, 14)
@@ -222,6 +231,12 @@ class ReproScene extends Phaser.Scene {
   private syncButtons(): void {
     this.startBtn?.setAlpha(this.running ? 0.45 : 1)
     this.stopBtn?.setAlpha(this.running ? 1 : 0.45)
+
+    if (this.graphicBtn) {
+      this.graphicBtn.setText(`GRAPHIC: ${this.graphicMode.toUpperCase()}`)
+      this.graphicBtn.setBackgroundColor(this.graphicMode === 'nested' ? '#1e3a5f' : '#374151')
+    }
+
     if (!this.modeBtn) return
 
     this.modeBtn.setText(`MODE: ${this.clipMode.toUpperCase()}`)
@@ -232,11 +247,9 @@ class ReproScene extends Phaser.Scene {
           ? '#7c3aed'
           : this.clipMode === 'stencil'
             ? '#92400e'
-            : this.clipMode === 'nested'
-              ? '#7c2d12'
-              : this.clipMode === 'none'
-                ? '#1f2937'
-                : '#374151'
+            : this.clipMode === 'none'
+              ? '#1f2937'
+              : '#374151'
     this.modeBtn.setBackgroundColor(modeColor)
   }
 
@@ -344,20 +357,51 @@ class ReproScene extends Phaser.Scene {
           inner2,
         ])
 
-        // Stencil clip at depth 0 (outermost level).
-        const outerHandle = applyStencilClip(outer, outerW, outerH)
-        // Stencil clips at depth 1 (nested inside outer).
-        const inner1Handle = applyStencilClip(inner1, innerW, innerH)
-        const inner2Handle = applyStencilClip(inner2, innerW, innerH)
+        // Apply the selected clip mode at both depth levels.
+        // 'filter' (mask-object based) is not supported for nested graphic — treated as 'none'.
+        const clipFn = this.getContainerClipFn()
+        const outerHandle = clipFn ? clipFn(outer, outerW, outerH) : undefined
+        const inner1Handle = clipFn ? clipFn(inner1, innerW, innerH) : undefined
+        const inner2Handle = clipFn ? clipFn(inner2, innerW, innerH) : undefined
 
-        this.cells.push({
-          container: outer,
-          extras: [],
-          clipHandle: outerHandle,
-          innerClipHandles: [inner1Handle, inner2Handle],
-        })
+        const innerHandles = [inner1Handle, inner2Handle].filter(
+          (h): h is { destroy: () => void } => h !== undefined
+        )
+
+        const cell: Cell = { container: outer, extras: [] }
+        if (outerHandle) cell.clipHandle = outerHandle
+        if (innerHandles.length > 0) cell.innerClipHandles = innerHandles
+        this.cells.push(cell)
       }
     }
+  }
+
+  /**
+   * Returns the clip function for the current clip mode, or undefined for 'none'/'filter'.
+   * 'filter' requires separate mask game objects and is handled inline in start().
+   */
+  private getContainerClipFn():
+    | ((container: Phaser.GameObjects.Container, w: number, h: number) => { destroy: () => void })
+    | undefined {
+    switch (this.clipMode) {
+      case 'scissor':
+        return applyScissorClip
+      case 'shader':
+        return applyShaderClip
+      case 'stencil':
+        return applyStencilClip
+      default:
+        return undefined
+    }
+  }
+
+  private toggleGraphic(): void {
+    const wasRunning = this.running
+    this.stop()
+    const idx = GRAPHIC_MODES.indexOf(this.graphicMode)
+    this.graphicMode = GRAPHIC_MODES[(idx + 1) % GRAPHIC_MODES.length] ?? DEFAULT_GRAPHIC_MODE
+    if (wasRunning) this.start()
+    this.syncButtons()
   }
 
   private toggleMode(): void {
