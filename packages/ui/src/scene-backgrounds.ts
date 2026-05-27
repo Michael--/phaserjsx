@@ -14,7 +14,7 @@ export interface BackgroundConfig {
 }
 
 export interface SceneBackgroundHandle {
-  background: Phaser.GameObjects.Graphics | Phaser.GameObjects.Container
+  background: BackgroundTarget
   destroy: () => void
   resize: (width: number, height: number) => void
 }
@@ -28,8 +28,52 @@ export const DEFAULT_BACKGROUND: BackgroundConfig = {
   color: 0x4a9eff,
 }
 
-type BackgroundTarget = Phaser.GameObjects.Graphics | Phaser.GameObjects.Container
+type BackgroundTarget =
+  | Phaser.GameObjects.Container
+  | Phaser.GameObjects.Image
+  | Phaser.GameObjects.TileSprite
 type RedrawableTarget = BackgroundTarget & { __redrawFn?: (x: number, y: number) => void }
+
+let sceneBackgroundTextureId = 0
+
+function colorToCss(color: number): string {
+  return `#${color.toString(16).padStart(6, '0')}`
+}
+
+function createCanvasTexture(
+  scene: Phaser.Scene,
+  width: number,
+  height: number,
+  draw: (ctx: CanvasRenderingContext2D, width: number, height: number) => void
+): string {
+  const textureKey = `__phaserjsx_scene_bg_${sceneBackgroundTextureId++}`
+  const textureWidth = Math.max(1, Math.ceil(width))
+  const textureHeight = Math.max(1, Math.ceil(height))
+  const texture = scene.textures.createCanvas(textureKey, textureWidth, textureHeight)
+
+  if (!texture) {
+    throw new Error('Unable to create scene background texture')
+  }
+
+  const canvas = texture.getSourceImage() as HTMLCanvasElement
+  const ctx = canvas.getContext('2d')
+
+  if (!ctx) {
+    throw new Error('Unable to create scene background canvas texture')
+  }
+
+  ctx.clearRect(0, 0, textureWidth, textureHeight)
+  draw(ctx, textureWidth, textureHeight)
+  texture.refresh()
+
+  return textureKey
+}
+
+function removeTexture(scene: Phaser.Scene, textureKey: string | undefined): void {
+  if (textureKey && scene.textures.exists(textureKey)) {
+    scene.textures.remove(textureKey)
+  }
+}
 
 export function addSceneBackground(
   scene: Phaser.Scene,
@@ -41,35 +85,40 @@ export function addSceneBackground(
   let background: BackgroundTarget | undefined
   let backgroundTween: Phaser.Tweens.Tween | undefined
   const particleTweens: Phaser.Tweens.Tween[] = []
+  const textureKeys = new Set<string>()
   let resizeFn: ((width: number, height: number) => void) | undefined
   let destroyed = false
 
   const createGridBackground = () => {
-    const graphics = scene.add.graphics()
     const gridSize = 40
     const color = bgConfig.color ?? 0x4a9eff
     const opacity = bgConfig.opacity ?? 0.15
+    const textureKey = createCanvasTexture(scene, gridSize, gridSize, (ctx, width, height) => {
+      ctx.globalAlpha = opacity
+      ctx.strokeStyle = colorToCss(color)
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(0.5, 0)
+      ctx.lineTo(0.5, height)
+      ctx.moveTo(0, 0.5)
+      ctx.lineTo(width, 0.5)
+      ctx.stroke()
+    })
+    textureKeys.add(textureKey)
 
-    const drawGrid = (offsetX: number, offsetY: number) => {
-      graphics.clear()
-      graphics.lineStyle(1, color, opacity)
+    const tile = scene.add.tileSprite(0, 0, scene.scale.width, scene.scale.height, textureKey)
+    tile.setOrigin(0, 0)
 
-      const width = scene.scale.width
-      const height = scene.scale.height
-
-      for (let x = offsetX % gridSize; x < width; x += gridSize) {
-        graphics.lineBetween(x, 0, x, height)
-      }
-
-      for (let y = offsetY % gridSize; y < height; y += gridSize) {
-        graphics.lineBetween(0, y, width, y)
-      }
+    const moveGrid = (offsetX: number, offsetY: number) => {
+      tile.tilePositionX = -offsetX
+      tile.tilePositionY = -offsetY
     }
 
-    drawGrid(0, 0)
-    ;(graphics as RedrawableTarget).__redrawFn = drawGrid
-    background = graphics
-    resizeFn = () => drawGrid(0, 0)
+    ;(tile as RedrawableTarget).__redrawFn = moveGrid
+    background = tile
+    resizeFn = (width, height) => {
+      tile.setSize(width, height)
+    }
   }
 
   const createLogoBackground = () => {
@@ -89,20 +138,38 @@ export function addSceneBackground(
   }
 
   const createGradientBackground = () => {
-    const graphics = scene.add.graphics()
     const color1 = bgConfig.color ?? 0x4a9eff
     const color2 = bgConfig.colorSecondary ?? 0x6b4aff
     const opacity = bgConfig.opacity ?? 0.2
 
-    const drawGradient = () => {
-      graphics.clear()
-      graphics.fillGradientStyle(color1, color1, color2, color2, opacity, opacity, opacity, opacity)
-      graphics.fillRect(0, 0, scene.scale.width, scene.scale.height)
+    const createGradientTexture = (width: number, height: number) =>
+      createCanvasTexture(scene, width, height, (ctx, textureWidth, textureHeight) => {
+        const gradient = ctx.createLinearGradient(0, 0, 0, textureHeight)
+        gradient.addColorStop(0, colorToCss(color1))
+        gradient.addColorStop(1, colorToCss(color2))
+
+        ctx.globalAlpha = opacity
+        ctx.fillStyle = gradient
+        ctx.fillRect(0, 0, textureWidth, textureHeight)
+      })
+
+    let textureKey = createGradientTexture(scene.scale.width, scene.scale.height)
+    textureKeys.add(textureKey)
+
+    const image = scene.add.image(0, 0, textureKey)
+    image.setOrigin(0, 0)
+
+    resizeFn = (width, height) => {
+      const previousTextureKey = textureKey
+      textureKey = createGradientTexture(width, height)
+      textureKeys.add(textureKey)
+      image.setTexture(textureKey)
+      image.setDisplaySize(width, height)
+      textureKeys.delete(previousTextureKey)
+      removeTexture(scene, previousTextureKey)
     }
 
-    drawGradient()
-    background = graphics
-    resizeFn = drawGradient
+    background = image
   }
 
   const createParticlesBackground = () => {
@@ -179,6 +246,10 @@ export function addSceneBackground(
 
     background?.destroy()
     background = undefined
+    for (const textureKey of textureKeys) {
+      removeTexture(scene, textureKey)
+    }
+    textureKeys.clear()
 
     scene.scale.off(Phaser.Scale.Events.RESIZE, onResize)
     scene.events.off(Phaser.Scenes.Events.SHUTDOWN, cleanup)

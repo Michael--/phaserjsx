@@ -6,6 +6,7 @@ import * as Phaser from 'phaser'
 import type { HoverEventData } from '../../gestures/gesture-types'
 import { themeRegistry } from '../../theme'
 import type { TooltipCallback, TooltipConfig } from '../../tooltip/tooltip-types'
+import { createBackgroundImage } from '../backgroundImage'
 
 /**
  * Internal state for tooltip management per container
@@ -116,10 +117,6 @@ function showTooltip(
   const bgWidth = textWidth + paddingX * 2
   const bgHeight = textHeight + paddingY * 2
 
-  // Create rounded background
-  const cornerRadius = tooltipTheme.cornerRadius ?? 6
-  const graphics = scene.add.graphics()
-
   // Parse background color
   const bg = bgColor ?? '#000000dd'
   let fillColor = 0x000000
@@ -139,11 +136,26 @@ function showTooltip(
     }
   }
 
-  graphics.fillStyle(fillColor, fillAlpha)
-  graphics.fillRoundedRect(-bgWidth / 2, -bgHeight / 2, bgWidth, bgHeight, cornerRadius)
+  const background = createBackgroundImage(
+    scene,
+    {
+      backgroundColor: fillColor,
+      backgroundAlpha: fillAlpha,
+      cornerRadius: tooltipTheme.cornerRadius ?? 6,
+    },
+    bgWidth,
+    bgHeight
+  )
+
+  if (!background) {
+    text.destroy()
+    return
+  }
+
+  background.setOrigin(0.5, 0.5)
 
   // Create container for background + text
-  const tooltipContainer = scene.add.container(0, 0, [graphics, text])
+  const tooltipContainer = scene.add.container(0, 0, [background, text])
   tooltipContainer.setDepth(10000)
 
   // Measure container bounds
