@@ -1,26 +1,57 @@
 import * as Phaser from 'phaser'
 
+/**
+ * Built-in decorative background variants that can be attached to a Phaser scene.
+ */
 export type SceneBackgroundType = 'grid' | 'logo' | 'gradient' | 'particles' | 'none'
 
+/**
+ * Optional animation applied to a scene background after it is created.
+ */
 export type BackgroundAnimation = 'lemniscate' | 'wave' | 'pulse' | 'rotate' | 'static'
 
+/**
+ * Configuration for {@link addSceneBackground}.
+ */
 export interface BackgroundConfig {
+  /** Background variant to create. Use `'none'` to disable background creation. */
   type: SceneBackgroundType
+
+  /** Animation preset applied to the created background. Defaults depend on caller config. */
   animation?: BackgroundAnimation
+
+  /** Background opacity, usually between `0` and `1`. */
   opacity?: number
+
+  /** Primary color as a Phaser numeric color, for example `0x4a9eff`. */
   color?: number
+
+  /** Secondary color used by gradient backgrounds. */
   colorSecondary?: number
+
+  /** Texture key used by the logo background. Defaults to the built-in logo key. */
   logoKey?: string
 }
 
+/**
+ * Handle returned by {@link addSceneBackground}.
+ */
 export interface SceneBackgroundHandle {
+  /** Root game object created for the background. */
   background: BackgroundTarget
+
+  /** Stops animations, destroys game objects, removes generated textures, and detaches listeners. */
   destroy: () => void
+
+  /** Manually resize the background to match an external viewport size. */
   resize: (width: number, height: number) => void
 }
 
 const DEFAULT_LOGO_KEY = 'phaser-jsx-logo'
 
+/**
+ * Default scene background used when no explicit config is provided.
+ */
 export const DEFAULT_BACKGROUND: BackgroundConfig = {
   type: 'grid',
   animation: 'lemniscate',
@@ -75,6 +106,30 @@ function removeTexture(scene: Phaser.Scene, textureKey: string | undefined): voi
   }
 }
 
+/**
+ * Adds a decorative background object to a Phaser scene.
+ *
+ * The helper owns all game objects, tweens, resize listeners, and generated textures it creates.
+ * It automatically cleans up on scene shutdown or destroy. Call `handle.destroy()` when removing
+ * the background earlier.
+ *
+ * @param scene - Phaser scene that receives the background.
+ * @param config - Background type, colors, opacity, animation, and optional logo texture key.
+ * @returns A handle for manual resize and cleanup, or `null` when `config.type` is `'none'`.
+ *
+ * @example
+ * ```ts
+ * const handle = addSceneBackground(scene, {
+ *   type: 'grid',
+ *   animation: 'wave',
+ *   color: 0x4a9eff,
+ *   opacity: 0.12,
+ * })
+ *
+ * // Later, if the background should be removed before scene shutdown:
+ * handle?.destroy()
+ * ```
+ */
 export function addSceneBackground(
   scene: Phaser.Scene,
   config: BackgroundConfig = DEFAULT_BACKGROUND
