@@ -6,12 +6,13 @@
   "description": "Focused development playground for @number10/phaserjsx features",
   "scripts": {
     "dev": "vite",
+    "prebuild": "pnpm run generate-icons",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "generate-icons": "tsx ../../packages/ui/src/scripts/generate-icons.ts --config ./icon-generator.config.ts"
+    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts"
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",

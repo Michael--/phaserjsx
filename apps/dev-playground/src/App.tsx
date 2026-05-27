@@ -571,7 +571,7 @@ function TestUI() {
  */
 export function App(props: AppProps & MountProps) {
   const tokens = useThemeTokens()
-  const [mode, setMode] = useState<'perf' | 'showcase'>('perf')
+  const [mode, setMode] = useState<'perf' | 'showcase'>('showcase')
 
   return (
     <View width={'fill'} height={'fill'}>

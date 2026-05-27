@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies (workspace)
         run: pnpm install --frozen-lockfile
 
-      # Important: build fully from workspace root to ensure all packages are built
+      # Full workspace build: validates docs, playgrounds, and bundler repros on Linux CI.
       - name: Build workspace
         run: pnpm run build
 
