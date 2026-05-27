@@ -92,15 +92,18 @@ function getStencilProg(gl: WebGLRenderingContext): WebGLProgram {
   let prog = _progByGl.get(gl)
   if (prog) return prog
 
-  const vs = gl.createShader(gl.VERTEX_SHADER)!
+  const vs = gl.createShader(gl.VERTEX_SHADER)
+  if (!vs) throw new Error('stencilClip: failed to create vertex shader')
   gl.shaderSource(vs, 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}')
   gl.compileShader(vs)
 
-  const fs = gl.createShader(gl.FRAGMENT_SHADER)!
+  const fs = gl.createShader(gl.FRAGMENT_SHADER)
+  if (!fs) throw new Error('stencilClip: failed to create fragment shader')
   gl.shaderSource(fs, 'void main(){gl_FragColor=vec4(0.);}')
   gl.compileShader(fs)
 
-  prog = gl.createProgram()!
+  prog = gl.createProgram()
+  if (!prog) throw new Error('stencilClip: failed to create shader program')
   gl.attachShader(prog, vs)
   gl.attachShader(prog, fs)
   gl.linkProgram(prog)
@@ -258,7 +261,8 @@ export function applyStencilClip(
   ensurePrerenderReset(gl, container.scene.game)
 
   // Persistent vertex buffer – reused every frame to avoid GC pressure.
-  const vertBuf = gl.createBuffer()!
+  const vertBuf = gl.createBuffer()
+  if (!vertBuf) throw new Error('stencilClip: failed to create vertex buffer')
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(8), gl.DYNAMIC_DRAW)
   gl.bindBuffer(gl.ARRAY_BUFFER, null)

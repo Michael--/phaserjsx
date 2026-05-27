@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser'
-import type { DC, ContainerRenderFn, RNManager, ScissorCache } from './shared'
+import type { ContainerRenderFn, DC, RNManager, ScissorCache } from './shared'
 
 /** Handle returned by {@link applyScissorClip} to modify or remove the clip at runtime. */
 export interface ScissorClipHandle {

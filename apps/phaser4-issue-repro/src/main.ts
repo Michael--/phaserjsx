@@ -16,11 +16,12 @@ type Cell = {
   container: Phaser.GameObjects.Container
   extras: Phaser.GameObjects.GameObject[]
   clipHandle?: { destroy: () => void }
+  innerClipHandles?: { destroy: () => void }[]
 }
 
-type ClipMode = 'none' | 'filter' | 'scissor' | 'shader' | 'stencil'
+type ClipMode = 'none' | 'filter' | 'scissor' | 'shader' | 'stencil' | 'nested'
 const DEFAULT_CLIP_MODE: ClipMode = 'none'
-const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader', 'stencil']
+const CLIP_MODES: ClipMode[] = ['none', 'filter', 'scissor', 'shader', 'stencil', 'nested']
 
 class ReproScene extends Phaser.Scene {
   private info?: Phaser.GameObjects.Text
@@ -82,6 +83,13 @@ class ReproScene extends Phaser.Scene {
 
   private start(): void {
     if (this.running) return
+
+    if (this.clipMode === 'nested') {
+      this.startNestedDemo()
+      this.running = true
+      this.syncButtons()
+      return
+    }
 
     const w = this.scale.width
     const h = this.scale.height
@@ -186,6 +194,9 @@ class ReproScene extends Phaser.Scene {
     if (!this.running && this.cells.length === 0) return
 
     for (const cell of this.cells) {
+      // Destroy inner clip handles first so GL resources are freed before the
+      // containers themselves are destroyed.
+      cell.innerClipHandles?.forEach((h) => h.destroy())
       cell.clipHandle?.destroy()
       cell.container.destroy(true)
       for (const obj of cell.extras) obj.destroy()
@@ -221,10 +232,132 @@ class ReproScene extends Phaser.Scene {
           ? '#7c3aed'
           : this.clipMode === 'stencil'
             ? '#92400e'
-            : this.clipMode === 'none'
-              ? '#1f2937'
-              : '#374151'
+            : this.clipMode === 'nested'
+              ? '#7c2d12'
+              : this.clipMode === 'none'
+                ? '#1f2937'
+                : '#374151'
     this.modeBtn.setBackgroundColor(modeColor)
+  }
+
+  /**
+   * Builds the nested clipping demo scene: a 2×2 grid of outer containers each
+   * with a stencil clip, containing two inner containers that are also
+   * stencil-clipped.  Demonstrates two-level INCR/DECR stencil nesting.
+   */
+  private startNestedDemo(): void {
+    const w = this.scale.width
+    const h = this.scale.height
+    const padX = Math.max(20, w * 0.04)
+    const top = HUD_CLEARANCE
+    const bottom = 20
+    const OUTER_COLS = 2
+    const OUTER_ROWS = 2
+    const gapX = 50
+    const gapY = 50
+    const totalW = w - padX * 2
+    const totalH = h - top - bottom
+    const outerW = ((totalW - gapX * (OUTER_COLS - 1)) / OUTER_COLS) * 0.88
+    const outerH = ((totalH - gapY * (OUTER_ROWS - 1)) / OUTER_ROWS) * 0.85
+    const stepX = totalW / OUTER_COLS
+    const stepY = totalH / OUTER_ROWS
+
+    for (let r = 0; r < OUTER_ROWS; r++) {
+      for (let c = 0; c < OUTER_COLS; c++) {
+        const cx = padX + c * stepX + stepX / 2
+        const cy = top + r * stepY + stepY / 2
+
+        // ── Outer container ────────────────────────────────────────────────
+        const outerBg = this.add
+          .rectangle(0, 0, outerW, outerH, 0x1e3a5f, 0.9)
+          .setStrokeStyle(2, 0x60a5fa, 0.8)
+        const outerLabel = this.add.text(
+          -outerW * 0.46,
+          -outerH * 0.46,
+          `OUTER ${r},${c}  [stencil depth 0]`,
+          { fontFamily: 'monospace', fontSize: '13px', color: '#93c5fd' }
+        )
+        // Large text that overflows the outer bounds — outer stencil clips it.
+        const outerOverflow = this.add.text(outerW * 0.3, outerH * 0.37, '« OVF »', {
+          fontFamily: 'monospace',
+          fontSize: '30px',
+          color: '#1d4ed8',
+        })
+
+        // ── Inner container 1 (top-left quadrant of outer) ─────────────────
+        const innerW = outerW * 0.42
+        const innerH = outerH * 0.42
+        const inner1X = -outerW * 0.24
+        const inner1Y = -outerH * 0.14
+
+        const i1Bg = this.add
+          .rectangle(0, 0, innerW, innerH, 0x14532d, 0.95)
+          .setStrokeStyle(1, 0x4ade80, 0.8)
+        const i1Label = this.add.text(-innerW * 0.45, -innerH * 0.43, 'INNER 1  [depth 1]', {
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          color: '#4ade80',
+        })
+        // Overflow text that escapes inner1 bounds (outer stencil will cut it).
+        const i1Overflow = this.add.text(innerW * 0.25, 0, 'OVF!', {
+          fontFamily: 'monospace',
+          fontSize: '38px',
+          color: '#86efac',
+        })
+
+        const inner1 = new Phaser.GameObjects.Container(this, inner1X, inner1Y, [
+          i1Bg,
+          i1Label,
+          i1Overflow,
+        ])
+
+        // ── Inner container 2 (bottom-right quadrant of outer) ─────────────
+        const inner2X = outerW * 0.24
+        const inner2Y = outerH * 0.24
+
+        const i2Bg = this.add
+          .rectangle(0, 0, innerW, innerH, 0x4c1d95, 0.95)
+          .setStrokeStyle(1, 0xc084fc, 0.8)
+        const i2Label = this.add.text(-innerW * 0.45, -innerH * 0.43, 'INNER 2  [depth 1]', {
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          color: '#c084fc',
+        })
+        // Overflow text escaping inner2 bounds in the opposite direction.
+        const i2Overflow = this.add.text(-innerW * 0.6, 0, 'OVF!', {
+          fontFamily: 'monospace',
+          fontSize: '38px',
+          color: '#e9d5ff',
+        })
+
+        const inner2 = new Phaser.GameObjects.Container(this, inner2X, inner2Y, [
+          i2Bg,
+          i2Label,
+          i2Overflow,
+        ])
+
+        const outer = this.add.container(cx, cy, [
+          outerBg,
+          outerLabel,
+          outerOverflow,
+          inner1,
+          inner2,
+        ])
+
+        // Stencil clip at depth 0 (outermost level).
+        const outerHandle = applyStencilClip(outer, outerW, outerH)
+        // Stencil clips at depth 1 (nested inside outer).
+        const inner1Handle = applyStencilClip(inner1, innerW, innerH)
+        const inner2Handle = applyStencilClip(inner2, innerW, innerH)
+
+        this.cells.push({
+          container: outer,
+          extras: [],
+          clipHandle: outerHandle,
+          innerClipHandles: [inner1Handle, inner2Handle],
+        })
+      }
+    }
   }
 
   private toggleMode(): void {
