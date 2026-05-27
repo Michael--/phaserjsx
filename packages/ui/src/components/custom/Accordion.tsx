@@ -89,6 +89,10 @@ export function Accordion(props: AccordionProps): VNodeLike {
     useForceRedraw(20, contentHeight)
   }
 
+  const animatedContentHeight = Math.max(0, contentHeight.value)
+  const resolvedContentHeight = animated ? animatedContentHeight : isOpen ? undefined : 0
+  const resolvedContentVisible = animated ? animatedContentHeight > 0.5 : isOpen
+
   const handleToggle = () => {
     const newState = !isOpen
     setInternalOpen(newState)
@@ -134,7 +138,7 @@ export function Accordion(props: AccordionProps): VNodeLike {
 
       {/* Invisible measurement container */}
       {autoHeight && (
-        <View visible={false} direction="stack">
+        <View visible={false} direction="stack" headless={true} width={0} height={0}>
           <View ref={measurementRef} {...contentTheme}>
             {props.children}
           </View>
@@ -144,9 +148,9 @@ export function Accordion(props: AccordionProps): VNodeLike {
       {/* Content */}
       <View
         direction="column"
-        height={animated ? contentHeight.value : isOpen ? undefined : 0}
+        height={resolvedContentHeight}
         overflow="hidden"
-        visible={animated ? contentHeight.value > 0.5 : isOpen}
+        visible={resolvedContentVisible}
         {...contentTheme}
       >
         {props.children}

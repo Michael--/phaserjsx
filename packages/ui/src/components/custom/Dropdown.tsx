@@ -212,6 +212,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
   const targetRotation = isOpen ? Math.PI : 0
   const [arrowRotation, setArrowRotation] = useSpring(targetRotation, animationConfig)
   useForceRedraw(20, arrowRotation)
+  const resolvedOverlayHeight = Math.max(0, overlayHeight.value)
 
   // Toggle dropdown
   const handleToggle = (event?: GestureEventData) => {
@@ -479,13 +480,13 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
 
   // Render overlay
   const overlay = (
-    <View height={overlayHeight.value} width={overlayPosition.width} overflow="hidden">
+    <View height={resolvedOverlayHeight} width={overlayPosition.width} overflow="hidden">
       <View
         ref={overlayRef}
         direction="column"
         width={'fill'}
         height={'fill'}
-        visible={isOpen || Math.abs(overlayHeight.value) > 0.1}
+        visible={isOpen || resolvedOverlayHeight > 0.1}
         {...overlayTheme}
       >
         {placement === 'top' ? (

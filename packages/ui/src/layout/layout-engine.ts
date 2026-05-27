@@ -301,6 +301,7 @@ const LAYOUT_CYCLE_TIME_MS = 20
 const LAYOUT_CYCLE_MAX = 5
 const LAYOUT_MAX_SIZE = 200000
 const layoutCycleGuard = new WeakMap<Phaser.GameObjects.Container, LayoutCycleState>()
+const deferredParentInvalidations = new WeakSet<Phaser.GameObjects.Container>()
 
 function isCloseSize(a: LayoutSize, b: LayoutSize, epsilon: number): boolean {
   return Math.abs(a.width - b.width) < epsilon && Math.abs(a.height - b.height) < epsilon
@@ -342,6 +343,19 @@ function invalidateParentLayoutIfNeeded(
 
   const newSize = { width: newWidth, height: newHeight }
   const now = Date.now()
+
+  // Size changed - need to recalculate parent layout
+  const parent = container.parentContainer as
+    | (Phaser.GameObjects.Container & {
+        __layoutProps?: LayoutProps
+        __getLayoutSize?: () => { width: number; height: number }
+      })
+    | undefined
+
+  if (!parent || !parent.__layoutProps) {
+    return // No layout parent to invalidate
+  }
+
   const guard = layoutCycleGuard.get(container)
   if (guard) {
     const repeatsPrev = guard.prev ? isCloseSize(guard.prev, newSize, LAYOUT_CYCLE_EPSILON) : false
@@ -356,11 +370,15 @@ function invalidateParentLayoutIfNeeded(
     layoutCycleGuard.set(container, guard)
 
     if (guard.count >= LAYOUT_CYCLE_MAX) {
-      DebugLogger.warn('layout', 'Layout cycle detected, skipping parent invalidation', {
+      DebugLogger.log('layout', 'Layout cycle detected, deferring parent invalidation', {
         container,
         oldSize,
         newSize,
       })
+      guard.count = 0
+      guard.lastTime = 0
+      layoutCycleGuard.set(container, guard)
+      deferParentLayoutInvalidation(container)
       return
     }
   } else {
@@ -371,7 +389,27 @@ function invalidateParentLayoutIfNeeded(
     })
   }
 
-  // Size changed - need to recalculate parent layout
+  DebugLogger.log(
+    'layout',
+    'Container size changed, invalidating parent:',
+    `${oldSize.width}x${oldSize.height} -> ${newWidth}x${newHeight}`
+  )
+  invalidateParentLayout(container)
+}
+
+function deferParentLayoutInvalidation(container: Phaser.GameObjects.Container): void {
+  if (deferredParentInvalidations.has(container)) {
+    return
+  }
+
+  deferredParentInvalidations.add(container)
+  DeferredLayoutQueue.defer(() => {
+    deferredParentInvalidations.delete(container)
+    invalidateParentLayout(container)
+  })
+}
+
+function invalidateParentLayout(container: Phaser.GameObjects.Container): void {
   const parent = container.parentContainer as
     | (Phaser.GameObjects.Container & {
         __layoutProps?: LayoutProps
@@ -380,16 +418,9 @@ function invalidateParentLayoutIfNeeded(
     | undefined
 
   if (!parent || !parent.__layoutProps) {
-    return // No layout parent to invalidate
+    return
   }
 
-  DebugLogger.log(
-    'layout',
-    'Container size changed, invalidating parent:',
-    `${oldSize.width}x${oldSize.height} -> ${newWidth}x${newHeight}`
-  )
-
-  // Get parent's parent for context
   const grandParent = parent.parentContainer as
     | (Phaser.GameObjects.Container & {
         __layoutProps?: LayoutProps
@@ -418,7 +449,6 @@ function invalidateParentLayoutIfNeeded(
     }
   }
 
-  // Recalculate parent layout (will recursively invalidate grandparent if needed)
   calculateLayout(parent, parent.__layoutProps, grandParentSize)
 }
 
