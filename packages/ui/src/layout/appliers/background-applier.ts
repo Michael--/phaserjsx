@@ -2,7 +2,11 @@
  * Background applier - updates background and hit area
  */
 import type * as Phaser from 'phaser'
-import { createBackgroundImage, destroyBackgroundImage } from '../../components/backgroundImage'
+import {
+  createBackgroundImage,
+  destroyBackgroundImage,
+  getBackgroundImageCacheKey,
+} from '../../components/backgroundImage'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout } from '../types'
 
@@ -21,6 +25,12 @@ export function updateBackground(
   if (background) {
     const layoutProps = (container as GameObjectWithLayout).__layoutProps
     if (layoutProps) {
+      const cacheKey = getBackgroundImageCacheKey(layoutProps, width, height)
+
+      if (background.__backgroundCacheKey === cacheKey) {
+        return
+      }
+
       const nextBackground = createBackgroundImage(container.scene, layoutProps, width, height)
 
       if (!nextBackground) return

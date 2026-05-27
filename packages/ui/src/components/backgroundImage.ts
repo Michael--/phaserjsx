@@ -3,10 +3,20 @@ import type { BackgroundProps } from '../core-props'
 
 export type BackgroundImage = Phaser.GameObjects.Image & {
   __isBackground?: boolean
+  __backgroundCacheKey?: string
   __backgroundTextureKey?: string
+  __backgroundTextureReleased?: boolean
 }
 
-let backgroundTextureId = 0
+type BackgroundTextureCacheEntry = {
+  textureKey: string
+  refs: number
+}
+
+const sceneBackgroundTextureCaches = new WeakMap<
+  Phaser.Scene,
+  Map<string, BackgroundTextureCacheEntry>
+>()
 
 function hasRenderableBackground(props: Partial<BackgroundProps>): boolean {
   const hasBackground = props.backgroundColor !== undefined
@@ -53,6 +63,61 @@ function drawBackground(
   }
 }
 
+function getSceneBackgroundTextureCache(
+  scene: Phaser.Scene
+): Map<string, BackgroundTextureCacheEntry> {
+  let cache = sceneBackgroundTextureCaches.get(scene)
+
+  if (!cache) {
+    cache = new Map()
+    sceneBackgroundTextureCaches.set(scene, cache)
+  }
+
+  return cache
+}
+
+function hashCacheKey(value: string): string {
+  let hash = 2166136261
+
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+
+  return (hash >>> 0).toString(36)
+}
+
+function normalizeCornerRadius(radius: BackgroundProps['cornerRadius']): string {
+  if (typeof radius === 'number') {
+    return String(radius)
+  }
+
+  if (!radius) {
+    return '0'
+  }
+
+  return `${radius.tl ?? 0},${radius.tr ?? 0},${radius.bl ?? 0},${radius.br ?? 0}`
+}
+
+export function getBackgroundImageCacheKey(
+  props: Partial<BackgroundProps>,
+  width: number,
+  height: number
+): string {
+  const textureWidth = Math.max(1, Math.ceil(width))
+  const textureHeight = Math.max(1, Math.ceil(height))
+  return [
+    textureWidth,
+    textureHeight,
+    props.backgroundColor ?? 'none',
+    props.backgroundAlpha ?? 1,
+    normalizeCornerRadius(props.cornerRadius),
+    props.borderWidth ?? 0,
+    props.borderColor ?? 'none',
+    props.borderAlpha ?? 1,
+  ].join('|')
+}
+
 export function createBackgroundImage(
   scene: Phaser.Scene,
   props: Partial<BackgroundProps>,
@@ -65,28 +130,65 @@ export function createBackgroundImage(
 
   const textureWidth = Math.max(1, Math.ceil(width))
   const textureHeight = Math.max(1, Math.ceil(height))
-  const textureKey = `__phaserjsx_bg_${backgroundTextureId++}`
-  const graphics = scene.add.graphics()
+  const cacheKey = getBackgroundImageCacheKey(props, textureWidth, textureHeight)
+  const textureKey = `__phaserjsx_bg_${hashCacheKey(cacheKey)}`
+  const cache = getSceneBackgroundTextureCache(scene)
+  let entry = cache.get(cacheKey)
 
-  drawBackground(graphics, props, textureWidth, textureHeight)
-  graphics.generateTexture(textureKey, textureWidth, textureHeight)
-  graphics.destroy()
+  if (!entry || !scene.textures.exists(entry.textureKey)) {
+    const graphics = scene.add.graphics()
 
-  const background = scene.add.image(0, 0, textureKey) as BackgroundImage
+    drawBackground(graphics, props, textureWidth, textureHeight)
+    graphics.generateTexture(textureKey, textureWidth, textureHeight)
+    graphics.destroy()
+
+    entry = { textureKey, refs: 0 }
+    cache.set(cacheKey, entry)
+  }
+
+  entry.refs++
+
+  const background = scene.add.image(0, 0, entry.textureKey) as BackgroundImage
   background.setOrigin(0, 0)
   background.__isBackground = true
-  background.__backgroundTextureKey = textureKey
+  background.__backgroundCacheKey = cacheKey
+  background.__backgroundTextureKey = entry.textureKey
+  background.once('destroy', () => releaseBackgroundImageTexture(background))
 
   return background
 }
 
-export function destroyBackgroundImage(background: BackgroundImage): void {
-  const scene = background.scene
-  const textureKey = background.__backgroundTextureKey
-
-  background.destroy()
-
-  if (scene && textureKey && scene.textures.exists(textureKey)) {
-    scene.textures.remove(textureKey)
+function releaseBackgroundImageTexture(background: BackgroundImage): void {
+  if (background.__backgroundTextureReleased) {
+    return
   }
+
+  const scene = background.scene
+  const cacheKey = background.__backgroundCacheKey
+
+  background.__backgroundTextureReleased = true
+
+  if (!scene || !cacheKey) {
+    return
+  }
+
+  const cache = sceneBackgroundTextureCaches.get(scene)
+  const entry = cache?.get(cacheKey)
+
+  if (!cache || !entry) {
+    return
+  }
+
+  entry.refs--
+
+  if (entry.refs <= 0) {
+    if (scene.textures.exists(entry.textureKey)) {
+      scene.textures.remove(entry.textureKey)
+    }
+    cache.delete(cacheKey)
+  }
+}
+
+export function destroyBackgroundImage(background: BackgroundImage): void {
+  background.destroy()
 }
