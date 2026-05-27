@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Phaser 3/4 Mask Repro</title>
+    <style>
+      html,
+      body,
+      #app {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #111827;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const params = new URLSearchParams(location.search)
+      const PHASER_MAJOR = params.get('phaser') === '4' ? 4 : 3
+      const PHASER_URL =
+        PHASER_MAJOR === 4
+          ? 'https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js'
+          : 'https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js'
+
+      const script = document.createElement('script')
+      script.src = PHASER_URL
+      script.onload = boot
+      document.head.appendChild(script)
+
+      function setVersion(v) {
+        location.search = '?phaser=' + v
+      }
+
+      function boot() {
+        const COLS = 4
+        const ROWS = 4
+
+        class ReproScene extends Phaser.Scene {
+          constructor() {
+            super()
+            this.cells = []
+            this.running = false
+            this.clipped = true
+          }
+
+          create() {
+            this.info = this.add
+              .text(12, 12, '', {
+                fontFamily: 'monospace',
+                fontSize: '14px',
+                color: '#e2e8f0',
+                backgroundColor: '#111827cc',
+                padding: { x: 8, y: 6 },
+              })
+              .setDepth(1000)
+
+            this.makeButton('PHASER 3', PHASER_MAJOR === 3 ? '#3b82f6' : '#1e3a8a', () =>
+              setVersion(3)
+            ).setPosition(520, 120)
+            this.makeButton('PHASER 4', PHASER_MAJOR === 4 ? '#3b82f6' : '#1e3a8a', () =>
+              setVersion(4)
+            ).setPosition(620, 120)
+            this.clipBtn = this.makeButton('CLIP: ON', '#14532d', () =>
+              this.toggleClip()
+            ).setPosition(720, 120)
+
+            this.start()
+          }
+
+          update() {
+            this.info.setText([
+              `Phaser ${PHASER_MAJOR} Mask Repro`,
+              `version: ${Phaser.VERSION}`,
+              `renderer: ${this.game.renderer.type === Phaser.WEBGL ? 'WebGL' : 'Canvas'}`,
+              `clip: ${this.clipped ? 'on' : 'off'}`,
+              `containers: ${this.cells.length}`,
+              `fps: ${Math.round(this.game.loop.actualFps)}`,
+              `size: ${this.scale.width} x ${this.scale.height}`,
+              `dpr: ${window.devicePixelRatio}`,
+            ])
+          }
+
+          makeButton(label, bg, onClick) {
+            return this.add
+              .text(0, 0, label, {
+                fontFamily: 'monospace',
+                fontSize: '13px',
+                color: '#fff',
+                backgroundColor: bg,
+                padding: { x: 9, y: 6 },
+              })
+              .setInteractive({ useHandCursor: true })
+              .on('pointerdown', onClick)
+          }
+
+          start() {
+            if (this.running) return
+
+            const w = this.scale.width
+            const h = this.scale.height
+            const padX = 20
+            const top = 170
+            const gap = 14
+            const cellW = (w - padX * 2 - gap * (COLS - 1)) / COLS
+            const cellH = (h - top - 20 - gap * (ROWS - 1)) / ROWS
+
+            for (let r = 0; r < ROWS; r++) {
+              for (let c = 0; c < COLS; c++) {
+                const cx = padX + c * (cellW + gap) + cellW * 0.5
+                const cy = top + r * (cellH + gap) + cellH * 0.5
+
+                // The blue box is the content; the rotated rectangle is the mask window
+                const maskW = cellW * 0.36
+                const maskH = cellH * 0.9
+                const maskRot = 0.4
+
+                const box = this.add
+                  .rectangle(0, 0, cellW * 0.86, cellH * 0.86, 0x3a86ff, 1)
+                  .setStrokeStyle(2, 0xffffff, 1)
+
+                const container = this.add.container(cx, cy, [box])
+
+                const extras = []
+
+                if (this.clipped && PHASER_MAJOR === 4) {
+                  // Phaser 4: solid white shape used as mask input (setVisible hides it from scene)
+                  const maskShape = this.add
+                    .rectangle(cx, cy, maskW, maskH, 0xffffff, 1)
+                    .setRotation(maskRot)
+                    .setVisible(false)
+                  container.enableFilters()
+                  container.filters.internal.addMask(maskShape, false, this.cameras.main, 'world')
+                  extras.push(maskShape)
+                } else if (this.clipped) {
+                  // Phaser 3: GeometryMask – draw the rotated rectangle as the clip region
+                  const g = this.add.graphics()
+                  g.fillStyle(0xffffff, 1)
+                  g.setVisible(false) // hide the graphics object, but it still works as a mask input
+                  g.save()
+                  g.translateCanvas(cx, cy)
+                  g.rotateCanvas(maskRot)
+                  g.fillRect(-maskW * 0.5, -maskH * 0.5, maskW, maskH)
+                  g.restore()
+                  const mask = g.createGeometryMask()
+                  container.setMask(mask)
+                  extras.push(g)
+                }
+
+                this.cells.push({ container, extras })
+              }
+            }
+
+            this.running = true
+          }
+
+          toggleClip() {
+            this.stop()
+            this.clipped = !this.clipped
+            this.clipBtn.setText(this.clipped ? 'CLIP: ON' : 'CLIP: OFF')
+            this.clipBtn.setStyle({ backgroundColor: this.clipped ? '#14532d' : '#7f1d1d' })
+            this.start()
+          }
+
+          stop() {
+            for (const cell of this.cells) {
+              cell.container.destroy(true)
+              for (const obj of cell.extras) obj.destroy()
+            }
+
+            this.cells = []
+            this.running = false
+          }
+        }
+
+        new Phaser.Game({
+          type: Phaser.WEBGL,
+          parent: 'app',
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#111827',
+          scene: [ReproScene],
+          scale: {
+            mode: Phaser.Scale.RESIZE,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+          },
+        })
+      }
+    </script>
+  </body>
+</html>
