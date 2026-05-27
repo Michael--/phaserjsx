@@ -77,8 +77,8 @@ function ensurePrerenderReset(gl: WebGLRenderingContext, game: Phaser.Game): voi
 
 /**
  * Cached WebGL programs keyed by context.  The stencil mask shader only needs
- * to emit a position; colour output is irrelevant because we always draw with
- * colour writes disabled.
+ * to emit a position; color output is irrelevant because we always draw with
+ * color writes disabled.
  */
 const _progByGl = new WeakMap<WebGLRenderingContext, WebGLProgram>()
 
