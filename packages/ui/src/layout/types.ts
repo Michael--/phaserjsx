@@ -3,6 +3,7 @@
  */
 import type * as Phaser from 'phaser'
 import type { BackgroundProps, EdgeInsets, LayoutProps, TransformProps } from '../core-props'
+import type { BackgroundImage } from '../components/backgroundImage'
 
 /**
  * Size information for layout calculations
@@ -31,7 +32,7 @@ export interface LayoutSizeProvider {
 export type GameObjectWithLayout = Phaser.GameObjects.GameObject & {
   __layoutProps?: LayoutProps & BackgroundProps & TransformProps
   __isBackground?: boolean
-  __background?: Phaser.GameObjects.Graphics
+  __background?: BackgroundImage
   __getLayoutSize?: () => LayoutSize
   __cachedLayoutSize?: LayoutSize
   __originalGetLayoutSize?: () => LayoutSize

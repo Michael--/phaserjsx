@@ -3,6 +3,7 @@
  * It is independent from React/Preact renderers.
  */
 import type * as Phaser from 'phaser'
+import type { BackgroundImage } from './components/backgroundImage'
 import type { Signal } from '@preact/signals-core'
 import type { BackgroundProps, LayoutProps, TransformProps } from './core-props'
 import type { LayoutSize } from './layout/types'
@@ -287,32 +288,32 @@ export function getLayoutProps(
 }
 
 /**
- * Utility function to get background graphics from a container
- * Returns the Graphics object used for backgroundColor, border, cornerRadius
+ * Utility function to get background object from a container
+ * Returns the Image object used for backgroundColor, border, cornerRadius
  * Useful for custom animations or modifications
  * @param container - Phaser container with background
- * @returns Graphics object or undefined if container has no background
+ * @returns Background image or undefined if container has no background
  */
 export function getBackgroundGraphics(
   container: Phaser.GameObjects.Container | null | undefined
-): Phaser.GameObjects.Graphics | undefined {
+): BackgroundImage | undefined {
   if (!container) return undefined
   const withBackground = container as Phaser.GameObjects.Container & {
-    __background?: Phaser.GameObjects.Graphics
+    __background?: BackgroundImage
   }
   return withBackground.__background
 }
 
 /**
- * Hook to get background graphics from a ref
- * Returns the Graphics object used for rendering the background
+ * Hook to get background image from a ref
+ * Returns the Image object used for rendering the background
  * Useful for animating background properties (tint, alpha, etc.)
  * @param ref - Ref to a Phaser container
- * @returns Graphics object or undefined
+ * @returns Background image or undefined
  */
 export function useBackgroundGraphics(ref: {
   current: Phaser.GameObjects.Container | null
-}): Phaser.GameObjects.Graphics | undefined {
+}): BackgroundImage | undefined {
   return getBackgroundGraphics(ref.current)
 }
 

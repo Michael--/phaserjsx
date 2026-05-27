@@ -4,6 +4,11 @@
  */
 import * as Phaser from 'phaser'
 import type { BackgroundProps, LayoutProps } from '../../core-props'
+import {
+  createBackgroundImage,
+  destroyBackgroundImage,
+  type BackgroundImage,
+} from '../backgroundImage'
 
 /**
  * Applies background properties (color, alpha, corner radius, border)
@@ -14,7 +19,7 @@ import type { BackgroundProps, LayoutProps } from '../../core-props'
  */
 export function applyBackgroundProps(
   container: Phaser.GameObjects.Container & {
-    __background?: Phaser.GameObjects.Graphics
+    __background?: BackgroundImage
     __getLayoutSize?: () => { width: number; height: number }
   },
   prev: Partial<BackgroundProps & LayoutProps>,
@@ -55,47 +60,20 @@ export function applyBackgroundProps(
   const nextHasGraphics = nextBgColor !== undefined || nextHasBorder
 
   if (prevHasGraphics && !nextHasGraphics) {
-    // Remove background/border graphics entirely
     if (container.__background) {
-      container.__background.destroy()
+      destroyBackgroundImage(container.__background)
       delete container.__background
     }
   } else if (!prevHasGraphics && nextHasGraphics) {
-    // Add background/border graphics
     if (container.scene) {
-      const background = container.scene.add.graphics()
+      const background = createBackgroundImage(container.scene, next, nextWidth, nextHeight)
 
-      if (nextBgColor !== undefined) {
-        background.fillStyle(nextBgColor, nextBgAlpha)
-      }
-
-      if (nextHasBorder) {
-        background.lineStyle(nextBorderWidth, nextBorderColor, nextBorderAlpha)
-      }
-
-      if (nextCornerRadius !== 0) {
-        if (nextBgColor !== undefined) {
-          background.fillRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
-        }
-        if (nextHasBorder) {
-          background.strokeRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
-        }
-      } else {
-        if (nextBgColor !== undefined) {
-          background.fillRect(0, 0, nextWidth, nextHeight)
-        }
-        if (nextHasBorder) {
-          background.strokeRect(0, 0, nextWidth, nextHeight)
-        }
-      }
+      if (!background) return
 
       container.addAt(background, 0)
       container.__background = background
-      ;(background as Phaser.GameObjects.Graphics & { __isBackground?: boolean }).__isBackground =
-        true
     }
   } else if (container.__background && nextHasGraphics) {
-    // Update existing background - Graphics requires clear and redraw
     const needsRedraw =
       prevBgColor !== nextBgColor ||
       prevBgAlpha !== nextBgAlpha ||
@@ -107,31 +85,14 @@ export function applyBackgroundProps(
       prevBorderAlpha !== nextBorderAlpha
 
     if (needsRedraw) {
-      container.__background.clear()
+      const oldBackground = container.__background
+      const background = createBackgroundImage(container.scene, next, nextWidth, nextHeight)
 
-      if (nextBgColor !== undefined) {
-        container.__background.fillStyle(nextBgColor, nextBgAlpha)
-      }
+      if (!background) return
 
-      if (nextHasBorder) {
-        container.__background.lineStyle(nextBorderWidth, nextBorderColor, nextBorderAlpha)
-      }
-
-      if (nextCornerRadius !== 0) {
-        if (nextBgColor !== undefined) {
-          container.__background.fillRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
-        }
-        if (nextHasBorder) {
-          container.__background.strokeRoundedRect(0, 0, nextWidth, nextHeight, nextCornerRadius)
-        }
-      } else {
-        if (nextBgColor !== undefined) {
-          container.__background.fillRect(0, 0, nextWidth, nextHeight)
-        }
-        if (nextHasBorder) {
-          container.__background.strokeRect(0, 0, nextWidth, nextHeight)
-        }
-      }
+      container.addAt(background, 0)
+      container.__background = background
+      destroyBackgroundImage(oldBackground)
     }
   }
 }

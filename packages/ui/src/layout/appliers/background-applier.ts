@@ -2,6 +2,7 @@
  * Background applier - updates background and hit area
  */
 import type * as Phaser from 'phaser'
+import { createBackgroundImage, destroyBackgroundImage } from '../../components/backgroundImage'
 import { DebugLogger } from '../../dev-config'
 import type { GameObjectWithLayout } from '../types'
 
@@ -18,43 +19,15 @@ export function updateBackground(
 ): void {
   const background = (container as GameObjectWithLayout).__background
   if (background) {
-    // Graphics don't have setSize - need to redraw
-    // Get current fill/stroke styles from __layoutProps
     const layoutProps = (container as GameObjectWithLayout).__layoutProps
     if (layoutProps) {
-      const bgColor = layoutProps.backgroundColor
-      const bgAlpha = layoutProps.backgroundAlpha ?? 1
-      const cornerRadius = layoutProps.cornerRadius ?? 0
-      const borderWidth = layoutProps.borderWidth ?? 0
-      const borderColor = layoutProps.borderColor
-      const borderAlpha = layoutProps.borderAlpha ?? 1
-      const hasBorder = borderWidth > 0 && borderColor !== undefined
+      const nextBackground = createBackgroundImage(container.scene, layoutProps, width, height)
 
-      background.clear()
+      if (!nextBackground) return
 
-      if (bgColor !== undefined) {
-        background.fillStyle(bgColor, bgAlpha)
-      }
-
-      if (hasBorder) {
-        background.lineStyle(borderWidth, borderColor, borderAlpha)
-      }
-
-      if (cornerRadius !== 0) {
-        if (bgColor !== undefined) {
-          background.fillRoundedRect(0, 0, width, height, cornerRadius)
-        }
-        if (hasBorder) {
-          background.strokeRoundedRect(0, 0, width, height, cornerRadius)
-        }
-      } else {
-        if (bgColor !== undefined) {
-          background.fillRect(0, 0, width, height)
-        }
-        if (hasBorder) {
-          background.strokeRect(0, 0, width, height)
-        }
-      }
+      container.addAt(nextBackground, 0)
+      ;(container as GameObjectWithLayout).__background = nextBackground
+      destroyBackgroundImage(background)
 
       DebugLogger.log('layout', 'Background redrawn to:', { width, height })
     }

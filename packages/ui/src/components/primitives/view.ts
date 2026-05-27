@@ -121,6 +121,7 @@ import { applyLayoutProps } from '../appliers/applyLayout'
 import { applyPhaserProps } from '../appliers/applyPhaser'
 import { applyTooltip } from '../appliers/applyTooltip'
 import { applyTransformProps } from '../appliers/applyTransform'
+import type { BackgroundImage } from '../backgroundImage'
 import { createBackground } from '../creators/createBackground'
 import { createGestures } from '../creators/createGestures'
 import { createLayout } from '../creators/createLayout'
@@ -206,7 +207,7 @@ export const viewCreator: HostCreator<'View'> = (scene, props) => {
   // Add background if backgroundColor is provided
   createBackground(
     scene,
-    container as typeof container & { __background?: Phaser.GameObjects.Graphics },
+    container as typeof container & { __background?: BackgroundImage },
     normalizedProps
   )
 
@@ -256,7 +257,7 @@ export const viewPatcher: HostPatcher<'View'> = (node, prev, next) => {
 
   // Background updates
   const container = node as Phaser.GameObjects.Container & {
-    __background?: Phaser.GameObjects.Graphics
+    __background?: BackgroundImage
   }
 
   applyBackgroundProps(container, normalizedPrev, normalizedNext)
