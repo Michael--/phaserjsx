@@ -105,10 +105,10 @@ function ensurePrerenderReset(gl: WebGLRenderingContext, game: Phaser.Game): voi
   game.events.on('prerender', () => {
     const d = _depthByGl.get(gl)
     if (d) d.value = 0
-    // Safety reset: fboDepth should always be 0 at frame start.
+    // Safety reset: rendering should start each frame on the main framebuffer.
     const fbo = _fboPatchByGl.get(gl)
     if (fbo) {
-      fbo.fboDepth = 0
+      fbo.current = null
       fbo.saved = null
     }
   })
@@ -131,9 +131,9 @@ interface SavedStencil {
 }
 
 interface FboPatchState {
-  /** How many FBO levels are currently bound (0 = main framebuffer). */
-  fboDepth: number
-  /** Stencil state saved when entering the first FBO level. */
+  /** Last framebuffer bound through the patched bindFramebuffer call. */
+  current: WebGLFramebuffer | null
+  /** Stencil state saved when transitioning from main framebuffer to an FBO. */
   saved: SavedStencil | null
 }
 
@@ -154,39 +154,42 @@ const _fboPatchByGl = new WeakMap<WebGLRenderingContext, FboPatchState>()
 function ensureFboPatch(gl: WebGLRenderingContext): void {
   if (_fboPatchByGl.has(gl)) return
 
-  const state: FboPatchState = { fboDepth: 0, saved: null }
+  const state: FboPatchState = { current: null, saved: null }
   _fboPatchByGl.set(gl, state)
 
   const origBind = gl.bindFramebuffer.bind(gl)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(gl as any).bindFramebuffer = (target: number, fb: WebGLFramebuffer | null) => {
-    if (fb !== null) {
-      if (state.fboDepth === 0 && (gl.getParameter(gl.STENCIL_TEST) as boolean)) {
-        // First FBO entry while stencil is active: save full state and disable.
-        state.saved = {
-          func: gl.getParameter(gl.STENCIL_FUNC) as number,
-          ref: gl.getParameter(gl.STENCIL_REF) as number,
-          valueMask: gl.getParameter(gl.STENCIL_VALUE_MASK) as number,
-          fail: gl.getParameter(gl.STENCIL_FAIL) as number,
-          zfail: gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL) as number,
-          zpass: gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS) as number,
-          writeMask: gl.getParameter(gl.STENCIL_WRITEMASK) as number,
-        }
-        gl.disable(gl.STENCIL_TEST)
+    const wasMain = state.current === null
+    const willBeMain = fb === null
+    const enteringOffscreen = wasMain && !willBeMain
+    const leavingOffscreen = !wasMain && willBeMain
+
+    if (enteringOffscreen && (gl.getParameter(gl.STENCIL_TEST) as boolean)) {
+      // First FBO entry while stencil is active: save full state and disable.
+      state.saved = {
+        func: gl.getParameter(gl.STENCIL_FUNC) as number,
+        ref: gl.getParameter(gl.STENCIL_REF) as number,
+        valueMask: gl.getParameter(gl.STENCIL_VALUE_MASK) as number,
+        fail: gl.getParameter(gl.STENCIL_FAIL) as number,
+        zfail: gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL) as number,
+        zpass: gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS) as number,
+        writeMask: gl.getParameter(gl.STENCIL_WRITEMASK) as number,
       }
-      state.fboDepth++
-    } else {
-      state.fboDepth = Math.max(0, state.fboDepth - 1)
-      if (state.fboDepth === 0 && state.saved) {
-        // Back to main framebuffer: restore the stencil state.
-        gl.enable(gl.STENCIL_TEST)
-        gl.stencilFunc(state.saved.func, state.saved.ref, state.saved.valueMask)
-        gl.stencilOp(state.saved.fail, state.saved.zfail, state.saved.zpass)
-        gl.stencilMask(state.saved.writeMask)
-        state.saved = null
-      }
+      gl.disable(gl.STENCIL_TEST)
     }
+
     origBind(target, fb)
+    state.current = fb
+
+    if (leavingOffscreen && state.saved) {
+      // Back to main framebuffer: restore the stencil state.
+      gl.enable(gl.STENCIL_TEST)
+      gl.stencilFunc(state.saved.func, state.saved.ref, state.saved.valueMask)
+      gl.stencilOp(state.saved.fail, state.saved.zfail, state.saved.zpass)
+      gl.stencilMask(state.saved.writeMask)
+      state.saved = null
+    }
   }
 }
 
