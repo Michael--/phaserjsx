@@ -105,7 +105,89 @@ function ensurePrerenderReset(gl: WebGLRenderingContext, game: Phaser.Game): voi
   game.events.on('prerender', () => {
     const d = _depthByGl.get(gl)
     if (d) d.value = 0
+    // Safety reset: fboDepth should always be 0 at frame start.
+    const fbo = _fboPatchByGl.get(gl)
+    if (fbo) {
+      fbo.fboDepth = 0
+      fbo.saved = null
+    }
   })
+}
+
+// ── FBO / PostFX stencil-state bridge ────────────────────────────────────────
+
+/**
+ * Saved stencil state captured just before entering an off-screen FBO.
+ * All fields are raw GL enum values / integers from `gl.getParameter`.
+ */
+interface SavedStencil {
+  func: number
+  ref: number
+  valueMask: number
+  fail: number
+  zfail: number
+  zpass: number
+  writeMask: number
+}
+
+interface FboPatchState {
+  /** How many FBO levels are currently bound (0 = main framebuffer). */
+  fboDepth: number
+  /** Stencil state saved when entering the first FBO level. */
+  saved: SavedStencil | null
+}
+
+const _fboPatchByGl = new WeakMap<WebGLRenderingContext, FboPatchState>()
+
+/**
+ * Patches `gl.bindFramebuffer` once per GL context so that the stencil test
+ * is automatically disabled when Phaser switches to an off-screen FBO (for
+ * PostFX / RenderTexture rendering) and restored when switching back.
+ *
+ * Without this, a PostFX child rendered inside a stencil-clipped container
+ * would be invisible: the FBO's stencil buffer starts at 0 while the active
+ * stencil test requires `EQUAL(myDepth + 1)`, causing every fragment to fail.
+ *
+ * The patch is installed once per GL context and remains active for the
+ * lifetime of the renderer.  It is a no-op when no stencil clip is active.
+ */
+function ensureFboPatch(gl: WebGLRenderingContext): void {
+  if (_fboPatchByGl.has(gl)) return
+
+  const state: FboPatchState = { fboDepth: 0, saved: null }
+  _fboPatchByGl.set(gl, state)
+
+  const origBind = gl.bindFramebuffer.bind(gl)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(gl as any).bindFramebuffer = (target: number, fb: WebGLFramebuffer | null) => {
+    if (fb !== null) {
+      if (state.fboDepth === 0 && (gl.getParameter(gl.STENCIL_TEST) as boolean)) {
+        // First FBO entry while stencil is active: save full state and disable.
+        state.saved = {
+          func: gl.getParameter(gl.STENCIL_FUNC) as number,
+          ref: gl.getParameter(gl.STENCIL_REF) as number,
+          valueMask: gl.getParameter(gl.STENCIL_VALUE_MASK) as number,
+          fail: gl.getParameter(gl.STENCIL_FAIL) as number,
+          zfail: gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL) as number,
+          zpass: gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS) as number,
+          writeMask: gl.getParameter(gl.STENCIL_WRITEMASK) as number,
+        }
+        gl.disable(gl.STENCIL_TEST)
+      }
+      state.fboDepth++
+    } else {
+      state.fboDepth = Math.max(0, state.fboDepth - 1)
+      if (state.fboDepth === 0 && state.saved) {
+        // Back to main framebuffer: restore the stencil state.
+        gl.enable(gl.STENCIL_TEST)
+        gl.stencilFunc(state.saved.func, state.saved.ref, state.saved.valueMask)
+        gl.stencilOp(state.saved.fail, state.saved.zfail, state.saved.zpass)
+        gl.stencilMask(state.saved.writeMask)
+        state.saved = null
+      }
+    }
+    origBind(target, fb)
+  }
 }
 
 // ── SDF stencil mask shader ───────────────────────────────────────────────────
@@ -287,8 +369,9 @@ function drawMaskShape(
   ] as const
 
   for (let i = 0; i < 4; i++) {
-    const lx = corners[i]![0]
-    const ly = corners[i]![1]
+    const corner = corners[i] as [number, number]
+    const lx = corner[0]
+    const ly = corner[1]
     // World position via affine transform.
     const wx = a * lx + c * ly + tx
     const wy = b * lx + d * ly + ty
@@ -395,6 +478,7 @@ export function applyStencilClip(
   const gl = renderer.gl as GLPolyfilled
 
   ensurePrerenderReset(gl, container.scene.game)
+  ensureFboPatch(gl)
 
   // Persistent vertex buffer: 4 vertices × 4 floats × 4 bytes = 64 bytes.
   const vertBuf = gl.createBuffer() as WebGLBuffer
