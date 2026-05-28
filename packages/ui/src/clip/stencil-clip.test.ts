@@ -48,7 +48,7 @@ function makeWebGlContainer() {
     bindFramebuffer: vi.fn(),
   }
 
-  const container = new Phaser.GameObjects.Container()
+  const container = new Phaser.GameObjects.Container(null as unknown as Phaser.Scene)
   container.scene = {
     renderer: {
       type: Phaser.WEBGL,
@@ -75,10 +75,13 @@ describe('stencil clip sources', () => {
 describe('applyStencilClip', () => {
   it('attaches, reuses, updates, and destroys a WebGL stencil clip handle', () => {
     const { container, gl } = makeWebGlContainer()
+    const renderStepContainer = container as Phaser.GameObjects.Container & {
+      _renderSteps: unknown[]
+    }
 
     const handle = applyStencilClip(container, { width: 100, height: 50 })
     expect(getStencilClipHandle(container)).toBe(handle)
-    expect(container._renderSteps).toHaveLength(1)
+    expect(renderStepContainer._renderSteps).toHaveLength(1)
 
     const sameHandle = applyStencilClip(container, {
       kind: 'bitmap',
@@ -86,14 +89,14 @@ describe('applyStencilClip', () => {
       alphaThreshold: 0.25,
     })
     expect(sameHandle).toBe(handle)
-    expect(container._renderSteps).toHaveLength(1)
+    expect(renderStepContainer._renderSteps).toHaveLength(1)
 
     handle.update({ width: 80, height: 40 })
     handle.destroy()
 
     expect(gl.deleteBuffer).toHaveBeenCalledWith({ id: 'buffer' })
     expect(getStencilClipHandle(container)).toBeUndefined()
-    expect(container._renderSteps).toHaveLength(0)
+    expect(renderStepContainer._renderSteps).toHaveLength(0)
   })
 })
 
@@ -119,7 +122,7 @@ describe('stencil clip extension', () => {
 
   it('returns the container for chainable extension calls', () => {
     installStencilClipExtension()
-    const container = new Phaser.GameObjects.Container()
+    const container = new Phaser.GameObjects.Container(null as unknown as Phaser.Scene)
     container.scene = { renderer: { type: 0 } } as unknown as Phaser.Scene
 
     expect(container.setStencilClip({ width: 10, height: 20 })).toBe(container)
