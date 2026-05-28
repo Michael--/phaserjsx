@@ -142,7 +142,7 @@ describe('drawMaskShape', () => {
       {
         getX: (x: number) => x + 100,
         getY: (_x: number, y: number) => y + 50,
-      } as Phaser.GameObjects.Components.TransformMatrix,
+      } as unknown as Phaser.GameObjects.Components.TransformMatrix,
       {
         kind: 'roundRect',
         width: 20,
