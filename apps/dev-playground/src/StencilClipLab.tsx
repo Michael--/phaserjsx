@@ -39,6 +39,13 @@ const SCENARIO_OPTIONS = [
   { value: 'nested', label: 'Nested' },
 ]
 
+const LAB_WIDTH = 960
+const LAB_HEIGHT = 500
+
+function usesDedicatedCamera(scenario: ClipLabScenario): boolean {
+  return scenario === 'scroll' || scenario === 'zoom' || scenario === 'viewport'
+}
+
 function addLabel(
   scene: Phaser.Scene,
   parent: Phaser.GameObjects.Container,
@@ -133,17 +140,17 @@ function addSceneContent(
   scenario: ClipLabScenario,
   handles: StencilClipHandle[]
 ): void {
-  root.add(scene.add.rectangle(0, 0, 1140, 680, 0x111827, 1).setOrigin(0))
+  root.add(scene.add.rectangle(0, 0, LAB_WIDTH, LAB_HEIGHT, 0x111827, 1).setOrigin(0))
 
-  for (let x = 0; x <= 1140; x += 40) {
+  for (let x = 0; x <= LAB_WIDTH; x += 40) {
     const line = scene.add
-      .rectangle(x, 0, 1, 680, 0x334155, x % 160 === 0 ? 0.5 : 0.22)
+      .rectangle(x, 0, 1, LAB_HEIGHT, 0x334155, x % 160 === 0 ? 0.5 : 0.22)
       .setOrigin(0)
     root.add(line)
   }
-  for (let y = 0; y <= 680; y += 40) {
+  for (let y = 0; y <= LAB_HEIGHT; y += 40) {
     const line = scene.add
-      .rectangle(0, y, 1140, 1, 0x334155, y % 160 === 0 ? 0.5 : 0.22)
+      .rectangle(0, y, LAB_WIDTH, 1, 0x334155, y % 160 === 0 ? 0.5 : 0.22)
       .setOrigin(0)
     root.add(line)
   }
@@ -182,11 +189,11 @@ function configureLabCamera(
   const vw =
     scenario === 'viewport'
       ? Math.min(720, Math.max(360, scene.scale.width - 160))
-      : Math.min(980, Math.max(420, scene.scale.width - 120))
+      : Math.min(LAB_WIDTH, Math.max(420, scene.scale.width - 120))
   const vh =
     scenario === 'viewport'
       ? Math.min(340, Math.max(260, scene.scale.height - 330))
-      : Math.min(460, Math.max(300, scene.scale.height - 290))
+      : Math.min(LAB_HEIGHT, Math.max(300, scene.scale.height - 290))
   const vx = Math.max(32, Math.floor((scene.scale.width - vw) / 2))
   const vy = Math.min(310, Math.max(220, scene.scale.height - vh - 36))
 
@@ -208,6 +215,12 @@ function configureLabCamera(
   }
 }
 
+function positionLabRoot(root: Phaser.GameObjects.Container, scene: Phaser.Scene): void {
+  const x = Math.max(32, Math.floor((scene.scale.width - LAB_WIDTH) / 2))
+  const y = Math.min(310, Math.max(220, scene.scale.height - LAB_HEIGHT - 36))
+  root.setPosition(x, y)
+}
+
 export function StencilClipLab() {
   const scene = useScene()
   const tokens = useThemeTokens()
@@ -225,14 +238,21 @@ export function StencilClipLab() {
   useEffect(() => {
     const root = scene.add.container(0, 0)
     const handles: StencilClipHandle[] = []
+    const dedicatedCamera = usesDedicatedCamera(scenario)
     addSceneContent(scene, root, scenario, handles)
 
-    const camera = scene.cameras.add(0, 0, 800, 400)
-    configureLabCamera(camera, scene, scenario)
-    scene.cameras.main.ignore(root)
+    let camera: Phaser.Cameras.Scene2D.Camera | undefined
 
-    const ignoredByLab = scene.children.list.filter((child) => child !== root)
-    camera.ignore(ignoredByLab)
+    if (dedicatedCamera) {
+      camera = scene.cameras.add(0, 0, 800, 400)
+      configureLabCamera(camera, scene, scenario)
+      scene.cameras.main.ignore(root)
+
+      const ignoredByLab = scene.children.list.filter((child) => child !== root)
+      camera.ignore(ignoredByLab)
+    } else {
+      positionLabRoot(root, scene)
+    }
 
     let t = 0
     const update = () => {
@@ -250,7 +270,9 @@ export function StencilClipLab() {
       scene.events.off(Phaser.Scenes.Events.UPDATE, update)
       handles.forEach((handle) => handle.destroy())
       root.destroy(true)
-      scene.cameras.remove(camera, true)
+      if (camera) {
+        scene.cameras.remove(camera, true)
+      }
     }
   }, [scenario, revision])
 
