@@ -30,6 +30,12 @@ type FilterableObject = Phaser.GameObjects.GameObject & {
   }
 }
 
+type ClipCaseOptions = {
+  rounded?: boolean
+  postfx?: boolean
+  nested?: boolean
+}
+
 const SCENARIO_OPTIONS = [
   { value: 'default', label: 'Default' },
   { value: 'scroll', label: 'Scroll' },
@@ -62,24 +68,13 @@ function addLabel(
   )
 }
 
-function addClipCase(
+function createCaseContent(
   scene: Phaser.Scene,
-  parent: Phaser.GameObjects.Container,
-  handles: StencilClipHandle[],
-  x: number,
-  y: number,
-  label: string,
-  options: { rounded?: boolean; postfx?: boolean; nested?: boolean } = {}
-): Phaser.GameObjects.Container {
-  const clipW = 190
-  const clipH = 122
-  const container = scene.add.container(x, y)
-
+  clipW: number,
+  clipH: number,
+  options: ClipCaseOptions
+): Phaser.GameObjects.GameObject[] {
   const bg = scene.add.rectangle(0, 0, clipW, clipH, 0x0f172a, 0.35).setOrigin(0)
-  const border = scene.add
-    .rectangle(0, 0, clipW, clipH)
-    .setOrigin(0)
-    .setStrokeStyle(2, 0xf8fafc, 0.45)
   const stripA = scene.add.rectangle(-42, 12, 270, 36, 0x22c55e, 0.85).setOrigin(0)
   const stripB = scene.add.rectangle(22, 54, 260, 34, 0x38bdf8, 0.82).setOrigin(0)
   const stripC = scene.add.rectangle(-64, 92, 310, 34, 0xf59e0b, 0.78).setOrigin(0)
@@ -88,8 +83,28 @@ function addClipCase(
     fontSize: '26px',
     color: '#f43f5e',
   })
+  const border = scene.add
+    .rectangle(0, 0, clipW, clipH)
+    .setOrigin(0)
+    .setStrokeStyle(2, options.rounded ? 0xf8fafc : 0x93c5fd, 0.58)
 
-  container.add([bg, stripA, stripB, stripC, overflowText, border])
+  return [bg, stripA, stripB, stripC, overflowText, border]
+}
+
+function addClipCase(
+  scene: Phaser.Scene,
+  parent: Phaser.GameObjects.Container,
+  handles: StencilClipHandle[],
+  x: number,
+  y: number,
+  label: string,
+  options: ClipCaseOptions = {}
+): Phaser.GameObjects.Container {
+  const clipW = 190
+  const clipH = 122
+  const container = scene.add.container(x, y)
+
+  container.add(createCaseContent(scene, clipW, clipH, options))
 
   if (options.postfx) {
     const fxRect = scene.add.rectangle(28, 24, 122, 58, 0xffffff, 0.9).setOrigin(0)
@@ -134,6 +149,21 @@ function addClipCase(
   return container
 }
 
+function addReferenceCase(
+  scene: Phaser.Scene,
+  parent: Phaser.GameObjects.Container,
+  x: number,
+  y: number,
+  label: string
+): void {
+  const clipW = 190
+  const clipH = 122
+  const container = scene.add.container(x, y)
+  container.add(createCaseContent(scene, clipW, clipH, {}))
+  parent.add(container)
+  addLabel(scene, parent, x, y + clipH + 10, label)
+}
+
 function addSceneContent(
   scene: Phaser.Scene,
   root: Phaser.GameObjects.Container,
@@ -164,20 +194,52 @@ function addSceneContent(
     'White frames are expected clip bounds. Colored content should not leak.'
   )
 
-  addClipCase(scene, root, handles, 70, 112, 'rect')
-  addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
-  addClipCase(scene, root, handles, 586, 112, 'nested', { rounded: true, nested: true })
+  if (scenario === 'nested') {
+    addClipCase(scene, root, handles, 70, 112, 'outer + inner', { rounded: true, nested: true })
+    addClipCase(scene, root, handles, 328, 112, 'outer square + inner', { nested: true })
+    addClipCase(scene, root, handles, 586, 112, 'outer rounded + inner', {
+      rounded: true,
+      nested: true,
+    })
+    addClipCase(scene, root, handles, 70, 322, 'nested comparison', {
+      rounded: true,
+      nested: true,
+    })
+    return
+  }
 
   if (scenario === 'postfx') {
+    addClipCase(scene, root, handles, 70, 112, 'rect')
+    addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
     addClipCase(scene, root, handles, 70, 322, 'postfx child', { rounded: true, postfx: true })
     addClipCase(scene, root, handles, 328, 322, 'postfx nested', {
       rounded: true,
       postfx: true,
       nested: true,
     })
+    return
+  }
+
+  if (usesDedicatedCamera(scenario)) {
+    addReferenceCase(scene, root, 190, 112, 'unclipped camera reference')
+    addClipCase(scene, root, handles, 450, 112, 'clipped rect')
+    addClipCase(scene, root, handles, 710, 112, 'clipped rounded', { rounded: true })
+    addClipCase(scene, root, handles, 450, 322, 'clipped nested', {
+      rounded: true,
+      nested: true,
+    })
+    return
+  }
+
+  if (scenario === 'default') {
+    addClipCase(scene, root, handles, 70, 112, 'rect')
+    addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
+    addReferenceCase(scene, root, 586, 112, 'unclipped reference')
+    addClipCase(scene, root, handles, 70, 322, 'rect comparison')
+    addClipCase(scene, root, handles, 328, 322, 'rounded comparison', { rounded: true })
   } else {
-    addClipCase(scene, root, handles, 70, 322, 'comparison')
-    addClipCase(scene, root, handles, 328, 322, 'comparison rounded', { rounded: true })
+    addClipCase(scene, root, handles, 70, 112, 'rect')
+    addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
   }
 }
 
@@ -256,10 +318,10 @@ export function StencilClipLab() {
 
     let t = 0
     const update = () => {
-      t += 0.018
+      t += 0.1
       root.list.forEach((child) => {
         if (child instanceof Phaser.GameObjects.Container && child.list.length > 0) {
-          child.rotation = Math.sin(t + child.x * 0.004) * 0.015
+          child.rotation = Math.sin(t + child.x * 0.004) * 0.025
         }
       })
     }
@@ -308,15 +370,6 @@ export function StencilClipLab() {
           />
         </View>
       </View>
-
-      <View
-        width={960}
-        height={500}
-        borderColor={tokens?.colors.border.DEFAULT.toNumber()}
-        borderWidth={1}
-        cornerRadius={8}
-        backgroundColor={tokens?.colors.background.DEFAULT.toNumber()}
-      />
     </View>
   )
 }
