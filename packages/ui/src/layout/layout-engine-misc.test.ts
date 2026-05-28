@@ -1,7 +1,7 @@
 /**
  * Tests for miscellaneous layout features (nested containers with padding, etc.)
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { LayoutProps } from '../core-props'
 import { calculateLayout } from './layout-engine'
 import { mockContainer, setupLayoutTests } from './layout-engine-test-utils'
@@ -108,5 +108,76 @@ describe('nested containers with padding', () => {
     expect(level2.width).toBe(800)
     expect(level3.width).toBe(780)
     expect(inner.width).toBe(760)
+  })
+})
+
+describe('overflow stencil clipping', () => {
+  it('passes asymmetric cornerRadius through overflow hidden clip updates', () => {
+    const container = mockContainer()
+    const child = mockContainer(20, 10, false)
+    container.add(child)
+
+    const setStencilClip = vi.fn()
+    const updateStencilClip = vi.fn()
+    const clearStencilClip = vi.fn()
+
+    const handle = { update: vi.fn(), destroy: vi.fn() }
+
+    Object.assign(container, {
+      setStencilClip(source: unknown) {
+        setStencilClip(source)
+        return this
+      },
+      updateStencilClip(source: unknown) {
+        updateStencilClip(source)
+        return this
+      },
+      clearStencilClip() {
+        clearStencilClip()
+        return this
+      },
+      getStencilClipHandle() {
+        return handle
+      },
+    })
+
+    calculateLayout(container, {
+      direction: 'column',
+      width: 250,
+      height: 60,
+      overflow: 'hidden',
+      cornerRadius: { tl: 10, tr: 20, br: 30, bl: 0 },
+    } as LayoutProps)
+
+    expect(setStencilClip).toHaveBeenCalledTimes(1)
+    expect(setStencilClip).toHaveBeenCalledWith({
+      width: 250,
+      height: 60,
+      cornerRadius: { tl: 10, tr: 20, br: 30, bl: 0 },
+    })
+
+    calculateLayout(container, {
+      direction: 'column',
+      width: 250,
+      height: 60,
+      overflow: 'hidden',
+      cornerRadius: { tl: 12, tr: 16, br: 22, bl: 4 },
+    } as LayoutProps)
+
+    expect(updateStencilClip).toHaveBeenCalledTimes(1)
+    expect(updateStencilClip).toHaveBeenCalledWith({
+      width: 250,
+      height: 60,
+      cornerRadius: { tl: 12, tr: 16, br: 22, bl: 4 },
+    })
+
+    calculateLayout(container, {
+      direction: 'column',
+      width: 250,
+      height: 60,
+      overflow: 'visible',
+    } as LayoutProps)
+
+    expect(clearStencilClip).toHaveBeenCalledTimes(1)
   })
 })
