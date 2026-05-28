@@ -19,6 +19,7 @@ import {
   View,
 } from '@number10/phaserjsx'
 import { Icon, type IconType } from './components/Icon'
+import { StencilClipLab } from './StencilClipLab'
 import type { AppProps } from './types'
 
 // Helper to apply color preset and update global theme
@@ -571,7 +572,7 @@ function TestUI() {
  */
 export function App(props: AppProps & MountProps) {
   const tokens = useThemeTokens()
-  const [mode, setMode] = useState<'perf' | 'showcase'>('showcase')
+  const [mode, setMode] = useState<'clip' | 'perf' | 'showcase'>('clip')
 
   return (
     <View width={'fill'} height={'fill'}>
@@ -590,16 +591,17 @@ export function App(props: AppProps & MountProps) {
             <RadioGroup
               direction="row"
               options={[
+                { value: 'clip', label: 'Stencil Lab' },
                 { value: 'perf', label: 'Perf Lab' },
                 { value: 'showcase', label: 'Showcase' },
               ]}
               value={mode}
-              onChange={(value) => setMode(value as 'perf' | 'showcase')}
+              onChange={(value) => setMode(value as 'clip' | 'perf' | 'showcase')}
             />
           </View>
 
           {/* Main Content */}
-          {mode === 'perf' ? <PerfLab /> : <TestUI />}
+          {mode === 'clip' ? <StencilClipLab /> : mode === 'perf' ? <PerfLab /> : <TestUI />}
         </View>
       </ScrollView>
     </View>
