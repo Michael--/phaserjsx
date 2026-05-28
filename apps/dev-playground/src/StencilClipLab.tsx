@@ -73,21 +73,27 @@ function createCaseContent(
   clipH: number,
   options: ClipCaseOptions
 ): Phaser.GameObjects.GameObject[] {
-  const bg = scene.add.rectangle(0, 0, clipW, clipH, 0x0f172a, 0.35).setOrigin(0)
+  // paint a background with a true inner border
+  const size = 3
+  const bg = scene.add
+    .graphics()
+    .fillStyle(options.rounded ? 0xf8fafc : 0x93c5fd, 0.58)
+    // the border
+    .fillRoundedRect(0, 0, clipW, clipH, options.rounded ? 18 : 0)
+    .fillStyle(0x0f172a, 0.65)
+    // the background
+    .fillRoundedRect(size, size, clipW - size * 2, clipH - size * 2, options.rounded ? 14 : 0)
   const stripA = scene.add.rectangle(-42, 12, 270, 36, 0x22c55e, 0.85).setOrigin(0)
   const stripB = scene.add.rectangle(22, 54, 260, 34, 0x38bdf8, 0.82).setOrigin(0)
   const stripC = scene.add.rectangle(-64, 92, 310, 34, 0xf59e0b, 0.78).setOrigin(0)
   const overflowText = scene.add.text(112, 34, 'OVERFLOW', {
     fontFamily: 'monospace',
+    fontStyle: 'bold',
     fontSize: '26px',
     color: '#f43f5e',
   })
-  const border = scene.add
-    .rectangle(0, 0, clipW, clipH)
-    .setOrigin(0)
-    .setStrokeStyle(2, options.rounded ? 0xf8fafc : 0x93c5fd, 0.58)
 
-  return [bg, stripA, stripB, stripC, overflowText, border]
+  return [bg, stripA, stripB, stripC, overflowText]
 }
 
 function addClipCase(
