@@ -206,10 +206,6 @@ function addSceneContent(
       rounded: true,
       nested: true,
     })
-    addClipCase(scene, root, handles, 70, 322, 'nested comparison', {
-      rounded: true,
-      nested: true,
-    })
     return
   }
 
@@ -237,11 +233,9 @@ function addSceneContent(
   }
 
   if (scenario === 'default') {
-    addClipCase(scene, root, handles, 70, 112, 'rect')
-    addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
-    addReferenceCase(scene, root, 586, 112, 'unclipped reference')
-    addClipCase(scene, root, handles, 70, 322, 'rect comparison')
-    addClipCase(scene, root, handles, 328, 322, 'rounded comparison', { rounded: true })
+    addReferenceCase(scene, root, 70, 112, 'unclipped reference')
+    addClipCase(scene, root, handles, 328, 112, 'rect')
+    addClipCase(scene, root, handles, 586, 112, 'rounded', { rounded: true })
   } else {
     addClipCase(scene, root, handles, 70, 112, 'rect')
     addClipCase(scene, root, handles, 328, 112, 'rounded', { rounded: true })
