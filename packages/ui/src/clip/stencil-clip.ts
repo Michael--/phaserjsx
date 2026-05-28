@@ -18,6 +18,8 @@
  * render time, so no per-layout world-position tracking is needed.
  */
 import * as Phaser from 'phaser'
+import { getDepth, ensurePrerenderReset } from './stencil-clip-depth'
+import { ensureFboPatch, resetFboPatchState } from './stencil-clip-fbo-bridge'
 import { drawMaskShape, type GLPolyfilled } from './stencil-clip-renderer'
 import { mergeMaskState, toMaskState } from './stencil-clip-state'
 import type { StencilClipHandle, StencilClipSource } from './stencil-clip-types'
@@ -40,124 +42,6 @@ export { isBitmapStencilClipSource } from './stencil-clip-state'
 type ContainerRenderFn = (renderer: any, go: any, ...rest: any[]) => void
 
 type RNManager = { finishBatch(): void }
-
-// ── Per-GL-context stencil depth counter ─────────────────────────────────────
-
-/**
- * Shared depth counter per GL context.
- * Incremented before each clip's INCR pass, decremented after the DECR pass.
- * Reset to 0 at the start of every frame via a `prerender` hook.
- */
-const _depthByGl = new WeakMap<WebGLRenderingContext, { value: number }>()
-
-function getDepth(gl: WebGLRenderingContext): { value: number } {
-  let d = _depthByGl.get(gl)
-  if (!d) {
-    d = { value: 0 }
-    _depthByGl.set(gl, d)
-  }
-  return d
-}
-
-const _prerenderHooked = new WeakSet<Phaser.Game>()
-
-/**
- * Registers a per-frame `prerender` listener that resets the depth counter.
- * Registered at most once per Phaser.Game instance.
- */
-function ensurePrerenderReset(gl: WebGLRenderingContext, game: Phaser.Game): void {
-  if (_prerenderHooked.has(game)) return
-  _prerenderHooked.add(game)
-  game.events.on('prerender', () => {
-    const d = _depthByGl.get(gl)
-    if (d) d.value = 0
-    // Safety reset: rendering should start each frame on the main framebuffer.
-    const fbo = _fboPatchByGl.get(gl)
-    if (fbo) {
-      fbo.current = null
-      fbo.saved = null
-    }
-  })
-}
-
-// ── FBO / PostFX stencil-state bridge ────────────────────────────────────────
-
-/**
- * Saved stencil state captured just before entering an off-screen FBO.
- * All fields are raw GL enum values / integers from `gl.getParameter`.
- */
-interface SavedStencil {
-  func: number
-  ref: number
-  valueMask: number
-  fail: number
-  zfail: number
-  zpass: number
-  writeMask: number
-}
-
-interface FboPatchState {
-  /** Last framebuffer bound through the patched bindFramebuffer call. */
-  current: WebGLFramebuffer | null
-  /** Stencil state saved when transitioning from main framebuffer to an FBO. */
-  saved: SavedStencil | null
-}
-
-const _fboPatchByGl = new WeakMap<WebGLRenderingContext, FboPatchState>()
-
-/**
- * Patches `gl.bindFramebuffer` once per GL context so that the stencil test
- * is automatically disabled when Phaser switches to an off-screen FBO (for
- * PostFX / RenderTexture rendering) and restored when switching back.
- *
- * Without this, a PostFX child rendered inside a stencil-clipped container
- * would be invisible: the FBO's stencil buffer starts at 0 while the active
- * stencil test requires `EQUAL(myDepth + 1)`, causing every fragment to fail.
- *
- * The patch is installed once per GL context and remains active for the
- * lifetime of the renderer.  It is a no-op when no stencil clip is active.
- */
-function ensureFboPatch(gl: WebGLRenderingContext): void {
-  if (_fboPatchByGl.has(gl)) return
-
-  const state: FboPatchState = { current: null, saved: null }
-  _fboPatchByGl.set(gl, state)
-
-  const origBind = gl.bindFramebuffer.bind(gl)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(gl as any).bindFramebuffer = (target: number, fb: WebGLFramebuffer | null) => {
-    const wasMain = state.current === null
-    const willBeMain = fb === null
-    const enteringOffscreen = wasMain && !willBeMain
-    const leavingOffscreen = !wasMain && willBeMain
-
-    if (enteringOffscreen && (gl.getParameter(gl.STENCIL_TEST) as boolean)) {
-      // First FBO entry while stencil is active: save full state and disable.
-      state.saved = {
-        func: gl.getParameter(gl.STENCIL_FUNC) as number,
-        ref: gl.getParameter(gl.STENCIL_REF) as number,
-        valueMask: gl.getParameter(gl.STENCIL_VALUE_MASK) as number,
-        fail: gl.getParameter(gl.STENCIL_FAIL) as number,
-        zfail: gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL) as number,
-        zpass: gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS) as number,
-        writeMask: gl.getParameter(gl.STENCIL_WRITEMASK) as number,
-      }
-      gl.disable(gl.STENCIL_TEST)
-    }
-
-    origBind(target, fb)
-    state.current = fb
-
-    if (leavingOffscreen && state.saved) {
-      // Back to main framebuffer: restore the stencil state.
-      gl.enable(gl.STENCIL_TEST)
-      gl.stencilFunc(state.saved.func, state.saved.ref, state.saved.valueMask)
-      gl.stencilOp(state.saved.fail, state.saved.zfail, state.saved.zpass)
-      gl.stencilMask(state.saved.writeMask)
-      state.saved = null
-    }
-  }
-}
 
 // ── Attachment symbol ─────────────────────────────────────────────────────────
 
@@ -225,7 +109,7 @@ export function applyStencilClip(
   const renderer = container.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer
   const gl = renderer.gl as GLPolyfilled
 
-  ensurePrerenderReset(gl, container.scene.game)
+  ensurePrerenderReset(gl, container.scene.game, resetFboPatchState)
   ensureFboPatch(gl)
 
   // Persistent vertex buffer: 4 vertices × 4 floats × 4 bytes = 64 bytes.
