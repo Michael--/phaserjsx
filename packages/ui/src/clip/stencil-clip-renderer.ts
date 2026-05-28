@@ -144,6 +144,7 @@ const STRIDE = 16
 function drawRoundRectMaskShape(
   gl: GLPolyfilled,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
+  cameraMatrix: Phaser.GameObjects.Components.TransformMatrix | undefined,
   offsetX: number,
   offsetY: number,
   w: number,
@@ -173,8 +174,10 @@ function drawRoundRectMaskShape(
     const ly = corner[1]
     const wx = a * lx + c * ly + tx
     const wy = b * lx + d * ly + ty
-    verts[i * 4 + 0] = (wx / logW) * 2 - 1
-    verts[i * 4 + 1] = 1 - (wy / logH) * 2
+    const sx = cameraMatrix ? cameraMatrix.getX(wx, wy) : wx
+    const sy = cameraMatrix ? cameraMatrix.getY(wx, wy) : wy
+    verts[i * 4 + 0] = (sx / logW) * 2 - 1
+    verts[i * 4 + 1] = 1 - (sy / logH) * 2
     verts[i * 4 + 2] = lx - cx
     verts[i * 4 + 3] = ly - cy
   }
@@ -246,6 +249,7 @@ function resolveBitmapFrame(scene: Phaser.Scene, source: BitmapMaskState): Bitma
 function drawBitmapMaskShape(
   gl: GLPolyfilled,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
+  cameraMatrix: Phaser.GameObjects.Components.TransformMatrix | undefined,
   source: BitmapMaskState,
   frameInfo: BitmapFrameInfo,
   logW: number,
@@ -272,8 +276,10 @@ function drawBitmapMaskShape(
     const ly = corner[1]
     const wx = a * lx + c * ly + tx
     const wy = b * lx + d * ly + ty
-    verts[i * 4 + 0] = (wx / logW) * 2 - 1
-    verts[i * 4 + 1] = 1 - (wy / logH) * 2
+    const sx = cameraMatrix ? cameraMatrix.getX(wx, wy) : wx
+    const sy = cameraMatrix ? cameraMatrix.getY(wx, wy) : wy
+    verts[i * 4 + 0] = (sx / logW) * 2 - 1
+    verts[i * 4 + 1] = 1 - (sy / logH) * 2
     verts[i * 4 + 2] = corner[2]
     verts[i * 4 + 3] = corner[3]
   }
@@ -320,6 +326,7 @@ export function drawMaskShape(
   gl: GLPolyfilled,
   scene: Phaser.Scene,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
+  cameraMatrix: Phaser.GameObjects.Components.TransformMatrix | undefined,
   source: MaskState,
   logW: number,
   logH: number,
@@ -329,13 +336,14 @@ export function drawMaskShape(
   if (source.kind === 'bitmap') {
     const frameInfo = resolveBitmapFrame(scene, source)
     if (!frameInfo) return
-    drawBitmapMaskShape(gl, matrix, source, frameInfo, logW, logH, vertBuf, verts)
+    drawBitmapMaskShape(gl, matrix, cameraMatrix, source, frameInfo, logW, logH, vertBuf, verts)
     return
   }
 
   drawRoundRectMaskShape(
     gl,
     matrix,
+    cameraMatrix,
     source.offsetX,
     source.offsetY,
     source.width,

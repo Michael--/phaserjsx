@@ -42,6 +42,14 @@ export { isBitmapStencilClipSource } from './stencil-clip-state'
 type ContainerRenderFn = (renderer: any, go: any, ...rest: any[]) => void
 
 type RNManager = { finishBatch(): void }
+type CameraLike = {
+  getViewMatrix(forceComposite?: boolean): Phaser.GameObjects.Components.TransformMatrix
+}
+
+type DrawingContextLike = {
+  camera?: CameraLike
+  useCanvas?: boolean
+}
 
 // ── Attachment symbol ─────────────────────────────────────────────────────────
 
@@ -150,6 +158,8 @@ export function applyStencilClip(
     }
 
     const matrix = container.getWorldTransformMatrix()
+    const context = drawingContext as DrawingContextLike
+    const cameraMatrix = context.camera?.getViewMatrix(!context.useCanvas)
     const rn = (webglRenderer as unknown as { renderNodes: RNManager }).renderNodes
     const depth = getDepth(gl)
     const myDepth = depth.value++
@@ -168,7 +178,7 @@ export function applyStencilClip(
     gl.stencilFunc(gl.EQUAL, myDepth, 0xff)
     gl.stencilOp(gl.KEEP, gl.KEEP, gl.INCR)
 
-    drawMaskShape(gl, container.scene, matrix, maskSource, logW, logH, vertBuf, verts)
+    drawMaskShape(gl, container.scene, matrix, cameraMatrix, maskSource, logW, logH, vertBuf, verts)
 
     // ── Content render: test for myDepth+1, protect stencil ──────────────
     gl.colorMask(true, true, true, true)
@@ -186,7 +196,7 @@ export function applyStencilClip(
     gl.stencilFunc(gl.EQUAL, myDepth + 1, 0xff)
     gl.stencilOp(gl.KEEP, gl.KEEP, gl.DECR)
 
-    drawMaskShape(gl, container.scene, matrix, maskSource, logW, logH, vertBuf, verts)
+    drawMaskShape(gl, container.scene, matrix, cameraMatrix, maskSource, logW, logH, vertBuf, verts)
 
     gl.colorMask(true, true, true, true)
     depth.value--

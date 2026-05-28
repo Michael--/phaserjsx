@@ -7,6 +7,7 @@ import {
   isBitmapStencilClipSource,
   uninstallStencilClipExtension,
 } from './index'
+import { drawMaskShape, type GLPolyfilled } from './stencil-clip-renderer'
 
 vi.mock('phaser', () => {
   class Container {
@@ -97,6 +98,71 @@ describe('applyStencilClip', () => {
     expect(gl.deleteBuffer).toHaveBeenCalledWith({ id: 'buffer' })
     expect(getStencilClipHandle(container)).toBeUndefined()
     expect(renderStepContainer._renderSteps).toHaveLength(0)
+  })
+})
+
+describe('drawMaskShape', () => {
+  it('projects mask vertices through the active camera matrix', () => {
+    const uploaded: Float32Array[] = []
+    const gl = {
+      ARRAY_BUFFER: 0x8892,
+      CURRENT_PROGRAM: 0x8b8d,
+      ARRAY_BUFFER_BINDING: 0x8894,
+      FLOAT: 0x1406,
+      FRAGMENT_SHADER: 0x8b30,
+      TRIANGLE_FAN: 0x0006,
+      VERTEX_SHADER: 0x8b31,
+      attachShader: vi.fn(),
+      bindBuffer: vi.fn(),
+      bindVertexArray: vi.fn(),
+      bufferSubData: vi.fn((_: number, __: number, data: Float32Array) => {
+        uploaded.push(new Float32Array(data))
+      }),
+      compileShader: vi.fn(),
+      createProgram: vi.fn(() => ({ id: 'program' })),
+      createShader: vi.fn((type: number) => ({ type })),
+      disableVertexAttribArray: vi.fn(),
+      drawArrays: vi.fn(),
+      enableVertexAttribArray: vi.fn(),
+      getAttribLocation: vi.fn((_: unknown, name: string) => (name === 'a_ndc' ? 0 : 1)),
+      getParameter: vi.fn(() => null),
+      getUniformLocation: vi.fn((_: unknown, name: string) => ({ name })),
+      linkProgram: vi.fn(),
+      shaderSource: vi.fn(),
+      uniform2f: vi.fn(),
+      uniform4f: vi.fn(),
+      useProgram: vi.fn(),
+      vertexAttribPointer: vi.fn(),
+    } as unknown as GLPolyfilled
+
+    drawMaskShape(
+      gl,
+      {} as Phaser.Scene,
+      { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 } as Phaser.GameObjects.Components.TransformMatrix,
+      {
+        getX: (x: number) => x + 100,
+        getY: (_x: number, y: number) => y + 50,
+      } as Phaser.GameObjects.Components.TransformMatrix,
+      {
+        kind: 'roundRect',
+        width: 20,
+        height: 10,
+        offsetX: 0,
+        offsetY: 0,
+        radii: [0, 0, 0, 0],
+      },
+      200,
+      100,
+      {} as WebGLBuffer,
+      new Float32Array(16)
+    )
+
+    expect(uploaded).toHaveLength(1)
+    const verts = uploaded[0]
+    expect(verts?.[0]).toBeCloseTo(0.1)
+    expect(verts?.[1]).toBeCloseTo(-0.4)
+    expect(verts?.[4]).toBeCloseTo(0.3)
+    expect(verts?.[5]).toBeCloseTo(-0.4)
   })
 })
 
