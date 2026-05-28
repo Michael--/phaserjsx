@@ -3,6 +3,7 @@
  */
 import {
   createDefaultTheme,
+  DebugPanel,
   Divider,
   type MountProps,
   RadioGroup,
@@ -37,7 +38,15 @@ export function App(props: AppProps & MountProps) {
   const [mode, setMode] = useState<'clip' | 'showcase'>('showcase')
 
   return (
-    <View width={'fill'} height={'fill'}>
+    <View width={'fill'} height={'fill'} direction="stack">
+      <DebugPanel
+        metrics={['phaserVersion', 'viewport', 'fps', 'textureCount']}
+        intervalMs={500}
+        padding={6}
+        backgroundColor={tokens?.colors.background.dark.toNumber()}
+        width={140}
+        innerProps={{ justifyContent: 'space-between', width: 'fill' }}
+      />
       <ScrollView sliderSize="small">
         <View alignItems="center" justifyContent="start">
           {/* Header */}

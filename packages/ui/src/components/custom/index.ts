@@ -8,6 +8,12 @@ export { AlertDialog, type AlertDialogProps } from './AlertDialog'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'
+export {
+  DebugPanel,
+  type DebugMetricKey,
+  type DebugPanelPreset,
+  type DebugPanelProps,
+} from './DebugPanel'
 export { Dialog, type DialogProps } from './Dialog'
 export { Divider, type DividerProps } from './Divider'
 export { Dropdown, type DropdownOption, type DropdownProps } from './Dropdown'
