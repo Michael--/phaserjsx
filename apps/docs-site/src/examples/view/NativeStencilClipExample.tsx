@@ -111,12 +111,11 @@ export function NativeStencilClipViewExample() {
       cornerRadius: { tl: 28, tr: 10, br: 28, bl: 10 },
     })
 
-    addNativePanel(scene, nativeRoot, 230, 'bitmap alpha stencil', {
+    addNativePanel(scene, nativeRoot, 230, 'bitmap stencil', {
       kind: 'bitmap',
       texture: MASK_KEY,
       width: 180,
       height: 140,
-      alphaThreshold: 0.5,
     })
 
     return () => {
