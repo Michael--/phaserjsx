@@ -18,6 +18,29 @@
  * render time, so no per-layout world-position tracking is needed.
  */
 import * as Phaser from 'phaser'
+import {
+  mergeMaskState,
+  toMaskState,
+  type BitmapMaskState,
+  type MaskState,
+} from './stencil-clip-state'
+import type {
+  StencilBitmapTexture,
+  StencilClipHandle,
+  StencilClipSource,
+} from './stencil-clip-types'
+
+export type {
+  StencilBitmapClipSource,
+  StencilBitmapTexture,
+  StencilClipHandle,
+  StencilClipShape,
+  StencilClipSource,
+  StencilClipUpdate,
+  StencilCornerRadius,
+  StencilRoundRectClipSource,
+} from './stencil-clip-types'
+export { isBitmapStencilClipSource } from './stencil-clip-state'
 
 // ── Internal Phaser type helpers ──────────────────────────────────────────────
 
@@ -28,99 +51,6 @@ type RNManager = { finishBatch(): void }
 
 type GLPolyfilled = WebGLRenderingContext & {
   bindVertexArray(vao: WebGLVertexArrayObject | null): void
-}
-
-// ── Public API types ──────────────────────────────────────────────────────────
-
-/** Per-corner radius specification (values in local/CSS units). */
-export type StencilCornerRadius = {
-  tl?: number
-  tr?: number
-  bl?: number
-  br?: number
-}
-
-/** Describes a rounded-rectangle clip in the container's local coordinate space. */
-export interface StencilRoundRectClipSource {
-  /**
-   * Clip source kind.
-   * Omit for backwards-compatible `applyStencilClip(container, { width, height })` calls.
-   */
-  kind?: 'rect' | 'roundRect'
-  /** Width of the clip rect in local units. */
-  width: number
-  /** Height of the clip rect in local units. */
-  height: number
-  /**
-   * X coordinate of the top-left corner in local space.
-   * Defaults to 0 (the container's local origin).
-   */
-  offsetX?: number
-  /**
-   * Y coordinate of the top-left corner in local space.
-   * Defaults to 0 (the container's local origin).
-   */
-  offsetY?: number
-  /**
-   * Corner radii in local units.
-   * A single number applies to all four corners uniformly.
-   * An object sets each corner individually; missing corners default to 0.
-   */
-  cornerRadius?: number | StencilCornerRadius
-}
-
-/** Backwards-compatible alias for the original rounded-rectangle shape API. */
-export type StencilClipShape = StencilRoundRectClipSource
-
-/** Texture reference accepted by bitmap stencil clips. */
-export type StencilBitmapTexture = string | Phaser.Textures.Texture | Phaser.Textures.Frame
-
-/** Describes a bitmap alpha clip in the container's local coordinate space. */
-export interface StencilBitmapClipSource {
-  /** Selects the texture-alpha mask renderer. */
-  kind: 'bitmap'
-  /** Texture key, Phaser texture, or Phaser frame to sample for mask alpha. */
-  texture: StencilBitmapTexture
-  /** Optional frame name/index when `texture` is a key or Texture. */
-  frame?: string | number
-  /**
-   * Width of the bitmap mask in local units.
-   * Defaults to the selected frame's pixel width.
-   */
-  width?: number
-  /**
-   * Height of the bitmap mask in local units.
-   * Defaults to the selected frame's pixel height.
-   */
-  height?: number
-  /** X coordinate of the top-left corner in local space. Defaults to 0. */
-  offsetX?: number
-  /** Y coordinate of the top-left corner in local space. Defaults to 0. */
-  offsetY?: number
-  /** Minimum sampled alpha required to write the stencil. Defaults to 0.5. */
-  alphaThreshold?: number
-  /** Inverts the alpha test, clipping inside transparent pixels. Defaults to false. */
-  invertAlpha?: boolean
-}
-
-/** Any mask source supported by the stencil clip renderer. */
-export type StencilClipSource = StencilRoundRectClipSource | StencilBitmapClipSource
-
-/** Partial source updates accepted by an existing clip handle. */
-export type StencilClipUpdate =
-  | Partial<StencilRoundRectClipSource>
-  | Partial<StencilBitmapClipSource>
-  | StencilClipSource
-
-/** Handle returned by {@link applyStencilClip} to update or remove the clip. */
-export interface StencilClipHandle {
-  /**
-   * Updates the clip source.  Changes take effect on the next rendered frame.
-   * @param source - Partial overrides merged with the current source, or a new source.
-   */
-  update(source: StencilClipUpdate): void
-  /** Removes the clip and restores the container's original render step. */
-  destroy(): void
 }
 
 // ── Per-GL-context stencil depth counter ─────────────────────────────────────
@@ -407,140 +337,6 @@ function getBitmapShaderLocs(gl: WebGLRenderingContext, prog: WebGLProgram): Bit
     _bitmapLocsByProg.set(prog, l)
   }
   return l
-}
-
-// ── Corner radius helpers ─────────────────────────────────────────────────────
-
-/**
- * Resolves the `cornerRadius` field to `[tl, tr, br, bl]` order matching the
- * `u_radii` vec4 uniform layout.
- * @param r - Raw corner radius value from the clip shape.
- * @returns Tuple `[tl, tr, br, bl]`.
- */
-function resolveRadii(
-  r: number | StencilCornerRadius | undefined
-): [number, number, number, number] {
-  if (!r) return [0, 0, 0, 0]
-  if (typeof r === 'number') return [r, r, r, r]
-  return [r.tl ?? 0, r.tr ?? 0, r.br ?? 0, r.bl ?? 0]
-}
-
-/** Returns true when a source/update selects the bitmap mask renderer. */
-export function isBitmapStencilClipSource(
-  source: StencilClipUpdate
-): source is Partial<StencilBitmapClipSource> & { kind: 'bitmap' } {
-  return source.kind === 'bitmap'
-}
-
-type RoundRectMaskState = {
-  kind: 'roundRect'
-  width: number
-  height: number
-  offsetX: number
-  offsetY: number
-  radii: [number, number, number, number]
-}
-
-type BitmapMaskState = {
-  kind: 'bitmap'
-  texture: StencilBitmapTexture
-  frame: string | number | undefined
-  width: number | undefined
-  height: number | undefined
-  offsetX: number
-  offsetY: number
-  alphaThreshold: number
-  invertAlpha: boolean
-}
-
-type MaskState = RoundRectMaskState | BitmapMaskState
-
-function toRoundRectState(source: StencilRoundRectClipSource): RoundRectMaskState {
-  return {
-    kind: 'roundRect',
-    width: source.width,
-    height: source.height,
-    offsetX: source.offsetX ?? 0,
-    offsetY: source.offsetY ?? 0,
-    radii: source.kind === 'rect' ? [0, 0, 0, 0] : resolveRadii(source.cornerRadius),
-  }
-}
-
-function toBitmapState(source: StencilBitmapClipSource): BitmapMaskState {
-  return {
-    kind: 'bitmap',
-    texture: source.texture,
-    frame: source.frame,
-    width: source.width,
-    height: source.height,
-    offsetX: source.offsetX ?? 0,
-    offsetY: source.offsetY ?? 0,
-    alphaThreshold: source.alphaThreshold ?? 0.5,
-    invertAlpha: source.invertAlpha ?? false,
-  }
-}
-
-function toMaskState(source: StencilClipSource): MaskState {
-  return isBitmapStencilClipSource(source) ? toBitmapState(source) : toRoundRectState(source)
-}
-
-function mergeMaskState(current: MaskState, update: StencilClipUpdate): MaskState {
-  if (isBitmapStencilClipSource(update)) {
-    if (current.kind !== 'bitmap' || update.texture !== undefined) {
-      return toBitmapState(update as StencilBitmapClipSource)
-    }
-
-    return {
-      kind: 'bitmap',
-      texture: current.texture,
-      frame: update.frame !== undefined ? update.frame : current.frame,
-      width: update.width !== undefined ? update.width : current.width,
-      height: update.height !== undefined ? update.height : current.height,
-      offsetX: update.offsetX !== undefined ? update.offsetX : current.offsetX,
-      offsetY: update.offsetY !== undefined ? update.offsetY : current.offsetY,
-      alphaThreshold:
-        update.alphaThreshold !== undefined ? update.alphaThreshold : current.alphaThreshold,
-      invertAlpha: update.invertAlpha !== undefined ? update.invertAlpha : current.invertAlpha,
-    }
-  }
-
-  if (current.kind === 'bitmap' && update.kind === undefined) {
-    const bitmapUpdate = update as Partial<StencilBitmapClipSource>
-    return {
-      kind: 'bitmap',
-      texture: current.texture,
-      frame: bitmapUpdate.frame !== undefined ? bitmapUpdate.frame : current.frame,
-      width: bitmapUpdate.width !== undefined ? bitmapUpdate.width : current.width,
-      height: bitmapUpdate.height !== undefined ? bitmapUpdate.height : current.height,
-      offsetX: bitmapUpdate.offsetX !== undefined ? bitmapUpdate.offsetX : current.offsetX,
-      offsetY: bitmapUpdate.offsetY !== undefined ? bitmapUpdate.offsetY : current.offsetY,
-      alphaThreshold:
-        bitmapUpdate.alphaThreshold !== undefined
-          ? bitmapUpdate.alphaThreshold
-          : current.alphaThreshold,
-      invertAlpha:
-        bitmapUpdate.invertAlpha !== undefined ? bitmapUpdate.invertAlpha : current.invertAlpha,
-    }
-  }
-
-  if (current.kind === 'bitmap') {
-    return toRoundRectState(update as StencilRoundRectClipSource)
-  }
-
-  const roundUpdate = update as Partial<StencilRoundRectClipSource>
-  return {
-    kind: 'roundRect',
-    width: roundUpdate.width !== undefined ? roundUpdate.width : current.width,
-    height: roundUpdate.height !== undefined ? roundUpdate.height : current.height,
-    offsetX: roundUpdate.offsetX !== undefined ? roundUpdate.offsetX : current.offsetX,
-    offsetY: roundUpdate.offsetY !== undefined ? roundUpdate.offsetY : current.offsetY,
-    radii:
-      roundUpdate.kind === 'rect'
-        ? [0, 0, 0, 0]
-        : 'cornerRadius' in roundUpdate
-          ? resolveRadii(roundUpdate.cornerRadius)
-          : current.radii,
-  }
 }
 
 // ── Mask quad drawing ─────────────────────────────────────────────────────────
