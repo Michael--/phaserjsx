@@ -38,6 +38,11 @@
       "import": "./dist/jsx-dev-runtime.js",
       "require": "./dist/jsx-dev-runtime.cjs"
     },
+    "./clip": {
+      "types": "./dist/clip/index.d.ts",
+      "import": "./dist/clip/index.js",
+      "require": "./dist/clip/index.cjs"
+    },
     "./components/custom": {
       "types": "./dist/components/custom/index.d.ts",
       "import": "./dist/components/custom/index.js",

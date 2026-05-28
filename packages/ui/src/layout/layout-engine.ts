@@ -3,8 +3,8 @@
  * Uses strategy pattern to handle different layout directions
  */
 import * as Phaser from 'phaser'
-import type { StencilClipHandle, StencilClipShape } from '../clip/stencil-clip'
-import { applyStencilClip } from '../clip/stencil-clip'
+import type { StencilClipHandle, StencilClipShape } from '../clip'
+import { installStencilClipExtension } from '../clip'
 import type { LayoutProps } from '../core-props'
 import { normalizeGap } from '../core-props'
 import { DebugLogger } from '../dev-config'
@@ -243,18 +243,17 @@ function applyOverflowMask(
   height: number
 ): void {
   const ext = container as typeof container & { __overflowClip?: StencilClipHandle }
+  installStencilClipExtension()
 
   if (containerProps.overflow === 'hidden') {
     if (!ext.__overflowClip) {
       const shapeBase: StencilClipShape = { width, height }
       if (containerProps.cornerRadius !== undefined)
         shapeBase.cornerRadius = containerProps.cornerRadius
-      const handle = applyStencilClip(container, shapeBase)
+      container.setStencilClip(shapeBase)
+      const handle = container.getStencilClipHandle()
+      if (!handle) return
       ext.__overflowClip = handle
-      container.once('destroy', () => {
-        handle.destroy()
-        delete ext.__overflowClip
-      })
       DebugLogger.log('overflowMask', 'Created stencil clip')
     } else {
       const update: Partial<StencilClipShape> = {
@@ -262,10 +261,10 @@ function applyOverflowMask(
         height,
         cornerRadius: containerProps.cornerRadius ?? 0,
       }
-      ext.__overflowClip.update(update)
+      container.updateStencilClip(update)
     }
   } else if (ext.__overflowClip) {
-    ext.__overflowClip.destroy()
+    container.clearStencilClip()
     delete ext.__overflowClip
     DebugLogger.log('overflowMask', 'Removed stencil clip')
   }

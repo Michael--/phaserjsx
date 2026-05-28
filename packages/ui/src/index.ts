@@ -3,6 +3,7 @@
  * Provides JSX + hooks + VDOM for Phaser 3 game development
  */
 import { registerBuiltins } from './components'
+import './clip'
 import './jsx-types' // Import JSX type declarations
 
 // Register built-in components (View, Text) on module load
@@ -10,6 +11,7 @@ registerBuiltins()
 
 export * from './core-types'
 export * from './camera'
+export * from './clip'
 export * from './effects'
 export * from './fx'
 export * from './hooks'

@@ -14,6 +14,7 @@ export default defineConfig({
         index: resolve(__dirname, 'src/index.ts'),
         'jsx-runtime': resolve(__dirname, 'src/jsx-runtime.ts'),
         'jsx-dev-runtime': resolve(__dirname, 'src/jsx-dev-runtime.ts'),
+        'clip/index': resolve(__dirname, 'src/clip/index.ts'),
         'components/custom/index': resolve(__dirname, 'src/components/custom/index.ts'),
       },
       name: 'PhaserJSX',
