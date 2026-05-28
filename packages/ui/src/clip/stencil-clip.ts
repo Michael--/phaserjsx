@@ -40,8 +40,13 @@ export type StencilCornerRadius = {
   br?: number
 }
 
-/** Describes the clip rectangle in the container's local coordinate space. */
-export interface StencilClipShape {
+/** Describes a rounded-rectangle clip in the container's local coordinate space. */
+export interface StencilRoundRectClipSource {
+  /**
+   * Clip source kind.
+   * Omit for backwards-compatible `applyStencilClip(container, { width, height })` calls.
+   */
+  kind?: 'rect' | 'roundRect'
   /** Width of the clip rect in local units. */
   width: number
   /** Height of the clip rect in local units. */
@@ -64,13 +69,56 @@ export interface StencilClipShape {
   cornerRadius?: number | StencilCornerRadius
 }
 
+/** Backwards-compatible alias for the original rounded-rectangle shape API. */
+export type StencilClipShape = StencilRoundRectClipSource
+
+/** Texture reference accepted by bitmap stencil clips. */
+export type StencilBitmapTexture = string | Phaser.Textures.Texture | Phaser.Textures.Frame
+
+/** Describes a bitmap alpha clip in the container's local coordinate space. */
+export interface StencilBitmapClipSource {
+  /** Selects the texture-alpha mask renderer. */
+  kind: 'bitmap'
+  /** Texture key, Phaser texture, or Phaser frame to sample for mask alpha. */
+  texture: StencilBitmapTexture
+  /** Optional frame name/index when `texture` is a key or Texture. */
+  frame?: string | number
+  /**
+   * Width of the bitmap mask in local units.
+   * Defaults to the selected frame's pixel width.
+   */
+  width?: number
+  /**
+   * Height of the bitmap mask in local units.
+   * Defaults to the selected frame's pixel height.
+   */
+  height?: number
+  /** X coordinate of the top-left corner in local space. Defaults to 0. */
+  offsetX?: number
+  /** Y coordinate of the top-left corner in local space. Defaults to 0. */
+  offsetY?: number
+  /** Minimum sampled alpha required to write the stencil. Defaults to 0.5. */
+  alphaThreshold?: number
+  /** Inverts the alpha test, clipping inside transparent pixels. Defaults to false. */
+  invertAlpha?: boolean
+}
+
+/** Any mask source supported by the stencil clip renderer. */
+export type StencilClipSource = StencilRoundRectClipSource | StencilBitmapClipSource
+
+/** Partial source updates accepted by an existing clip handle. */
+export type StencilClipUpdate =
+  | Partial<StencilRoundRectClipSource>
+  | Partial<StencilBitmapClipSource>
+  | StencilClipSource
+
 /** Handle returned by {@link applyStencilClip} to update or remove the clip. */
 export interface StencilClipHandle {
   /**
-   * Updates the clip shape.  Changes take effect on the next rendered frame.
-   * @param shape - Partial overrides merged with the current shape.
+   * Updates the clip source.  Changes take effect on the next rendered frame.
+   * @param source - Partial overrides merged with the current source, or a new source.
    */
-  update(shape: Partial<StencilClipShape>): void
+  update(source: StencilClipUpdate): void
   /** Removes the clip and restores the container's original render step. */
   destroy(): void
 }
@@ -204,7 +252,7 @@ function ensureFboPatch(gl: WebGLRenderingContext): void {
  * pure pass-through.  This correctly handles translation, scale, and rotation
  * without a matrix uniform.
  */
-const VERT_SRC = `
+const ROUND_RECT_VERT_SRC = `
 attribute vec2 a_ndc;
 attribute vec2 a_loc;
 varying vec2 v_loc;
@@ -223,7 +271,7 @@ void main(){gl_Position=vec4(a_ndc,0.,1.);v_loc=a_loc;}
  * For plain rectangles u_radii = vec4(0.0) and sdRoundedBox returns ≤ 0 for
  * all fragments inside the quad, so `discard` is never executed.
  */
-const FRAG_SRC = `
+const ROUND_RECT_FRAG_SRC = `
 precision mediump float;
 varying vec2 v_loc;
 uniform vec2 u_halfSize;
@@ -240,43 +288,88 @@ void main(){
 }
 `
 
-const _progByGl = new WeakMap<WebGLRenderingContext, WebGLProgram>()
+const BITMAP_VERT_SRC = `
+attribute vec2 a_ndc;
+attribute vec2 a_uv;
+varying vec2 v_uv;
+void main(){gl_Position=vec4(a_ndc,0.,1.);v_uv=a_uv;}
+`
+
+const BITMAP_FRAG_SRC = `
+precision mediump float;
+varying vec2 v_uv;
+uniform sampler2D u_texture;
+uniform float u_alphaThreshold;
+uniform float u_invertAlpha;
+void main(){
+  float a=texture2D(u_texture,v_uv).a;
+  bool keep=u_invertAlpha>0.5 ? a<u_alphaThreshold : a>=u_alphaThreshold;
+  if(!keep)discard;
+  gl_FragColor=vec4(0.);
+}
+`
+
+const _roundRectProgByGl = new WeakMap<WebGLRenderingContext, WebGLProgram>()
+const _bitmapProgByGl = new WeakMap<WebGLRenderingContext, WebGLProgram>()
 
 /**
  * Returns (or lazily creates) the SDF stencil shader program for a GL context.
  * @param gl - The WebGL context.
  * @returns Compiled and linked WebGLProgram.
  */
-function getStencilProg(gl: WebGLRenderingContext): WebGLProgram {
-  let prog = _progByGl.get(gl)
-  if (prog) return prog
-
+function createProgram(gl: WebGLRenderingContext, vertSrc: string, fragSrc: string): WebGLProgram {
   const vs = gl.createShader(gl.VERTEX_SHADER) as WebGLShader
-  gl.shaderSource(vs, VERT_SRC)
+  gl.shaderSource(vs, vertSrc)
   gl.compileShader(vs)
 
   const fs = gl.createShader(gl.FRAGMENT_SHADER) as WebGLShader
-  gl.shaderSource(fs, FRAG_SRC)
+  gl.shaderSource(fs, fragSrc)
   gl.compileShader(fs)
 
-  prog = gl.createProgram() as WebGLProgram
+  const prog = gl.createProgram() as WebGLProgram
   gl.attachShader(prog, vs)
   gl.attachShader(prog, fs)
   gl.linkProgram(prog)
 
-  _progByGl.set(gl, prog)
+  return prog
+}
+
+function getRoundRectProg(gl: WebGLRenderingContext): WebGLProgram {
+  let prog = _roundRectProgByGl.get(gl)
+  if (prog) return prog
+
+  prog = createProgram(gl, ROUND_RECT_VERT_SRC, ROUND_RECT_FRAG_SRC)
+  _roundRectProgByGl.set(gl, prog)
+  return prog
+}
+
+function getBitmapProg(gl: WebGLRenderingContext): WebGLProgram {
+  let prog = _bitmapProgByGl.get(gl)
+  if (prog) return prog
+
+  prog = createProgram(gl, BITMAP_VERT_SRC, BITMAP_FRAG_SRC)
+  _bitmapProgByGl.set(gl, prog)
   return prog
 }
 
 /** Cached attribute and uniform locations resolved once per shader program. */
-interface ShaderLocs {
+interface RoundRectShaderLocs {
   ndc: number
   loc: number
   halfSize: WebGLUniformLocation | null
   radii: WebGLUniformLocation | null
 }
 
-const _locsByProg = new WeakMap<WebGLProgram, ShaderLocs>()
+interface BitmapShaderLocs {
+  ndc: number
+  uv: number
+  texture: WebGLUniformLocation | null
+  alphaThreshold: WebGLUniformLocation | null
+  invertAlpha: WebGLUniformLocation | null
+}
+
+const _roundRectLocsByProg = new WeakMap<WebGLProgram, RoundRectShaderLocs>()
+const _bitmapLocsByProg = new WeakMap<WebGLProgram, BitmapShaderLocs>()
 
 /**
  * Returns (or resolves and caches) the attribute/uniform locations for a program.
@@ -284,8 +377,11 @@ const _locsByProg = new WeakMap<WebGLProgram, ShaderLocs>()
  * @param prog - The shader program.
  * @returns Cached locations.
  */
-function getShaderLocs(gl: WebGLRenderingContext, prog: WebGLProgram): ShaderLocs {
-  let l = _locsByProg.get(prog)
+function getRoundRectShaderLocs(
+  gl: WebGLRenderingContext,
+  prog: WebGLProgram
+): RoundRectShaderLocs {
+  let l = _roundRectLocsByProg.get(prog)
   if (!l) {
     l = {
       ndc: gl.getAttribLocation(prog, 'a_ndc'),
@@ -293,7 +389,22 @@ function getShaderLocs(gl: WebGLRenderingContext, prog: WebGLProgram): ShaderLoc
       halfSize: gl.getUniformLocation(prog, 'u_halfSize'),
       radii: gl.getUniformLocation(prog, 'u_radii'),
     }
-    _locsByProg.set(prog, l)
+    _roundRectLocsByProg.set(prog, l)
+  }
+  return l
+}
+
+function getBitmapShaderLocs(gl: WebGLRenderingContext, prog: WebGLProgram): BitmapShaderLocs {
+  let l = _bitmapLocsByProg.get(prog)
+  if (!l) {
+    l = {
+      ndc: gl.getAttribLocation(prog, 'a_ndc'),
+      uv: gl.getAttribLocation(prog, 'a_uv'),
+      texture: gl.getUniformLocation(prog, 'u_texture'),
+      alphaThreshold: gl.getUniformLocation(prog, 'u_alphaThreshold'),
+      invertAlpha: gl.getUniformLocation(prog, 'u_invertAlpha'),
+    }
+    _bitmapLocsByProg.set(prog, l)
   }
   return l
 }
@@ -312,6 +423,124 @@ function resolveRadii(
   if (!r) return [0, 0, 0, 0]
   if (typeof r === 'number') return [r, r, r, r]
   return [r.tl ?? 0, r.tr ?? 0, r.br ?? 0, r.bl ?? 0]
+}
+
+/** Returns true when a source/update selects the bitmap mask renderer. */
+export function isBitmapStencilClipSource(
+  source: StencilClipUpdate
+): source is Partial<StencilBitmapClipSource> & { kind: 'bitmap' } {
+  return source.kind === 'bitmap'
+}
+
+type RoundRectMaskState = {
+  kind: 'roundRect'
+  width: number
+  height: number
+  offsetX: number
+  offsetY: number
+  radii: [number, number, number, number]
+}
+
+type BitmapMaskState = {
+  kind: 'bitmap'
+  texture: StencilBitmapTexture
+  frame: string | number | undefined
+  width: number | undefined
+  height: number | undefined
+  offsetX: number
+  offsetY: number
+  alphaThreshold: number
+  invertAlpha: boolean
+}
+
+type MaskState = RoundRectMaskState | BitmapMaskState
+
+function toRoundRectState(source: StencilRoundRectClipSource): RoundRectMaskState {
+  return {
+    kind: 'roundRect',
+    width: source.width,
+    height: source.height,
+    offsetX: source.offsetX ?? 0,
+    offsetY: source.offsetY ?? 0,
+    radii: source.kind === 'rect' ? [0, 0, 0, 0] : resolveRadii(source.cornerRadius),
+  }
+}
+
+function toBitmapState(source: StencilBitmapClipSource): BitmapMaskState {
+  return {
+    kind: 'bitmap',
+    texture: source.texture,
+    frame: source.frame,
+    width: source.width,
+    height: source.height,
+    offsetX: source.offsetX ?? 0,
+    offsetY: source.offsetY ?? 0,
+    alphaThreshold: source.alphaThreshold ?? 0.5,
+    invertAlpha: source.invertAlpha ?? false,
+  }
+}
+
+function toMaskState(source: StencilClipSource): MaskState {
+  return isBitmapStencilClipSource(source) ? toBitmapState(source) : toRoundRectState(source)
+}
+
+function mergeMaskState(current: MaskState, update: StencilClipUpdate): MaskState {
+  if (isBitmapStencilClipSource(update)) {
+    if (current.kind !== 'bitmap' || update.texture !== undefined) {
+      return toBitmapState(update as StencilBitmapClipSource)
+    }
+
+    return {
+      kind: 'bitmap',
+      texture: current.texture,
+      frame: update.frame !== undefined ? update.frame : current.frame,
+      width: update.width !== undefined ? update.width : current.width,
+      height: update.height !== undefined ? update.height : current.height,
+      offsetX: update.offsetX !== undefined ? update.offsetX : current.offsetX,
+      offsetY: update.offsetY !== undefined ? update.offsetY : current.offsetY,
+      alphaThreshold:
+        update.alphaThreshold !== undefined ? update.alphaThreshold : current.alphaThreshold,
+      invertAlpha: update.invertAlpha !== undefined ? update.invertAlpha : current.invertAlpha,
+    }
+  }
+
+  if (current.kind === 'bitmap' && update.kind === undefined) {
+    const bitmapUpdate = update as Partial<StencilBitmapClipSource>
+    return {
+      kind: 'bitmap',
+      texture: current.texture,
+      frame: bitmapUpdate.frame !== undefined ? bitmapUpdate.frame : current.frame,
+      width: bitmapUpdate.width !== undefined ? bitmapUpdate.width : current.width,
+      height: bitmapUpdate.height !== undefined ? bitmapUpdate.height : current.height,
+      offsetX: bitmapUpdate.offsetX !== undefined ? bitmapUpdate.offsetX : current.offsetX,
+      offsetY: bitmapUpdate.offsetY !== undefined ? bitmapUpdate.offsetY : current.offsetY,
+      alphaThreshold:
+        bitmapUpdate.alphaThreshold !== undefined
+          ? bitmapUpdate.alphaThreshold
+          : current.alphaThreshold,
+      invertAlpha:
+        bitmapUpdate.invertAlpha !== undefined ? bitmapUpdate.invertAlpha : current.invertAlpha,
+    }
+  }
+
+  if (current.kind === 'bitmap') {
+    return toRoundRectState(update as StencilRoundRectClipSource)
+  }
+
+  const roundUpdate = update as Partial<StencilRoundRectClipSource>
+  return {
+    kind: 'roundRect',
+    width: roundUpdate.width !== undefined ? roundUpdate.width : current.width,
+    height: roundUpdate.height !== undefined ? roundUpdate.height : current.height,
+    offsetX: roundUpdate.offsetX !== undefined ? roundUpdate.offsetX : current.offsetX,
+    offsetY: roundUpdate.offsetY !== undefined ? roundUpdate.offsetY : current.offsetY,
+    radii:
+      roundUpdate.kind === 'rect'
+        ? [0, 0, 0, 0]
+        : 'cornerRadius' in roundUpdate
+          ? resolveRadii(roundUpdate.cornerRadius)
+          : current.radii,
+  }
 }
 
 // ── Mask quad drawing ─────────────────────────────────────────────────────────
@@ -343,7 +572,7 @@ const STRIDE = 16
  * @param vertBuf - Persistent WebGLBuffer (64 bytes, DYNAMIC_DRAW).
  * @param verts - Reusable Float32Array(16) to avoid per-frame allocation.
  */
-function drawMaskShape(
+function drawRoundRectMaskShape(
   gl: GLPolyfilled,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
   offsetX: number,
@@ -398,10 +627,10 @@ function drawMaskShape(
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
   gl.bufferSubData(gl.ARRAY_BUFFER, 0, verts)
 
-  const prog = getStencilProg(gl)
+  const prog = getRoundRectProg(gl)
   gl.useProgram(prog)
 
-  const locs = getShaderLocs(gl, prog)
+  const locs = getRoundRectShaderLocs(gl, prog)
   gl.enableVertexAttribArray(locs.ndc)
   gl.vertexAttribPointer(locs.ndc, 2, gl.FLOAT, false, STRIDE, 0)
   gl.enableVertexAttribArray(locs.loc)
@@ -421,9 +650,160 @@ function drawMaskShape(
   gl.bindVertexArray(prevVAO)
 }
 
+type BitmapFrameInfo = {
+  webGLTexture: WebGLTexture
+  width: number
+  height: number
+  u0: number
+  v0: number
+  u1: number
+  v1: number
+}
+
+function isTextureFrame(value: StencilBitmapTexture): value is Phaser.Textures.Frame {
+  return typeof value === 'object' && value !== null && 'glTexture' in value && 'u0' in value
+}
+
+function resolveBitmapFrame(scene: Phaser.Scene, source: BitmapMaskState): BitmapFrameInfo | null {
+  const frame = isTextureFrame(source.texture)
+    ? source.texture
+    : typeof source.texture === 'string'
+      ? scene.textures.getFrame(source.texture, source.frame)
+      : source.texture.get(source.frame)
+
+  if (!frame?.glTexture?.webGLTexture) return null
+
+  return {
+    webGLTexture: frame.glTexture.webGLTexture,
+    width: source.width ?? frame.cutWidth ?? frame.realWidth,
+    height: source.height ?? frame.cutHeight ?? frame.realHeight,
+    u0: frame.u0,
+    v0: frame.v0,
+    u1: frame.u1,
+    v1: frame.v1,
+  }
+}
+
+function drawBitmapMaskShape(
+  gl: GLPolyfilled,
+  matrix: Phaser.GameObjects.Components.TransformMatrix,
+  source: BitmapMaskState,
+  frameInfo: BitmapFrameInfo,
+  logW: number,
+  logH: number,
+  vertBuf: WebGLBuffer,
+  verts: Float32Array
+): void {
+  const { a, b, c, d, tx, ty } = matrix
+  const x0 = source.offsetX
+  const y0 = source.offsetY
+  const x1 = x0 + frameInfo.width
+  const y1 = y0 + frameInfo.height
+
+  const corners = [
+    [x0, y0, frameInfo.u0, frameInfo.v0],
+    [x1, y0, frameInfo.u1, frameInfo.v0],
+    [x1, y1, frameInfo.u1, frameInfo.v1],
+    [x0, y1, frameInfo.u0, frameInfo.v1],
+  ] as const
+
+  for (let i = 0; i < 4; i++) {
+    const corner = corners[i] as (typeof corners)[number]
+    const lx = corner[0]
+    const ly = corner[1]
+    const wx = a * lx + c * ly + tx
+    const wy = b * lx + d * ly + ty
+    verts[i * 4 + 0] = (wx / logW) * 2 - 1
+    verts[i * 4 + 1] = 1 - (wy / logH) * 2
+    verts[i * 4 + 2] = corner[2]
+    verts[i * 4 + 3] = corner[3]
+  }
+
+  const prevProg = gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram | null
+  const prevBuf = gl.getParameter(gl.ARRAY_BUFFER_BINDING) as WebGLBuffer | null
+  const prevVAO = gl.getParameter(0x85b5) as WebGLVertexArrayObject | null
+  const prevActiveTexture = gl.getParameter(gl.ACTIVE_TEXTURE) as number
+
+  gl.activeTexture(gl.TEXTURE0)
+  const prevTexture = gl.getParameter(gl.TEXTURE_BINDING_2D) as WebGLTexture | null
+
+  gl.bindVertexArray(null)
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
+  gl.bufferSubData(gl.ARRAY_BUFFER, 0, verts)
+
+  const prog = getBitmapProg(gl)
+  gl.useProgram(prog)
+
+  const locs = getBitmapShaderLocs(gl, prog)
+  gl.enableVertexAttribArray(locs.ndc)
+  gl.vertexAttribPointer(locs.ndc, 2, gl.FLOAT, false, STRIDE, 0)
+  gl.enableVertexAttribArray(locs.uv)
+  gl.vertexAttribPointer(locs.uv, 2, gl.FLOAT, false, STRIDE, 8)
+
+  gl.bindTexture(gl.TEXTURE_2D, frameInfo.webGLTexture)
+  gl.uniform1i(locs.texture, 0)
+  gl.uniform1f(locs.alphaThreshold, source.alphaThreshold)
+  gl.uniform1f(locs.invertAlpha, source.invertAlpha ? 1 : 0)
+
+  gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
+
+  gl.disableVertexAttribArray(locs.ndc)
+  gl.disableVertexAttribArray(locs.uv)
+
+  gl.bindTexture(gl.TEXTURE_2D, prevTexture)
+  gl.activeTexture(prevActiveTexture)
+  gl.bindBuffer(gl.ARRAY_BUFFER, prevBuf)
+  gl.useProgram(prevProg)
+  gl.bindVertexArray(prevVAO)
+}
+
+function drawMaskShape(
+  gl: GLPolyfilled,
+  scene: Phaser.Scene,
+  matrix: Phaser.GameObjects.Components.TransformMatrix,
+  source: MaskState,
+  logW: number,
+  logH: number,
+  vertBuf: WebGLBuffer,
+  verts: Float32Array
+): void {
+  if (source.kind === 'bitmap') {
+    const frameInfo = resolveBitmapFrame(scene, source)
+    if (!frameInfo) return
+    drawBitmapMaskShape(gl, matrix, source, frameInfo, logW, logH, vertBuf, verts)
+    return
+  }
+
+  drawRoundRectMaskShape(
+    gl,
+    matrix,
+    source.offsetX,
+    source.offsetY,
+    source.width,
+    source.height,
+    logW,
+    logH,
+    source.radii,
+    vertBuf,
+    verts
+  )
+}
+
 // ── Attachment symbol ─────────────────────────────────────────────────────────
 
 const STENCIL_HANDLE = Symbol('stencilClipHandle')
+
+/** Returns the active stencil clip handle attached to a container, if any. */
+export function getStencilClipHandle(
+  container: Phaser.GameObjects.Container
+): StencilClipHandle | undefined {
+  return (container as unknown as { [STENCIL_HANDLE]?: StencilClipHandle })[STENCIL_HANDLE]
+}
+
+/** Removes any active stencil clip from a container. */
+export function clearStencilClip(container: Phaser.GameObjects.Container): void {
+  getStencilClipHandle(container)?.destroy()
+}
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -448,12 +828,12 @@ const STENCIL_HANDLE = Symbol('stencilClipHandle')
  * returns it.
  *
  * @param container - The container to clip.
- * @param shape - Clip rect geometry in local units.
+ * @param source - Clip source in the container's local coordinate space.
  * @returns A handle to modify dimensions / corner radii or remove the clip.
  */
 export function applyStencilClip(
   container: Phaser.GameObjects.Container,
-  shape: StencilClipShape
+  source: StencilClipSource
 ): StencilClipHandle {
   const obj = container as unknown as {
     _renderSteps: Array<ContainerRenderFn | undefined>
@@ -463,7 +843,7 @@ export function applyStencilClip(
 
   // Re-use existing handle if already attached.
   if (obj[STENCIL_HANDLE]) {
-    obj[STENCIL_HANDLE].update(shape)
+    obj[STENCIL_HANDLE].update(source)
     return obj[STENCIL_HANDLE]
   }
 
@@ -486,11 +866,7 @@ export function applyStencilClip(
 
   const verts = new Float32Array(16)
 
-  let clipW = shape.width
-  let clipH = shape.height
-  let clipOffsetX = shape.offsetX ?? 0
-  let clipOffsetY = shape.offsetY ?? 0
-  let radii = resolveRadii(shape.cornerRadius)
+  let maskSource = toMaskState(source)
   let destroyed = false
 
   const wrapper: ContainerRenderFn = (
@@ -538,19 +914,7 @@ export function applyStencilClip(
     gl.stencilFunc(gl.EQUAL, myDepth, 0xff)
     gl.stencilOp(gl.KEEP, gl.KEEP, gl.INCR)
 
-    drawMaskShape(
-      gl,
-      matrix,
-      clipOffsetX,
-      clipOffsetY,
-      clipW,
-      clipH,
-      logW,
-      logH,
-      radii,
-      vertBuf,
-      verts
-    )
+    drawMaskShape(gl, container.scene, matrix, maskSource, logW, logH, vertBuf, verts)
 
     // ── Content render: test for myDepth+1, protect stencil ──────────────
     gl.colorMask(true, true, true, true)
@@ -568,19 +932,7 @@ export function applyStencilClip(
     gl.stencilFunc(gl.EQUAL, myDepth + 1, 0xff)
     gl.stencilOp(gl.KEEP, gl.KEEP, gl.DECR)
 
-    drawMaskShape(
-      gl,
-      matrix,
-      clipOffsetX,
-      clipOffsetY,
-      clipW,
-      clipH,
-      logW,
-      logH,
-      radii,
-      vertBuf,
-      verts
-    )
+    drawMaskShape(gl, container.scene, matrix, maskSource, logW, logH, vertBuf, verts)
 
     gl.colorMask(true, true, true, true)
     depth.value--
@@ -600,11 +952,7 @@ export function applyStencilClip(
 
   const handle: StencilClipHandle = {
     update(s) {
-      if (s.width !== undefined) clipW = s.width
-      if (s.height !== undefined) clipH = s.height
-      if (s.offsetX !== undefined) clipOffsetX = s.offsetX
-      if (s.offsetY !== undefined) clipOffsetY = s.offsetY
-      if ('cornerRadius' in s) radii = resolveRadii(s.cornerRadius)
+      maskSource = mergeMaskState(maskSource, s)
     },
     destroy() {
       if (destroyed) return
