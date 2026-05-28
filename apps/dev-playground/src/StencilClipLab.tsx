@@ -1,5 +1,4 @@
 import {
-  Button,
   RadioGroup,
   Text,
   useEffect,
@@ -360,9 +359,6 @@ export function StencilClipLab() {
           />
         </View>
         <View direction="row" gap={10} alignItems="center">
-          <Button variant="secondary" onClick={() => setRevision((value) => value + 1)}>
-            <Text text="Rebuild" />
-          </Button>
           <Text
             text="Use the camera window below to compare clip bounds against overflow content."
             style={tokens?.textStyles.small}
