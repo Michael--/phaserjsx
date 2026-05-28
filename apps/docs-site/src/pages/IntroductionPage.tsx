@@ -54,7 +54,7 @@ export function IntroductionPage() {
             GameObjects when state changes, leading to verbose and error-prone code.
           </div>
           <div className="doc-list-item">
-            <strong>Lifecycle Complexity:</strong> Managing GameObject lifecycles (creation,
+            <strong>Lifecycle Complexity:</strong> Managing GameObject life cycles (creation,
             updates, cleanup) becomes increasingly complex as your UI grows.
           </div>
           <div className="doc-list-item">

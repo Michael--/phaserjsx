@@ -7,7 +7,7 @@ import type * as Phaser from 'phaser'
 /**
  * Preprocesses SVG string to ensure tinting works correctly
  * Replaces fill/stroke="currentColor" and other colors with white (#FFFFFF)
- * This allows Phaser's tint to work multiplicatively (white × tint = tint color)
+ * This allows Phaser's tint to work by multiplication (white × tint = tint color)
  * @param svg - Raw SVG string
  * @returns Preprocessed SVG string with white fills/strokes
  */

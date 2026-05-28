@@ -932,7 +932,7 @@ generateColorScale(baseColor: string): ColorShade`}
             <code>getThemedProps()</code> usage for theme resolution
           </li>
           <li>Nested theme propagation to Icon and Text children</li>
-          <li>Default fallback values for unconfigured properties</li>
+          <li>Default fallback values for properties that are not configured</li>
         </ul>
 
         <h3>Icon System Integration</h3>

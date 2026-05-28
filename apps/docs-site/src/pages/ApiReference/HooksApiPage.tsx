@@ -739,7 +739,7 @@ function GameUI() {
 
         <div className="callout callout-warning">
           <strong>Performance Warning:</strong> Use throttling to avoid excessive re-renders.
-          Unthrottled signals updating at 60 FPS can impact performance. Start with 33ms (30 FPS)
+          Non-throttled signals updating at 60 FPS can impact performance. Start with 33ms (30 FPS)
           and adjust as needed.
         </div>
       </Section>
@@ -1089,7 +1089,7 @@ function useSVGTextures(configs: SVGTextureConfig[]): boolean`}
       scale={scale}
       onTouch={() => setScale((prev) => (prev === 1 ? 1.2 : 1))}
     >
-      <Text text="Boing" />
+      <Text text="Bounce" />
     </View>
   )
 }`}

@@ -248,7 +248,7 @@ export function GesturesPage() {
         <p>Scroll wheel events for zooming or custom scrolling. Desktop/mouse only:</p>
 
         <CodeBlock language="tsx">
-          {`function ZoomableView() {
+          {`function ZoomView() {
   const [zoom, setZoom] = useState(1.0)
 
   return (

@@ -147,7 +147,7 @@ export const iconLoaders = {
         <p>Each icon becomes a tiny, lazy-loaded chunk:</p>
         <CodeBlock language="text">
           {`dist/assets/icons/check-D7HmZJz2.js    0.47 kB
-dist/assets/icons/gear-DHGjwfBQ.js     0.52 kB`}
+	dist/assets/icons/gear-DH7fB9Q2.js     0.52 kB`}
         </CodeBlock>
       </Section>
 

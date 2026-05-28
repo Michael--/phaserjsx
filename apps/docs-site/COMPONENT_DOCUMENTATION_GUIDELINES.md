@@ -315,7 +315,7 @@ The `Text` component uses Phaser's `style` prop for visual styling instead of di
 
 **Common Text style properties:**
 
-- `color: '#hexcolor'` - Text color (CSS hex format)
+- `color: '#RRGGBB'` - Text color (CSS hex format)
 - `fontSize: '20px'` - Font size (string with unit)
 - `fontFamily: 'Arial'` - Font family
 - `fontStyle: 'bold'` - Font style (bold, italic, etc.)

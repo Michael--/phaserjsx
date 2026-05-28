@@ -344,7 +344,7 @@ export class GestureManager {
   /**
    * Handle global pointer down event
    * Registers all containers that were hit for move event tracking
-   * Only the topmost gets touch/longpress callbacks
+   * Only the topmost gets touch/long-press callbacks
    */
   private handlePointerDown(pointer: Phaser.Input.Pointer): void {
     // Create set to track all hit containers for this pointer
@@ -418,7 +418,7 @@ export class GestureManager {
           state.longPressTriggered = false
         }
 
-        // Only the first (topmost) hit gets touch/longpress handling
+        // Only the first (topmost) hit gets touch/long-press handling
         if (isFirstHit) {
           isFirstHit = false
 

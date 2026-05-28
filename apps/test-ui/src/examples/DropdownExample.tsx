@@ -56,7 +56,7 @@ const largeOptions: DropdownOption[] = [
   { value: 'coconut', label: 'Coconut' },
   { value: 'cranberry', label: 'Cranberry' },
   { value: 'date', label: 'Date' },
-  { value: 'dragonfruit', label: 'Dragon Fruit' },
+  { value: 'dragon-fruit', label: 'Dragon Fruit' },
   { value: 'elderberry', label: 'Elderberry' },
   { value: 'fig', label: 'Fig' },
   { value: 'grape', label: 'Grape' },

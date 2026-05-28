@@ -270,7 +270,7 @@ function DialogNoCloseExample() {
       </Button>
 
       <Dialog
-        key="noclose-dialog"
+        key="no-close-dialog"
         isOpen={isOpen}
         onClose={handleClose}
         title="Important Message"
@@ -308,9 +308,11 @@ function LargeDialogExample() {
 
   const content = useMemo(
     () => (
+      // cspell:disable
       <WrapText
         text={`Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n\nUt enim ad minim veniam, quis nostrud exercitation ullamco laboris.\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum.\n\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit.\n\nSed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`}
       />
+      // cspell:enable
     ),
     []
   )

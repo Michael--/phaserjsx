@@ -225,7 +225,7 @@ function NoCancelExample() {
       </Button>
 
       <AlertDialog
-        key="nocancel-dialog"
+        key="no-cancel-dialog"
         isOpen={isOpen}
         onClose={handleClose}
         prefix={prefix}

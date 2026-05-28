@@ -62,7 +62,7 @@
  *    - Compare with current dependencies in patcher
  *    - Call onDraw only if changed
  *
- * 6. Performance Optimization: GENERATETEXTURE PATH 🆕
+ * 6. Performance Optimization: GENERATE-TEXTURE PATH 🆕
  *    Strategy for static graphics:
  *    - Static graphics (no redraw) → Consider generateTexture() optimization
  *    - Converts geometry to texture (faster rendering, loses vector quality)
@@ -77,7 +77,7 @@
  *    - ✅ Custom complex shapes (polygons, stars, bezier curves)
  *    - ✅ Dynamic visualizations (graphs, charts)
  *    - ✅ Progress bars with custom shapes
- *    - ✅ Debug overlays (hitboxes, grids)
+ *    - ✅ Debug overlays (hit boxes, grids)
  *    Use Alternatives For:
  *    - ❌ Simple rectangles → Use View with backgroundColor
  *    - ❌ Borders → Use View with borderColor/borderWidth

@@ -22,7 +22,7 @@
 
 ### Minor Changes
 
-- Adjust dev-playground, prepare for develop a sample at stackblitz
+- Adjust dev-playground and prepare a sample for StackBlitz
 
 ### Patch Changes
 

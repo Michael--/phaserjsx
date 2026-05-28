@@ -87,7 +87,7 @@ if (uShaderClipEnabled > 0.5)
 `.trim()
 
 /**
- * Reads or initialises the shader clip state on a drawing context.
+ * Reads or initializes the shader clip state on a drawing context.
  * @param drawingContext - The drawing context to query.
  * @returns The mutable ShaderClipState attached to this context.
  */

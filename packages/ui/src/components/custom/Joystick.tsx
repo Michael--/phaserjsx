@@ -457,7 +457,7 @@ export function Joystick(props: JoystickProps): VNodeLike {
     const angle = Math.atan2(dy, dx) * (180 / Math.PI) // Convert to degrees
     const rawForce = Math.min(dist / radius, 1.0) // Normalize to 0.0 - 1.0
 
-    // Apply minForce (deadzone)
+    // Apply minForce (dead zone)
     const minForce = props.minForce ?? 0.2
     const force = rawForce < minForce ? 0 : (rawForce - minForce) / (1 - minForce)
 

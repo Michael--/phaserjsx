@@ -73,7 +73,7 @@
 
 ### Minor Changes
 
-- Add further exmaples to show ScrollView option Momentum and Snap
+- Add further examples to show ScrollView option Momentum and Snap
 
 ### Patch Changes
 

@@ -741,7 +741,7 @@ export function createElement(
  * @returns Created Phaser GameObject
  */
 export function mount(parentOrScene: ParentType, vnode: VNode): Phaser.GameObjects.GameObject {
-  // Guard against invalid vnodes
+  // Guard against invalid virtual nodes
   if (!vnode || typeof vnode !== 'object') {
     // Create a dummy invisible container to prevent crashes
     console.error(
@@ -1347,7 +1347,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
   // Check if the container's own layout props changed
   const containerLayoutChanged = hasLayoutPropsChanged(oldV, newV)
 
-  // CRITICAL: If number of valid children changed, trigger layout recalc
+  // CRITICAL: If number of valid children changed, trigger layout recalculation
   // This catches cases where children are added/removed without layout prop changes
   const oldValidChildCount = a.filter((c) => c != null && c !== false).length
   const newValidChildCount = b.filter((c) => c != null && c !== false).length

@@ -24,7 +24,7 @@
 
 - **Phaser 4.1.0** — upgraded peer dependency from Phaser 3 to Phaser 4 (breaking)
 - Phaser 3 projects should stay on `@number10/phaserjsx@0.6.1`; the 4.x line targets Phaser 4 and no longer aims to preserve Phaser 3 compatibility.
-- Overflow masking: replaced `GeometryMask`/`setMask()` with a WebGL stencil-buffer clip; no separate Graphics game object or per-frame world-position tracking needed; supports arbitrary nesting via INCR/DECR and optional rounded corners via SDF shader
+- Overflow masking: replaced `GeometryMask`/`setMask()` with a WebGL stencil-buffer clip; no separate Graphics game object or per-frame world-position tracking needed; supports arbitrary nesting via increment/decrement stencil ops and optional rounded corners via SDF shader
 - FX system: replaced `postFX`/`preFX` pipelines with `filters.internal`/`filters.external`; `FXType` changed from `'post'|'pre'` to `'internal'|'external'`
 - `Phaser.FX.Controller` renamed to `Phaser.Filters.Controller`
 - `ColorMatrix` filter effects now accessed via `colorMatrixFilter.colorMatrix.*`
@@ -87,7 +87,7 @@
 
 ### Patch Changes
 
-- Added typesVersions entries for jsx-runtime and jsx-dev-runtime so older TS resolvers can find the d.ts subpaths while keeping the existing exports map as-is. This targets the TS “react-jsx” consumer error without altering the runtime bundles.
+- Added typesVersions entries for jsx-runtime and jsx-dev-runtime so older TS resolvers can find the d.ts sub-paths while keeping the existing exports map as-is. This targets the TS “react-jsx” consumer error without altering the runtime bundles.
 
 ## 0.4.0
 
@@ -112,7 +112,7 @@
 
 ### Minor Changes
 
-- VDOM patching instead remountint modal/portal to avoid effects when childrens changed
+- VDOM patching instead of remounting modal/portal to avoid effects when children change
 - add unmountJSX
 - Add Momentum and Snap option to ScrollSlider
 
