@@ -4,6 +4,8 @@ Documentation and showcase site for @number10/phaserjsx component library.
 
 This docs site documents the PhaserJSX 4.x line for Phaser 4. Phaser 3 projects should use `@number10/phaserjsx@0.6.1`.
 
+Current docs target `@number10/phaserjsx@4.1.0`, including the standalone stencil clip extension for native Phaser Containers.
+
 ## Architecture
 
 This is a **React-based** documentation site that demonstrates PhaserJSX components in live, interactive examples.
@@ -20,6 +22,8 @@ The site uses **two separate JSX runtimes** without conflicts:
 1. **Docs UI (React)**: Navigation, text, code samples rendered as HTML/DOM
 2. **Live Examples (PhaserJSX)**: Interactive Phaser components in isolated canvas
 3. **Bridge Pattern**: `LiveExample` component wraps Phaser.Game, mounts PhaserJSX components
+
+The View documentation also includes a native Phaser stencil clip example that uses PhaserJSX only as the root mount and demonstrates direct `Container#setStencilClip(...)` usage.
 
 ## Development
 

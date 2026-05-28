@@ -1,5 +1,18 @@
 # docs-site
 
+## 0.6.0
+
+### Minor Changes
+
+- Add View documentation for standalone stencil clip usage on native Phaser Containers.
+- Add a live View example showing both `roundRect` and bitmap stencil clips with mostly native Phaser children.
+- Document the new `@number10/phaserjsx@4.1.0` stencil clip extension surface.
+
+### Patch Changes
+
+- Updated dependencies
+  - @number10/phaserjsx@4.1.0
+
 ## 0.5.0
 
 ### Major Changes

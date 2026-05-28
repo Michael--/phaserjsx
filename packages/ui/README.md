@@ -27,6 +27,7 @@ The 4.x line uses Phaser 4 render steps, filters, and WebGL behavior and is not 
 - 📱 **Responsive Design** - Flexible layout with multiple size value formats (px, %, vw/vh, fill, auto, calc)
 - 🔧 **Custom Components** - Easy to create and integrate custom components
 - 🎮 **Phaser Integration** - Seamless integration with Phaser 4 game objects and scenes
+- ✂️ **Stencil Clipping** - Native Phaser Container stencil clips with fast rounded rectangles and bitmap masks
 - 📊 **SVG Support** - Convert SVG to Phaser textures with caching
 - 🚀 **Performance** - Optimized VDOM reconciliation with smart dirty checking
 
@@ -95,6 +96,35 @@ const config: Phaser.Types.Core.GameConfig = {
 }
 
 new Phaser.Game(config)
+```
+
+## ✂️ Standalone Stencil Clip
+
+The stencil clip extension can be used directly with native Phaser Containers, with or without PhaserJSX components:
+
+```ts
+import '@number10/phaserjsx/clip'
+
+const panel = this.add.container(40, 40)
+
+panel.setStencilClip({
+  kind: 'roundRect',
+  width: 220,
+  height: 120,
+  cornerRadius: 16,
+})
+```
+
+Bitmap masks are also supported. They are evaluated as hard stencil masks using an alpha threshold:
+
+```ts
+panel.setStencilClip({
+  kind: 'bitmap',
+  texture: 'panel-mask',
+  width: 220,
+  height: 120,
+  alphaThreshold: 0.5,
+})
 ```
 
 ## 📖 Documentation

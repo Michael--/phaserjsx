@@ -1,5 +1,23 @@
 # @number10/phaserjsx
 
+## 4.1.0
+
+### Minor Changes
+
+- Add standalone WebGL stencil clip support for Phaser 4 Containers via `@number10/phaserjsx/clip`.
+- Add `Container#setStencilClip`, `updateStencilClip`, `clearStencilClip`, and `getStencilClipHandle` extension methods with idempotent install/uninstall helpers.
+- Add bitmap stencil sources with hard alpha-threshold evaluation alongside the existing fast `roundRect`/`rect` SDF path.
+- Export the stencil clip API from the package root and the new `./clip` subpath.
+
+### Patch Changes
+
+- Route internal `overflow="hidden"` clipping through the shared stencil clip extension.
+- Keep the rounded-rectangle overflow path on its existing shader path so bitmap support does not add overhead to common View clipping.
+- Avoid persistent Graphics objects for internal View backgrounds and cache generated background textures.
+- Render View backgrounds through image-backed textures for improved performance.
+- Stabilize animated layout invalidation.
+- Add extension-pattern documentation for future Phaser prototype extensions.
+
 ## 4.0.0
 
 ### Major Changes
