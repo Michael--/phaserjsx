@@ -11,6 +11,7 @@ import {
   FillSizingViewExample,
   FlexDirectionViewExample,
   MinMaxConstraintsViewExample,
+  NativeStencilClipViewExample,
   NestedLayoutsViewExample,
   OverflowControlViewExample,
   PaddingVariationsViewExample,
@@ -27,6 +28,7 @@ import DepthStackingViewExampleRaw from '@/examples/view/DepthStackingExample.ts
 import FillSizingViewExampleRaw from '@/examples/view/FillSizingExample.tsx?raw'
 import FlexDirectionViewExampleRaw from '@/examples/view/FlexDirectionExample.tsx?raw'
 import MinMaxConstraintsViewExampleRaw from '@/examples/view/MinMaxConstraintsExample.tsx?raw'
+import NativeStencilClipViewExampleRaw from '@/examples/view/NativeStencilClipExample.tsx?raw'
 import NestedLayoutsViewExampleRaw from '@/examples/view/NestedLayoutsExample.tsx?raw'
 import OverflowControlViewExampleRaw from '@/examples/view/OverflowControlExample.tsx?raw'
 import PaddingVariationsViewExampleRaw from '@/examples/view/PaddingVariationsExample.tsx?raw'
@@ -130,6 +132,15 @@ export const viewContent: ComponentDocs = {
       component: OverflowControlViewExample,
       height: SCENE_SIZES.large,
       code: OverflowControlViewExampleRaw,
+    },
+    {
+      id: 'native-stencil-clip',
+      title: 'Native Phaser Stencil Clip',
+      description:
+        'Use the standalone stencil clip extension directly on Phaser containers with roundRect and bitmap masks',
+      component: NativeStencilClipViewExample,
+      height: SCENE_SIZES.medium,
+      code: NativeStencilClipViewExampleRaw,
     },
     {
       id: 'nested-layouts',
