@@ -250,7 +250,7 @@ export function StencilClipLab() {
       scene.events.off(Phaser.Scenes.Events.UPDATE, update)
       handles.forEach((handle) => handle.destroy())
       root.destroy(true)
-      camera.destroy()
+      scene.cameras.remove(camera, true)
     }
   }, [scenario, revision])
 
