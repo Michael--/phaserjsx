@@ -4,7 +4,6 @@
  */
 import * as Phaser from 'phaser'
 import type { StencilClipHandle, StencilClipShape } from '../clip'
-import { installStencilClipExtension } from '../clip'
 import type { LayoutProps } from '../core-props'
 import { normalizeGap } from '../core-props'
 import { DebugLogger } from '../dev-config'
@@ -243,7 +242,6 @@ function applyOverflowMask(
   height: number
 ): void {
   const ext = container as typeof container & { __overflowClip?: StencilClipHandle }
-  installStencilClipExtension()
 
   if (containerProps.overflow === 'hidden') {
     if (!ext.__overflowClip) {
