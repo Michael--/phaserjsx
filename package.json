@@ -14,6 +14,10 @@
   "scripts": {
     "dev": "pnpm --parallel --filter \"packages/*\" dev & pnpm --filter @phaserjsx/test-ui dev",
     "dev:app": "pnpm --filter @phaserjsx/test-ui dev",
+    "ci": "ci-runner",
+    "ci:quick": "ci-runner --target quick",
+    "ci:build": "ci-runner --target build",
+    "ci:targets": "ci-runner --list-targets --format pretty",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r run lint",
@@ -27,17 +31,19 @@
     "doctor": "node -v && pnpm -v && pnpm exec tsc -v",
     "generate-stats": "ts-node scripts/generate-stats.ts",
     "generate-icons": "tsx packages/ui/src/scripts/generate-icon-types.ts -p bootstrap-icons -o apps/test-ui/src/components/icon-types.generated.ts",
-    "generate-icon-loaders": "tsx packages/ui/src/scripts/generate-icon-loaders.ts -s apps/test-ui/src -o apps/test-ui/src/components/icon-loaders.generated.ts -p bootstrap-icons"
+    "generate-icon-loaders": "tsx packages/ui/src/scripts/generate-icon-loaders.ts -s apps/test-ui/src -o apps/test-ui/src/components/icon-loaders.generated.ts -p bootstrap-icons",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
+    "@eslint/js": "^10.0.1",
+    "@number10/ci-runner-cli": "^0.2.1",
     "@typescript-eslint/eslint-plugin": "^8.59.4",
     "@typescript-eslint/parser": "^8.59.4",
     "cspell": "^10.0.0",
     "eslint": "^10.4.0",
-    "@eslint/js": "^10.0.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.5.5",

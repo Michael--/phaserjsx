@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",

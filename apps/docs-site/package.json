@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b && tsc -p src/examples-docs/tsconfig.json --noEmit",
     "typecheck:examples": "tsc -p src/examples-docs/tsconfig.json --noEmit",
-    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts"
+    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "dependencies": {
     "react": "^19.2.6",

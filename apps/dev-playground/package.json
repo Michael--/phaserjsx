@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts"
+    "generate-icons": "node ../../packages/ui/dist/scripts/generate-icons.js --config ./icon-generator.config.ts",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "parcel index.html --port 1234",
     "build": "parcel build index.html --no-minify",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",

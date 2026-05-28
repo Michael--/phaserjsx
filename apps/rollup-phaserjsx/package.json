@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node scripts/dev-server.cjs",
     "build": "rollup -c",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "spell": "cspell \"**/*.{ts,tsx,js,mjs,cjs,json,md,yml,yaml,css,html}\""
   },
   "dependencies": {
     "@number10/phaserjsx": "workspace:*",
