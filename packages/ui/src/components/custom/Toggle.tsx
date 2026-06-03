@@ -149,8 +149,6 @@ export function Toggle(props: ToggleProps): VNodeLike {
     // Animate thumb position via state
     const startX = thumbX
 
-    console.log('Duration:', duration.current)
-
     scene.tweens.addCounter({
       from: 0,
       to: 1,
