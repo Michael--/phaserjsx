@@ -1,6 +1,0 @@
-export { applyScissorClip } from './scissorClip'
-export type { ScissorClipHandle } from './scissorClip'
-export { applyShaderClip } from './shaderClip'
-export type { ShaderClipHandle } from './shaderClip'
-export { applyStencilClip } from './stencilClip'
-export type { StencilClipHandle } from './stencilClip'
