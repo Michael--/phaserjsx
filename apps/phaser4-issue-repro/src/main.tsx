@@ -17,6 +17,7 @@ import {
   useState,
   useThemeTokens,
   View,
+  WrapText,
   type MountProps,
 } from '@number10/phaserjsx'
 import * as Phaser from 'phaser'
@@ -25,6 +26,9 @@ import './style.css'
 setColorPreset('oceanBlue', 'dark')
 
 type ClipMode = 'none' | 'phaser' | 'phaserjsx'
+
+const CLIP_EVERY = 3
+const CLIP_SIZE_FACTOR = 0.5
 
 type TestPatternOptions = {
   cols: number
@@ -110,17 +114,21 @@ function FpsMeter() {
 
 function ReproOverlay(props: ReproOverlayProps) {
   const tokens = useThemeTokens()
+  const { onCreateSample, title } = props
   const [sampleOn, setSampleOn] = useState(true)
-  const [clipMode, setClipMode] = useState<ClipMode>('none')
+  const [clipMode, setClipMode] = useState<ClipMode>('phaser')
   const [textureMode, setTextureMode] = useState(false)
   const [clipUseExternal, setClipUseExternal] = useState(false)
   const [clipAutoUpdate, setClipAutoUpdate] = useState(false)
   const [clipScaleFactor, setClipScaleFactor] = useState(1)
-  const [size, setSize] = useState(10)
-  const [cellSize, setCellSize] = useState(64)
+  const [size, setSize] = useState(14)
+  const [cellSize, setCellSize] = useState(48)
+
+  const totalCells = size * size
+  const clippedCells = Math.ceil(totalCells / CLIP_EVERY)
 
   useEffect(() => {
-    props.onCreateSample?.({
+    onCreateSample?.({
       on: sampleOn,
       size,
       cellSize,
@@ -131,6 +139,7 @@ function ReproOverlay(props: ReproOverlayProps) {
       clipScaleFactor: clipScaleFactor,
     })
   }, [
+    onCreateSample,
     sampleOn,
     clipMode,
     textureMode,
@@ -139,7 +148,6 @@ function ReproOverlay(props: ReproOverlayProps) {
     clipScaleFactor,
     size,
     cellSize,
-    props,
   ])
 
   return (
@@ -147,7 +155,7 @@ function ReproOverlay(props: ReproOverlayProps) {
       <View
         gap={10}
         padding={14}
-        width={400}
+        width={425}
         overflow="hidden"
         backgroundColor={tokens?.colors.background.DEFAULT.toNumber()}
         backgroundAlpha={0.9}
@@ -155,7 +163,15 @@ function ReproOverlay(props: ReproOverlayProps) {
         borderWidth={1}
         cornerRadius={6}
       >
-        <Text text={props.title} style={tokens?.textStyles.large} />
+        <Text text={title} style={tokens?.textStyles.large} />
+        <Text
+          text={'Every 3rd item is clipped to a centered 50% rect/bitmap.'}
+          style={tokens?.textStyles.small}
+        />
+        <Text
+          text={`Load: ${totalCells} containers, ${clippedCells} clipped`}
+          style={tokens?.textStyles.small}
+        />
         <Divider />
         <Toggle
           checked={sampleOn}
@@ -183,21 +199,26 @@ function ReproOverlay(props: ReproOverlayProps) {
             onChange={(v) => setClipMode(v as ClipMode)}
             options={[
               { label: 'None', value: 'none' },
-              { label: 'Phaser Mask', value: 'phaser' },
-              { label: 'Stencil Clip', value: 'phaserjsx' },
+              { label: 'Phaser Filter Mask (phaser4)', value: 'phaser' },
+              { label: 'Rect/Bitmap Clip (prototype)', value: 'phaserjsx' },
             ]}
           />
         </View>
         <Toggle
           checked={textureMode}
           onChange={setTextureMode}
-          label="Prefer Texture:"
+          label="Use Bitmap Source:"
+          suffix={
+            <Text text={'(forces texture-based clipping)'} style={tokens?.textStyles.small} />
+          }
           labelPosition="left"
         />
         <Divider />
-        <Text text={'Phaser Filter Options:'} />
-        <Text
-          text={'(Only applies with "Phaser Mask" clipping mode & no texture clip)'}
+        <Text text={'Phaser Filter Mask Options:'} />
+        <WrapText
+          text={
+            'Only applies to "Phaser Filter Mask". Auto-update off is the static-mask best case.'
+          }
           style={tokens?.textStyles.small}
         />
         <Toggle
@@ -213,7 +234,7 @@ function ReproOverlay(props: ReproOverlayProps) {
           labelPosition="left"
         />
         <View direction="row" gap={10} alignItems="center">
-          <Text text={'Mask Scale:'} />
+          <Text text={'Shape Mask Scale:'} />
           <Slider
             value={clipScaleFactor}
             onChange={setClipScaleFactor}
@@ -221,7 +242,7 @@ function ReproOverlay(props: ReproOverlayProps) {
             max={1}
             step={0.1}
           />
-          <Text text={`${clipScaleFactor}x`} />
+          <Text text={`${clipScaleFactor.toFixed(1)}x`} />
         </View>
         <Divider />
         <FpsMeter />
@@ -331,7 +352,7 @@ class ReproScene extends Phaser.Scene {
   create(): void {
     this.jsxContainer = this.add.container(0, 0).setDepth(1000)
     mountComponent(this.jsxContainer, ReproOverlay, {
-      title: 'Phaser 4 Clipping Gamble Repro',
+      title: 'Phaser 4 Filter Mask Clipping Cost',
       width: this.scale.width,
       height: this.scale.height,
       onCreateSample: (props: SampleProps) => {
@@ -342,13 +363,14 @@ class ReproScene extends Phaser.Scene {
           const x = this.scale.width * 0.5
           const y = this.scale.height * 0.5
           this.phaserExample?.destroy()
+          this.releaseClipMaskTextures()
           this.phaserExample = this.createContainerTestPattern(x, y, {
             cols: props.size,
             rows: props.size,
             cellSize: props.cellSize,
             seed: 42,
-            clipEvery: 3,
-            clipSizeFactor: 0.5,
+            clipEvery: CLIP_EVERY,
+            clipSizeFactor: CLIP_SIZE_FACTOR,
             textureMode: props.textureMode,
             clip: props.mode,
             clipPhaserOptions: {
@@ -363,8 +385,18 @@ class ReproScene extends Phaser.Scene {
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.phaserExample?.destroy()
+      this.releaseClipMaskTextures()
+      this.textures.remove('__white_pixel')
       if (this.jsxContainer) unmountJSX(this.jsxContainer)
     })
+  }
+
+  /** Removes all dynamically created clip mask textures from the texture manager. */
+  private releaseClipMaskTextures(): void {
+    const prefix = '__clip_mask_'
+    Object.keys(this.textures.list)
+      .filter((key) => key.startsWith(prefix))
+      .forEach((key) => this.textures.remove(key))
   }
 
   createContainerTestPattern(
@@ -453,9 +485,7 @@ class ReproScene extends Phaser.Scene {
               }
             }
           } else if (clip === 'phaserjsx') {
-            // optionally use Phaser JSX's built-in stencil clip API, which supports both texture and non-texture clips with the same codepath and automatically handles optimizations like external/fullscreen filter selection and static mask detection.
-            // not really necessary for rectangular clips, but useful for testing with texture clips without needing to manually manage Phaser Mask GameObjects.
-
+            // Candidate lightweight clipping path: no per-item filter render target.
             if (textureMode && clipMaskTexture) {
               item.setStencilClip({
                 kind: 'bitmap',
