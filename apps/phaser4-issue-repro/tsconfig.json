@@ -4,6 +4,12 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "paths": {
+      "@number10/phaserjsx": ["../../packages/ui/src/index.ts"],
+      "@number10/phaserjsx/*": ["../../packages/ui/src/*"],
+      "@number10/phaserjsx/jsx-dev-runtime": ["../../packages/ui/src/jsx-dev-runtime.ts"],
+      "@number10/phaserjsx/jsx-runtime": ["../../packages/ui/src/jsx-runtime.ts"]
+    },
     "jsx": "react-jsx",
     "jsxImportSource": "@number10/phaserjsx",
     "useDefineForClassFields": true,

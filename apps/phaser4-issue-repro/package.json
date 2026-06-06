@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@number10/phaserjsx": "^4.1.0",
+    "@number10/phaserjsx": "workspace:*",
     "phaser": "^4.1.0"
   },
   "devDependencies": {

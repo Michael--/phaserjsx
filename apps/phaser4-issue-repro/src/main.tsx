@@ -116,8 +116,8 @@ function ReproOverlay(props: ReproOverlayProps) {
   const tokens = useThemeTokens()
   const { onCreateSample, title } = props
   const [sampleOn, setSampleOn] = useState(true)
-  const [clipMode, setClipMode] = useState<ClipMode>('phaser')
-  const [textureMode, setTextureMode] = useState(false)
+  const [clipMode, setClipMode] = useState<ClipMode>('phaserjsx')
+  const [textureMode, setTextureMode] = useState(true)
   const [clipUseExternal, setClipUseExternal] = useState(false)
   const [clipAutoUpdate, setClipAutoUpdate] = useState(false)
   const [clipScaleFactor, setClipScaleFactor] = useState(1)
