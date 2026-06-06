@@ -18,12 +18,13 @@
  * render time, so no per-layout world-position tracking is needed.
  */
 import * as Phaser from 'phaser'
-import { getDepth, ensurePrerenderReset } from './stencil-clip-depth'
+import { ensurePrerenderReset, getDepth } from './stencil-clip-depth'
 import { ensureFboPatch, resetFboPatchState } from './stencil-clip-fbo-bridge'
 import { drawMaskShape, type GLPolyfilled } from './stencil-clip-renderer'
 import { mergeMaskState, toMaskState } from './stencil-clip-state'
 import type { StencilClipHandle, StencilClipSource } from './stencil-clip-types'
 
+export { isBitmapStencilClipSource } from './stencil-clip-state'
 export type {
   StencilBitmapClipSource,
   StencilBitmapTexture,
@@ -34,7 +35,6 @@ export type {
   StencilCornerRadius,
   StencilRoundRectClipSource,
 } from './stencil-clip-types'
-export { isBitmapStencilClipSource } from './stencil-clip-state'
 
 // ── Internal Phaser type helpers ──────────────────────────────────────────────
 
@@ -49,6 +49,15 @@ type CameraLike = {
 type DrawingContextLike = {
   camera?: CameraLike
   useCanvas?: boolean
+}
+
+type GLWrapperLike = {
+  state?: {
+    bindings?: {
+      arrayBuffer?: unknown
+    }
+  }
+  updateBindingsArrayBuffer?(state: unknown, force?: boolean): void
 }
 
 // ── Attachment symbol ─────────────────────────────────────────────────────────
@@ -116,15 +125,26 @@ export function applyStencilClip(
 
   const renderer = container.scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer
   const gl = renderer.gl as GLPolyfilled
+  const glWrapper = renderer.glWrapper as unknown as GLWrapperLike
 
   ensurePrerenderReset(gl, container.scene.game, resetFboPatchState)
   ensureFboPatch(gl)
 
   // Persistent vertex buffer: 4 vertices × 4 floats × 4 bytes = 64 bytes.
+  const previousArrayBuffer = glWrapper.state?.bindings?.arrayBuffer ?? null
   const vertBuf = gl.createBuffer() as WebGLBuffer
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(16), gl.DYNAMIC_DRAW)
   gl.bindBuffer(gl.ARRAY_BUFFER, null)
+  // Creating the buffer mutates raw GL state; restore Phaser's cached binding too.
+  glWrapper.updateBindingsArrayBuffer?.(
+    {
+      bindings: {
+        arrayBuffer: previousArrayBuffer,
+      },
+    },
+    true
+  )
 
   const verts = new Float32Array(16)
 

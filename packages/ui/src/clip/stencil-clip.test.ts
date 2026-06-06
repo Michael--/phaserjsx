@@ -54,6 +54,14 @@ function makeWebGlContainer() {
     renderer: {
       type: Phaser.WEBGL,
       gl,
+      glWrapper: {
+        state: {
+          bindings: {
+            arrayBuffer: null,
+          },
+        },
+        updateBindingsArrayBuffer: vi.fn(),
+      },
     },
     game: {
       events: {
@@ -104,12 +112,15 @@ describe('applyStencilClip', () => {
 describe('drawMaskShape', () => {
   it('projects mask vertices through the active camera matrix', () => {
     const uploaded: Float32Array[] = []
+    const restoreState = vi.fn()
     const gl = {
+      ACTIVE_TEXTURE: 0x84e0,
       ARRAY_BUFFER: 0x8892,
       CURRENT_PROGRAM: 0x8b8d,
       ARRAY_BUFFER_BINDING: 0x8894,
       FLOAT: 0x1406,
       FRAGMENT_SHADER: 0x8b30,
+      TEXTURE0: 0x84c0,
       TRIANGLE_FAN: 0x0006,
       VERTEX_SHADER: 0x8b31,
       attachShader: vi.fn(),
@@ -137,7 +148,21 @@ describe('drawMaskShape', () => {
 
     drawMaskShape(
       gl,
-      {} as Phaser.Scene,
+      {
+        renderer: {
+          glWrapper: {
+            state: {
+              bindings: {
+                activeTexture: 0,
+                arrayBuffer: null,
+                program: null,
+              },
+              vao: null,
+            },
+            update: restoreState,
+          },
+        },
+      } as unknown as Phaser.Scene,
       { a: 1, b: 0, c: 0, d: 1, tx: 10, ty: 20 } as Phaser.GameObjects.Components.TransformMatrix,
       {
         getX: (x: number) => x + 100,
@@ -163,6 +188,102 @@ describe('drawMaskShape', () => {
     expect(verts?.[1]).toBeCloseTo(-0.4)
     expect(verts?.[4]).toBeCloseTo(0.3)
     expect(verts?.[5]).toBeCloseTo(-0.4)
+  })
+
+  it('renders bitmap masks through Phaser texture units and restores active texture state', () => {
+    const uploaded: Float32Array[] = []
+    const previousTexture = { id: 'previous-texture' }
+    const maskTexture = { id: 'mask-texture', webGLTexture: { id: 'mask-webgl-texture' } }
+    const textureUnits = {
+      units: [previousTexture],
+      bind: vi.fn((texture: unknown, unit: number) => {
+        textureUnits.units[unit] = texture
+      }),
+    }
+    const updateBindingsActiveTexture = vi.fn()
+    const gl = {
+      ACTIVE_TEXTURE: 0x84e0,
+      ARRAY_BUFFER: 0x8892,
+      ARRAY_BUFFER_BINDING: 0x8894,
+      CURRENT_PROGRAM: 0x8b8d,
+      FLOAT: 0x1406,
+      FRAGMENT_SHADER: 0x8b30,
+      TEXTURE0: 0x84c0,
+      TRIANGLE_FAN: 0x0006,
+      VERTEX_SHADER: 0x8b31,
+      attachShader: vi.fn(),
+      bindBuffer: vi.fn(),
+      bindVertexArray: vi.fn(),
+      bufferSubData: vi.fn((_: number, __: number, data: Float32Array) => {
+        uploaded.push(new Float32Array(data))
+      }),
+      compileShader: vi.fn(),
+      createProgram: vi.fn(() => ({ id: 'bitmap-program' })),
+      createShader: vi.fn((type: number) => ({ type })),
+      disableVertexAttribArray: vi.fn(),
+      drawArrays: vi.fn(),
+      enableVertexAttribArray: vi.fn(),
+      getAttribLocation: vi.fn((_: unknown, name: string) => (name === 'a_ndc' ? 0 : 1)),
+      getParameter: vi.fn((parameter: number) => (parameter === 0x84e0 ? 0x84c3 : null)),
+      getUniformLocation: vi.fn((_: unknown, name: string) => ({ name })),
+      linkProgram: vi.fn(),
+      shaderSource: vi.fn(),
+      uniform1f: vi.fn(),
+      uniform1i: vi.fn(),
+      useProgram: vi.fn(),
+      vertexAttribPointer: vi.fn(),
+    } as unknown as GLPolyfilled
+
+    const scene = {
+      renderer: {
+        glTextureUnits: textureUnits,
+        glWrapper: {
+          updateBindingsActiveTexture,
+        },
+      },
+      textures: {
+        getFrame: vi.fn(() => ({
+          cutHeight: 16,
+          cutWidth: 16,
+          glTexture: maskTexture,
+          u0: 0,
+          u1: 1,
+          v0: 0,
+          v1: 1,
+        })),
+      },
+    } as unknown as Phaser.Scene
+
+    drawMaskShape(
+      gl,
+      scene,
+      { a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 } as Phaser.GameObjects.Components.TransformMatrix,
+      undefined,
+      {
+        alphaThreshold: 0.5,
+        frame: undefined,
+        height: 16,
+        invertAlpha: false,
+        kind: 'bitmap',
+        offsetX: 0,
+        offsetY: 0,
+        texture: 'mask',
+        width: 16,
+      },
+      100,
+      100,
+      {} as WebGLBuffer,
+      new Float32Array(16)
+    )
+
+    expect(uploaded).toHaveLength(1)
+    expect(textureUnits.bind).toHaveBeenNthCalledWith(1, maskTexture, 0)
+    expect(textureUnits.bind).toHaveBeenNthCalledWith(2, previousTexture, 0)
+    expect(updateBindingsActiveTexture).toHaveBeenCalledWith({
+      bindings: {
+        activeTexture: 3,
+      },
+    })
   })
 })
 

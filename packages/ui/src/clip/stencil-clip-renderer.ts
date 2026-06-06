@@ -6,6 +6,71 @@ export type GLPolyfilled = WebGLRenderingContext & {
   bindVertexArray(vao: WebGLVertexArrayObject | null): void
 }
 
+type GLWrapperLike = {
+  state?: {
+    bindings?: {
+      activeTexture?: number
+      arrayBuffer?: unknown
+      program?: unknown
+    }
+    vao?: unknown
+  }
+  update?(state: unknown, force?: boolean, vaoLast?: boolean): void
+  updateBindingsActiveTexture?(state: unknown, force?: boolean): void
+}
+
+type SavedPhaserGLState = {
+  activeTexture: number | undefined
+  arrayBuffer: unknown
+  program: unknown
+  vao: unknown
+}
+
+function savePhaserGLState(renderer: Phaser.Renderer.WebGL.WebGLRenderer): SavedPhaserGLState {
+  const glWrapper = renderer.glWrapper as unknown as GLWrapperLike
+
+  // Phaser 4 caches GL bindings; raw gl.* restoration is not enough.
+  return {
+    activeTexture: glWrapper.state?.bindings?.activeTexture,
+    arrayBuffer: glWrapper.state?.bindings?.arrayBuffer ?? null,
+    program: glWrapper.state?.bindings?.program ?? null,
+    vao: glWrapper.state?.vao ?? null,
+  }
+}
+
+function restorePhaserGLState(
+  renderer: Phaser.Renderer.WebGL.WebGLRenderer,
+  saved: SavedPhaserGLState,
+  fallbackActiveTexture: number
+): void {
+  const glWrapper = renderer.glWrapper as unknown as GLWrapperLike
+
+  if (glWrapper.update) {
+    // Keep Phaser's cached state aligned after this custom stencil shader pass.
+    glWrapper.update(
+      {
+        bindings: {
+          activeTexture: saved.activeTexture ?? fallbackActiveTexture,
+          arrayBuffer: saved.arrayBuffer,
+          program: saved.program,
+        },
+        vao: saved.vao,
+      },
+      true
+    )
+    return
+  }
+
+  glWrapper.updateBindingsActiveTexture?.(
+    {
+      bindings: {
+        activeTexture: saved.activeTexture ?? fallbackActiveTexture,
+      },
+    },
+    true
+  )
+}
+
 const ROUND_RECT_VERT_SRC = `
 attribute vec2 a_ndc;
 attribute vec2 a_loc;
@@ -143,6 +208,7 @@ const STRIDE = 16
 
 function drawRoundRectMaskShape(
   gl: GLPolyfilled,
+  scene: Phaser.Scene,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
   cameraMatrix: Phaser.GameObjects.Components.TransformMatrix | undefined,
   offsetX: number,
@@ -185,6 +251,9 @@ function drawRoundRectMaskShape(
   const prevProg = gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram | null
   const prevBuf = gl.getParameter(gl.ARRAY_BUFFER_BINDING) as WebGLBuffer | null
   const prevVAO = gl.getParameter(0x85b5) as WebGLVertexArrayObject | null
+  const prevActiveTextureUnit = (gl.getParameter(gl.ACTIVE_TEXTURE) as number) - gl.TEXTURE0
+  const renderer = scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer
+  const savedPhaserState = savePhaserGLState(renderer)
 
   gl.bindVertexArray(null)
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
@@ -210,10 +279,11 @@ function drawRoundRectMaskShape(
   gl.bindBuffer(gl.ARRAY_BUFFER, prevBuf)
   gl.useProgram(prevProg)
   gl.bindVertexArray(prevVAO)
+  restorePhaserGLState(renderer, savedPhaserState, prevActiveTextureUnit)
 }
 
 type BitmapFrameInfo = {
-  webGLTexture: WebGLTexture
+  glTexture: Phaser.Renderer.WebGL.Wrappers.WebGLTextureWrapper
   width: number
   height: number
   u0: number
@@ -236,7 +306,7 @@ function resolveBitmapFrame(scene: Phaser.Scene, source: BitmapMaskState): Bitma
   if (!frame?.glTexture?.webGLTexture) return null
 
   return {
-    webGLTexture: frame.glTexture.webGLTexture,
+    glTexture: frame.glTexture,
     width: source.width ?? frame.cutWidth ?? frame.realWidth,
     height: source.height ?? frame.cutHeight ?? frame.realHeight,
     u0: frame.u0,
@@ -248,6 +318,7 @@ function resolveBitmapFrame(scene: Phaser.Scene, source: BitmapMaskState): Bitma
 
 function drawBitmapMaskShape(
   gl: GLPolyfilled,
+  scene: Phaser.Scene,
   matrix: Phaser.GameObjects.Components.TransformMatrix,
   cameraMatrix: Phaser.GameObjects.Components.TransformMatrix | undefined,
   source: BitmapMaskState,
@@ -287,10 +358,9 @@ function drawBitmapMaskShape(
   const prevProg = gl.getParameter(gl.CURRENT_PROGRAM) as WebGLProgram | null
   const prevBuf = gl.getParameter(gl.ARRAY_BUFFER_BINDING) as WebGLBuffer | null
   const prevVAO = gl.getParameter(0x85b5) as WebGLVertexArrayObject | null
-  const prevActiveTexture = gl.getParameter(gl.ACTIVE_TEXTURE) as number
-
-  gl.activeTexture(gl.TEXTURE0)
-  const prevTexture = gl.getParameter(gl.TEXTURE_BINDING_2D) as WebGLTexture | null
+  const prevActiveTextureUnit = (gl.getParameter(gl.ACTIVE_TEXTURE) as number) - gl.TEXTURE0
+  const renderer = scene.renderer as Phaser.Renderer.WebGL.WebGLRenderer
+  const savedPhaserState = savePhaserGLState(renderer)
 
   gl.bindVertexArray(null)
   gl.bindBuffer(gl.ARRAY_BUFFER, vertBuf)
@@ -305,7 +375,10 @@ function drawBitmapMaskShape(
   gl.enableVertexAttribArray(locs.uv)
   gl.vertexAttribPointer(locs.uv, 2, gl.FLOAT, false, STRIDE, 8)
 
-  gl.bindTexture(gl.TEXTURE_2D, frameInfo.webGLTexture)
+  const textureUnits = renderer.glTextureUnits
+  const prevTexture = textureUnits.units[0] ?? null
+
+  textureUnits.bind(frameInfo.glTexture, 0)
   gl.uniform1i(locs.texture, 0)
   gl.uniform1f(locs.alphaThreshold, source.alphaThreshold)
   gl.uniform1f(locs.invertAlpha, source.invertAlpha ? 1 : 0)
@@ -315,11 +388,16 @@ function drawBitmapMaskShape(
   gl.disableVertexAttribArray(locs.ndc)
   gl.disableVertexAttribArray(locs.uv)
 
-  gl.bindTexture(gl.TEXTURE_2D, prevTexture)
-  gl.activeTexture(prevActiveTexture)
+  textureUnits.bind(prevTexture, 0)
+  renderer.glWrapper.updateBindingsActiveTexture({
+    bindings: {
+      activeTexture: prevActiveTextureUnit,
+    },
+  })
   gl.bindBuffer(gl.ARRAY_BUFFER, prevBuf)
   gl.useProgram(prevProg)
   gl.bindVertexArray(prevVAO)
+  restorePhaserGLState(renderer, savedPhaserState, prevActiveTextureUnit)
 }
 
 export function drawMaskShape(
@@ -336,12 +414,24 @@ export function drawMaskShape(
   if (source.kind === 'bitmap') {
     const frameInfo = resolveBitmapFrame(scene, source)
     if (!frameInfo) return
-    drawBitmapMaskShape(gl, matrix, cameraMatrix, source, frameInfo, logW, logH, vertBuf, verts)
+    drawBitmapMaskShape(
+      gl,
+      scene,
+      matrix,
+      cameraMatrix,
+      source,
+      frameInfo,
+      logW,
+      logH,
+      vertBuf,
+      verts
+    )
     return
   }
 
   drawRoundRectMaskShape(
     gl,
+    scene,
     matrix,
     cameraMatrix,
     source.offsetX,
