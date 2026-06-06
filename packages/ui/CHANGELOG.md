@@ -1,5 +1,19 @@
 # @number10/phaserjsx
 
+## Upcoming
+
+### Minor Changes
+
+- Add `DebugPanel` as an exported custom component for lightweight Phaser/PhaserJSX runtime diagnostics.
+
+### Patch Changes
+
+- Restore Phaser's cached WebGL wrapper state after custom stencil clipping setup and mask draw passes, preventing transient global flicker when bitmap stencil clips are added.
+- Project stencil masks through the active camera matrix so clipped content stays aligned under camera transforms.
+- Keep bitmap stencil mask rendering on Phaser texture-unit bindings instead of mutating raw texture state directly.
+- Split stencil clip depth, framebuffer bridge, renderer, runtime state, and shared types into focused modules for easier maintenance.
+- Add stencil clip regression coverage for asynchronous corner handling, camera projection, and bitmap texture-unit state restoration.
+
 ## 4.1.0
 
 ### Minor Changes
