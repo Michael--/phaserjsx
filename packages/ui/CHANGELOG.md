@@ -1,6 +1,6 @@
 # @number10/phaserjsx
 
-## Upcoming
+## 4.2.0
 
 ### Minor Changes
 
