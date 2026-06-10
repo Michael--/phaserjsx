@@ -7,34 +7,34 @@
   font-size: 48px;
   font-weight: 700;
   margin: 0 0 24px 0;
-  color: #ffffff;
+  color: var(--color-text-strong);
 }
 
 .section-title {
   font-size: 32px;
   font-weight: 600;
   margin: 0 0 16px 0;
-  color: #ffffff;
+  color: var(--color-text-strong);
 }
 
 .doc-paragraph {
   font-size: 16px;
   line-height: 1.8;
   margin-bottom: 16px;
-  color: #ccc;
+  color: var(--color-text);
 }
 
 .doc-description {
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 24px;
-  color: #ccc;
+  color: var(--color-text);
 }
 
 .section-description {
   font-size: 14px;
   line-height: 1.5;
-  color: #888;
+  color: var(--color-text-secondary);
   margin-bottom: 16px;
 }
 
@@ -55,7 +55,7 @@
   font-size: 24px;
   font-weight: 600;
   margin: 32px 0 16px 0;
-  color: #ffffff;
+  color: var(--color-text-strong);
 }
 
 .doc-subsection {
@@ -74,23 +74,23 @@
   padding-left: 24px;
   position: relative;
   line-height: 1.6;
-  color: #ccc;
+  color: var(--color-text);
 }
 
 .doc-list-item::before {
   content: '•';
   position: absolute;
   left: 8px;
-  color: #4a9eff;
+  color: var(--color-accent);
   font-weight: bold;
 }
 
 .doc-list-item strong {
-  color: #ffffff;
+  color: var(--color-text-strong);
 }
 
 .doc-list-item a {
-  color: #4a9eff;
+  color: var(--color-accent);
   text-decoration: none;
   font-weight: 500;
 }
@@ -104,17 +104,17 @@
   margin: 24px 0;
   border-radius: 8px;
   overflow: hidden;
-  background: #1a1a2e;
-  border: 1px solid #2a2a3e;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border);
 }
 
 .code-block-title {
   padding: 12px 16px;
-  background: #2a2a3e;
-  color: #ffffff;
+  background: var(--color-code-header-bg);
+  color: var(--color-text-strong);
   font-weight: 600;
   font-size: 14px;
-  border-bottom: 1px solid #3a3a4e;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .code-block pre {
@@ -128,7 +128,7 @@
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   line-height: 1.6;
-  color: #e0e0e0;
+  color: var(--color-code-text);
 }
 
 /* Inline code */
@@ -136,29 +136,29 @@ code {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9em;
   padding: 2px 6px;
-  background: #2a2a3e;
+  background: var(--color-bg-tertiary);
   border-radius: 4px;
-  color: #4a9eff;
+  color: var(--color-accent);
 }
 
 /* Info boxes */
 .info-box {
   margin: 24px 0;
   padding: 16px 20px;
-  background: rgba(74, 158, 255, 0.1);
-  border-left: 4px solid #4a9eff;
+  background: var(--color-info-bg);
+  border-left: 4px solid var(--color-accent);
   border-radius: 4px;
 }
 
 .info-box strong {
-  color: #4a9eff;
+  color: var(--color-accent);
   display: block;
   margin-bottom: 8px;
 }
 
 .info-box p {
   margin: 8px 0;
-  color: #ccc;
+  color: var(--color-text);
   line-height: 1.6;
 }
 
@@ -169,7 +169,7 @@ code {
 .installation-notice {
   margin: 24px 0;
   padding: 16px 20px;
-  background: rgba(255, 180, 0, 0.1);
+  background: var(--color-warning-bg);
   border-left: 4px solid #ffb400;
   border-radius: 4px;
 }
@@ -182,7 +182,7 @@ code {
 
 .installation-notice p {
   margin: 8px 0;
-  color: #ccc;
+  color: var(--color-text);
   line-height: 1.6;
 }
 
@@ -196,10 +196,10 @@ code {
 }
 
 .arch-layer {
-  background: #2a2a3e;
+  background: var(--color-bg-tertiary);
   padding: 20px 40px;
   border-radius: 8px;
-  border: 2px solid #4a9eff;
+  border: 2px solid var(--color-accent);
   text-align: center;
   min-width: 300px;
 }
@@ -207,19 +207,19 @@ code {
 .arch-layer strong {
   display: block;
   font-size: 18px;
-  color: #ffffff;
+  color: var(--color-text-strong);
   margin-bottom: 8px;
 }
 
 .arch-layer span {
   display: block;
   font-size: 14px;
-  color: #888;
+  color: var(--color-text-secondary);
 }
 
 .arch-arrow {
   font-size: 32px;
-  color: #4a9eff;
+  color: var(--color-accent);
   margin: 4px 0;
 }
 
@@ -241,9 +241,9 @@ code {
 .toggle-button {
   margin-top: 16px;
   padding: 8px 16px;
-  background-color: #333;
-  color: #fff;
-  border: none;
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-strong);
+  border: 1px solid var(--color-border);
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
@@ -252,9 +252,9 @@ code {
 }
 
 .toggle-button:hover {
-  background-color: #444;
+  background-color: var(--color-bg-secondary);
 }
 
 .toggle-button:active {
-  background-color: #222;
+  background-color: var(--color-border);
 }

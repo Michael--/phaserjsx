@@ -23,15 +23,40 @@
   /* Dark mode colors */
   --color-bg: #0d1117;
   --color-bg-secondary: #1e1e1e;
+  --color-bg-tertiary: #2a2a3e;
   --color-text: #c9d1d9;
+  --color-text-strong: #ffffff;
   --color-text-secondary: #8b949e;
   --color-border: #30363d;
   --color-accent: #61dafb;
+  --color-code-bg: #1a1a2e;
+  --color-code-header-bg: #2a2a3e;
+  --color-code-text: #e0e0e0;
+  --color-info-bg: rgba(74, 158, 255, 0.1);
+  --color-warning-bg: rgba(255, 180, 0, 0.1);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #edf2f7;
+  --color-text: #1f2937;
+  --color-text-strong: #111827;
+  --color-text-secondary: #64748b;
+  --color-border: #d8dee4;
+  --color-accent: #0969da;
+  --color-code-bg: #f6f8fa;
+  --color-code-header-bg: #eaeef2;
+  --color-code-text: #24292f;
+  --color-info-bg: rgba(9, 105, 218, 0.08);
+  --color-warning-bg: rgba(154, 103, 0, 0.1);
 }
 
 body {

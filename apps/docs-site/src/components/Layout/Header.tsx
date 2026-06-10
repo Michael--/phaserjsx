@@ -2,21 +2,16 @@
  * Header - Navigation and branding
  */
 /** @jsxImportSource react */
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import packageJson from '../../../package.json'
 import logoImage from '../../assets/phaser-jsx-logo.png'
+import { useDocsTheme } from './DocsTheme'
 
 /**
  * Site header with navigation and theme toggle
  */
 export function Header() {
-  const [darkMode, setDarkMode] = useState(true)
-
-  const toggleTheme = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.setAttribute('data-theme', darkMode ? 'light' : 'dark')
-  }
+  const { darkMode, toggleTheme } = useDocsTheme()
 
   return (
     <header
@@ -85,6 +80,7 @@ export function Header() {
       </div>
       <button
         onClick={toggleTheme}
+        aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
         style={{
           padding: '8px 16px',
           backgroundColor: darkMode ? '#333' : '#f0f0f0',

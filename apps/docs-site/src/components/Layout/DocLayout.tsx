@@ -5,6 +5,7 @@
 import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useDocsTheme } from './DocsTheme'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 
@@ -16,7 +17,7 @@ interface DocLayoutProps {
  * Main layout for documentation pages
  */
 export function DocLayout({ children }: DocLayoutProps) {
-  const darkMode = true // TODO: sync with theme context
+  const { darkMode } = useDocsTheme()
   const location = useLocation()
   const mainRef = useRef<HTMLElement | null>(null)
 

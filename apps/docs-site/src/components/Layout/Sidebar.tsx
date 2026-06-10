@@ -4,6 +4,7 @@
 /** @jsxImportSource react */
 import { useLayoutEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useDocsTheme } from './DocsTheme'
 
 interface NavItem {
   label: string
@@ -134,7 +135,7 @@ let persistedScrollTop = 0
  */
 export function Sidebar() {
   const location = useLocation()
-  const darkMode = true // TODO: sync with theme context
+  const { darkMode } = useDocsTheme()
   const containerRef = useRef<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
