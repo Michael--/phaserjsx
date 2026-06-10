@@ -27,6 +27,7 @@ import { ImageExample } from './examples/ImageExample'
 import { ModalExample } from './examples/ModalExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
+import { ParticlesExample } from './examples/ParticlesExample'
 import { PortalExample } from './examples/PortalExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
@@ -37,6 +38,7 @@ import { StackExample } from './examples/StackExample'
 import { TestExample } from './examples/TestExample'
 import { ThemeExample } from './examples/ThemeExample'
 import { ThemePreviewExample } from './examples/ThemePreviewExample'
+import { TileSpriteExample } from './examples/TileSpriteExample'
 import { ToggleExample } from './examples/ToggleExample'
 import { TooltipExample } from './examples/TooltipExample'
 import { WrapTextExample } from './examples/WrapTextExample'
@@ -55,7 +57,9 @@ export type ExampleKey =
   | 'graphics'
   | 'image'
   | 'sprite'
+  | 'tilesprite'
   | 'nineslice'
+  | 'particles'
   | 'stack'
   | 'flex'
   | 'flexAdvanced'
@@ -108,7 +112,9 @@ const groupedExamples: GroupedExamples = {
       graphics: { label: 'Graphics Component', component: GraphicsExample },
       image: { label: 'Image Component', component: ImageExample },
       sprite: { label: 'Sprite Component', component: SpriteExample },
+      tilesprite: { label: 'TileSprite Component', component: TileSpriteExample },
       nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+      particles: { label: 'Particles Component', component: ParticlesExample },
       accordion: { label: 'Accordion Component', component: AccordionExample },
       charText: { label: 'CharText Component', component: ChartTextExample },
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },

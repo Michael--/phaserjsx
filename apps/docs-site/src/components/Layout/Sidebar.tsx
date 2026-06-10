@@ -40,6 +40,7 @@ const navigation: NavSection[] = [
     title: 'Form Controls',
     items: [
       { label: 'Button', path: '/components/button' },
+      { label: 'Checkbox', path: '/components/checkbox' },
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
       { label: 'RadioButton', path: '/components/radiobutton' },
@@ -71,6 +72,7 @@ const navigation: NavSection[] = [
     items: [
       { label: 'Icon', path: '/components/icon' },
       { label: 'Image', path: '/components/image' },
+      { label: 'Particles', path: '/components/particles' },
       { label: 'Graphics', path: '/components/graphics' },
       { label: 'NineSliceButton', path: '/components/nineslice-button' },
     ],
@@ -78,8 +80,8 @@ const navigation: NavSection[] = [
   {
     title: 'Primitives',
     items: [
-      { label: '🚧 Sprite (soon)', path: '/components/sprite' },
-      { label: '🚧 TileSprite (soon)', path: '/components/tilesprite' },
+      { label: 'Sprite', path: '/components/sprite' },
+      { label: 'TileSprite', path: '/components/tilesprite' },
     ],
   },
   {

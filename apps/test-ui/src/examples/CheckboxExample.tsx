@@ -130,25 +130,26 @@ function Example() {
         </View>
       </ViewLevel3>
 
-      {/* Colored Checkboxes */}
+      {/* Custom indicator content */}
       <ViewLevel3 gap={20} direction="column" padding={10} width={'fill'}>
-        <Text text="Colored Checkboxes with Custom Icons" />
-        <View
-          direction="column"
-          gap={15}
-          theme={createTheme({
-            Checkbox: {
-              size: 32,
-              gap: 12,
-              bodyIcon: 'circle',
-              checkedIcon: 'check-circle-fill',
-              intermediateIcon: 'dash-circle-fill',
-            },
-          })}
-        >
-          <Checkbox label="Circle style unchecked" checked={false} />
-          <Checkbox label="Circle style checked" checked={true} />
-          <Checkbox label="Circle style indeterminate" checked="indeterminate" tristate={true} />
+        <Text text="Custom Indicator Content" />
+        <View direction="column" gap={15}>
+          <Checkbox
+            label="Icon indicator unchecked"
+            checked={false}
+            indicator={<Icon type="circle" />}
+          />
+          <Checkbox
+            label="Icon indicator checked"
+            checked={true}
+            indicator={<Icon type="check-circle-fill" />}
+          />
+          <Checkbox
+            label="Icon indicator indeterminate"
+            checked="indeterminate"
+            tristate={true}
+            indicator={<Icon type="dash-circle-fill" />}
+          />
         </View>
       </ViewLevel3>
 

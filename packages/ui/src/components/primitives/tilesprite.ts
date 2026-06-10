@@ -1,6 +1,6 @@
 /**
  * TileSprite component - Phaser TileSprite GameObject (repeating texture pattern)
- * Status: DUMMY - Not implemented yet
+ * Status: IMPLEMENTED ✅
  *
  * Design Decisions & Answers:
  * ===========================
@@ -101,26 +101,29 @@
  *
  * Implementation Checklist:
  * ========================
- * [ ] Create TileSprite with scene.add.tileSprite(x, y, width, height, texture, frame)
- * [ ] Set origin to (0, 0) by default (UI-friendly)
- * [ ] Apply transform props via applyTransformProps
- * [ ] Setup tilePosition/tileScale props
- * [ ] Implement layout size resolver (support %, fill)
- * [ ] Setup layout size provider (width/height)
- * [ ] Handle dimension changes (recreate if needed)
- * [ ] Support tint, origin props
- * [ ] Test with scrolling, scaling, rotation
- * [ ] Document power-of-2 texture recommendation
+ * [✅] Create TileSprite with scene.add.tileSprite(x, y, width, height, texture, frame)
+ * [✅] Set origin to (0, 0) by default (UI-friendly)
+ * [✅] Apply transform props via applyTransformProps
+ * [✅] Setup tilePosition/tileScale props
+ * [✅] Setup layout size provider (width/height)
+ * [✅] Handle dimension changes via setSize
+ * [✅] Support tint, origin props
+ * [✅] Document power-of-2 texture recommendation
  */
 import type * as Phaser from 'phaser'
-import type { TransformProps } from '../../core-props'
+import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import type { HostCreator, HostPatcher } from '../../host'
+import type { LayoutSize } from '../../layout'
 import type { PropsDefaultExtension } from '../../types'
+import { applyPhaserProps } from '../appliers/applyPhaser'
+import { applyTransformProps } from '../appliers/applyTransform'
+import { createPhaser } from '../creators/createPhaser'
+import { createTransform } from '../creators/createTransform'
 
 /**
  * Base props for TileSprite component
  */
-export interface TileSpriteBaseProps extends TransformProps {
+export interface TileSpriteBaseProps extends TransformProps, PhaserProps, LayoutProps {
   /** Texture key (loaded via Phaser's texture manager) */
   texture: string
 
@@ -148,10 +151,10 @@ export interface TileSpriteBaseProps extends TransformProps {
   /** Tint color applied to tiles (0xRRGGBB) */
   tint?: number
 
-  /** Origin X (0-1, default 0.5) */
+  /** Origin X (0-1, default 0) */
   originX?: number
 
-  /** Origin Y (0-1, default 0.5) */
+  /** Origin Y (0-1, default 0) */
   originY?: number
 }
 
@@ -161,22 +164,112 @@ export interface TileSpriteBaseProps extends TransformProps {
 export interface TileSpriteProps
   extends TileSpriteBaseProps, PropsDefaultExtension<Phaser.GameObjects.TileSprite> {}
 
-/**
- * TileSprite creator - NOT IMPLEMENTED YET
- * @throws Error indicating component is not implemented
- */
-export const tileSpriteCreator: HostCreator<'TileSprite'> = (_scene, _props) => {
-  throw new Error(
-    'TileSprite component not implemented yet. This is a placeholder for architecture planning.'
-  )
+type TileSpriteNode = Phaser.GameObjects.TileSprite & {
+  __layoutProps?: TileSpriteBaseProps
+  __getLayoutSize?: () => LayoutSize
 }
 
 /**
- * TileSprite patcher - NOT IMPLEMENTED YET
- * @throws Error indicating component is not implemented
+ * Creates layout infrastructure for TileSprite.
  */
-export const tileSpritePatcher: HostPatcher<'TileSprite'> = (_node, _prev, _next) => {
-  throw new Error(
-    'TileSprite component not implemented yet. This is a placeholder for architecture planning.'
+function createTileSpriteLayout(
+  tileSprite: TileSpriteNode,
+  props: Partial<TileSpriteBaseProps>
+): void {
+  tileSprite.__layoutProps = props as TileSpriteBaseProps
+  tileSprite.__getLayoutSize = () => {
+    if (tileSprite.__layoutProps?.headless) {
+      return { width: 0.01, height: 0.01 }
+    }
+
+    return {
+      width: tileSprite.width,
+      height: tileSprite.height,
+    }
+  }
+}
+
+function applyTileSpriteProps(
+  tileSprite: Phaser.GameObjects.TileSprite,
+  prev: Partial<TileSpriteBaseProps>,
+  next: Partial<TileSpriteBaseProps>
+): void {
+  if ((prev.texture !== next.texture || prev.frame !== next.frame) && next.texture) {
+    tileSprite.setTexture(next.texture, next.frame)
+  }
+
+  if (
+    (prev.width !== next.width || prev.height !== next.height) &&
+    typeof next.width === 'number' &&
+    typeof next.height === 'number'
+  ) {
+    tileSprite.setSize(next.width, next.height)
+  }
+
+  if (prev.tilePositionX !== next.tilePositionX && typeof next.tilePositionX === 'number') {
+    tileSprite.tilePositionX = next.tilePositionX
+  }
+
+  if (prev.tilePositionY !== next.tilePositionY && typeof next.tilePositionY === 'number') {
+    tileSprite.tilePositionY = next.tilePositionY
+  }
+
+  if (prev.tileScaleX !== next.tileScaleX && typeof next.tileScaleX === 'number') {
+    tileSprite.tileScaleX = next.tileScaleX
+  }
+
+  if (prev.tileScaleY !== next.tileScaleY && typeof next.tileScaleY === 'number') {
+    tileSprite.tileScaleY = next.tileScaleY
+  }
+
+  if (prev.tint !== next.tint) {
+    if (typeof next.tint === 'number') {
+      tileSprite.setTint(next.tint)
+    } else {
+      tileSprite.clearTint()
+    }
+  }
+
+  if (prev.originX !== next.originX || prev.originY !== next.originY) {
+    tileSprite.setOrigin(next.originX ?? tileSprite.originX, next.originY ?? tileSprite.originY)
+  }
+}
+
+/**
+ * TileSprite creator - creates a Phaser TileSprite object.
+ */
+export const tileSpriteCreator: HostCreator<'TileSprite'> = (scene, props) => {
+  const tileSprite = scene.add.tileSprite(
+    props.x ?? 0,
+    props.y ?? 0,
+    props.width,
+    props.height,
+    props.texture,
+    props.frame
   )
+
+  tileSprite.setOrigin(props.originX ?? 0, props.originY ?? 0)
+
+  createTransform(tileSprite, props)
+  createPhaser(tileSprite, props)
+  applyTileSpriteProps(tileSprite, {}, props)
+  createTileSpriteLayout(tileSprite as TileSpriteNode, props)
+
+  props.onReady?.(tileSprite)
+
+  return tileSprite
+}
+
+/**
+ * TileSprite patcher - updates texture, size, tiling and shared display props.
+ */
+export const tileSpritePatcher: HostPatcher<'TileSprite'> = (node, prev, next) => {
+  applyTransformProps(node, prev, next)
+  applyPhaserProps(node, prev, next)
+  applyTileSpriteProps(node, prev, next)
+
+  const tileSprite = node as TileSpriteNode
+  if (tileSprite.__layoutProps) {
+    tileSprite.__layoutProps = next as TileSpriteBaseProps
+  }
 }

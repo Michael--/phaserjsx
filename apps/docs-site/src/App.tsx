@@ -6,6 +6,7 @@ import { alertdialogContent } from './content/alertdialog.content'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
+import { checkboxContent } from './content/checkbox.content'
 import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
@@ -15,13 +16,16 @@ import { imageContent } from './content/image.content'
 import { joystickContent } from './content/joystick.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
+import { particlesContent } from './content/particles.content'
 import { portalContent } from './content/portal.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
 import { sliderContent } from './content/slider.content'
+import { spriteContent } from './content/sprite.content'
 import { tabsContent } from './content/tabs.content'
 import { textContent } from './content/text.content'
+import { tileSpriteContent } from './content/tilesprite.content'
 import { toggleContent } from './content/toggle.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
@@ -66,6 +70,7 @@ export function App() {
         <Route path="/quick-start" element={<QuickStartPage />} />
 
         <Route path="/components/button" element={<ComponentPage content={buttonContent} />} />
+        <Route path="/components/checkbox" element={<ComponentPage content={checkboxContent} />} />
         <Route path="/components/toggle" element={<ComponentPage content={toggleContent} />} />
         <Route path="/components/slider" element={<ComponentPage content={sliderContent} />} />
         <Route
@@ -115,6 +120,15 @@ export function App() {
         />
         <Route path="/components/icon" element={<ComponentPage content={iconContent} />} />
         <Route path="/components/image" element={<ComponentPage content={imageContent} />} />
+        <Route path="/components/sprite" element={<ComponentPage content={spriteContent} />} />
+        <Route
+          path="/components/tilesprite"
+          element={<ComponentPage content={tileSpriteContent} />}
+        />
+        <Route
+          path="/components/particles"
+          element={<ComponentPage content={particlesContent} />}
+        />
         <Route path="/components/graphics" element={<ComponentPage content={graphicsContent} />} />
         <Route
           path="/components/nineslice-button"

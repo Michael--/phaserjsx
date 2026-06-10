@@ -147,7 +147,8 @@ export function TooltipsPage() {
       <h1>Tooltips</h1>
       <DocDescription>
         Tooltips are lightweight, text-only hover hints driven by the <code>onTooltip</code> core
-        prop. They render as native Phaser text and are intended for desktop/mouse input.
+        prop. Tooltip is an API surface, not a separate component route. It renders native Phaser
+        text and is only available when hover-capable pointer input exists.
       </DocDescription>
 
       <Section title="Overview">
@@ -159,8 +160,8 @@ export function TooltipsPage() {
         </SectionDescription>
 
         <div className="info-box">
-          <strong>Note:</strong> Tooltips are disabled on touch-only devices. For touch, use
-          press/long-press or dedicated UI components.
+          <strong>Input support:</strong> Tooltips are disabled on touch-only displays. For touch,
+          use press/long-press, visible helper text, or dedicated UI components.
         </div>
 
         <CodeBlock language="tsx">

@@ -8,6 +8,7 @@ export {
   Accordion,
   CharText,
   CharTextInput,
+  Checkbox,
   NineSliceButton,
   RefOriginView,
   Sidebar,
@@ -16,6 +17,7 @@ export {
   type CharTextAPI,
   type CharTextInputProps,
   type CharTextProps,
+  type CheckboxProps,
   type NineSliceButtonProps,
   type RefOriginViewProps,
   type SidebarProps,
@@ -23,7 +25,6 @@ export {
 } from '@number10/phaserjsx'
 
 // Test-UI specific components (depend on local icon system)
-export { Checkbox, type CheckboxProps } from './Checkbox'
 export { Icon, useIcon, type IconType } from './Icon'
 export {
   IconButton as Button,

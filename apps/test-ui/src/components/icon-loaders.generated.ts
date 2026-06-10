@@ -18,7 +18,6 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'chevron-down': () => import('bootstrap-icons/icons/chevron-down.svg?raw'),
   'circle': () => import('bootstrap-icons/icons/circle.svg?raw'),
   'custom-check': () => import('./../custom-icons/custom-check.svg?raw'),
-  'dash': () => import('bootstrap-icons/icons/dash.svg?raw'),
   'dash-circle-fill': () => import('bootstrap-icons/icons/dash-circle-fill.svg?raw'),
   'envelope': () => import('bootstrap-icons/icons/envelope.svg?raw'),
   'exclamation-triangle': () => import('bootstrap-icons/icons/exclamation-triangle.svg?raw'),

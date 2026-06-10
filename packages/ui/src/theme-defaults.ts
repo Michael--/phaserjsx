@@ -101,6 +101,19 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         fontSize: '14px',
       },
     },
+    Checkbox: {
+      checkedColor: colors.primary.DEFAULT.toNumber(),
+      indeterminateColor: colors.primary.medium.toNumber(),
+      color: colors.border.medium.toNumber(),
+      gap: 10,
+      size: 20,
+      disabledAlpha: 0.5,
+      labelPosition: 'right',
+      labelStyle: {
+        color: colors.text.DEFAULT.toString(),
+        fontSize: '14px',
+      },
+    },
     ScrollSlider: {
       borderColor: colors.border.dark.toNumber(),
       trackColor: colors.surface.dark.toNumber(),

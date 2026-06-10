@@ -89,6 +89,7 @@ class MainScene extends Phaser.Scene {
   preload() {
     // Load local assets
     this.load.atlas('ui', 'assets/ui/buttons.png', 'assets/ui/buttons.json')
+    this.load.atlas('flares', 'assets/ui/flares.png', 'assets/ui/flares.json')
     this.load.image('phaser-planet', 'assets/images/phaser-planet-small.png')
     this.load.image('phaser-jsx-logo', 'assets/images/phaser-jsx-logo.png')
     this.load.image('test-image', 'assets/images/test.png')

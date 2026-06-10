@@ -9,6 +9,13 @@ export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'
 export {
+  Checkbox,
+  type CheckboxIndicatorRenderProps,
+  type CheckboxLabelPosition,
+  type CheckboxProps,
+  type CheckboxState,
+} from './Checkbox'
+export {
   DebugPanel,
   type DebugMetricKey,
   type DebugPanelPreset,

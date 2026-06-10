@@ -21,7 +21,6 @@ import { viewCreator, viewPatcher } from './primitives/view'
 /**
  * Registers all built-in components with the host
  * This should be called during library initialization
- * Note: TileSprite is currently dummy (throws on use)
  */
 export function registerBuiltins() {
   // Register primitives (lowercase) - internal use
@@ -54,6 +53,13 @@ export { type LayoutSize } from './../layout/types'
 
 // Re-export custom components (public API)
 export { Button, type ButtonProps } from './custom/Button'
+export {
+  Checkbox,
+  type CheckboxIndicatorRenderProps,
+  type CheckboxLabelPosition,
+  type CheckboxProps,
+  type CheckboxState,
+} from './custom/Checkbox'
 export { Graphics, type GraphicsProps } from './custom/Graphics'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
@@ -81,7 +87,7 @@ export {
 export { spriteCreator, spritePatcher, type SpriteBaseProps } from './primitives/sprite'
 export { particlesCreator, particlesPatcher, type ParticlesBaseProps } from './primitives/particles'
 
-// Re-export Image component (dummy, no wrapper yet)
+// Re-export Image primitive (internal use only - prefer custom wrapper)
 export {
   imageCreator,
   imagePatcher,

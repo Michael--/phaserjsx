@@ -26,6 +26,16 @@ export interface CustomComponentThemes {
     size?: number
     innerSize?: number
   } & NestedComponentThemes
+  Checkbox: {
+    color?: number
+    checkedColor?: number
+    indeterminateColor?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    gap?: number
+    size?: number
+    disabledAlpha?: number
+    labelPosition?: 'left' | 'right' | 'none'
+  } & NestedComponentThemes
   ScrollSlider: {
     borderColor?: number
     trackColor?: number
