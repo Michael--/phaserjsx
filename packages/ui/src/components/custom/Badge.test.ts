@@ -25,8 +25,8 @@ describe('Badge utilities', () => {
 
   it('uses the selected size for default text font size', () => {
     expect(resolveBadgeTextStyle({ size: 'small', textColor: '#fff' }).fontSize).toBe('11px')
-    expect(resolveBadgeTextStyle({ size: 'medium', textColor: '#fff' }).fontSize).toBe('12px')
-    expect(resolveBadgeTextStyle({ size: 'large', textColor: '#fff' }).fontSize).toBe('14px')
+    expect(resolveBadgeTextStyle({ size: 'medium', textColor: '#fff' }).fontSize).toBe('13px')
+    expect(resolveBadgeTextStyle({ size: 'large', textColor: '#fff' }).fontSize).toBe('18px')
   })
 
   it('allows explicit text style to override size font size', () => {

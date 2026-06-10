@@ -56,6 +56,19 @@ export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { Particles, type ParticlesProps } from './Particles'
 export { Portal, type PortalProps } from './Portal'
 export {
+  ContextMenu,
+  Popover,
+  calculateOverlayPosition,
+  type ContextMenuItem,
+  type ContextMenuProps,
+  type OverlayAnchorRect,
+  type OverlayContentSize,
+  type OverlayPosition,
+  type OverlayPositionOptions,
+  type PopoverPlacement,
+  type PopoverProps,
+} from './Popover'
+export {
   ProgressBar,
   clampProgressValue,
   getProgressRatio,

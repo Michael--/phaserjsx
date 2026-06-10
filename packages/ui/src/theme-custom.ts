@@ -9,6 +9,7 @@
 import type { AnimationConfig } from './animation/spring-physics'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonVariant } from './components/custom/Button'
+import type { PopoverPlacement } from './components/custom/Popover'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
@@ -53,6 +54,27 @@ export interface CustomComponentThemes {
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     disabledAlpha?: number
     closeSize?: number
+  } & NestedComponentThemes
+  Popover: ViewTheme & {
+    placement?: PopoverPlacement
+    offset?: number
+    depth?: number
+    closeOnOutside?: boolean
+    closeOnEscape?: boolean
+    contentWidth?: number
+    contentHeight?: number
+    viewportPadding?: number
+  } & NestedComponentThemes
+  ContextMenu: ViewTheme & {
+    width?: number
+    itemHeight?: number
+    itemGap?: number
+    itemPadding?: ViewTheme['padding']
+    itemCornerRadius?: number
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledTextColor?: string
+    dangerTextColor?: string
+    dangerBackgroundColor?: number
   } & NestedComponentThemes
   ProgressBar: ViewTheme & {
     orientation?: 'horizontal' | 'vertical'

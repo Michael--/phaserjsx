@@ -20,6 +20,7 @@ import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { particlesContent } from './content/particles.content'
 import { portalContent } from './content/portal.content'
+import { popoverContent } from './content/popover.content'
 import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
@@ -119,6 +120,7 @@ export function App() {
           />
           <Route path="/components/divider" element={<ComponentPage content={dividerContent} />} />
           <Route path="/components/portal" element={<ComponentPage content={portalContent} />} />
+          <Route path="/components/popover" element={<ComponentPage content={popoverContent} />} />
           <Route path="/components/modal" element={<ComponentPage content={modalContent} />} />
           <Route path="/components/dialog" element={<ComponentPage content={dialogContent} />} />
           <Route

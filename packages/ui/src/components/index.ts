@@ -92,6 +92,19 @@ export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
 export { View, type ViewProps } from './custom/View'
 export { Particles, type ParticlesProps } from './custom/Particles'
 export {
+  ContextMenu,
+  Popover,
+  calculateOverlayPosition,
+  type ContextMenuItem,
+  type ContextMenuProps,
+  type OverlayAnchorRect,
+  type OverlayContentSize,
+  type OverlayPosition,
+  type OverlayPositionOptions,
+  type PopoverPlacement,
+  type PopoverProps,
+} from './custom/Popover'
+export {
   ProgressBar,
   clampProgressValue,
   getProgressRatio,

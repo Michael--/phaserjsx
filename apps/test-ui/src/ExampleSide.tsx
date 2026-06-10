@@ -30,6 +30,7 @@ import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { ParticlesExample } from './examples/ParticlesExample'
 import { PortalExample } from './examples/PortalExample'
+import { PopoverExample } from './examples/PopoverExample'
 import { ProgressBarExample } from './examples/ProgressBarExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
@@ -92,6 +93,7 @@ export type ExampleKey =
   | 'toggle'
   | 'tooltip'
   | 'portal'
+  | 'popover'
   | 'modal'
   | 'dialog'
   | 'alertDialog'
@@ -128,6 +130,7 @@ const groupedExamples: GroupedExamples = {
       progressBar: { label: 'ProgressBar Component', component: ProgressBarExample },
       tooltip: { label: 'Tooltip Component', component: TooltipExample },
       portal: { label: 'Portal System (Foundation)', component: PortalExample },
+      popover: { label: 'Popover / ContextMenu', component: PopoverExample },
       modal: { label: 'Modal Component', component: ModalExample },
       dialog: { label: 'Dialog Component', component: DialogExample },
       alertDialog: { label: 'AlertDialog Component', component: AlertDialogExample },

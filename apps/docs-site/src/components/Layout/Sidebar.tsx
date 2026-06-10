@@ -35,7 +35,10 @@ const navigation: NavSection[] = [
   },
   {
     title: 'Advanced Composition',
-    items: [{ label: 'Portal', path: '/components/portal' }],
+    items: [
+      { label: 'Portal', path: '/components/portal' },
+      { label: 'Popover / ContextMenu', path: '/components/popover' },
+    ],
   },
   {
     title: 'Form Controls',
