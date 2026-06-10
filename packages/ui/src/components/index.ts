@@ -60,6 +60,12 @@ export {
   type CheckboxProps,
   type CheckboxState,
 } from './custom/Checkbox'
+export {
+  DebugPanel,
+  type DebugMetricKey,
+  type DebugPanelPreset,
+  type DebugPanelProps,
+} from './custom/DebugPanel'
 export { Graphics, type GraphicsProps } from './custom/Graphics'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'

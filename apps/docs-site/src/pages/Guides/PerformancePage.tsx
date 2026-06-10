@@ -3,9 +3,12 @@
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
-import { CodeBlock } from '@/components/Example'
+import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
+import { PerformancePlaygroundExample } from '@/examples/performance'
+import PerformancePlaygroundExampleRaw from '@/examples/performance/PerformancePlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
  * Performance optimization guide
@@ -61,6 +64,21 @@ Solutions:
         <p>
           These warnings identify expensive remounts. Fix them immediately to avoid technical debt.
         </p>
+      </Section>
+
+      <Section title="Performance Playground">
+        <SectionDescription>
+          Use the public <code>DebugPanel</code> dev component to watch frame timing, renderer,
+          viewport, texture count, and VDOM mount stats while changing a live scene.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(PerformancePlaygroundExample)}
+          width={640}
+          height={320}
+        />
+
+        <CodeBlock language="tsx">{PerformancePlaygroundExampleRaw}</CodeBlock>
       </Section>
 
       <Section title="Memoization">
