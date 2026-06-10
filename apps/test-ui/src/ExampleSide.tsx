@@ -29,6 +29,7 @@ import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { ParticlesExample } from './examples/ParticlesExample'
 import { PortalExample } from './examples/PortalExample'
+import { ProgressBarExample } from './examples/ProgressBarExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
 import { SliderExample } from './examples/SliderExample'
@@ -84,6 +85,7 @@ export type ExampleKey =
   | 'customEffects'
   | 'checkbox'
   | 'dropdown'
+  | 'progressBar'
   | 'slider'
   | 'toggle'
   | 'tooltip'
@@ -120,6 +122,7 @@ const groupedExamples: GroupedExamples = {
       charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
       dropdown: { label: 'Dropdown Component', component: DropdownExample },
       slider: { label: 'Slider Component', component: SliderExample },
+      progressBar: { label: 'ProgressBar Component', component: ProgressBarExample },
       tooltip: { label: 'Tooltip Component', component: TooltipExample },
       portal: { label: 'Portal System (Foundation)', component: PortalExample },
       modal: { label: 'Modal Component', component: ModalExample },

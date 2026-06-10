@@ -74,6 +74,15 @@ export { Text, type TextProps } from './custom/Text'
 export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
 export { View, type ViewProps } from './custom/View'
 export { Particles, type ParticlesProps } from './custom/Particles'
+export {
+  ProgressBar,
+  clampProgressValue,
+  getProgressRatio,
+  type ProgressBarFormatProps,
+  type ProgressBarLabelPosition,
+  type ProgressBarOrientation,
+  type ProgressBarProps,
+} from './custom/ProgressBar'
 
 // Re-export primitive creators/patchers for advanced use cases
 export { textCreator, textPatcher, type TextBaseProps } from './primitives/text'

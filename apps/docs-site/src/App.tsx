@@ -19,6 +19,7 @@ import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { particlesContent } from './content/particles.content'
 import { portalContent } from './content/portal.content'
+import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
@@ -78,6 +79,10 @@ export function App() {
           />
           <Route path="/components/toggle" element={<ComponentPage content={toggleContent} />} />
           <Route path="/components/slider" element={<ComponentPage content={sliderContent} />} />
+          <Route
+            path="/components/progressbar"
+            element={<ComponentPage content={progressbarContent} />}
+          />
           <Route
             path="/components/radiobutton"
             element={<ComponentPage content={radiobuttonContent} />}

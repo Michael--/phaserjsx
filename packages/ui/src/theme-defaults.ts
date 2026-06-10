@@ -114,6 +114,23 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         fontSize: '14px',
       },
     },
+    ProgressBar: {
+      width: 240,
+      height: 22,
+      orientation: 'horizontal',
+      labelPosition: 'right',
+      trackColor: colors.surface.dark.toNumber(),
+      fillColor: colors.success.DEFAULT.toNumber(),
+      borderColor: colors.border.medium.toNumber(),
+      borderWidth: 1,
+      cornerRadius: 11,
+      gap: 8,
+      disabledAlpha: 0.5,
+      labelStyle: {
+        color: colors.text.DEFAULT.toString(),
+        fontSize: '13px',
+      },
+    },
     ScrollSlider: {
       borderColor: colors.border.dark.toNumber(),
       trackColor: colors.surface.dark.toNumber(),

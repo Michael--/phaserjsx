@@ -38,6 +38,15 @@ export { NineSlice, type NineSliceProps } from './NineSlice'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export { Particles, type ParticlesProps } from './Particles'
 export { Portal, type PortalProps } from './Portal'
+export {
+  ProgressBar,
+  clampProgressValue,
+  getProgressRatio,
+  type ProgressBarFormatProps,
+  type ProgressBarLabelPosition,
+  type ProgressBarOrientation,
+  type ProgressBarProps,
+} from './ProgressBar'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'

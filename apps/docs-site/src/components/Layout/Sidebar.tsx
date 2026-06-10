@@ -44,6 +44,7 @@ const navigation: NavSection[] = [
       { label: 'Checkbox', path: '/components/checkbox' },
       { label: 'Toggle', path: '/components/toggle' },
       { label: 'Slider', path: '/components/slider' },
+      { label: 'ProgressBar', path: '/components/progressbar' },
       { label: 'RadioButton', path: '/components/radiobutton' },
       { label: 'Dropdown', path: '/components/dropdown' },
       { label: 'Tabs', path: '/components/tabs' },

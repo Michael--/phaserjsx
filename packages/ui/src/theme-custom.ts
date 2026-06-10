@@ -36,6 +36,24 @@ export interface CustomComponentThemes {
     disabledAlpha?: number
     labelPosition?: 'left' | 'right' | 'none'
   } & NestedComponentThemes
+  ProgressBar: ViewTheme & {
+    orientation?: 'horizontal' | 'vertical'
+    labelPosition?: 'none' | 'inside' | 'top' | 'bottom' | 'left' | 'right'
+    trackColor?: number
+    fillColor?: number
+    borderColor?: number
+    borderWidth?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledAlpha?: number
+    gap?: number
+    formatValue?: (props: {
+      value: number
+      min: number
+      max: number
+      ratio: number
+      percent: number
+    }) => string
+  } & NestedComponentThemes
   ScrollSlider: {
     borderColor?: number
     trackColor?: number
