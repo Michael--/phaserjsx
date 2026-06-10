@@ -3,9 +3,12 @@
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
-import { CodeBlock } from '@/components/Example'
+import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
+import { ThemeEffectsPlaygroundExample } from '@/examples/theme-effects'
+import ThemeEffectsPlaygroundExampleRaw from '@/examples/theme-effects/ThemeEffectsPlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
  * Effects & Animations guide page
@@ -41,6 +44,21 @@ export function EffectsPage() {
           towards it. They excel at reactive UI elements like sliders, draggable objects, and
           state-driven transforms.
         </p>
+      </Section>
+
+      <Section title="Effects Playground">
+        <SectionDescription>
+          Pick a Button effect, click the themed action, and compare how effect configuration and
+          local theme styling work together.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(ThemeEffectsPlaygroundExample)}
+          width={800}
+          height={520}
+        />
+
+        <CodeBlock language="tsx">{ThemeEffectsPlaygroundExampleRaw}</CodeBlock>
       </Section>
 
       <Section title="Effect System">

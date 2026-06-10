@@ -377,6 +377,97 @@ describe('Flexbox - flexBasis', () => {
 })
 
 describe('Flexbox - Combined flex properties', () => {
+  it('keeps fill children bounded inside nested flex containers', () => {
+    const app = mockContainer()
+    const header = mockContainer()
+    const body = mockContainer()
+    const sidebar = mockContainer()
+    const content = mockContainer()
+    const cardRow = mockContainer()
+    const lowerPanel = mockContainer()
+    const card1 = mockContainer()
+    const card2 = mockContainer()
+    const card3 = mockContainer()
+
+    app.add(header)
+    app.add(body)
+    body.add(sidebar)
+    body.add(content)
+    content.add(cardRow)
+    content.add(lowerPanel)
+    cardRow.add(card1)
+    cardRow.add(card2)
+    cardRow.add(card3)
+
+    Object.assign(header, {
+      __layoutProps: { width: 'fill', height: 58 } as LayoutProps,
+    })
+    Object.assign(body, {
+      __layoutProps: {
+        flex: 1,
+        width: 'fill',
+        direction: 'row',
+        gap: 12,
+      } as LayoutProps,
+    })
+    Object.assign(sidebar, {
+      __layoutProps: {
+        width: 160,
+        height: 'fill',
+      } as LayoutProps,
+    })
+    Object.assign(content, {
+      __layoutProps: {
+        flex: 1,
+        width: 'fill',
+        direction: 'column',
+        gap: 12,
+      } as LayoutProps,
+    })
+    Object.assign(cardRow, {
+      __layoutProps: {
+        width: 'fill',
+        direction: 'row',
+        flexWrap: 'wrap',
+        gap: 12,
+        padding: 10,
+      } as LayoutProps,
+    })
+    Object.assign(lowerPanel, {
+      __layoutProps: {
+        flex: 1,
+        width: 'fill',
+        minHeight: 60,
+      } as LayoutProps,
+    })
+
+    for (const card of [card1, card2, card3]) {
+      Object.assign(card, {
+        __layoutProps: {
+          width: 'fill',
+          minWidth: 80,
+          maxWidth: 120,
+          height: 74,
+        } as LayoutProps,
+      })
+    }
+
+    calculateLayout(app, {
+      direction: 'column',
+      width: 560,
+      height: 330,
+      gap: 12,
+      padding: 16,
+    })
+
+    // App content width: 560 - 32 padding = 528
+    // Body row available width: 528 - 12 gap - 160 sidebar = 356
+    expect(body.width).toBe(528)
+    expect(content.width).toBe(356)
+    expect(cardRow.width).toBe(356)
+    expect(cardRow.x + cardRow.width).toBeLessThanOrEqual(content.width)
+  })
+
   it('combines flex, flexShrink, and flexBasis correctly', () => {
     const container = mockContainer()
     const child1 = mockContainer(50, 50)

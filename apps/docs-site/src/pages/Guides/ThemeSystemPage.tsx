@@ -3,9 +3,12 @@
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
-import { CodeBlock } from '@/components/Example'
+import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
+import { ThemeEffectsPlaygroundExample } from '@/examples/theme-effects'
+import ThemeEffectsPlaygroundExampleRaw from '@/examples/theme-effects/ThemeEffectsPlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
  * Theme System guide page
@@ -75,6 +78,21 @@ export function ThemeSystemPage() {
           This system ensures explicit control when needed while providing sensible defaults
           everywhere else.
         </p>
+      </Section>
+
+      <Section title="Theme Playground">
+        <SectionDescription>
+          Switch color presets and modes while a local theme updates View, Text, Button styling, and
+          a selected Button effect.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(ThemeEffectsPlaygroundExample)}
+          width={800}
+          height={520}
+        />
+
+        <CodeBlock language="tsx">{ThemeEffectsPlaygroundExampleRaw}</CodeBlock>
       </Section>
 
       <Section title="Global Theme Configuration">

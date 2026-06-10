@@ -3,9 +3,12 @@
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
-import { CodeBlock } from '@/components/Example'
+import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
+import { ResponsiveViewportExample } from '@/examples/responsive'
+import ResponsiveViewportExampleRaw from '@/examples/responsive/ResponsiveViewportExample.tsx?raw'
 import '@/styles/docs.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
  * Responsive Design guide page
@@ -52,6 +55,21 @@ export function ResponsiveDesignPage() {
           This system lets you design once and have your UI adapt gracefully from small mobile
           screens (320x568) to large desktop displays (2560x1440+).
         </p>
+      </Section>
+
+      <Section title="Responsive Viewport Playground">
+        <SectionDescription>
+          Switch simulated game viewport sizes and inspect how direction, wrapping, min/max
+          constraints, and flexible sizing affect the same UI.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(ResponsiveViewportExample)}
+          width={600}
+          height={600}
+        />
+
+        <CodeBlock language="tsx">{ResponsiveViewportExampleRaw}</CodeBlock>
       </Section>
 
       <Section title="Sizing Units">
