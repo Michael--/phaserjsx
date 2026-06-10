@@ -60,6 +60,7 @@ export function DocsThemeProvider({ children }: { children: ReactNode }) {
   return <DocsThemeContext.Provider value={value}>{children}</DocsThemeContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useDocsTheme(): DocsThemeContextValue {
   const context = useContext(DocsThemeContext)
   if (!context) {

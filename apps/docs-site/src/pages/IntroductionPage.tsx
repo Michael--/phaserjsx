@@ -285,7 +285,7 @@ export function IntroductionPage() {
             <a href="/installation">Installation Guide</a> - Set up PhaserJSX in your project
           </div>
           <div className="doc-list-item">
-            <a href="/components/button">Button Component</a> - Interactive button examples
+            <a href="/components/view">View Component</a> - View examples
           </div>
           <div className="doc-list-item">
             <a href="/guides/testing">Testing Guide</a> - Learn how to create examples
