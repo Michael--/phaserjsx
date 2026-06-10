@@ -30,7 +30,7 @@ export function QuickStartDropdownExample() {
           style={{ color: '#aaaaaa', fontSize: '14px' }}
         />
         <Text
-          text="Note: This Dropdown uses a stack layout to overlay the menu above other content."
+          text="The menu is rendered as a portal overlay and stays outside the parent layout."
           style={{ color: '#95a5a6', fontSize: '11px' }}
         />
       </View>

@@ -14,13 +14,15 @@ import {
   type EffectDefinition,
 } from '../../effects'
 import { useForceRedraw, useRef, useState, useTheme } from '../../hooks'
-import type { GameObjectWithLayout } from '../../layout/types'
 import { getThemedProps } from '../../theme'
+import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
 import { Graphics, Text, View } from '../index'
 import { CharTextInput } from './CharTextInput'
+import { Popover, type PopoverPlacement } from './Popover'
 import { ScrollView } from './ScrollView'
+import { TransformOriginView } from './TransformOriginView'
 
 /**
  * Option type for Dropdown
@@ -45,7 +47,7 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
   /** Available options */
   options: DropdownOption<T>[]
 
-  /** optional use stack layout, then only the trigger is part of automatic layout, rest as overlay */
+  /** @deprecated Dropdown overlays are portal-based; this legacy prop is ignored. */
   stackLayout?: boolean
 
   /** Selected value (controlled) */
@@ -162,15 +164,9 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
     props.defaultValue ?? (props.multiple ? [] : ('' as T))
   )
   const [filterQuery, setFilterQuery] = useState('')
-  const [isAnimating, setIsAnimating] = useState(false)
-
-  // Flag to prevent closing on option/overlay clicks
-  const shouldIgnoreNextClick = useRef(false)
 
   // Refs
   const triggerRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const overlayRef = useRef<Phaser.GameObjects.Container | null>(null)
-  const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const scrollViewRef = useRef<Phaser.GameObjects.Container | null>(null)
   const { applyEffect } = useGameObjectEffect(triggerRef)
 
@@ -187,6 +183,9 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
   const animationConfig = props.animationConfig ?? themed.animationConfig ?? 'gentle'
   const maxHeight = props.maxHeight ?? overlayTheme.maxHeight ?? 300
   const arrowConfig = themed.arrow ?? {}
+  const arrowSize = arrowConfig.size ?? 12
+  const placement = props.placement ?? 'bottom'
+  const popoverPlacement: PopoverPlacement = placement === 'top' ? 'top-start' : 'bottom-start'
 
   // Get selected options
   const getSelectedOptions = (): DropdownOption<T>[] => {
@@ -201,62 +200,46 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
 
   const selectedOptions = getSelectedOptions()
 
-  // Animation for overlay height
-  const targetHeight = isOpen ? maxHeight : 0
-  const [overlayHeight, setOverlayHeight] = useSpring(targetHeight, animationConfig, () =>
-    setIsAnimating(false)
-  )
-  useForceRedraw(20, overlayHeight)
-
   // Arrow rotation animation
   const targetRotation = isOpen ? Math.PI : 0
   const [arrowRotation, setArrowRotation] = useSpring(targetRotation, animationConfig)
   useForceRedraw(20, arrowRotation)
-  const resolvedOverlayHeight = Math.max(0, overlayHeight.value)
 
-  // Toggle dropdown
-  const handleToggle = (event?: GestureEventData) => {
+  const openDropdown = () => {
     if (props.disabled) return
+    if (isOpen) return
 
-    event?.stopPropagation()
+    setIsOpen(true)
+    setArrowRotation(Math.PI)
+    setFilterQuery('')
+    props.onOpen?.()
 
-    if (isOpen) {
-      // If open, close it (like clicking outside)
-      handleClose()
-    } else {
-      // If closed, open it
-      setIsOpen(true)
-      setIsAnimating(true)
-      setOverlayHeight(maxHeight)
-      setArrowRotation(Math.PI)
-      setFilterQuery('')
-      props.onOpen?.()
-
-      // Prevent immediate close from outside click detection
-      // Especially important for placement="top" where overlay overlaps trigger
-      shouldIgnoreNextClick.current = true
-
-      // Apply effect
-      const resolved = resolveEffect(props, themed as EffectDefinition)
-      applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
-    }
+    const resolved = resolveEffect(props, themed as EffectDefinition)
+    applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
   }
 
   // Close dropdown (for click outside)
   const handleClose = () => {
-    setIsAnimating(true)
+    if (!isOpen) return
+
     setIsOpen(false)
-    setOverlayHeight(0)
     setArrowRotation(0)
     setFilterQuery('')
     props.onClose?.()
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      openDropdown()
+    } else {
+      handleClose()
+    }
   }
 
   // Select option
   const handleSelect = (value: T, event?: GestureEventData) => {
     // Stop propagation to prevent closing dropdown when clicking options
     event?.stopPropagation()
-    shouldIgnoreNextClick.current = true
 
     if (props.multiple) {
       const values = currentValue as T[]
@@ -284,41 +267,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
         handleClose()
       }
     }
-  }
-
-  // Click outside detection
-  const handleOutsideClick = () => {
-    // Check and reset flag
-    if (shouldIgnoreNextClick.current) {
-      shouldIgnoreNextClick.current = false
-      return
-    }
-
-    // Close dropdown when clicked outside
-    if (isOpen) {
-      handleClose()
-    }
-  }
-
-  // Calculate overlay position and width
-  const calculateOverlayPosition = (): { x: number; y: number; width: number } => {
-    const triggerContainer = triggerRef.current as GameObjectWithLayout
-    if (!triggerContainer) return { x: 0, y: 0, width: 0 }
-
-    const triggerSize = triggerContainer.__getLayoutSize?.() ?? { width: 0, height: 0 }
-    const triggerX = triggerContainer.x ?? 0
-    const triggerY = triggerContainer.y ?? 0
-
-    const gap = 4
-
-    // Auto-placement logic
-    let placement = props.placement ?? 'bottom'
-
-    const overlayX = triggerX
-    const overlayY =
-      placement === 'bottom' ? triggerY + triggerSize.height + gap : triggerY - maxHeight - gap
-
-    return { x: overlayX, y: overlayY, width: triggerSize.width }
   }
 
   // Render selected value
@@ -351,7 +299,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
   }
 
   const triggerStyle = getTriggerStyle()
-  const overlayPosition = calculateOverlayPosition()
 
   // Render ALL options, use visible prop to show/hide based on filter
   // No useMemo - re-render on every filter change to ensure proper updates
@@ -360,8 +307,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
       const isSelected = props.multiple
         ? (currentValue as T[]).includes(option.value)
         : currentValue === option.value
-      const isDisabled =
-        (option.disabled ?? false) || (isAnimating && (props.placement ?? 'bottom') === 'top')
+      const isDisabled = option.disabled ?? false
 
       // Check if option matches current filter
       const matchesFilter = props.isFilterable
@@ -407,8 +353,6 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
     })
   })()
 
-  const placement = props.placement ?? 'bottom'
-
   // Render trigger
   const trigger = (
     <View
@@ -416,18 +360,24 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
       direction="row"
       alignItems="center"
       justifyContent="space-between"
-      enableGestures={!props.disabled}
-      onTouch={(data) => handleToggle(data)}
       {...triggerStyle}
     >
       <View flex={1}>{renderSelectedValue()}</View>
 
       {/* Arrow */}
-      {props.arrow ? (
-        props.arrow
-      ) : (
-        <DefaultArrow color={arrowConfig.color ?? 0xffffff} size={arrowConfig.size ?? 8} />
-      )}
+      <TransformOriginView
+        width={arrowSize}
+        height={arrowSize}
+        rotation={arrowRotation.value}
+        originX={0.5}
+        originY={0.5}
+      >
+        {props.arrow ? (
+          props.arrow
+        ) : (
+          <DefaultArrow color={arrowConfig.color ?? 0xffffff} size={arrowSize} />
+        )}
+      </TransformOriginView>
     </View>
   )
 
@@ -450,7 +400,7 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
     <View flex={1} width={'fill'}>
       <ScrollView
         ref={scrollViewRef}
-        showVerticalSlider={isAnimating ? false : 'auto'}
+        showVerticalSlider="auto"
         height="fill"
         width="100%"
         onTouch={() => {
@@ -480,62 +430,66 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
 
   // Render overlay
   const overlay = (
-    <View height={resolvedOverlayHeight} width={overlayPosition.width} overflow="hidden">
-      <View
-        ref={overlayRef}
-        direction="column"
-        width={'fill'}
-        height={'fill'}
-        visible={isOpen || resolvedOverlayHeight > 0.1}
-        {...overlayTheme}
-      >
-        {placement === 'top' ? (
-          <>
-            {optionsList}
-            {filterInput}
-          </>
-        ) : (
-          <>
-            {filterInput}
-            {optionsList}
-          </>
-        )}
-      </View>
+    <View
+      direction="column"
+      width="fill"
+      height={maxHeight}
+      overflow="hidden"
+      theme={nestedTheme}
+      {...overlayTheme}
+    >
+      {placement === 'top' ? (
+        <>
+          {optionsList}
+          {filterInput}
+        </>
+      ) : (
+        <>
+          {filterInput}
+          {optionsList}
+        </>
+      )}
     </View>
   )
 
+  const popoverTheme: PartialTheme = {
+    ...nestedTheme,
+    Popover: {
+      backgroundColor: 0x000000,
+      backgroundAlpha: 0,
+      borderWidth: 0,
+      cornerRadius: 0,
+      padding: 0,
+      gap: 0,
+    },
+  }
+
   return (
-    <View
-      direction={props.stackLayout ? 'stack' : 'column'}
-      width={props.width || 'fill'}
-      height={props.stackLayout ? triggerRef.current?.height : 'auto'}
-      ref={props.ref}
-      //borderColor={0x00ff00}
-      //borderWidth={14}
-    >
-      <View
-        key={`dropdown-${placement}`}
-        ref={containerRef}
-        direction="column"
-        width={props.width}
-        theme={nestedTheme}
-        enableGestures={true}
-        onTouchOutside={handleOutsideClick}
-        //borderColor={0x0000ff}
-        //borderWidth={2}
+    <View direction="column" width={props.width || 'fill'} height="auto" ref={props.ref}>
+      <Popover
+        trigger={trigger}
+        isOpen={isOpen}
+        onOpenChange={handleOpenChange}
+        placement={popoverPlacement}
+        offset={4}
+        matchTriggerWidth
+        contentHeight={maxHeight}
+        contentProps={{
+          height: maxHeight,
+          backgroundAlpha: 0,
+          borderWidth: 0,
+          padding: 0,
+          gap: 0,
+          cornerRadius: 0,
+        }}
+        triggerProps={{ width: props.width ?? 'fill' }}
+        closeOnOutside
+        closeOnEscape
+        disabled={props.disabled === true}
+        theme={popoverTheme}
       >
-        {placement === 'top' ? (
-          <>
-            {overlay}
-            {trigger}
-          </>
-        ) : (
-          <>
-            {trigger}
-            {overlay}
-          </>
-        )}
-      </View>
+        {overlay}
+      </Popover>
     </View>
   )
 }

@@ -1030,7 +1030,7 @@ export function LayoutPatternsPage() {
             <strong>Accordion:</strong> Nested flex layouts with expanding sections
           </li>
           <li>
-            <strong>Dropdown:</strong> Overlay positioning with stack direction
+            <strong>Dropdown:</strong> Trigger layout with portal-based menu positioning
           </li>
           <li>
             <strong>Modal:</strong> Centered overlay with backdrop

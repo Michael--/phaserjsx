@@ -316,13 +316,6 @@ export function Popover(props: PopoverProps): VNodeLike {
             />
           )}
           <View
-            {...contentProps}
-            ref={handleContentRef}
-            x={overlayPosition.x}
-            y={overlayPosition.y}
-            {...(props.matchTriggerWidth || explicitContentWidth !== undefined
-              ? { width: contentWidth }
-              : {})}
             direction="column"
             backgroundColor={themed.backgroundColor ?? 0x111827}
             borderColor={themed.borderColor ?? 0x334155}
@@ -330,6 +323,13 @@ export function Popover(props: PopoverProps): VNodeLike {
             cornerRadius={themed.cornerRadius ?? 8}
             padding={themed.padding ?? 10}
             gap={themed.gap ?? 8}
+            {...contentProps}
+            ref={handleContentRef}
+            x={overlayPosition.x}
+            y={overlayPosition.y}
+            {...(props.matchTriggerWidth || explicitContentWidth !== undefined
+              ? { width: contentWidth }
+              : {})}
             {...(isPositionReady
               ? contentPropsAlpha !== undefined
                 ? { alpha: contentPropsAlpha }

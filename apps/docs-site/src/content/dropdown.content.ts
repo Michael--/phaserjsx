@@ -18,7 +18,7 @@ import type { ComponentDocs } from '@/types/docs'
 export const dropdownContent: ComponentDocs = {
   title: 'Dropdown',
   description:
-    'Select component for choosing options from a dropdown list. Supports single and multi-select modes, filtering, custom rendering, and flexible placement. Important: Parent container must use direction="stack" for proper overlay positioning.',
+    'Select component for choosing options from a dropdown list. Supports single and multi-select modes, filtering, custom rendering, and portal-based top/bottom placement.',
 
   quickStart: {
     id: 'quick-start',
