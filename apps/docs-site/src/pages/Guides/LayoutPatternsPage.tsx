@@ -3,9 +3,12 @@
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
-import { CodeBlock } from '@/components/Example'
+import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
+import { LayoutPatternPlaygroundExample } from '@/examples/layout-patterns'
+import LayoutPatternPlaygroundExampleRaw from '@/examples/layout-patterns/LayoutPatternPlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
  * Layout Patterns guide page
@@ -67,6 +70,21 @@ export function LayoutPatternsPage() {
             <strong>Line</strong> - Row of children (when wrapping enabled)
           </li>
         </ul>
+      </Section>
+
+      <Section title="Layout Playground">
+        <SectionDescription>
+          Switch common scene layouts and inspect how <code>justifyContent</code>,{' '}
+          <code>alignItems</code>, <code>gap</code>, and wrapping change the result.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(LayoutPatternPlaygroundExample)}
+          width={800}
+          height={600}
+        />
+
+        <CodeBlock language="tsx">{LayoutPatternPlaygroundExampleRaw}</CodeBlock>
       </Section>
 
       <Section title="Direction & Stacking">
