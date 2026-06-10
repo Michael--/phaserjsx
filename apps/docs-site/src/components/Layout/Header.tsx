@@ -68,7 +68,7 @@ export function Header() {
             to="/components/view"
             style={{ color: darkMode ? '#aaa' : '#666', textDecoration: 'none' }}
           >
-            Components 🚧
+            Components
           </Link>
           <Link
             to="/guides/best-practices"
