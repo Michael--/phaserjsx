@@ -6,7 +6,7 @@ import type { RefObject } from '../types'
 import {
   buildDeathZonesFromLayout,
   buildEmitZoneFromLayout,
-  type ParticleExclusionZoneConfig,
+  type ParticleDeathZoneConfig,
   type ParticleZoneConfig,
 } from './emit-zone'
 import type { ParticleEmitter, ParticleEmitterManagerLike, ParticlesHandle } from './particle-types'
@@ -27,8 +27,16 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
   explode: (count: number, x?: number, y?: number) => void
   setConfig: (config: ParticleEmitterConfig) => void
   setEmitZone: (zone: ParticleZoneConfig, width?: number, height?: number) => void
+  setDeathZones: (
+    zones: ParticleDeathZoneConfig | ParticleDeathZoneConfig[],
+    width?: number,
+    height?: number
+  ) => void
+  /**
+   * @deprecated Use setDeathZones.
+   */
   setExcludeZones: (
-    zones: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[],
+    zones: ParticleDeathZoneConfig | ParticleDeathZoneConfig[],
     width?: number,
     height?: number
   ) => void
@@ -76,9 +84,9 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
     [getEmitter]
   )
 
-  const setExcludeZones = useCallback(
+  const setDeathZones = useCallback(
     (
-      zones: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[],
+      zones: ParticleDeathZoneConfig | ParticleDeathZoneConfig[],
       width?: number,
       height?: number
     ) => {
@@ -97,6 +105,7 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
     explode,
     setConfig,
     setEmitZone,
-    setExcludeZones,
+    setDeathZones,
+    setExcludeZones: setDeathZones,
   }
 }

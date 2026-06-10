@@ -36,7 +36,9 @@ export function applyParticlesProps(
   const configChanged =
     prev.preset !== next.preset ||
     prev.config !== next.config ||
+    prev.emitZone !== next.emitZone ||
     prev.zone !== next.zone ||
+    prev.deathZones !== next.deathZones ||
     prev.excludeZones !== next.excludeZones ||
     prev.width !== next.width ||
     prev.height !== next.height
@@ -61,14 +63,17 @@ export function applyParticlesProps(
 
     applyEmitterConfig(emitter, resolvedConfig)
 
-    if (next.zone) {
-      const emitZone = buildEmitZoneFromLayout(next.zone, next.width, next.height)
+    const emitZoneProps = next.emitZone ?? next.zone
+    const deathZoneProps = next.deathZones ?? next.excludeZones
+
+    if (emitZoneProps) {
+      const emitZone = buildEmitZoneFromLayout(emitZoneProps, next.width, next.height)
       if (emitZone) {
         applyEmitZone(emitter, emitZone)
       }
     }
 
-    const deathZones = buildDeathZonesFromLayout(next.excludeZones, next.width, next.height)
+    const deathZones = buildDeathZonesFromLayout(deathZoneProps, next.width, next.height)
     const combined = mergeDeathZones(
       (resolvedConfig as unknown as { deathZone?: unknown }).deathZone,
       deathZones

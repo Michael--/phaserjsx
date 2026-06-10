@@ -15,9 +15,11 @@ export {
   buildEmitZone,
   buildEmitZoneFromLayout,
   type DeathZoneConfig,
+  type EmitZoneConfig,
+  type ParticleDeathZoneConfig,
   type ParticleDeathZoneMode,
   type ParticleExclusionZoneConfig,
-  type EmitZoneConfig,
+  type ParticleZoneSource,
   type ParticleZoneConfig,
   type ParticleZoneShape,
 } from './emit-zone'

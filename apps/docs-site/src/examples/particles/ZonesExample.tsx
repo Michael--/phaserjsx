@@ -9,12 +9,19 @@ export function ZonesParticlesExample() {
   return (
     <View width="fill" height="fill" padding={20} gap={20}>
       <Text
-        text="Rect emit zone with center exclusion"
+        text="Emit zone controls spawn. Death zone removes particles on enter."
         x={20}
         y={20}
         style={{ color: '#ffffff', fontSize: '15px' }}
       />
       <View width={360} height={180} backgroundColor={0x20283a} cornerRadius={8} direction="stack">
+        <Text
+          text="emitZone"
+          x={12}
+          y={10}
+          style={{ color: '#9fb1d1', fontSize: '13px' }}
+          depth={2}
+        />
         <View
           x={180 - 40}
           y={90 - 40}
@@ -24,6 +31,13 @@ export function ZonesParticlesExample() {
           borderWidth={2}
           cornerRadius={40}
         />
+        <Text
+          text="deathZones: onEnter"
+          x={105}
+          y={82}
+          style={{ color: '#ffc857', fontSize: '13px' }}
+          depth={2}
+        />
         <Particles
           texture="particle-zones"
           frame="green"
@@ -32,8 +46,8 @@ export function ZonesParticlesExample() {
           y={0}
           width={360}
           height={180}
-          zone={{ shape: 'rect', type: 'random' }}
-          excludeZones={{ shape: 'circle', x: 180, y: 90, radius: 40, mode: 'onEnter' }}
+          emitZone={{ shape: 'rect', type: 'random' }}
+          deathZones={{ shape: 'circle', x: 180, y: 90, radius: 40, mode: 'onEnter' }}
         />
       </View>
     </View>

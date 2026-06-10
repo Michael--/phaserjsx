@@ -1,7 +1,6 @@
 /**
  * Emit zone helpers for particle emitters
  */
-import * as Phaser from 'phaser'
 import type { SizeValue } from '../core-props'
 
 /**
@@ -33,25 +32,45 @@ export interface ParticleZoneConfig extends ZoneConfigBase {
 }
 
 /**
- * Exclusion zone config
+ * Death zone config
  * Death zones use particle world positions for evaluation,
  * but coordinates should be specified relative to the emitter position
  */
-export interface ParticleExclusionZoneConfig extends ZoneConfigBase {
+export interface ParticleDeathZoneConfig extends ZoneConfigBase {
   /**
-   * Death zone mode - evaluated using particle world positions
+   * Death zone mode - evaluated using particle world positions.
+   * - onEnter: remove particles when they enter the zone.
+   * - onLeave: remove particles when they leave the zone.
    */
   mode?: ParticleDeathZoneMode
 }
 
+/**
+ * @deprecated Use ParticleDeathZoneConfig.
+ */
+export type ParticleExclusionZoneConfig = ParticleDeathZoneConfig
+
+type PointLike = { x: number; y: number }
+
+export type ParticleZoneSource = {
+  x?: number
+  y?: number
+  width?: number
+  height?: number
+  radius?: number
+  contains: (x: number, y: number) => boolean
+  getRandomPoint: (point?: PointLike) => PointLike
+  getPoints: (quantity?: number, stepRate?: number) => PointLike[]
+}
+
 export type EmitZoneConfig = {
   type: 'random' | 'edge'
-  source: Phaser.Geom.Rectangle | Phaser.Geom.Circle | Phaser.Geom.Ellipse | Phaser.Geom.Line
+  source: ParticleZoneSource
 }
 
 export type DeathZoneConfig = {
   type: ParticleDeathZoneMode
-  source: Phaser.Geom.Rectangle | Phaser.Geom.Circle | Phaser.Geom.Ellipse | Phaser.Geom.Line
+  source: ParticleZoneSource
 }
 
 type ZoneSize = { width?: number; height?: number }
@@ -69,23 +88,153 @@ function resolveZoneSize(zone: ZoneConfigBase, fallback: ZoneSize): ZoneSize {
   return size
 }
 
+function withPoint(point: PointLike | undefined, x: number, y: number): PointLike {
+  if (point) {
+    point.x = x
+    point.y = y
+    return point
+  }
+
+  return { x, y }
+}
+
+function createRectSource(x: number, y: number, width: number, height: number): ParticleZoneSource {
+  return {
+    x,
+    y,
+    width,
+    height,
+    contains: (px, py) => px >= x && px <= x + width && py >= y && py <= y + height,
+    getRandomPoint: (point) =>
+      withPoint(point, x + Math.random() * width, y + Math.random() * height),
+    getPoints: (quantity = 1) => {
+      const count = Math.max(1, quantity)
+      return Array.from({ length: count }, (_, index) => {
+        const progress = count === 1 ? 0 : index / (count - 1)
+        const perimeter = 2 * (width + height)
+        const distance = progress * perimeter
+
+        if (distance <= width) return { x: x + distance, y }
+        if (distance <= width + height) return { x: x + width, y: y + distance - width }
+        if (distance <= width * 2 + height) {
+          return { x: x + width - (distance - width - height), y: y + height }
+        }
+        return { x, y: y + height - (distance - width * 2 - height) }
+      })
+    },
+  }
+}
+
+function createCircleSource(x: number, y: number, radius: number): ParticleZoneSource {
+  return {
+    x,
+    y,
+    radius,
+    contains: (px, py) => {
+      const dx = px - x
+      const dy = py - y
+      return dx * dx + dy * dy <= radius * radius
+    },
+    getRandomPoint: (point) => {
+      const angle = Math.random() * Math.PI * 2
+      const distance = Math.sqrt(Math.random()) * radius
+      return withPoint(point, x + Math.cos(angle) * distance, y + Math.sin(angle) * distance)
+    },
+    getPoints: (quantity = 1) => {
+      const count = Math.max(1, quantity)
+      return Array.from({ length: count }, (_, index) => {
+        const angle = (index / count) * Math.PI * 2
+        return { x: x + Math.cos(angle) * radius, y: y + Math.sin(angle) * radius }
+      })
+    },
+  }
+}
+
+function createEllipseSource(
+  x: number,
+  y: number,
+  width: number,
+  height: number
+): ParticleZoneSource {
+  const radiusX = width / 2
+  const radiusY = height / 2
+
+  return {
+    x,
+    y,
+    width,
+    height,
+    contains: (px, py) => {
+      const dx = (px - x) / radiusX
+      const dy = (py - y) / radiusY
+      return dx * dx + dy * dy <= 1
+    },
+    getRandomPoint: (point) => {
+      const angle = Math.random() * Math.PI * 2
+      const distance = Math.sqrt(Math.random())
+      return withPoint(
+        point,
+        x + Math.cos(angle) * radiusX * distance,
+        y + Math.sin(angle) * radiusY * distance
+      )
+    },
+    getPoints: (quantity = 1) => {
+      const count = Math.max(1, quantity)
+      return Array.from({ length: count }, (_, index) => {
+        const angle = (index / count) * Math.PI * 2
+        return { x: x + Math.cos(angle) * radiusX, y: y + Math.sin(angle) * radiusY }
+      })
+    },
+  }
+}
+
+function createLineSource(x: number, y: number, endX: number, endY: number): ParticleZoneSource {
+  return {
+    x,
+    y,
+    contains: (px, py) => {
+      const lengthSquared = (endX - x) ** 2 + (endY - y) ** 2
+      if (lengthSquared === 0) return px === x && py === y
+
+      const progress = Math.max(
+        0,
+        Math.min(1, ((px - x) * (endX - x) + (py - y) * (endY - y)) / lengthSquared)
+      )
+      const closestX = x + progress * (endX - x)
+      const closestY = y + progress * (endY - y)
+      return Math.hypot(px - closestX, py - closestY) <= 0.5
+    },
+    getRandomPoint: (point) => {
+      const progress = Math.random()
+      return withPoint(point, x + (endX - x) * progress, y + (endY - y) * progress)
+    },
+    getPoints: (quantity = 1) => {
+      const count = Math.max(1, quantity)
+      return Array.from({ length: count }, (_, index) => {
+        const progress = count === 1 ? 0 : index / (count - 1)
+        return { x: x + (endX - x) * progress, y: y + (endY - y) * progress }
+      })
+    },
+  }
+}
+
 function buildZoneSource(
   zone: ZoneConfigBase,
   fallbackSize: ZoneSize
-): Phaser.Geom.Rectangle | Phaser.Geom.Circle | Phaser.Geom.Ellipse | Phaser.Geom.Line | undefined {
+): ParticleZoneSource | undefined {
   const baseX = zone.x ?? 0
   const baseY = zone.y ?? 0
   const { width, height } = resolveZoneSize(zone, fallbackSize)
 
   switch (zone.shape) {
     case 'rect':
-      return new Phaser.Geom.Rectangle(baseX, baseY, width ?? 1, height ?? 1)
+      return createRectSource(baseX, baseY, width ?? 1, height ?? 1)
     case 'circle':
-      return new Phaser.Geom.Circle(baseX, baseY, zone.radius ?? 1)
+      return createCircleSource(baseX, baseY, zone.radius ?? 1)
     case 'ellipse':
-      return new Phaser.Geom.Ellipse(baseX, baseY, width ?? 1, height ?? 1)
+      return createEllipseSource(baseX, baseY, width ?? 1, height ?? 1)
     case 'line':
-      return new Phaser.Geom.Line(
+      return createLineSource(
         baseX,
         baseY,
         zone.endX ?? baseX + (width ?? 1),
@@ -128,10 +277,10 @@ export function buildEmitZoneFromLayout(
 }
 
 /**
- * Build a Phaser deathZone config from a lightweight exclusion definition
+ * Build a Phaser deathZone config from a lightweight death zone definition
  */
 export function buildDeathZone(
-  zone: ParticleExclusionZoneConfig,
+  zone: ParticleDeathZoneConfig,
   fallbackSize: ZoneSize = {}
 ): DeathZoneConfig | undefined {
   const type = zone.mode ?? 'onEnter'
@@ -149,7 +298,7 @@ export function buildDeathZone(
  * Create death zones using layout size as a fallback
  */
 export function buildDeathZonesFromLayout(
-  zones: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[] | undefined,
+  zones: ParticleDeathZoneConfig | ParticleDeathZoneConfig[] | undefined,
   width?: SizeValue,
   height?: SizeValue
 ): DeathZoneConfig[] | undefined {

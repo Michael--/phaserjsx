@@ -10,7 +10,7 @@
  */
 import type { LayoutProps, PhaserProps, TransformProps } from '../../core-props'
 import type { HostCreator, HostPatcher } from '../../host'
-import type { ParticleExclusionZoneConfig, ParticleZoneConfig } from '../../particles/emit-zone'
+import type { ParticleDeathZoneConfig, ParticleZoneConfig } from '../../particles/emit-zone'
 import { buildDeathZonesFromLayout, buildEmitZoneFromLayout } from '../../particles/emit-zone'
 import type { ParticleEmitterManagerLike, ParticlesHandle } from '../../particles/particle-types'
 import type { ParticleEmitterConfig, ParticlePresetName } from '../../particles/preset-registry'
@@ -46,11 +46,23 @@ export interface ParticlesBaseProps extends TransformProps, PhaserProps, LayoutP
   /** Optional emitter config overrides */
   config?: ParticleEmitterConfig
 
-  /** Optional emit zone */
+  /** Optional emit zone: where particles are born */
+  emitZone?: ParticleZoneConfig
+
+  /**
+   * Optional emit zone: where particles are born.
+   * @deprecated Use emitZone.
+   */
   zone?: ParticleZoneConfig
 
-  /** Optional exclusion zones (coordinates relative to particle emitter) */
-  excludeZones?: ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[] | undefined
+  /** Optional death zones: where particles are removed */
+  deathZones?: ParticleDeathZoneConfig | ParticleDeathZoneConfig[] | undefined
+
+  /**
+   * Optional death zones: where particles are removed.
+   * @deprecated Use deathZones.
+   */
+  excludeZones?: ParticleDeathZoneConfig | ParticleDeathZoneConfig[] | undefined
 }
 
 /**
@@ -67,8 +79,11 @@ export const particlesCreator: HostCreator<'Particles'> = (scene, props) => {
     ...resolveParticlePreset(props.preset, props.config),
   } as ParticleEmitterConfig
 
-  if (props.zone) {
-    const emitZone = buildEmitZoneFromLayout(props.zone, props.width, props.height)
+  const emitZoneProps = props.emitZone ?? props.zone
+  const deathZoneProps = props.deathZones ?? props.excludeZones
+
+  if (emitZoneProps) {
+    const emitZone = buildEmitZoneFromLayout(emitZoneProps, props.width, props.height)
     if (emitZone) {
       const configWithZone = resolvedConfig as unknown as { emitZone?: unknown }
       configWithZone.emitZone = emitZone
@@ -114,8 +129,8 @@ export const particlesCreator: HostCreator<'Particles'> = (scene, props) => {
   createParticlesLayout(particles, props)
 
   // Now apply death zones with container-relative coordinates
-  if (props.excludeZones && emitter) {
-    const deathZones = buildDeathZonesFromLayout(props.excludeZones, props.width, props.height)
+  if (deathZoneProps && emitter) {
+    const deathZones = buildDeathZonesFromLayout(deathZoneProps, props.width, props.height)
     const combinedDeathZones = mergeDeathZones(
       (resolvedConfig as unknown as { deathZone?: unknown }).deathZone,
       deathZones

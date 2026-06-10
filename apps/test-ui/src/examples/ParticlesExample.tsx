@@ -27,7 +27,7 @@ export function ParticlesExample() {
                 y={50}
                 width={340}
                 height={220}
-                zone={{ shape: 'rect', type: 'random' }}
+                emitZone={{ shape: 'rect', type: 'random' }}
               />
             </ViewLevel3>
 
@@ -40,7 +40,7 @@ export function ParticlesExample() {
                 x={210}
                 y={150}
                 config={{ frequency: 900, lifespan: 900, scale: { start: 0.45, end: 0 } }}
-                excludeZones={{ shape: 'circle', radius: 48, x: 0, y: 0, mode: 'onEnter' }}
+                deathZones={{ shape: 'circle', radius: 48, x: 0, y: 0, mode: 'onEnter' }}
               />
             </ViewLevel3>
           </View>

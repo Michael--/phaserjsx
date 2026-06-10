@@ -18,7 +18,7 @@ import type { ComponentDocs } from '@/types/docs'
 export const particlesContent: ComponentDocs = {
   title: 'Particles',
   description:
-    'Typed wrapper around Phaser particle emitters with built-in presets, emitter config overrides, emit zones, and exclusion zones.',
+    'Typed wrapper around Phaser particle emitters with built-in presets, emitter config overrides, emit zones, and death zones.',
 
   quickStart: {
     id: 'quick-start',
@@ -42,8 +42,9 @@ export const particlesContent: ComponentDocs = {
     },
     {
       id: 'zones',
-      title: 'Emit & Exclusion Zones',
-      description: 'Use layout-sized emit zones and exclusion death zones.',
+      title: 'Emit & Death Zones',
+      description:
+        'Use emitZone for where particles are born and deathZones for where particles are removed.',
       component: ZonesParticlesExample,
       height: SCENE_SIZES.medium,
       code: ZonesParticlesExampleRaw,
@@ -64,9 +65,15 @@ export const particlesContent: ComponentDocs = {
       description: 'Phaser emitter config overrides applied after the preset.',
     },
     {
-      name: 'zone',
+      name: 'emitZone',
       type: 'ParticleZoneConfig',
-      description: 'Optional emit zone: rect, circle, ellipse, or line.',
+      description: 'Where particles are born: rect, circle, ellipse, or line.',
+    },
+    {
+      name: 'deathZones',
+      type: 'ParticleDeathZoneConfig | ParticleDeathZoneConfig[]',
+      description:
+        'Where particles are removed. Use mode "onEnter" for obstacles or "onLeave" for boundaries.',
     },
   ],
 
@@ -79,21 +86,36 @@ export const particlesContent: ComponentDocs = {
       type: 'ParticleEmitterConfig',
       description: 'Phaser emitter config overrides applied after the preset.',
     },
-    { name: 'zone', type: 'ParticleZoneConfig', description: 'Optional emit zone.' },
     {
-      name: 'excludeZones',
-      type: 'ParticleExclusionZoneConfig | ParticleExclusionZoneConfig[]',
-      description: 'Optional death zones to exclude particles from regions.',
+      name: 'emitZone',
+      type: 'ParticleZoneConfig',
+      description: 'Where particles are born. width/height are used as fallback size.',
+    },
+    {
+      name: 'deathZones',
+      type: 'ParticleDeathZoneConfig | ParticleDeathZoneConfig[]',
+      description:
+        'Where particles are removed. mode "onEnter" removes particles inside a region; mode "onLeave" keeps particles inside a boundary.',
     },
     {
       name: 'width',
       type: 'number',
-      description: 'Fallback width for layout-sized emit/death zones.',
+      description: 'Fallback width for layout-sized emitZone/deathZones; not a particle boundary.',
     },
     {
       name: 'height',
       type: 'number',
-      description: 'Fallback height for layout-sized emit/death zones.',
+      description: 'Fallback height for layout-sized emitZone/deathZones; not a particle boundary.',
+    },
+    {
+      name: 'zone',
+      type: 'ParticleZoneConfig',
+      description: 'Deprecated alias for emitZone.',
+    },
+    {
+      name: 'excludeZones',
+      type: 'ParticleDeathZoneConfig | ParticleDeathZoneConfig[]',
+      description: 'Deprecated alias for deathZones.',
     },
   ],
 
