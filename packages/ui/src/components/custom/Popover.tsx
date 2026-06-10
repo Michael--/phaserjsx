@@ -3,6 +3,12 @@
  * Popover and ContextMenu components - portal-based overlays that do not participate in parent layout.
  */
 import type * as Phaser from 'phaser'
+import {
+  createFadeInEffect,
+  createFadeOutEffect,
+  useGameObjectEffect,
+  type EffectFn,
+} from '../../effects/use-effect'
 import type { GestureEventData } from '../../gestures/gesture-types'
 import { useEffect, useRef, useScene, useState, useTheme } from '../../hooks'
 import { DeferredLayoutQueue } from '../../layout/layout-engine'
@@ -14,6 +20,7 @@ import type { ChildrenType, Ref } from '../../types'
 import type { VNodeLike } from '../../vdom'
 import { Text, View, type ViewProps } from '../index'
 import { Portal } from './Portal'
+import { useOverlayPresence } from './useOverlayPresence'
 
 export type PopoverPlacement =
   | 'top'
@@ -89,6 +96,14 @@ export interface PopoverProps {
   matchTriggerWidth?: boolean
   /** Padding inside the viewport clamp. */
   viewportPadding?: number
+  /** Custom effect for showing overlay content. */
+  openEffect?: EffectFn
+  /** Custom effect for hiding overlay content. */
+  closeEffect?: EffectFn
+  /** Open animation duration in milliseconds. */
+  openDuration?: number
+  /** Close animation duration in milliseconds. */
+  closeDuration?: number
   /** Props applied to the trigger wrapper. */
   triggerProps?: Omit<ViewProps, 'children'>
   /** Props applied to the content wrapper. */
@@ -213,6 +228,9 @@ export function Popover(props: PopoverProps): VNodeLike {
   const [internalOpen, setInternalOpen] = useState(props.defaultOpen ?? false)
   const isControlled = props.isOpen !== undefined
   const isOpen = isControlled ? props.isOpen === true : internalOpen
+  const presence = useOverlayPresence(isOpen)
+  const { applyEffect: contentAnimation, stopEffects: stopContentEffects } =
+    useGameObjectEffect(contentRef)
 
   const placement = props.placement ?? themed.placement ?? 'bottom'
   const offset = props.offset ?? themed.offset ?? 8
@@ -220,6 +238,10 @@ export function Popover(props: PopoverProps): VNodeLike {
   const closeOnOutside = props.closeOnOutside ?? themed.closeOnOutside ?? true
   const closeOnEscape = props.closeOnEscape ?? themed.closeOnEscape ?? true
   const viewportPadding = props.viewportPadding ?? themed.viewportPadding ?? 8
+  const openEffect = props.openEffect ?? themed.openEffect ?? createFadeInEffect
+  const closeEffect = props.closeEffect ?? themed.closeEffect ?? createFadeOutEffect
+  const openDuration = props.openDuration ?? themed.openDuration ?? 120
+  const closeDuration = props.closeDuration ?? themed.closeDuration ?? 100
   const explicitContentWidth = props.contentWidth ?? themed.contentWidth
   const explicitContentHeight = props.contentHeight ?? themed.contentHeight
   const viewport = portalRegistry.getViewportSize(scene)
@@ -279,7 +301,7 @@ export function Popover(props: PopoverProps): VNodeLike {
   }, [closeOnEscape, isOpen])
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!presence.isPresent) return
 
     DeferredLayoutQueue.defer(() => {
       const size = getLayoutSize(contentRef.current)
@@ -290,7 +312,33 @@ export function Popover(props: PopoverProps): VNodeLike {
         return { width: size.width, height: size.height }
       })
     })
-  }, [isOpen, props.children, explicitContentWidth, explicitContentHeight])
+  }, [presence.isPresent, props.children, explicitContentWidth, explicitContentHeight])
+
+  useEffect(() => {
+    const content = contentRef.current
+    if (!content || !presence.isPresent) return
+
+    if (presence.phase === 'entering') {
+      if (!isPositionReady) return
+
+      stopContentEffects()
+      content.setVisible(true)
+      contentAnimation(openEffect, {
+        time: openDuration,
+        onComplete: presence.finishEnter,
+      })
+    } else if (presence.phase === 'exiting') {
+      stopContentEffects()
+      contentAnimation(closeEffect, {
+        time: closeDuration,
+        onComplete: () => {
+          contentRef.current?.setVisible(false)
+          setMeasuredContentSize(null)
+          presence.finishExit()
+        },
+      })
+    }
+  }, [presence.phase, presence.isPresent, isPositionReady, openDuration, closeDuration])
 
   return (
     <>
@@ -303,7 +351,7 @@ export function Popover(props: PopoverProps): VNodeLike {
         {props.trigger}
       </View>
 
-      {isOpen && (
+      {presence.isPresent && (
         <Portal depth={depth} blockEvents={false}>
           {closeOnOutside && (
             <View

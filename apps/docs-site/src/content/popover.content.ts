@@ -80,6 +80,12 @@ export const popoverContent: ComponentDocs = {
       description:
         'Optional fixed width override. By default Popover measures the rendered content after layout.',
     },
+    {
+      name: 'openDuration',
+      type: 'number',
+      default: '120',
+      description: 'Open animation duration in milliseconds.',
+    },
   ],
 
   propsComplete: [
@@ -146,6 +152,42 @@ export const popoverContent: ComponentDocs = {
       type: 'boolean',
       default: 'false',
       description: 'Use the trigger width when it is larger than measured or fixed content width.',
+    },
+    {
+      name: 'contentWidth',
+      type: 'number',
+      description:
+        'Optional fixed width override. Useful when content such as WrapText needs a known width.',
+    },
+    {
+      name: 'contentHeight',
+      type: 'number',
+      description:
+        'Optional fixed height override. By default Popover measures the rendered content after layout.',
+    },
+    {
+      name: 'openEffect',
+      type: 'EffectFn',
+      default: 'fade in',
+      description: 'Custom effect for showing overlay content.',
+    },
+    {
+      name: 'closeEffect',
+      type: 'EffectFn',
+      default: 'fade out',
+      description: 'Custom effect for hiding overlay content while the portal remains mounted.',
+    },
+    {
+      name: 'openDuration',
+      type: 'number',
+      default: '120',
+      description: 'Open animation duration in milliseconds.',
+    },
+    {
+      name: 'closeDuration',
+      type: 'number',
+      default: '100',
+      description: 'Close animation duration in milliseconds.',
     },
     {
       name: 'items',

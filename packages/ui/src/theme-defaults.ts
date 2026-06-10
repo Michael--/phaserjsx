@@ -141,6 +141,8 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       closeOnOutside: true,
       closeOnEscape: true,
       viewportPadding: 8,
+      openDuration: 120,
+      closeDuration: 100,
       backgroundColor: colors.surface.dark.toNumber(),
       borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,

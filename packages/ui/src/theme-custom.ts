@@ -11,6 +11,7 @@ import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Bad
 import type { ButtonVariant } from './components/custom/Button'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
+import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
 
@@ -64,6 +65,10 @@ export interface CustomComponentThemes {
     contentWidth?: number
     contentHeight?: number
     viewportPadding?: number
+    openEffect?: EffectFn
+    closeEffect?: EffectFn
+    openDuration?: number
+    closeDuration?: number
   } & NestedComponentThemes
   ContextMenu: ViewTheme & {
     width?: number
