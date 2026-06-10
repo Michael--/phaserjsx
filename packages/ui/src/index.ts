@@ -1,6 +1,6 @@
 /**
  * PhaserJSX UI Library
- * Provides JSX + hooks + VDOM for Phaser 3 game development
+ * Provides JSX + hooks + VDOM for Phaser 4 game UI development
  */
 import { registerBuiltins } from './components'
 import './clip'

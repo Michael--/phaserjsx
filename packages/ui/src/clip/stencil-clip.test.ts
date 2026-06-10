@@ -73,6 +73,105 @@ function makeWebGlContainer() {
   return { container, gl }
 }
 
+function makeRenderableWebGlContainer() {
+  const gl = {
+    ACTIVE_TEXTURE: 0x84e0,
+    ARRAY_BUFFER: 0x8892,
+    ARRAY_BUFFER_BINDING: 0x8894,
+    CURRENT_PROGRAM: 0x8b8d,
+    DYNAMIC_DRAW: 0x88e8,
+    FLOAT: 0x1406,
+    FRAGMENT_SHADER: 0x8b30,
+    KEEP: 0x1e00,
+    INCR: 0x1e02,
+    DECR: 0x1e03,
+    EQUAL: 0x0202,
+    STENCIL_TEST: 0x0b90,
+    STENCIL_FUNC: 0x0b92,
+    STENCIL_REF: 0x0b97,
+    STENCIL_VALUE_MASK: 0x0b93,
+    STENCIL_FAIL: 0x0b94,
+    STENCIL_PASS_DEPTH_FAIL: 0x0b95,
+    STENCIL_PASS_DEPTH_PASS: 0x0b96,
+    STENCIL_WRITEMASK: 0x0b98,
+    TEXTURE0: 0x84c0,
+    TRIANGLE_FAN: 0x0006,
+    VERTEX_SHADER: 0x8b31,
+    attachShader: vi.fn(),
+    bindBuffer: vi.fn(),
+    bindFramebuffer: vi.fn(),
+    bindVertexArray: vi.fn(),
+    bufferData: vi.fn(),
+    bufferSubData: vi.fn(),
+    colorMask: vi.fn(),
+    compileShader: vi.fn(),
+    createBuffer: vi.fn(() => ({ id: `buffer-${Math.random()}` })),
+    createProgram: vi.fn(() => ({ id: `program-${Math.random()}` })),
+    createShader: vi.fn((type: number) => ({ type })),
+    deleteBuffer: vi.fn(),
+    disable: vi.fn(),
+    disableVertexAttribArray: vi.fn(),
+    drawArrays: vi.fn(),
+    enable: vi.fn(),
+    enableVertexAttribArray: vi.fn(),
+    getAttribLocation: vi.fn((_: unknown, name: string) => (name === 'a_ndc' ? 0 : 1)),
+    getParameter: vi.fn((parameter: number) => (parameter === 0x84e0 ? 0x84c0 : null)),
+    getUniformLocation: vi.fn((_: unknown, name: string) => ({ name })),
+    linkProgram: vi.fn(),
+    shaderSource: vi.fn(),
+    stencilFunc: vi.fn(),
+    stencilMask: vi.fn(),
+    stencilOp: vi.fn(),
+    uniform2f: vi.fn(),
+    uniform4f: vi.fn(),
+    useProgram: vi.fn(),
+    vertexAttribPointer: vi.fn(),
+  }
+
+  const renderer = {
+    type: Phaser.WEBGL,
+    gl,
+    glWrapper: {
+      state: {
+        bindings: {
+          activeTexture: 0,
+          arrayBuffer: null,
+          program: null,
+        },
+        vao: null,
+      },
+      update: vi.fn(),
+      updateBindingsArrayBuffer: vi.fn(),
+      updateBindingsActiveTexture: vi.fn(),
+    },
+    height: 100,
+    renderNodes: {
+      finishBatch: vi.fn(),
+    },
+    width: 100,
+  }
+
+  const scene = {
+    renderer,
+    game: {
+      events: {
+        on: vi.fn(),
+      },
+    },
+  } as unknown as Phaser.Scene
+
+  const container = new Phaser.GameObjects.Container(null as unknown as Phaser.Scene)
+  container.scene = scene
+  ;(
+    container as Phaser.GameObjects.Container & {
+      getWorldTransformMatrix: () => Phaser.GameObjects.Components.TransformMatrix
+    }
+  ).getWorldTransformMatrix = () =>
+    ({ a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0 }) as Phaser.GameObjects.Components.TransformMatrix
+
+  return { container, gl, renderer }
+}
+
 describe('stencil clip sources', () => {
   it('detects bitmap sources without treating roundRect shapes as bitmap', () => {
     expect(isBitmapStencilClipSource({ kind: 'bitmap', texture: 'mask' })).toBe(true)
@@ -82,6 +181,21 @@ describe('stencil clip sources', () => {
 })
 
 describe('applyStencilClip', () => {
+  it('returns a no-op handle for non-WebGL renderers', () => {
+    const container = new Phaser.GameObjects.Container(null as unknown as Phaser.Scene)
+    container.scene = { renderer: { type: 0 } } as unknown as Phaser.Scene
+    const renderStepContainer = container as Phaser.GameObjects.Container & {
+      _renderSteps: unknown[]
+    }
+
+    const handle = applyStencilClip(container, { width: 100, height: 50 })
+    handle.update({ width: 80, height: 40 })
+    handle.destroy()
+
+    expect(getStencilClipHandle(container)).toBeUndefined()
+    expect(renderStepContainer._renderSteps).toHaveLength(0)
+  })
+
   it('attaches, reuses, updates, and destroys a WebGL stencil clip handle', () => {
     const { container, gl } = makeWebGlContainer()
     const renderStepContainer = container as Phaser.GameObjects.Container & {
@@ -106,6 +220,56 @@ describe('applyStencilClip', () => {
     expect(gl.deleteBuffer).toHaveBeenCalledWith({ id: 'buffer' })
     expect(getStencilClipHandle(container)).toBeUndefined()
     expect(renderStepContainer._renderSteps).toHaveLength(0)
+  })
+
+  it('renders nested clips with incremented stencil depths and restores the parent state', () => {
+    const { container: parent, gl, renderer } = makeRenderableWebGlContainer()
+    const { container: child } = makeRenderableWebGlContainer()
+    child.scene = parent.scene
+
+    applyStencilClip(parent, { width: 80, height: 60 })
+    applyStencilClip(child, { width: 40, height: 30 })
+
+    const parentRenderSteps = parent as Phaser.GameObjects.Container & {
+      _renderSteps: Array<(...args: unknown[]) => void>
+      renderWebGLStep: (...args: unknown[]) => void
+    }
+    const childRenderSteps = child as Phaser.GameObjects.Container & {
+      _renderSteps: Array<(...args: unknown[]) => void>
+      renderWebGLStep: (...args: unknown[]) => void
+    }
+
+    childRenderSteps.renderWebGLStep = vi.fn()
+    parentRenderSteps.renderWebGLStep = (
+      webglRenderer,
+      _go,
+      drawingContext,
+      parentMatrix,
+      renderStep,
+      displayList,
+      displayListIndex
+    ) => {
+      childRenderSteps._renderSteps[0]?.(
+        webglRenderer,
+        child,
+        drawingContext,
+        parentMatrix,
+        renderStep,
+        displayList,
+        displayListIndex
+      )
+    }
+
+    parentRenderSteps._renderSteps[0]?.(renderer, parent, {}, undefined, 0, undefined, 0)
+
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(1, gl.EQUAL, 0, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(2, gl.EQUAL, 1, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(3, gl.EQUAL, 1, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(4, gl.EQUAL, 2, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(5, gl.EQUAL, 2, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(6, gl.EQUAL, 1, 0xff)
+    expect(gl.stencilFunc).toHaveBeenNthCalledWith(7, gl.EQUAL, 1, 0xff)
+    expect(gl.disable).toHaveBeenCalledWith(gl.STENCIL_TEST)
   })
 })
 

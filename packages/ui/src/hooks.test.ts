@@ -15,24 +15,6 @@ vi.mock('./host', () => ({
   },
 }))
 
-// Mock render context
-vi.mock('./render-context', () => ({
-  getContextFromParent: vi.fn(() => ({
-    getCurrent: vi.fn(() => null),
-    setCurrent: vi.fn(),
-    deferLayout: vi.fn(),
-    setViewport: vi.fn(),
-    getTextureScene: vi.fn(),
-  })),
-  getRenderContext: vi.fn(() => ({
-    getCurrent: vi.fn(() => null),
-    setCurrent: vi.fn(),
-    deferLayout: vi.fn(),
-    setViewport: vi.fn(),
-    getTextureScene: vi.fn(),
-  })),
-}))
-
 // Mock render context before imports
 vi.mock('./render-context', () => ({
   getContextFromParent: vi.fn(() => ({

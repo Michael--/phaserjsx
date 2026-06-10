@@ -137,9 +137,9 @@ export const viewContent: ComponentDocs = {
       id: 'native-stencil-clip',
       title: 'Native Phaser Stencil Clip',
       description:
-        'Use the standalone stencil clip extension directly on Phaser containers with roundRect and bitmap masks',
+        'Use the standalone stencil clip extension directly on Phaser containers with roundRect, bitmap, nested, and transformed masks',
       component: NativeStencilClipViewExample,
-      height: SCENE_SIZES.medium,
+      height: SCENE_SIZES.large,
       code: NativeStencilClipViewExampleRaw,
     },
     {

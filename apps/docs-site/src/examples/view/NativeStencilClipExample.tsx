@@ -54,10 +54,12 @@ function addNativePanel(
   scene: Phaser.Scene,
   root: Phaser.GameObjects.Container,
   x: number,
+  y: number,
   title: string,
-  clip: Parameters<Phaser.GameObjects.Container['setStencilClip']>[0]
+  clip: Parameters<Phaser.GameObjects.Container['setStencilClip']>[0],
+  configure?: (panel: Phaser.GameObjects.Container) => void
 ) {
-  const label = scene.add.text(x, 12, title, {
+  const label = scene.add.text(x, y, title, {
     color: '#ffffff',
     fontSize: '16px',
     fontFamily: 'Arial',
@@ -65,8 +67,9 @@ function addNativePanel(
   })
   root.add(label)
 
-  const panel = scene.add.container(x, 44)
+  const panel = scene.add.container(x, y + 32)
   panel.setStencilClip(clip)
+  configure?.(panel)
   root.add(panel)
 
   const background = scene.add.rectangle(0, 0, 180, 140, 0x253044, 1).setOrigin(0, 0)
@@ -91,6 +94,51 @@ function addNativePanel(
   })
 }
 
+function addNestedPanel(
+  scene: Phaser.Scene,
+  root: Phaser.GameObjects.Container,
+  x: number,
+  y: number
+) {
+  addNativePanel(scene, root, x, y, 'nested stencil', {
+    kind: 'roundRect',
+    width: 180,
+    height: 140,
+    cornerRadius: 24,
+  })
+
+  const panel = root.list[root.list.length - 1] as Phaser.GameObjects.Container
+  const child = scene.add.container(42, 32)
+  child.setStencilClip({
+    kind: 'roundRect',
+    width: 96,
+    height: 76,
+    cornerRadius: 18,
+  })
+  panel.add(child)
+
+  const innerBackground = scene.add.rectangle(0, 0, 96, 76, 0x141c2f, 1).setOrigin(0, 0)
+  child.add(innerBackground)
+
+  for (let i = 0; i < 5; i++) {
+    child.add(
+      scene.add
+        .rectangle(-30 + i * 34, -10 + i * 14, 24, 112, i % 2 === 0 ? 0xf87171 : 0x60a5fa, 0.9)
+        .setOrigin(0, 0)
+        .setRotation(-0.48)
+    )
+  }
+
+  scene.tweens.add({
+    targets: child,
+    x: 56,
+    duration: 1200,
+    yoyo: true,
+    repeat: -1,
+    ease: 'Sine.easeInOut',
+  })
+}
+
 export function NativeStencilClipViewExample() {
   const scene = useScene()
   const rootRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -104,19 +152,39 @@ export function NativeStencilClipViewExample() {
     const nativeRoot = scene.add.container(28, 28)
     root.add(nativeRoot)
 
-    addNativePanel(scene, nativeRoot, 0, 'roundRect stencil', {
+    addNativePanel(scene, nativeRoot, 0, 0, 'roundRect stencil', {
       kind: 'roundRect',
       width: 180,
       height: 140,
       cornerRadius: { tl: 28, tr: 10, br: 28, bl: 10 },
     })
 
-    addNativePanel(scene, nativeRoot, 230, 'bitmap stencil', {
+    addNativePanel(scene, nativeRoot, 230, 0, 'bitmap stencil', {
       kind: 'bitmap',
       texture: MASK_KEY,
       width: 180,
       height: 140,
     })
+
+    addNestedPanel(scene, nativeRoot, 0, 190)
+
+    addNativePanel(
+      scene,
+      nativeRoot,
+      245,
+      190,
+      'transformed stencil',
+      {
+        kind: 'roundRect',
+        width: 180,
+        height: 140,
+        cornerRadius: 22,
+      },
+      (panel) => {
+        panel.setRotation(-0.08)
+        panel.setScale(0.94)
+      }
+    )
 
     return () => {
       nativeRoot.destroy(true)
