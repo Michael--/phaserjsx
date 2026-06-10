@@ -7,11 +7,16 @@ import { Particles, Text, View } from '@number10/phaserjsx'
 
 export function ZonesParticlesExample() {
   return (
-    <View width="fill" height="fill" padding={20} gap={20}>
+    <View
+      width="fill"
+      height="fill"
+      padding={40}
+      gap={40}
+      justifyContent="center"
+      alignItems="center"
+    >
       <Text
         text="Emit zone controls spawn. Death zone removes particles on enter."
-        x={20}
-        y={20}
         style={{ color: '#ffffff', fontSize: '15px' }}
       />
       <View width={360} height={180} backgroundColor={0x20283a} cornerRadius={8} direction="stack">
@@ -30,23 +35,21 @@ export function ZonesParticlesExample() {
           borderColor={0xffc857}
           borderWidth={2}
           cornerRadius={40}
-        />
-        <Text
-          text="deathZones: onEnter"
-          x={105}
-          y={82}
-          style={{ color: '#ffc857', fontSize: '13px' }}
-          depth={2}
-        />
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Text text="deathZones" style={{ color: '#ffc857', fontSize: '13px' }} />
+        </View>
         <Particles
           texture="particle-zones"
           frame="green"
-          preset="rain"
+          preset="snow"
           x={0}
           y={0}
           width={360}
-          height={180}
+          height={0}
           emitZone={{ shape: 'rect', type: 'random' }}
+          config={{ frequency: 5, lifespan: 1900, scale: { start: 0.45, end: 0 } }}
           deathZones={{ shape: 'circle', x: 180, y: 90, radius: 40, mode: 'onEnter' }}
         />
       </View>

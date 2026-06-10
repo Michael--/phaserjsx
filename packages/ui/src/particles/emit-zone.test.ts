@@ -29,4 +29,26 @@ describe('particle zone helpers', () => {
     expect((deathZones?.[1]?.source as { width: number } | undefined)?.width).toBe(320)
     expect((deathZones?.[1]?.source as { height: number } | undefined)?.height).toBe(180)
   })
+
+  it('evaluates death zones in owner-local coordinates', () => {
+    const owner = {
+      getWorldTransformMatrix: () => ({
+        applyInverse: (x: number, y: number, output = { x: 0, y: 0 }) => {
+          output.x = x - 40
+          output.y = y - 80
+          return output
+        },
+      }),
+    }
+
+    const deathZones = buildDeathZonesFromLayout(
+      { shape: 'circle', x: 180, y: 90, radius: 40, mode: 'onEnter' },
+      360,
+      180,
+      owner
+    )
+
+    expect(deathZones?.[0]?.source.contains(220, 170)).toBe(true)
+    expect(deathZones?.[0]?.source.contains(180, 90)).toBe(false)
+  })
 })

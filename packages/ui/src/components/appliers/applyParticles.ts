@@ -73,7 +73,7 @@ export function applyParticlesProps(
       }
     }
 
-    const deathZones = buildDeathZonesFromLayout(deathZoneProps, next.width, next.height)
+    const deathZones = buildDeathZonesFromLayout(deathZoneProps, next.width, next.height, manager)
     const combined = mergeDeathZones(
       (resolvedConfig as unknown as { deathZone?: unknown }).deathZone,
       deathZones

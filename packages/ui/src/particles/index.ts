@@ -19,6 +19,7 @@ export {
   type ParticleDeathZoneConfig,
   type ParticleDeathZoneMode,
   type ParticleExclusionZoneConfig,
+  type ParticleZoneTransformOwner,
   type ParticleZoneSource,
   type ParticleZoneConfig,
   type ParticleZoneShape,

@@ -130,7 +130,12 @@ export const particlesCreator: HostCreator<'Particles'> = (scene, props) => {
 
   // Now apply death zones with container-relative coordinates
   if (deathZoneProps && emitter) {
-    const deathZones = buildDeathZonesFromLayout(deathZoneProps, props.width, props.height)
+    const deathZones = buildDeathZonesFromLayout(
+      deathZoneProps,
+      props.width,
+      props.height,
+      particles
+    )
     const combinedDeathZones = mergeDeathZones(
       (resolvedConfig as unknown as { deathZone?: unknown }).deathZone,
       deathZones

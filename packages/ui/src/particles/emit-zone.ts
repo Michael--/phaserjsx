@@ -51,6 +51,12 @@ export interface ParticleDeathZoneConfig extends ZoneConfigBase {
 export type ParticleExclusionZoneConfig = ParticleDeathZoneConfig
 
 type PointLike = { x: number; y: number }
+type TransformMatrixLike = {
+  applyInverse: (x: number, y: number) => PointLike
+}
+export type ParticleZoneTransformOwner = {
+  getWorldTransformMatrix?: () => TransformMatrixLike
+}
 
 export type ParticleZoneSource = {
   x?: number
@@ -245,6 +251,33 @@ function buildZoneSource(
   }
 }
 
+function getTransformOwner(value: unknown): ParticleZoneTransformOwner | undefined {
+  if (!value || typeof value !== 'object') return undefined
+  if (typeof (value as ParticleZoneTransformOwner).getWorldTransformMatrix !== 'function') {
+    return undefined
+  }
+  return value as ParticleZoneTransformOwner
+}
+
+function createLocalDeathZoneSource(
+  source: ParticleZoneSource,
+  owner?: unknown
+): ParticleZoneSource {
+  const transformOwner = getTransformOwner(owner)
+  if (!transformOwner) return source
+
+  return {
+    ...source,
+    contains: (worldX, worldY) => {
+      const matrix = transformOwner.getWorldTransformMatrix?.()
+      if (!matrix) return source.contains(worldX, worldY)
+
+      const localPoint = matrix.applyInverse(worldX, worldY)
+      return source.contains(localPoint.x, localPoint.y)
+    },
+  }
+}
+
 /**
  * Build a Phaser emitZone config from a lightweight zone definition
  */
@@ -281,17 +314,15 @@ export function buildEmitZoneFromLayout(
  */
 export function buildDeathZone(
   zone: ParticleDeathZoneConfig,
-  fallbackSize: ZoneSize = {}
+  fallbackSize: ZoneSize = {},
+  owner?: unknown
 ): DeathZoneConfig | undefined {
   const type = zone.mode ?? 'onEnter'
-
-  // Zones are in container-relative coordinates
-  // No need to adjust since emitter is at container origin (0,0) with origin(0,0)
   const source = buildZoneSource(zone, fallbackSize)
 
   if (!source) return undefined
 
-  return { type, source }
+  return { type, source: createLocalDeathZoneSource(source, owner) }
 }
 
 /**
@@ -300,7 +331,8 @@ export function buildDeathZone(
 export function buildDeathZonesFromLayout(
   zones: ParticleDeathZoneConfig | ParticleDeathZoneConfig[] | undefined,
   width?: SizeValue,
-  height?: SizeValue
+  height?: SizeValue,
+  owner?: unknown
 ): DeathZoneConfig[] | undefined {
   if (!zones) return undefined
   const list = Array.isArray(zones) ? zones : [zones]
@@ -311,7 +343,7 @@ export function buildDeathZonesFromLayout(
   if (resolvedHeight !== undefined) fallback.height = resolvedHeight
 
   const deathZones = list
-    .map((zone) => buildDeathZone(zone, fallback))
+    .map((zone) => buildDeathZone(zone, fallback, owner))
     .filter((zone): zone is DeathZoneConfig => Boolean(zone))
 
   return deathZones.length > 0 ? deathZones : undefined

@@ -91,10 +91,11 @@ export function useParticles(ref: RefObject<ParticlesHandle | null>): {
       height?: number
     ) => {
       const emitter = getEmitter()
-      const deathZones = buildDeathZonesFromLayout(zones, width, height)
+      const manager = getManager()
+      const deathZones = buildDeathZonesFromLayout(zones, width, height, manager ?? undefined)
       applyDeathZone(emitter, deathZones)
     },
-    [getEmitter]
+    [getEmitter, getManager]
   )
 
   return {
