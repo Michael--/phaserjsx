@@ -48,7 +48,7 @@ export function HomePage() {
       <Section title="Explore">
         <CTAButtons
           buttons={[
-            { to: '/components/button', text: 'View Components', variant: 'primary' },
+            { to: '/components/view', text: 'View Components', variant: 'primary' },
             { to: '/installation', text: 'Installation Guide', variant: 'secondary' },
           ]}
         />
