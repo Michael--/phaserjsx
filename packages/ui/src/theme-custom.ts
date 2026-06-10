@@ -7,6 +7,7 @@
  * 2. Add the corresponding default values in theme-defaults.ts
  */
 import type { AnimationConfig } from './animation/spring-physics'
+import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonVariant } from './components/custom/Button'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
@@ -35,6 +36,23 @@ export interface CustomComponentThemes {
     size?: number
     disabledAlpha?: number
     labelPosition?: 'left' | 'right' | 'none'
+  } & NestedComponentThemes
+  Badge: ViewTheme & {
+    tone?: BadgeTone
+    variant?: BadgeVariant
+    size?: BadgeSize
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledAlpha?: number
+    dotSize?: number
+    maxCount?: number
+  } & NestedComponentThemes
+  Tag: ViewTheme & {
+    tone?: BadgeTone
+    variant?: BadgeVariant
+    size?: BadgeSize
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledAlpha?: number
+    closeSize?: number
   } & NestedComponentThemes
   ProgressBar: ViewTheme & {
     orientation?: 'horizontal' | 'vertical'

@@ -52,6 +52,23 @@ export function registerBuiltins() {
 export { type LayoutSize } from './../layout/types'
 
 // Re-export custom components (public API)
+export {
+  Badge,
+  Tag,
+  formatBadgeCount,
+  getBadgeSizeConfig,
+  getBadgeText,
+  resolveBadgeTextStyle,
+  type BadgeFormatOptions,
+  type BadgeProps,
+  type BadgeSize,
+  type BadgeSizeConfig,
+  type BadgeTextStyleOptions,
+  type BadgeTone,
+  type BadgeToneColors,
+  type BadgeVariant,
+  type TagProps,
+} from './custom/Badge'
 export { Button, type ButtonProps } from './custom/Button'
 export {
   Checkbox,

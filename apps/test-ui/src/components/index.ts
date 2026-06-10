@@ -6,6 +6,7 @@
 // Re-export migrated components from @number10/phaserjsx
 export {
   Accordion,
+  Badge,
   CharText,
   CharTextInput,
   Checkbox,
@@ -13,8 +14,13 @@ export {
   ProgressBar,
   RefOriginView,
   Sidebar,
+  Tag,
   TransformOriginView,
   type AccordionProps,
+  type BadgeProps,
+  type BadgeSize,
+  type BadgeTone,
+  type BadgeVariant,
   type CharTextAPI,
   type CharTextInputProps,
   type CharTextProps,
@@ -26,6 +32,7 @@ export {
   type ProgressBarProps,
   type RefOriginViewProps,
   type SidebarProps,
+  type TagProps,
   type TransformOriginViewProps,
 } from '@number10/phaserjsx'
 

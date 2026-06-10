@@ -3,7 +3,7 @@
  */
 /** @jsxImportSource @number10/phaserjsx */
 import type { ChildrenType, SizeValue } from '@number10/phaserjsx'
-import { Button, Divider, Text, useState, View } from '@number10/phaserjsx'
+import { Badge, Button, Divider, Tag, Text, useState, View } from '@number10/phaserjsx'
 
 type Pattern = 'app' | 'split' | 'gallery' | 'hud'
 type Direction = 'row' | 'column'
@@ -111,8 +111,8 @@ function AppPattern({
       >
         <Text text="Top bar" style={VALUE_STYLE} />
         <View direction="row" gap={8}>
-          <MiniBar color={0x22c55e} width={42} />
-          <MiniBar color={0xf59e0b} width={42} />
+          <Badge label="Online" tone="success" size="small" />
+          <Badge count={4} tone="warning" size="small" />
         </View>
       </View>
 
@@ -264,7 +264,7 @@ function HudPattern({
         <Text text="Map" style={VALUE_STYLE} />
       </View>
       <View x={258} y={18} width={96} height={34} backgroundColor={0xb91c1c} cornerRadius={17}>
-        <Text text="Alert" style={{ color: '#ffffff', fontSize: '12px' }} />
+        <Badge label="Alert" tone="danger" />
       </View>
       <View
         x={24}
@@ -335,9 +335,11 @@ function PatternPreview({
     >
       <View direction="row" justifyContent="space-between" alignItems="center">
         <Text text={`${pattern} layout`} style={{ color: '#f8fafc', fontSize: '14px' }} />
-        <Text
-          text={`${direction} / ${justifyContent} / ${alignItems}`}
-          style={{ color: '#93c5fd', fontSize: '11px' }}
+        <Tag
+          label={`${direction} / ${justifyContent} / ${alignItems}`}
+          size="small"
+          tone="info"
+          variant="outline"
         />
       </View>
       <Divider color={0x334155} />

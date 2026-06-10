@@ -5,6 +5,23 @@
 
 export { Accordion, type AccordionProps } from './Accordion'
 export { AlertDialog, type AlertDialogProps } from './AlertDialog'
+export {
+  Badge,
+  Tag,
+  formatBadgeCount,
+  getBadgeSizeConfig,
+  getBadgeText,
+  resolveBadgeTextStyle,
+  type BadgeFormatOptions,
+  type BadgeProps,
+  type BadgeSize,
+  type BadgeSizeConfig,
+  type BadgeTextStyleOptions,
+  type BadgeTone,
+  type BadgeToneColors,
+  type BadgeVariant,
+  type TagProps,
+} from './Badge'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'

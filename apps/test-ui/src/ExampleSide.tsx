@@ -4,6 +4,7 @@ import { Accordion, Icon, type IconType } from './components'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
 import { AlertDialogExample } from './examples/AlertDialogExample'
+import { BadgeExample } from './examples/BadgeExample'
 import { BorderExample } from './examples/BorderExample'
 import { ButtonExample } from './examples/ButtonExample'
 import { ColorModeExample } from './examples/ColorModeExample'
@@ -55,6 +56,7 @@ declare module '@number10/phaserjsx' {
 
 export type ExampleKey =
   | 'button'
+  | 'badge'
   | 'graphics'
   | 'image'
   | 'sprite'
@@ -109,6 +111,7 @@ const groupedExamples: GroupedExamples = {
     iconType: 'gear',
     examples: {
       button: { label: 'Button Variants', component: ButtonExample },
+      badge: { label: 'Badge / Tag Component', component: BadgeExample },
       checkbox: { label: 'Checkbox Component', component: CheckboxExample },
       toggle: { label: 'Toggle/Switch Component', component: ToggleExample },
       graphics: { label: 'Graphics Component', component: GraphicsExample },

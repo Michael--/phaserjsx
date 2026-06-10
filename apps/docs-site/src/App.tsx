@@ -4,6 +4,7 @@ import { ComponentPage } from './components/ComponentPage'
 import { DocsThemeProvider } from './components/Layout'
 import { accordionContent } from './content/accordion.content'
 import { alertdialogContent } from './content/alertdialog.content'
+import { badgeContent } from './content/badge.content'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
@@ -83,6 +84,7 @@ export function App() {
             path="/components/progressbar"
             element={<ComponentPage content={progressbarContent} />}
           />
+          <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route
             path="/components/radiobutton"
             element={<ComponentPage content={radiobuttonContent} />}

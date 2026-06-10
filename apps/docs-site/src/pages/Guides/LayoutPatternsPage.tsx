@@ -148,15 +148,7 @@ export function LayoutPatternsPage() {
   <Icon name="star" size={64} color={0xffffff} />
 
   {/* Badge overlay */}
-  <View
-    width={30}
-    height={30}
-    backgroundColor={0xe74c3c}
-    x={170}
-    y={0}
-  >
-    <Text text="5" />
-  </View>
+  <Badge count={5} tone="danger" x={170} y={0} />
 </View>`}
         </CodeBlock>
 
@@ -790,7 +782,9 @@ export function LayoutPatternsPage() {
         </CodeBlock>
 
         <h3>Badge Overlay</h3>
-        <p>Position badge on top-right of an icon:</p>
+        <p>
+          Position a <code>Badge</code> on the top-right of an icon with stack layout:
+        </p>
 
         <CodeBlock language="tsx">
           {`<View direction="stack" width={64} height={64}>
@@ -798,17 +792,7 @@ export function LayoutPatternsPage() {
   <Icon name="bell" size={64} color={0x3498db} />
 
   {/* Badge overlay */}
-  <View
-    width={20}
-    height={20}
-    backgroundColor={0xe74c3c}
-    x={44}
-    y={0}
-    justifyContent="center"
-    alignItems="center"
-  >
-    <Text text="3" style={{ fontSize: '12px' }} />
-  </View>
+  <Badge count={3} tone="danger" size="small" x={44} y={0} />
 </View>`}
         </CodeBlock>
 

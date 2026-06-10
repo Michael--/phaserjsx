@@ -114,6 +114,26 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         fontSize: '14px',
       },
     },
+    Badge: {
+      tone: 'neutral',
+      variant: 'solid',
+      size: 'medium',
+      maxCount: 99,
+      disabledAlpha: 0.5,
+      textStyle: {
+        fontStyle: 'bold',
+      },
+    },
+    Tag: {
+      tone: 'neutral',
+      variant: 'soft',
+      size: 'medium',
+      closeSize: 16,
+      disabledAlpha: 0.5,
+      textStyle: {
+        fontStyle: 'bold',
+      },
+    },
     ProgressBar: {
       width: 240,
       height: 22,
