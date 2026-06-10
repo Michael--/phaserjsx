@@ -1,5 +1,23 @@
 # @number10/phaserjsx
 
+## 4.3.0
+
+### Minor Changes
+
+- Add `Checkbox` as a public custom component with controlled/uncontrolled state, disabled handling, label positioning, tristate support, theme defaults, docs examples, and package tests.
+- Add `ProgressBar` as a public custom component with horizontal/vertical modes, label placement options, theming, docs examples, and package tests.
+- Add `Badge` and `Tag` as public custom components with tone, variant, size, count formatting, theme defaults, docs examples, and package tests.
+- Add `Popover` and `ContextMenu` as public portal-based overlay components with placement calculation, viewport clamping, measured content positioning, theme defaults, docs examples, and package tests.
+
+### Patch Changes
+
+- Add an interactive performance playground that uses the public `DebugPanel` component.
+- Clarify `Particles` emit zones and death zones, resolve death-zone coordinates in local space, and add particle zone regression coverage.
+- Improve `TileSprite` support and examples, including size handling and regression coverage.
+- Expand docs-site coverage for Sprite, TileSprite, Particles, Checkbox, ProgressBar, Badge/Tag, Popover/ContextMenu, responsive design, layout patterns, performance, theme effects, and gestures/tooltips guidance.
+- Synchronize docs-site theme switching across the full layout instead of only the header.
+- Clean up Phaser 4 docs-site scaffolding and stale temporary documentation.
+
 ## 4.2.0
 
 ### Minor Changes

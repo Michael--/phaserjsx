@@ -22,7 +22,7 @@ The 4.x line uses Phaser 4 render steps, filters, and WebGL behavior and is not 
 - 🎨 **React-like API** - Familiar JSX syntax with hooks (useState, useEffect, useMemo, etc.)
 - 🎯 **Type-Safe** - Full TypeScript support with strict type checking
 - 🎨 **Powerful Theme System** - Global and component-level theming with runtime switching
-- 📦 **Rich Component Library** - Button, Text, Icon, Accordion, Dropdown, CharTextInput, and more
+- 📦 **Rich Component Library** - Button, Text, Icon, Checkbox, ProgressBar, Badge, Popover, ContextMenu, and more
 - 🎭 **Built-in Effects** - 23+ animation effects (pulse, shake, fade, bounce, etc.)
 - 📱 **Responsive Design** - Flexible layout with multiple size value formats (px, %, vw/vh, fill, auto, calc)
 - 🔧 **Custom Components** - Easy to create and integrate custom components
@@ -30,6 +30,19 @@ The 4.x line uses Phaser 4 render steps, filters, and WebGL behavior and is not 
 - ✂️ **Stencil Clipping** - Native Phaser Container stencil clips with fast rounded rectangles and bitmap masks
 - 📊 **SVG Support** - Convert SVG to Phaser textures with caching
 - 🚀 **Performance** - Optimized VDOM reconciliation with smart dirty checking
+
+## Current Release
+
+The current package line is `@number10/phaserjsx@4.3.0`, targeting Phaser 4.1+.
+
+Recent public API additions include:
+
+- `Checkbox` for form and settings UIs, including controlled/uncontrolled and tristate state.
+- `ProgressBar` for horizontal or vertical progress indicators with optional labels.
+- `Badge` and `Tag` for compact status, count, and label indicators.
+- `Popover` and `ContextMenu` for portal-based overlays with measured placement and viewport clamping.
+- `DebugPanel` for lightweight runtime diagnostics in development and performance demos.
+- Tooltip support as an API-level interaction feature for pointer/hover-capable displays.
 
 ## 📦 Installation
 

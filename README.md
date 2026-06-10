@@ -12,7 +12,7 @@ A modern, type-safe framework for building game UIs in Phaser 4 using JSX compon
 - 🎨 **React-like API** - Familiar JSX syntax with hooks (useState, useEffect, useMemo, etc.)
 - 🎯 **Type-Safe** - Full TypeScript support with strict type checking
 - 🎨 **Powerful Theme System** - Global and component-level theming with runtime switching
-- 📦 **Rich Component Library** - Button, Text, Icon, Accordion, Dropdown, CharTextInput, and more
+- 📦 **Rich Component Library** - Button, Text, Icon, Checkbox, ProgressBar, Badge, Popover, ContextMenu, and more
 - 🎭 **Built-in Effects** - 23+ animation effects (pulse, shake, fade, bounce, etc.)
 - 📱 **Responsive Design** - Flexible layout with multiple size value formats
 - ✂️ **Stencil Clipping** - Standalone Phaser 4 Container clips with rounded-rectangle and bitmap-mask modes
@@ -38,7 +38,7 @@ This monorepo contains:
 - **[docs-site](./apps/docs-site)** - Documentation website (GitHub Pages)
 - **[test-ui](./apps/test-ui)** - Development playground and testing app
 
-The current package line is `@number10/phaserjsx@4.1.0`, targeting Phaser 4.1+.
+The current package line is `@number10/phaserjsx@4.3.0`, targeting Phaser 4.1+.
 
 ## 🚀 Getting Started for Development
 

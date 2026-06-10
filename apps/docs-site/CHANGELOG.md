@@ -1,5 +1,18 @@
 # docs-site
 
+## 0.7.0
+
+### Minor Changes
+
+- Document the `@number10/phaserjsx@4.3.0` UI surface for Checkbox, ProgressBar, Badge/Tag, Popover/ContextMenu, Sprite, TileSprite, and Particles.
+- Add interactive guide examples for layout patterns, responsive behavior, performance diagnostics, and theme/effect controls.
+- Use the shared docs theme state across the full layout so light/dark mode applies beyond the header.
+- Prepare the docs-site README for GitHub Pages publication of the current 4.x documentation.
+
+### Patch Changes
+
+- Updated dependency target documentation for `@number10/phaserjsx@4.3.0`.
+
 ## 0.6.0
 
 ### Minor Changes
