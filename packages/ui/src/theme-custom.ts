@@ -113,8 +113,14 @@ export interface CustomComponentThemes {
   ScrollSlider: {
     borderColor?: number
     trackColor?: number
+    trackCornerRadius?: number
     thumbColor?: number
+    thumbActiveColor?: number
+    thumbBorderColor?: number
+    thumbBorderWidth?: number
+    thumbCornerRadius?: number
     borderWidth?: number
+    cornerRadius?: number
     size?: number
     minThumbSize?: number
   } & NestedComponentThemes

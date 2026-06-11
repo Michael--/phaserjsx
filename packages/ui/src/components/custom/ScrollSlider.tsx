@@ -4,7 +4,7 @@
  */
 import * as Phaser from 'phaser'
 import type { GestureEventData } from '../../core-props'
-import { useRef } from '../../hooks'
+import { useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
 import type { LayoutSize } from '../index'
@@ -76,9 +76,11 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
     momentum = true,
     onMomentumEnd,
   } = props
-  const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed } = getThemedProps('ScrollSlider', localTheme, {})
   const sliderRef = useRef<Phaser.GameObjects.Container | null>(null)
   const isDraggingRef = useRef(false)
+  const [isDragging, setIsDragging] = useState(false)
   const trackContainerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const velocityRef = useRef(0)
   const lastTimeRef = useRef(0)
@@ -86,6 +88,14 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
 
   const isVertical = direction === 'vertical'
   const { border, outer, dimension } = calculateSliderSize(props.size)
+  const sizeFactor = outer / (themed.size ?? 24)
+  const thumbBorderWidth = Math.min(
+    (themed.thumbBorderWidth ?? 1) * sizeFactor,
+    Math.max(0, dimension / 3)
+  )
+  const outerRadius = themed.cornerRadius ?? outer / 2
+  const trackRadius = themed.trackCornerRadius ?? dimension / 2
+  const thumbRadius = themed.thumbCornerRadius ?? dimension / 2
 
   // Get actual resolved track size from the container after layout
   const containerWithLayout = trackContainerRef.current as
@@ -122,6 +132,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
 
     if (data.state === 'start') {
       isDraggingRef.current = true
+      setIsDragging(true)
       velocityRef.current = 0
       lastTimeRef.current = Date.now()
       // Stop any ongoing momentum tween
@@ -134,6 +145,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
 
     if (data.state === 'end') {
       isDraggingRef.current = false
+      setIsDragging(false)
       if (momentum && Math.abs(velocityRef.current) > 0.1) {
         startMomentum(scrollPosition)
       } else if (onMomentumEnd) {
@@ -214,6 +226,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
       width={isVertical ? outer : '100%'}
       height={isVertical ? '100%' : outer}
       backgroundColor={themed.borderColor ?? 0x000000}
+      cornerRadius={outerRadius}
       padding={border}
     >
       <View
@@ -221,6 +234,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
         width={isVertical ? dimension : '100%'}
         height={isVertical ? '100%' : dimension}
         backgroundColor={themed.trackColor ?? 0xdddddd}
+        cornerRadius={trackRadius}
         direction="stack"
         padding={0}
       >
@@ -230,6 +244,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
           x={0}
           y={0}
           backgroundColor={themed.trackColor ?? 0xaaaaaa}
+          cornerRadius={trackRadius}
           enableGestures={true}
           onTouch={handleBackgroundTouch}
         />
@@ -238,7 +253,14 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
           height={isVertical ? thumbSize : dimension}
           x={isVertical ? 0 : thumbPosition}
           y={isVertical ? thumbPosition : 0}
-          backgroundColor={themed.thumbColor ?? 0xeeeebb}
+          backgroundColor={
+            isDragging
+              ? (themed.thumbActiveColor ?? themed.thumbColor ?? 0xeeeebb)
+              : (themed.thumbColor ?? 0xeeeebb)
+          }
+          borderColor={themed.thumbBorderColor}
+          borderWidth={thumbBorderWidth}
+          cornerRadius={thumbRadius}
           enableGestures={true}
           onTouchMove={handleThumbTouchMove}
         />
