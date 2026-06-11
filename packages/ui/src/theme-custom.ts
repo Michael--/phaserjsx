@@ -31,10 +31,14 @@ export interface CustomComponentThemes {
   RadioButton: {
     selectedColor?: number
     color?: number
+    backgroundColor?: number
+    borderWidth?: number
     labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
     gap?: number
     size?: number
     innerSize?: number
+    disabledAlpha?: number
+    labelPosition?: 'left' | 'right' | 'none'
   } & NestedComponentThemes
   Checkbox: {
     color?: number

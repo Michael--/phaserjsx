@@ -92,10 +92,13 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     },
     RadioButton: {
       selectedColor: colors.primary.DEFAULT.toNumber(),
-      color: colors.border.medium.toNumber(),
-      gap: 10,
-      size: 16,
-      innerSize: 16,
+      color: colors.border.dark.toNumber(),
+      borderWidth: 2,
+      gap: 8,
+      size: 18,
+      innerSize: 8,
+      disabledAlpha: 0.5,
+      labelPosition: 'right',
       labelStyle: {
         color: colors.text.DEFAULT.toString(),
         fontSize: '14px',

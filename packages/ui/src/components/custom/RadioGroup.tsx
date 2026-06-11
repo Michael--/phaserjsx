@@ -3,10 +3,11 @@
  * RadioGroup component - Manages a group of radio buttons with single-selection logic
  */
 
-import { useState } from '../../hooks'
+import { useState, useTheme } from '../../hooks'
 import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
-import { Text, View } from '../index'
+import { View } from '../index'
+import { RadioButton } from './RadioButton'
 
 // import { getThemedProps, Text, useState, View } from '@number10/phaserjsx'
 
@@ -28,10 +29,14 @@ export interface RadioGroupProps {
   options: RadioGroupOption[]
   /** Currently selected value */
   value?: string
+  /** Initial selected value for uncontrolled groups */
+  defaultValue?: string
   /** Callback when selection changes */
   onChange?: (value: string) => void
   /** Layout direction (default: 'column') */
   direction?: 'row' | 'column'
+  /** Disabled state for all options */
+  disabled?: boolean
 }
 
 /**
@@ -40,12 +45,19 @@ export interface RadioGroupProps {
  * @returns RadioGroup JSX element
  */
 export function RadioGroup(props: RadioGroupProps): VNodeLike {
-  const { props: themed, nestedTheme } = getThemedProps('RadioButton', undefined, {})
+  const localTheme = useTheme()
+  const { props: themed, nestedTheme } = getThemedProps('RadioButton', localTheme, {})
 
-  const [selected, setSelected] = useState<string>(props.value ?? '')
+  const [internalSelected, setInternalSelected] = useState<string>(
+    props.value ?? props.defaultValue ?? ''
+  )
+  const selected = props.value ?? internalSelected
 
   const handleSelect = (value: string) => {
-    setSelected(value)
+    if (props.disabled) return
+    if (props.value === undefined) {
+      setInternalSelected(value)
+    }
     props.onChange?.(value)
   }
 
@@ -54,40 +66,14 @@ export function RadioGroup(props: RadioGroupProps): VNodeLike {
       {props.options.map((option) => {
         const isSelected = selected === option.value
 
-        const size = themed.size ?? 16
-        const innerSize = themed.innerSize ?? size * 0.75
-        const innerRadius = innerSize * 0.5
-        const outerRadius = size * 0.5
-
         return (
-          <View
+          <RadioButton
             key={option.value}
-            direction="row"
-            gap={themed.gap}
-            alignItems="center"
-            enableGestures={true}
-            onTouch={() => handleSelect(option.value)}
-          >
-            <View
-              width={size}
-              height={size}
-              backgroundColor={themed.color}
-              alignItems="center"
-              justifyContent="center"
-              backgroundAlpha={1.0}
-              padding={0}
-              cornerRadius={outerRadius}
-            >
-              <View
-                width={innerSize}
-                height={innerSize}
-                backgroundColor={themed.selectedColor}
-                visible={isSelected}
-                cornerRadius={innerRadius}
-              />
-            </View>
-            <Text text={option.label} style={themed.labelStyle} />
-          </View>
+            label={option.label}
+            selected={isSelected}
+            disabled={props.disabled ?? false}
+            onClick={() => handleSelect(option.value)}
+          />
         )
       })}
     </View>
