@@ -121,7 +121,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       maxCount: 99,
       disabledAlpha: 0.5,
       textStyle: {
-        fontStyle: 'bold',
+        fontFamily: 'Arial',
       },
     },
     Tag: {
@@ -131,7 +131,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       closeSize: 16,
       disabledAlpha: 0.5,
       textStyle: {
-        fontStyle: 'bold',
+        fontFamily: 'Arial',
       },
     },
     Popover: {

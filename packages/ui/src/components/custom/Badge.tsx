@@ -118,26 +118,26 @@ const DEFAULT_TONES: Record<BadgeTone, BadgeToneColors> = {
 
 const DEFAULT_SIZES: Record<BadgeSize, BadgeSizeConfig> = {
   small: {
-    height: 20,
-    padding: { left: 7, right: 7, top: 2, bottom: 2 },
-    fontSize: 11,
-    cornerRadius: 10,
+    height: 22,
+    padding: { left: 8, right: 8, top: 3, bottom: 3 },
+    fontSize: 12,
+    cornerRadius: 11,
     gap: 5,
     dotSize: 8,
   },
   medium: {
-    height: 24,
-    padding: { left: 9, right: 9, top: 3, bottom: 3 },
-    fontSize: 13,
-    cornerRadius: 12,
+    height: 26,
+    padding: { left: 10, right: 10, top: 4, bottom: 4 },
+    fontSize: 14,
+    cornerRadius: 13,
     gap: 6,
     dotSize: 10,
   },
   large: {
-    height: 30,
-    padding: { left: 12, right: 12, top: 4, bottom: 4 },
+    height: 32,
+    padding: { left: 13, right: 13, top: 5, bottom: 5 },
     fontSize: 18,
-    cornerRadius: 15,
+    cornerRadius: 16,
     gap: 8,
     dotSize: 12,
   },
@@ -335,6 +335,7 @@ export function Tag(props: TagProps): VNodeLike {
   const resolvedVariant = variant ?? themed.variant ?? (selected ? 'solid' : 'soft')
   const resolvedSize = size ?? themed.size ?? 'medium'
   const colors = resolveBadgeColors(resolvedTone, resolvedVariant)
+  const closeSize = themed.closeSize ?? 16
   const resolvedTextStyle = resolveBadgeTextStyle({
     size: resolvedSize,
     textColor: colors.textColor,
@@ -356,15 +357,16 @@ export function Tag(props: TagProps): VNodeLike {
       {children}
       {onRemove && (
         <Button
-          width={themed.closeSize ?? 16}
-          height={themed.closeSize ?? 16}
+          width={closeSize}
+          height={closeSize}
+          minWidth={closeSize}
           padding={0}
-          cornerRadius={(themed.closeSize ?? 16) / 2}
+          cornerRadius={closeSize / 2}
           onClick={onRemove}
           theme={nestedTheme}
-        >
-          <Text text={closeLabel} style={resolvedTextStyle} />
-        </Button>
+          label={closeLabel}
+          textStyle={resolvedTextStyle}
+        />
       )}
     </Badge>
   )
