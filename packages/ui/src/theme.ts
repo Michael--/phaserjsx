@@ -70,6 +70,8 @@ class ThemeRegistry {
         this.customThemes.set(component, { ...existing, ...styles })
       }
     }
+
+    this.notifyListeners()
   }
 
   /**
@@ -332,40 +334,26 @@ function extractNestedThemes<T extends object>(
   const ownProps = { ...theme }
   const nestedThemes: PartialTheme = {}
 
-  // Get all registered component names (built-in + custom)
-  const allComponentNames = new Set([
-    'View',
-    'Text',
-    'NineSlice',
-    'Sprite',
-    'Image',
-    'Graphics',
-    'TileSprite',
-    'Particles',
-    'Icon',
-    'RadioButton',
-    'Checkbox',
-    'Badge',
-    'Tag',
-    'Popover',
-    'ContextMenu',
-    'ProgressBar',
-    'ScrollSlider',
-    'Button',
-    'Toggle',
-    'Sidebar',
-    'Accordion',
-    'Tabs',
-    'NineSliceButton',
-    'CharText',
-    'CharTextInput',
-    'Dropdown',
-    'Slider',
-    ...Array.from(themeRegistry.getCustomComponentNames()),
+  const internalPrimitiveNames = new Set([
+    'view',
+    'text',
+    'nineslice',
+    'sprite',
+    'image',
+    'graphics',
+    'tilesprite',
+    'particles',
   ])
+  const allComponentNames = new Set(
+    [
+      ...Object.keys(defaultTheme),
+      ...Object.keys(themeRegistry.getGlobalTheme()),
+      ...Array.from(themeRegistry.getCustomComponentNames()),
+    ].filter((key) => key !== '__colorPreset' && !internalPrimitiveNames.has(key))
+  )
 
   for (const key in ownProps) {
-    // Check if this key is a component name (starts with uppercase or is in our registry)
+    // Check if this key is a registered component theme.
     if (allComponentNames.has(key)) {
       nestedThemes[key as keyof ComponentThemes] = (ownProps as never)[key]
       delete (ownProps as never)[key]

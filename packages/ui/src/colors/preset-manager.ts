@@ -2,6 +2,7 @@
  * Dynamic color preset management
  */
 import { themeRegistry } from '../theme'
+import { createDefaultTheme } from '../theme-defaults'
 import { remountAll } from '../vdom'
 import type { PresetName } from './color-presets'
 import { getPresetWithMode } from './color-presets'
@@ -30,6 +31,7 @@ export function setColorPreset(presetName: PresetName, colorMode?: 'light' | 'da
   // Update color tokens WITHOUT notifying listeners
   // We skip listener notifications to prevent unnecessary re-renders
   themeRegistry.setColorTokens(preset.colors)
+  themeRegistry.setGlobalTheme(createDefaultTheme(presetName, targetMode))
   themeRegistry.setCurrentPresetName(presetName, true) // true = skip notify
 
   // If caller asked for a specific mode, update it here so we only remount once
