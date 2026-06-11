@@ -37,8 +37,12 @@ vi.mock('./render-context', () => ({
 }))
 
 import { host } from './host'
+import { useTheme } from './hooks'
+import { jsx } from './jsx-runtime'
+import { createTheme, getThemedProps } from './theme'
 import type { ParentType } from './types'
 import { createElement, mount, mountJSX, patchVNode, unmount, unmountJSX } from './vdom'
+import { Toggle } from './components/custom/Toggle'
 
 describe('VDOM', () => {
   let mockScene: unknown
@@ -112,6 +116,98 @@ describe('VDOM', () => {
       mount(mockScene as any, vnode)
 
       expect(mockComponent).toHaveBeenCalledWith({ test: 'value' })
+    })
+
+    it('should expose JSX theme context to function components', () => {
+      function ThemedProbe() {
+        const localTheme = useTheme()
+        const { props } = getThemedProps('Toggle', localTheme, {})
+        return createElement('View', { width: props.width })
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(host.create).mockReturnValue({ id: 'themed-probe' } as any)
+
+      const vnode = jsx(ThemedProbe, {
+        theme: createTheme({ Toggle: { width: 123 } }),
+      })
+      const scene = {
+        sys: { settings: { active: true } },
+        add: { container: vi.fn(() => ({ visible: true })) },
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mount(scene as any, vnode as any)
+
+      expect(vi.mocked(host.create)).toHaveBeenCalledWith(
+        'View',
+        expect.objectContaining({ width: 123 }),
+        scene
+      )
+    })
+
+    it('should apply local theme props to Toggle during mount', () => {
+      const scene = {
+        sys: { settings: { active: true } },
+        add: { container: vi.fn(() => ({ visible: true })) },
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vi.mocked(host.create).mockImplementation(
+        (_type, _props, sceneArg) =>
+          ({
+            scene: sceneArg,
+            list: [],
+            add: vi.fn(),
+            remove: vi.fn(),
+          }) as any
+      )
+
+      const vnode = jsx(Toggle, {
+        checked: true,
+        labelPosition: 'none',
+        theme: createTheme({
+          Toggle: {
+            width: 77,
+            height: 33,
+            thumbSize: 29,
+            trackColorOn: 0x123456,
+          },
+        }),
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mount(scene as any, vnode as any)
+
+      const hostCalls = vi.mocked(host.create).mock.calls
+      expect(hostCalls).toEqual(
+        expect.arrayContaining([
+          [
+            'view',
+            expect.objectContaining({
+              width: 77,
+              height: 33,
+            }),
+            expect.anything(),
+          ],
+          [
+            'graphics',
+            expect.objectContaining({
+              width: 77,
+              height: 33,
+              dependencies: expect.arrayContaining([0x123456]),
+            }),
+            expect.anything(),
+          ],
+          [
+            'graphics',
+            expect.objectContaining({
+              width: 29,
+              height: 29,
+            }),
+            expect.anything(),
+          ],
+        ])
+      )
     })
   })
 

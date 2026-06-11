@@ -1,7 +1,7 @@
 /** @jsxImportSource ../.. */
 import type { ViewProps } from '..'
 import { useEffect, useLayoutEffect, useRedraw, useRef, useState, useTheme } from '../../hooks'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
 import type { VNodeLike } from '../../vdom'
 import { CharText, type CharTextAPI } from './CharText'
@@ -103,11 +103,8 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
  */
 export function CharTextInput(props: CharTextInputProps): VNodeLike {
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps(
-    'CharTextInput',
-    localTheme,
-    props.theme ?? {}
-  )
+  const mergedLocalTheme = props.theme ? mergeThemes(localTheme ?? {}, props.theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('CharTextInput', mergedLocalTheme, {})
   const inputProps = { ...themed, ...props } as CharTextInputProps
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)

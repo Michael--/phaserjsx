@@ -14,7 +14,7 @@ import { useEffect, useRef, useScene, useState, useTheme } from '../../hooks'
 import { DeferredLayoutQueue } from '../../layout/layout-engine'
 import type { GameObjectWithLayout, LayoutSize } from '../../layout/types'
 import { portalRegistry } from '../../portal'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType, Ref } from '../../types'
 import type { VNodeLike } from '../../vdom'
@@ -220,7 +220,8 @@ function assignRef<T>(ref: Ref<T> | undefined, value: T | null): void {
 
 export function Popover(props: PopoverProps): VNodeLike {
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('Popover', localTheme, props.theme ?? {})
+  const mergedLocalTheme = props.theme ? mergeThemes(localTheme ?? {}, props.theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Popover', mergedLocalTheme, {})
   const scene = useScene()
   const triggerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const contentRef = useRef<Phaser.GameObjects.Container | null>(null)
@@ -405,11 +406,8 @@ export function ContextMenu(props: ContextMenuProps): VNodeLike {
     ...popoverProps
   } = props
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps(
-    'ContextMenu',
-    localTheme,
-    props.theme ?? {}
-  )
+  const mergedLocalTheme = props.theme ? mergeThemes(localTheme ?? {}, props.theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('ContextMenu', mergedLocalTheme, {})
   const [internalOpen, setInternalOpen] = useState(defaultOpen ?? false)
   const isControlled = explicitOpen !== undefined
   const isOpen = isControlled ? explicitOpen === true : internalOpen

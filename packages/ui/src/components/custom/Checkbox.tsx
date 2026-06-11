@@ -4,7 +4,7 @@
  */
 import type * as Phaser from 'phaser'
 import { useEffect, useState, useTheme } from '../../hooks'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
@@ -98,7 +98,8 @@ function drawDefaultIndicator(
 
 export function Checkbox(props: CheckboxProps): VNodeLike {
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('Checkbox', localTheme, props.theme ?? {})
+  const mergedLocalTheme = props.theme ? mergeThemes(localTheme ?? {}, props.theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Checkbox', mergedLocalTheme, {})
   const size = themed.size ?? 20
   const gap = themed.gap ?? 8
   const labelPosition = props.labelPosition ?? themed.labelPosition ?? 'right'

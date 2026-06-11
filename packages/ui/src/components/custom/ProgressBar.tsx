@@ -3,7 +3,7 @@
  * ProgressBar component - determinate progress indicator for health, loading, cooldowns, and XP.
  */
 import { useTheme } from '../../hooks'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { VNodeLike } from '../../vdom'
 import { Text, View, type ViewProps } from '../index'
@@ -101,7 +101,8 @@ export function ProgressBar(props: ProgressBarProps): VNodeLike {
   } = props
 
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('ProgressBar', localTheme, theme ?? {})
+  const mergedLocalTheme = theme ? mergeThemes(localTheme ?? {}, theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('ProgressBar', mergedLocalTheme, {})
 
   const orientation = explicitOrientation ?? themed.orientation ?? 'horizontal'
   const ratio = getProgressRatio(value, min, max)

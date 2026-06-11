@@ -44,6 +44,32 @@ describe('JSX Runtime', () => {
         children: [child1, child2],
       })
     })
+
+    it('should keep theme props for function components while storing theme context', () => {
+      function Component() {
+        return null
+      }
+
+      const theme = { Toggle: { width: 40 } }
+      const vnode = jsx(Component, { theme, label: 'themed' })
+
+      expect(vnode).toMatchObject({
+        type: Component,
+        props: { theme, label: 'themed' },
+        __theme: theme,
+      })
+    })
+
+    it('should strip theme props from host components', () => {
+      const theme = { View: { gap: 12 } }
+      const vnode = jsx('View', { theme, width: 100 })
+
+      expect(vnode).toMatchObject({
+        type: 'View',
+        props: { width: 100 },
+        __theme: theme,
+      })
+    })
   })
 
   describe('jsxs', () => {

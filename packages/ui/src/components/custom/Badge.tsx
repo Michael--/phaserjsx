@@ -3,7 +3,7 @@
  * Badge and Tag components - compact labels for counts, status, filters, and inventory metadata.
  */
 import { useTheme } from '../../hooks'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
@@ -251,7 +251,8 @@ export function Badge(props: BadgeProps): VNodeLike {
   } = props
 
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('Badge', localTheme, theme ?? {})
+  const mergedLocalTheme = theme ? mergeThemes(localTheme ?? {}, theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Badge', mergedLocalTheme, {})
   const tone = explicitTone ?? themed.tone ?? 'neutral'
   const variant = explicitVariant ?? themed.variant ?? 'solid'
   const size = explicitSize ?? themed.size ?? 'medium'
@@ -330,7 +331,8 @@ export function Tag(props: TagProps): VNodeLike {
   } = props
 
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('Tag', localTheme, theme ?? {})
+  const mergedLocalTheme = theme ? mergeThemes(localTheme ?? {}, theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Tag', mergedLocalTheme, {})
   const resolvedTone = tone ?? themed.tone ?? (selected ? 'primary' : 'neutral')
   const resolvedVariant = variant ?? themed.variant ?? (selected ? 'solid' : 'soft')
   const resolvedSize = size ?? themed.size ?? 'medium'
