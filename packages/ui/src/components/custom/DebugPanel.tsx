@@ -163,7 +163,7 @@ function collectSnapshot(scene: Phaser.Scene): DebugSnapshot {
     frameMs,
     phaserVersion: Phaser.VERSION,
     renderer: resolveRendererName(scene),
-    viewport: `${scene.scale.width}x${scene.scale.height}`,
+    viewport: `${scene.scale.width.toFixed(0)}x${scene.scale.height.toFixed(0)}`,
     textureCount: resolveTextureCount(scene),
     mountsTotal: mountStats.totalMounts,
     mountsByType: summarizeMap(mountStats.byType),
