@@ -581,12 +581,23 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       lineHeight: 1.2,
       wordWrap: false,
       disabledColor: colors.border.dark.toNumber(),
-      focusedBorderColor: colors.accent.lightest.toNumber(),
-      backgroundColor: colors.surface.medium.toNumber(),
+      disabledBackgroundColor: colors.surface.medium.toNumber(),
+      disabledBorderColor: colors.border.light.toNumber(),
+      disabledAlpha: 0.6,
+      focusedBorderColor: colors.primary.DEFAULT.toNumber(),
+      backgroundColor: colors.surface.lightest.toNumber(),
       borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,
-      padding: 8,
-      textStyle: textStyles.DEFAULT,
+      cornerRadius: 7,
+      padding: { left: 10, right: 10, top: 8, bottom: 8 },
+      textStyle: {
+        ...textStyles.DEFAULT,
+        color: colors.text.dark.toString(),
+      },
+      placeholderStyle: {
+        ...textStyles.DEFAULT,
+        color: colors.text.light.toString(),
+      },
     },
     Dropdown: {
       trigger: {

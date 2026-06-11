@@ -1,6 +1,7 @@
 /** @jsxImportSource ../.. */
 import type { ViewProps } from '..'
-import { useEffect, useLayoutEffect, useRedraw, useRef, useState } from '../../hooks'
+import { useEffect, useLayoutEffect, useRedraw, useRef, useState, useTheme } from '../../hooks'
+import { getThemedProps } from '../../theme'
 import { KeyboardInputManager } from '../../utils/KeyboardInputManager'
 import type { VNodeLike } from '../../vdom'
 import { CharText, type CharTextAPI } from './CharText'
@@ -26,6 +27,9 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
 
   /** Text style for characters */
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+
+  /** Text style for placeholder characters */
+  placeholderStyle?: Phaser.Types.GameObjects.Text.TextStyle
 
   /** Spacing between characters */
   charSpacing?: number
@@ -57,6 +61,18 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
   /** Selection background alpha */
   selectionAlpha?: number
 
+  /** Border color while focused */
+  focusedBorderColor?: number
+
+  /** Background color while disabled */
+  disabledBackgroundColor?: number
+
+  /** Border color while disabled */
+  disabledBorderColor?: number
+
+  /** Alpha applied while disabled */
+  disabledAlpha?: number
+
   /** show html input area */
   debugHtmlInput?: boolean
 
@@ -86,24 +102,31 @@ export interface CharTextInputProps extends Omit<ViewProps, 'children'> {
  * - Scroll-to-cursor behavior on input
  */
 export function CharTextInput(props: CharTextInputProps): VNodeLike {
+  const localTheme = useTheme()
+  const { props: themed, nestedTheme } = getThemedProps(
+    'CharTextInput',
+    localTheme,
+    props.theme ?? {}
+  )
+  const inputProps = { ...themed, ...props } as CharTextInputProps
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
   const inputManagerRef = useRef<KeyboardInputManager | null>(null)
   const charTextApiRef = useRef<CharTextAPI | null>(null)
 
   // Internal state for uncontrolled mode
-  const [internalValue, setInternalValue] = useState(props.value ?? '')
+  const [internalValue, setInternalValue] = useState(inputProps.value ?? '')
   const [cursorPosition, setCursorPosition] = useState(0)
   const [selectionAnchor, setSelectionAnchor] = useState(-1) // -1 = no selection, else anchor position
   const [isFocused, setIsFocused] = useState(false)
 
   // Refs for current values (used in event handlers to avoid stale closures)
-  const refCurrentValue = useRef(props.value ?? '')
+  const refCurrentValue = useRef(inputProps.value ?? '')
   const refCursorPosition = useRef(0)
   const refSelectionAnchor = useRef(-1)
 
   // Use controlled value if provided
-  const currentValue = props.value !== undefined ? props.value : internalValue
-  const isControlled = props.value !== undefined
+  const currentValue = inputProps.value !== undefined ? inputProps.value : internalValue
+  const isControlled = inputProps.value !== undefined
 
   // Sync refs with state
   refCurrentValue.current = currentValue
@@ -132,18 +155,18 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
     const container = containerRef.current
 
     inputManagerRef.current = new KeyboardInputManager(container, {
-      ...(props.maxLength !== undefined && { maxLength: props.maxLength }),
-      ...(props.disabled !== undefined && { disabled: props.disabled }),
-      debug: props.debugHtmlInput ?? false,
+      ...(inputProps.maxLength !== undefined && { maxLength: inputProps.maxLength }),
+      ...(inputProps.disabled !== undefined && { disabled: inputProps.disabled }),
+      debug: inputProps.debugHtmlInput ?? false,
       onInput: (_value, _event) => {
         // Ignored - we handle all input via onKeyDown
       },
       onKeyDown: (event) => {
         // Handle special keys
         if (event.key === 'Enter') {
-          if (!props.multiline) {
+          if (!inputProps.multiline) {
             event.preventDefault()
-            props.onSubmit?.(refCurrentValue.current)
+            inputProps.onSubmit?.(refCurrentValue.current)
           } else {
             // Insert newline
             event.preventDefault()
@@ -180,13 +203,13 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
         setIsFocused(true)
         inputManagerRef.current?.setPointerEvents(false)
         setCursorPosition(currentValue.length)
-        props.onFocus?.()
+        inputProps.onFocus?.()
       },
       onBlur: () => {
         setIsFocused(false)
         setSelectionAnchor(-1)
         inputManagerRef.current?.setPointerEvents(true)
-        props.onBlur?.()
+        inputProps.onBlur?.()
       },
     })
 
@@ -194,7 +217,13 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
       inputManagerRef.current?.destroy()
       inputManagerRef.current = null
     }
-  }, [containerRef.current, props.maxLength, props.disabled, props.multiline, isControlled])
+  }, [
+    containerRef.current,
+    inputProps.maxLength,
+    inputProps.disabled,
+    inputProps.multiline,
+    isControlled,
+  ])
 
   /**
    * Check if key event represents a printable character
@@ -237,20 +266,20 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
     }
 
     // Enforce maxLength
-    if (props.maxLength !== undefined && newValue.length > props.maxLength) {
+    if (inputProps.maxLength !== undefined && newValue.length > inputProps.maxLength) {
       return
     }
 
     // Check if newline would exceed maxLines (multiline mode)
-    if (props.multiline && char === '\n' && props.maxLines !== undefined) {
+    if (inputProps.multiline && char === '\n' && inputProps.maxLines !== undefined) {
       const lineCount = newValue.split('\n').length
-      if (lineCount > props.maxLines) {
+      if (lineCount > inputProps.maxLines) {
         return
       }
     }
 
     // Check if character fits (single-line only)
-    if (!props.multiline && charTextApiRef.current) {
+    if (!inputProps.multiline && charTextApiRef.current) {
       // For selection replacement, we need to check if the char fits at the selection start
       const insertPosition = anchor >= 0 ? Math.min(anchor, cursorPosition) : cursorPosition
       if (!charTextApiRef.current.canFitChar(char, insertPosition)) {
@@ -425,10 +454,10 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
    */
   const updateValue = (newValue: string) => {
     if (isControlled) {
-      props.onChange?.(newValue)
+      inputProps.onChange?.(newValue)
     } else {
       setInternalValue(newValue)
-      props.onChange?.(newValue)
+      inputProps.onChange?.(newValue)
     }
   }
 
@@ -462,21 +491,48 @@ export function CharTextInput(props: CharTextInputProps): VNodeLike {
   const {
     value: _value,
     placeholder: _placeholder,
+    placeholderStyle,
+    focusedBorderColor,
+    disabledBackgroundColor,
+    disabledBorderColor,
+    disabledAlpha,
     onChange: _onChange,
     onFocus: _onFocus,
     onBlur: _onBlur,
     onSubmit: _onSubmit,
     ...viewProps
-  } = props
+  } = inputProps
 
   // Determine displayed text: actual value, or placeholder if empty and not focused
-  const displayText = currentValue || (props.placeholder && !isFocused ? props.placeholder : '')
+  const isPlaceholderVisible = currentValue.length === 0 && !!inputProps.placeholder && !isFocused
+  const displayText = currentValue || (isPlaceholderVisible ? (inputProps.placeholder ?? '') : '')
+  const textStyle = isPlaceholderVisible
+    ? { ...(inputProps.textStyle ?? {}), ...(placeholderStyle ?? {}) }
+    : inputProps.textStyle
+  const disabled = inputProps.disabled ?? false
+  const focusedViewProps = isFocused
+    ? {
+        borderColor: focusedBorderColor ?? inputProps.borderColor,
+        borderWidth: Math.max(2, inputProps.borderWidth ?? 1),
+      }
+    : {}
+  const disabledViewProps = disabled
+    ? {
+        backgroundColor: disabledBackgroundColor ?? inputProps.backgroundColor,
+        borderColor: disabledBorderColor ?? inputProps.borderColor,
+        alpha: inputProps.alpha ?? disabledAlpha ?? 0.6,
+      }
+    : {}
 
   return (
     <CharText
       forwardRef={(r) => (containerRef.current = r)}
       {...viewProps}
+      {...focusedViewProps}
+      {...disabledViewProps}
+      theme={nestedTheme}
       text={displayText}
+      {...(textStyle !== undefined && { textStyle })}
       showCursor={isFocused}
       cursorPosition={cursorPosition}
       selectionStart={selectionStart}

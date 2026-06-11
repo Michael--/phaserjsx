@@ -202,6 +202,7 @@ export interface CustomComponentThemes {
   } & ViewTheme
   CharTextInput: {
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    placeholderStyle?: Phaser.Types.GameObjects.Text.TextStyle
     charSpacing?: number
     cursorColor?: number
     cursorWidth?: number
@@ -212,6 +213,9 @@ export interface CustomComponentThemes {
     wordWrap?: boolean
     focusedBorderColor?: number
     disabledColor?: number
+    disabledBackgroundColor?: number
+    disabledBorderColor?: number
+    disabledAlpha?: number
   } & ViewTheme
   Dropdown: ViewTheme & {
     trigger?: ViewTheme
