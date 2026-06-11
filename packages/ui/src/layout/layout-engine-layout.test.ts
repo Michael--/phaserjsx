@@ -470,4 +470,48 @@ describe('edge cases', () => {
     // Child should be positioned at padding.left
     expect(child.x).toBe(10)
   })
+
+  it('calculates fill width relative to content-area minus horizontal child margins', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'column',
+      width: 710,
+      height: 300,
+      padding: 10,
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { width: 'fill', margin: { left: 12, right: 18 } } })
+
+    calculateLayout(container, props)
+
+    expect(child.width).toBe(660)
+    expect(child.x).toBe(22)
+    expect(child.x + child.width + 18).toBe(700)
+  })
+
+  it('calculates fill height relative to content-area minus vertical child margins', () => {
+    const container = mockContainer()
+    const child = mockContainer(0, 0)
+    container.add(child)
+
+    const props: LayoutProps = {
+      direction: 'row',
+      width: 300,
+      height: 240,
+      padding: { top: 15, right: 10, bottom: 25, left: 10 },
+      gap: 0,
+    }
+
+    Object.assign(child, { __layoutProps: { height: 'fill', margin: { top: 8, bottom: 12 } } })
+
+    calculateLayout(container, props)
+
+    expect(child.height).toBe(180)
+    expect(child.y).toBe(23)
+    expect(child.y + child.height + 12).toBe(215)
+  })
 })

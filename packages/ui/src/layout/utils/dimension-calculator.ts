@@ -25,6 +25,26 @@ export interface PaddingValues {
   bottom: number
 }
 
+function normalizeMargin(margin?: number | EdgeInsets): EdgeInsets {
+  if (typeof margin === 'number') {
+    return {
+      left: margin,
+      top: margin,
+      right: margin,
+      bottom: margin,
+    }
+  }
+  return margin ?? {}
+}
+
+function getHorizontalMargin(margin: EdgeInsets): number {
+  return (margin.left ?? 0) + (margin.right ?? 0)
+}
+
+function getVerticalMargin(margin: EdgeInsets): number {
+  return (margin.top ?? 0) + (margin.bottom ?? 0)
+}
+
 /**
  * Calculate content dimensions based on children and layout direction
  * For flex children, uses a minimum default size to avoid chicken-egg sizing issues
@@ -115,10 +135,17 @@ export function calculateContainerSize(
   // Resolve width
   const parsedWidth = parseSize(props.width)
   let width = resolveSize(parsedWidth, parentSize?.width, contentWidth, parentPadding?.horizontal)
+  const margin = normalizeMargin(props.margin)
+  if (parsedWidth.type === 'fill') {
+    width = Math.max(0, width - getHorizontalMargin(margin))
+  }
 
   // Resolve height
   const parsedHeight = parseSize(props.height)
   let height = resolveSize(parsedHeight, parentSize?.height, contentHeight, parentPadding?.vertical)
+  if (parsedHeight.type === 'fill') {
+    height = Math.max(0, height - getVerticalMargin(margin))
+  }
 
   // Apply min/max constraints to container size
   // Note: parentSize is already the content-area of the parent container (after padding),

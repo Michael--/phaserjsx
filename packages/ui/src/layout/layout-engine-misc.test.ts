@@ -3,7 +3,7 @@
  */
 import { describe, expect, it, vi } from 'vitest'
 import type { LayoutProps } from '../core-props'
-import { calculateLayout } from './layout-engine'
+import { calculateLayout, LayoutBatchQueue } from './layout-engine'
 import { mockContainer, setupLayoutTests } from './layout-engine-test-utils'
 
 setupLayoutTests()
@@ -108,6 +108,110 @@ describe('nested containers with padding', () => {
     expect(level2.width).toBe(800)
     expect(level3.width).toBe(780)
     expect(inner.width).toBe(760)
+  })
+
+  it('calculates fill width correctly through multiple nested containers with padding', () => {
+    const root = mockContainer()
+    const level2 = mockContainer()
+    const level3 = mockContainer()
+    const inner = mockContainer(0, 0)
+
+    root.add(level2)
+    level2.add(level3)
+    level3.add(inner)
+
+    const rootProps: LayoutProps = {
+      direction: 'column',
+      width: 800,
+      height: 400,
+      gap: 0,
+      padding: 20,
+    }
+
+    Object.assign(level2, {
+      __layoutProps: {
+        width: 'fill',
+        padding: 10,
+      } as LayoutProps,
+    })
+
+    Object.assign(level3, {
+      __layoutProps: {
+        width: 'fill',
+        padding: 10,
+      } as LayoutProps,
+    })
+
+    Object.assign(inner, {
+      __layoutProps: {
+        width: 'fill',
+      } as LayoutProps,
+    })
+
+    calculateLayout(root, rootProps)
+
+    expect(level2.width).toBe(760)
+    expect(level3.width).toBe(740)
+    expect(inner.width).toBe(720)
+  })
+
+  it('settles nested fill widths correctly when descendants are queued before parents', async () => {
+    LayoutBatchQueue.synchronous = false
+
+    const root = mockContainer()
+    const level2 = mockContainer()
+    const level3 = mockContainer()
+    const inner = mockContainer(0, 0)
+
+    root.add(level2)
+    level2.add(level3)
+    level3.add(inner)
+
+    Object.assign(level2, { parentContainer: root })
+    Object.assign(level3, { parentContainer: level2 })
+    Object.assign(inner, { parentContainer: level3 })
+    for (const container of [root, level2, level3, inner]) {
+      Object.assign(container, { active: true })
+    }
+
+    const rootProps: LayoutProps = {
+      direction: 'column',
+      width: 800,
+      height: 400,
+      gap: 0,
+      padding: 20,
+    }
+    const level2Props: LayoutProps = {
+      width: 'fill',
+      padding: 10,
+    }
+    const level3Props: LayoutProps = {
+      width: 'fill',
+      padding: 10,
+    }
+    const innerProps: LayoutProps = {
+      width: 'fill',
+    }
+
+    Object.assign(root, { __layoutProps: rootProps })
+    Object.assign(level2, { __layoutProps: level2Props })
+    Object.assign(level3, { __layoutProps: level3Props })
+    Object.assign(inner, { __layoutProps: innerProps })
+
+    calculateLayout(inner, innerProps)
+    calculateLayout(level3, level3Props)
+    calculateLayout(level2, level2Props)
+    calculateLayout(root, rootProps)
+
+    for (let i = 0; i < 20; i++) {
+      await Promise.resolve()
+    }
+
+    LayoutBatchQueue.synchronous = true
+
+    expect(level2.width).toBe(760)
+    expect(level3.width).toBe(740)
+    expect(inner.width).toBe(720)
   })
 })
 

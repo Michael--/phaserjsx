@@ -45,6 +45,14 @@ export function getMargin(child: GameObjectWithLayout): EdgeInsets {
   return margin ?? {}
 }
 
+function getHorizontalMargin(margin: EdgeInsets): number {
+  return (margin.left ?? 0) + (margin.right ?? 0)
+}
+
+function getVerticalMargin(margin: EdgeInsets): number {
+  return (margin.top ?? 0) + (margin.bottom ?? 0)
+}
+
 /**
  * Get effective size of a child
  * Calls __getLayoutSize if available, otherwise falls back to layoutProps or default
@@ -70,6 +78,7 @@ export function getChildSize(
   ) {
     const layoutWidth = child.__layoutProps.width
     const layoutHeight = child.__layoutProps.height
+    const margin = getMargin(child)
 
     // Resolve width
     const parsedWidth = parseSize(layoutWidth)
@@ -79,6 +88,9 @@ export function getChildSize(
       child.width ?? 100,
       parentPadding?.horizontal
     )
+    if (parsedWidth.type === 'fill') {
+      width = Math.max(0, width - getHorizontalMargin(margin))
+    }
 
     // Resolve height
     const parsedHeight = parseSize(layoutHeight)
@@ -88,6 +100,9 @@ export function getChildSize(
       child.height ?? 20,
       parentPadding?.vertical
     )
+    if (parsedHeight.type === 'fill') {
+      height = Math.max(0, height - getVerticalMargin(margin))
+    }
 
     // Apply min/max constraints
     const { minWidth, maxWidth, minHeight, maxHeight } = child.__layoutProps
