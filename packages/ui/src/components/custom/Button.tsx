@@ -10,25 +10,44 @@ import {
   useGameObjectEffect,
   type EffectDefinition,
 } from '../../effects'
-import { useRef } from '../../hooks'
-import { getThemedProps } from '../../theme'
-import type { ViewTheme } from '../../theme-base'
+import { useRef, useTheme } from '../../hooks'
+import { getThemedProps, mergeThemes } from '../../theme'
+import type { PartialTheme, ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
-import { View } from '../index'
+import { Text, View } from '../index'
 
 /**
  * Button variant theme
  */
-export type ButtonVariantTheme = ViewTheme & EffectDefinition
-export type ButtonVariant = 'primary' | 'secondary' | 'outline'
+export type ButtonVariantTheme = ViewTheme &
+  EffectDefinition & {
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    iconSize?: number
+    disabledColor?: number
+    disabledAlpha?: number
+  }
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
 export type ButtonSize = 'small' | 'medium' | 'large'
+
+export type ButtonTheme = ButtonVariantTheme & {
+  variant?: ButtonVariant
+  size?: ButtonSize
+  variants?: Partial<Record<ButtonVariant, ButtonVariantTheme>>
+  sizes?: Partial<Record<ButtonSize, ButtonVariantTheme>>
+} & Partial<Record<ButtonVariant, ButtonVariantTheme>> &
+  Partial<Record<ButtonSize, ButtonVariantTheme>>
+
 /**
  * Props for Button component
  */
 export interface ButtonProps extends ViewProps, EffectDefinition {
   /** Button content - can be text, icons, or any JSX */
   children?: ChildrenType | undefined
+  /** Convenience text label. Children take precedence when provided. */
+  label?: string | number | undefined
+  /** Backward-compatible alias for label. */
+  text?: string | number | undefined
   /** Click handler */
   onClick?: (() => void) | undefined
   /** Disabled state */
@@ -37,6 +56,52 @@ export interface ButtonProps extends ViewProps, EffectDefinition {
   variant?: ButtonVariant | undefined
   /** Size variant */
   size?: ButtonSize | undefined
+  /** Text style for generated label/text content and nested Text defaults. */
+  textStyle?: Phaser.Types.GameObjects.Text.TextStyle | undefined
+  /** Icon size for nested Icon defaults. */
+  iconSize?: number | undefined
+  /** Alpha applied while disabled. */
+  disabledAlpha?: number | undefined
+}
+
+function mergeButtonTheme(
+  base: ButtonTheme,
+  override: ButtonVariantTheme | undefined
+): ButtonTheme {
+  return override ? ({ ...base, ...override } as ButtonTheme) : base
+}
+
+function resolveButtonSlotTheme<TName extends ButtonVariant | ButtonSize>(
+  theme: ButtonTheme,
+  group: 'variants' | 'sizes',
+  name: TName | undefined
+): ButtonVariantTheme | undefined {
+  if (!name) return undefined
+
+  return {
+    ...(theme[group]?.[name as never] ?? {}),
+    ...(theme[name] ?? {}),
+  } as ButtonVariantTheme
+}
+
+function buildButtonContentTheme(theme: ButtonTheme): PartialTheme {
+  const textTheme = theme.Text ?? {}
+  const iconTheme = theme.Icon ?? {}
+  const mergedTextStyle =
+    theme.textStyle || textTheme.style
+      ? {
+          ...(textTheme.style ?? {}),
+          ...(theme.textStyle ?? {}),
+        }
+      : undefined
+
+  return {
+    Text: mergedTextStyle ? { ...textTheme, style: mergedTextStyle } : textTheme,
+    Icon: {
+      ...iconTheme,
+      ...(theme.iconSize !== undefined ? { size: theme.iconSize } : {}),
+    },
+  }
 }
 
 /**
@@ -57,93 +122,135 @@ export interface ButtonProps extends ViewProps, EffectDefinition {
  * ```
  */
 export function Button(props: ButtonProps): VNodeLike {
-  const { children, onClick, disabled, variant, size, width, height, ...restProps } = props
-  const { props: themed } = getThemedProps('Button', undefined, {})
+  const {
+    children,
+    label,
+    text,
+    onClick,
+    disabled = false,
+    variant,
+    size,
+    width,
+    height,
+    textStyle,
+    iconSize,
+    disabledAlpha,
+    alpha,
+    theme,
+    onTouch,
+    ...restProps
+  } = props
+
+  const localTheme = useTheme()
+  const mergedLocalTheme = theme ? mergeThemes(localTheme ?? {}, theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Button', mergedLocalTheme, {})
   const ref = useRef<Phaser.GameObjects.Container | null>(null)
 
   // Setup effect system
   const { applyEffect } = useGameObjectEffect(ref)
 
-  // Cast to ButtonVariantTheme for proper access to nested themes
-  const themedButton = themed as unknown as ButtonVariantTheme & {
-    primary?: ButtonVariantTheme
-    secondary?: ButtonVariantTheme
-    outline?: ButtonVariantTheme
-    small?: ButtonVariantTheme
-    medium?: ButtonVariantTheme
-    large?: ButtonVariantTheme
-    disabledColor?: number
-  }
+  const themedButton = themed as unknown as ButtonTheme
 
   // Merge base theme with variant and size overrides
-  let variantTheme = { ...themedButton }
-  if (variant && themedButton[variant as keyof typeof themedButton]) {
-    const variantOverrides = themedButton[
-      variant as keyof typeof themedButton
-    ] as ButtonVariantTheme
-    variantTheme = { ...variantTheme, ...variantOverrides }
-  }
+  const resolvedVariant = variant ?? themedButton.variant ?? 'primary'
+  const resolvedSize = size ?? themedButton.size ?? 'medium'
+  const variantTheme = mergeButtonTheme(
+    { ...themedButton },
+    resolveButtonSlotTheme(themedButton, 'variants', resolvedVariant)
+  )
+  const sizeTheme = mergeButtonTheme(
+    variantTheme,
+    resolveButtonSlotTheme(themedButton, 'sizes', resolvedSize)
+  )
 
-  let sizeTheme = { ...variantTheme }
-  if (size && themedButton[size as keyof typeof themedButton]) {
-    const sizeOverrides = themedButton[size as keyof typeof themedButton] as ButtonVariantTheme
-    sizeTheme = { ...sizeTheme, ...sizeOverrides }
+  const resolvedTextStyle =
+    sizeTheme.textStyle || textStyle
+      ? { ...(sizeTheme.textStyle ?? {}), ...(textStyle ?? {}) }
+      : undefined
+  const resolvedIconSize = iconSize ?? sizeTheme.iconSize
+  const resolvedDisabledAlpha = disabledAlpha ?? sizeTheme.disabledAlpha ?? 0.5
+  const contentStyleProps: Partial<ButtonTheme> = {
+    ...(resolvedTextStyle ? { textStyle: resolvedTextStyle } : {}),
+    ...(resolvedIconSize !== undefined ? { iconSize: resolvedIconSize } : {}),
   }
 
   // Apply disabled state styling
   const effectiveTheme = disabled
     ? {
         ...sizeTheme,
-        backgroundColor: themedButton.disabledColor ?? sizeTheme?.backgroundColor,
-        alpha: 0.5,
+        backgroundColor:
+          sizeTheme.disabledColor ?? themedButton.disabledColor ?? sizeTheme.backgroundColor,
+        alpha: alpha ?? resolvedDisabledAlpha,
+        ...contentStyleProps,
       }
-    : sizeTheme
+    : {
+        ...sizeTheme,
+        ...(alpha !== undefined ? { alpha } : {}),
+        ...contentStyleProps,
+      }
 
-  const handleTouch = !disabled
-    ? () => {
+  const handleTouch: ViewProps['onTouch'] | undefined = !disabled
+    ? (event) => {
         // Apply effect: props override theme, theme overrides default
-        const resolved = resolveEffect(props, themed as ButtonVariantTheme)
+        const resolved = resolveEffect(props, effectiveTheme)
         applyEffectByName(applyEffect, resolved.effect, resolved.effectConfig)
+        onTouch?.(event)
         onClick?.()
       }
     : undefined
 
+  const generatedText = label ?? text
+  const content =
+    children ??
+    (generatedText !== undefined ? (
+      <Text
+        text={`${generatedText}`}
+        {...(resolvedTextStyle ? { style: resolvedTextStyle } : {})}
+      />
+    ) : null)
+
+  const contentTheme = mergeThemes(nestedTheme, buildButtonContentTheme(effectiveTheme))
+
   // Filter out non-View props from theme
   const {
     disabledColor: _disabledColor,
+    disabledAlpha: _disabledAlpha,
     effect: _effect,
     effectConfig: _effectConfig,
+    textStyle: _textStyle,
+    iconSize: _iconSize,
+    variant: _variant,
+    size: _size,
+    variants: _variants,
+    sizes: _sizes,
     primary: _primary,
     secondary: _secondary,
     outline: _outline,
+    ghost: _ghost,
+    danger: _danger,
     small: _small,
     medium: _medium,
     large: _large,
+    Text: _Text,
+    Icon: _Icon,
     ...viewThemeProps
-  } = effectiveTheme as ButtonVariantTheme & {
-    disabledColor?: number
-    primary?: unknown
-    secondary?: unknown
-    outline?: unknown
-    small?: unknown
-    medium?: unknown
-    large?: unknown
-  }
+  } = effectiveTheme
 
   return (
     <View
       ref={ref}
-      width={width}
-      height={height}
       enableGestures={!disabled}
       direction="row"
       alignItems="center"
       justifyContent="center"
-      {...(handleTouch && { onTouch: handleTouch })}
       {...viewThemeProps}
+      width={width ?? effectiveTheme.width}
+      height={height ?? effectiveTheme.height}
       {...restProps}
+      {...(handleTouch && { onTouch: handleTouch })}
+      theme={contentTheme}
     >
-      {children}
+      {content}
     </View>
   )
 }

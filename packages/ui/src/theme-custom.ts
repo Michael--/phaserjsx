@@ -8,12 +8,19 @@
  */
 import type { AnimationConfig } from './animation/spring-physics'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
-import type { ButtonVariant } from './components/custom/Button'
+import type { ButtonSize, ButtonVariant } from './components/custom/Button'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
+
+type ButtonThemeSlot = ViewTheme & {
+  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+  iconSize?: number
+  effect?: string
+  effectConfig?: Record<string, unknown>
+}
 
 /**
  * Custom component themes
@@ -108,16 +115,25 @@ export interface CustomComponentThemes {
     minThumbSize?: number
   } & NestedComponentThemes
   Button: ViewTheme & {
+    variant?: ButtonVariant
+    size?: ButtonSize
     disabledColor?: number
+    disabledAlpha?: number
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     iconSize?: number
-    primary?: Record<string, unknown>
-    secondary?: Record<string, unknown>
-    outline?: Record<string, unknown>
-    small?: Record<string, unknown>
-    medium?: Record<string, unknown>
-    large?: Record<string, unknown>
-  }
+    effect?: string
+    effectConfig?: Record<string, unknown>
+    variants?: Partial<Record<ButtonVariant, ButtonThemeSlot>>
+    sizes?: Partial<Record<ButtonSize, ButtonThemeSlot>>
+    primary?: ButtonThemeSlot
+    secondary?: ButtonThemeSlot
+    outline?: ButtonThemeSlot
+    ghost?: ButtonThemeSlot
+    danger?: ButtonThemeSlot
+    small?: ButtonThemeSlot
+    medium?: ButtonThemeSlot
+    large?: ButtonThemeSlot
+  } & NestedComponentThemes
   Sidebar: ViewTheme & {
     variant?: SidebarVariant
     size?: SidebarSize

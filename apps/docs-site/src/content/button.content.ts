@@ -79,9 +79,14 @@ export const buttonContent: ComponentDocs = {
   propsEssential: [
     {
       name: 'variant',
-      type: '"primary" | "secondary" | "outline"',
+      type: '"primary" | "secondary" | "outline" | "ghost" | "danger"',
       default: '"primary"',
       description: 'Visual style variant - determines color scheme and appearance',
+    },
+    {
+      name: 'label',
+      type: 'string | number',
+      description: 'Convenience label rendered with the Button textStyle theme',
     },
     {
       name: 'onClick',
@@ -112,7 +117,7 @@ export const buttonContent: ComponentDocs = {
   propsComplete: [
     {
       name: 'variant',
-      type: '"primary" | "secondary" | "outline"',
+      type: '"primary" | "secondary" | "outline" | "ghost" | "danger"',
       default: '"primary"',
       description: 'Visual style variant - determines color scheme and appearance from theme',
     },
@@ -164,6 +169,33 @@ export const buttonContent: ComponentDocs = {
       name: 'children',
       type: 'VNode | VNode[]',
       description: 'Button content - rendered in row layout with center alignment',
+    },
+    {
+      name: 'label',
+      type: 'string | number',
+      description: 'Generated text content. Ignored when children are provided.',
+    },
+    {
+      name: 'text',
+      type: 'string | number',
+      description: 'Backward-compatible alias for label.',
+    },
+    {
+      name: 'textStyle',
+      type: 'Phaser.Types.GameObjects.Text.TextStyle',
+      description:
+        'Overrides generated label style and sets the nested Text theme for child Text components.',
+    },
+    {
+      name: 'iconSize',
+      type: 'number',
+      description: 'Sets the nested Icon theme size for icon children.',
+    },
+    {
+      name: 'disabledAlpha',
+      type: 'number',
+      default: '0.48',
+      description: 'Alpha applied while disabled, configurable through the Button theme.',
     },
   ],
 
