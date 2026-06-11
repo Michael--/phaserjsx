@@ -7,6 +7,7 @@ import {
   NestedScrollViewExample,
   QuickStartScrollViewExample,
   SliderControlScrollViewExample,
+  SliderSizeScrollViewExample,
   SnapScrollViewExample,
 } from '@/examples/scrollview'
 // Import source code as raw strings
@@ -14,6 +15,7 @@ import BothDirectionsScrollViewExampleRaw from '@/examples/scrollview/BothDirect
 import NestedScrollViewExampleRaw from '@/examples/scrollview/NestedScrollViewExample.tsx?raw'
 import QuickStartScrollViewExampleRaw from '@/examples/scrollview/QuickStartExample.tsx?raw'
 import SliderControlScrollViewExampleRaw from '@/examples/scrollview/SliderControlExample.tsx?raw'
+import SliderSizeScrollViewExampleRaw from '@/examples/scrollview/SliderSizeExample.tsx?raw'
 import SnapScrollViewExampleRaw from '@/examples/scrollview/SnapExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
 
@@ -50,6 +52,15 @@ export const scrollviewContent: ComponentDocs = {
       component: SliderControlScrollViewExample,
       height: SCENE_SIZES.large,
       code: SliderControlScrollViewExampleRaw,
+    },
+    {
+      id: 'slider-size',
+      title: 'Slider Size',
+      description:
+        'Compare all sliderSize variants from large down to nano for compact scroll surfaces.',
+      component: SliderSizeScrollViewExample,
+      height: SCENE_SIZES.small,
+      code: SliderSizeScrollViewExampleRaw,
     },
     {
       id: 'snap-scrolling',
@@ -123,7 +134,7 @@ export const scrollviewContent: ComponentDocs = {
       type: 'SliderSize',
       default: 'undefined',
       description:
-        "Size variant for scroll sliders (affects slider width/height): 'large' | 'medium' | 'small' | 'tiny' | undefined",
+        "Size variant for scroll sliders (affects slider width/height): 'large' | 'medium' | 'small' | 'tiny' | 'micro' | 'nano' | undefined",
     },
     {
       name: 'scroll',

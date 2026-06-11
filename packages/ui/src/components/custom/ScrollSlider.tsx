@@ -13,13 +13,19 @@ import { View } from '../index'
 /** Size variants for the scroll slider */
 export type SliderSize = 'large' | 'medium' | 'small' | 'tiny' | 'micro' | 'nano' | undefined
 
+type ScrollSliderSizeTheme = {
+  borderWidth?: number
+  size?: number
+}
+
 /**
  * Calculate slider dimensions based on size variant and theme
  * @param size - Size variant
+ * @param theme - Optional resolved ScrollSlider theme values
  * @returns Calculated dimensions
  */
-export function calculateSliderSize(size: SliderSize) {
-  const { props: themed } = getThemedProps('ScrollSlider', undefined, {})
+export function calculateSliderSize(size: SliderSize, theme?: ScrollSliderSizeTheme) {
+  const themed = theme ?? getThemedProps('ScrollSlider', undefined, {}).props
   const sizeFactor =
     size === 'large'
       ? 1.25
@@ -87,7 +93,7 @@ export function ScrollSlider(props: ScrollSliderProps): VNodeLike {
   const tweenRef = useRef<Phaser.Tweens.Tween | null>(null)
 
   const isVertical = direction === 'vertical'
-  const { border, outer, dimension } = calculateSliderSize(props.size)
+  const { border, outer, dimension } = calculateSliderSize(props.size, themed)
   const sizeFactor = outer / (themed.size ?? 24)
   const thumbBorderWidth = Math.min(
     (themed.thumbBorderWidth ?? 1) * sizeFactor,

@@ -5,8 +5,9 @@
 import * as Phaser from 'phaser'
 import type { ViewProps } from '..'
 import type { GestureEventData, WheelEventData } from '../../core-props'
-import { useEffect, useLayoutEffect, useRedraw, useRef, useState } from '../../hooks'
+import { useEffect, useLayoutEffect, useRedraw, useRef, useState, useTheme } from '../../hooks'
 import { getRenderContext } from '../../render-context'
+import { getThemedProps } from '../../theme'
 import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 import { calculateSliderSize, ScrollSlider, type SliderSize } from './ScrollSlider'
@@ -84,8 +85,12 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     snapThreshold = 20,
     momentum = true,
     onSnap,
+    onSliderSize,
+    sliderSize: sliderSizeVariant,
     ...viewProps
   } = props
+  const localTheme = useTheme()
+  const { props: sliderTheme } = getThemedProps('ScrollSlider', localTheme, {})
 
   const [scroll, setScroll] = useState({
     dx: initialScroll?.dx ?? 0,
@@ -127,9 +132,9 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     showHorizontalSlider === true || (needsHorizontalScroll && showHorizontalSlider === 'auto')
 
   // Get slider size, considering size variant and theme
-  const { outer: sliderSize } = calculateSliderSize(props.sliderSize)
-  props.onSliderSize?.({
-    width: showVerticalSlider ? sliderSize : 0,
+  const { outer: sliderSize } = calculateSliderSize(sliderSizeVariant, sliderTheme)
+  onSliderSize?.({
+    width: showVerticalSliderActual ? sliderSize : 0,
     height: showHorizontalSliderActual ? sliderSize : 0,
   })
 
@@ -718,7 +723,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
           <View visible={showHorizontalSliderActual ? true : 'none'}>
             <ScrollSlider
               direction="horizontal"
-              size={props.sliderSize}
+              size={sliderSizeVariant}
               scrollPosition={scroll.dx}
               viewportSize={viewportWidth}
               contentSize={contentWidth}
@@ -734,7 +739,7 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
           <View flex={1}>
             <ScrollSlider
               direction="vertical"
-              size={props.sliderSize}
+              size={sliderSizeVariant}
               scrollPosition={scroll.dy}
               viewportSize={viewportHeight}
               contentSize={effectiveContentHeight}
