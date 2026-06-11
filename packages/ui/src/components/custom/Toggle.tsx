@@ -6,7 +6,7 @@
 import type * as Phaser from 'phaser'
 import { numberToRgb, rgbToNumber } from '../../colors/color-utils'
 import { useEffect, useRef, useState, useTheme } from '../../hooks'
-import { getThemedProps } from '../../theme'
+import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
@@ -80,7 +80,8 @@ export interface ToggleProps {
  */
 export function Toggle(props: ToggleProps): VNodeLike {
   const localTheme = useTheme()
-  const { props: themed, nestedTheme } = getThemedProps('Toggle', localTheme, props.theme ?? {})
+  const mergedLocalTheme = props.theme ? mergeThemes(localTheme ?? {}, props.theme) : localTheme
+  const { props: themed, nestedTheme } = getThemedProps('Toggle', mergedLocalTheme, {})
 
   // Theme values with defaults - use refs for values used in closures
   const width = useRef(themed.width ?? 50)
