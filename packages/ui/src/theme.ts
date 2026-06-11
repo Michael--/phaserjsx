@@ -352,6 +352,7 @@ function extractNestedThemes<T extends object>(
     'ProgressBar',
     'ScrollSlider',
     'Button',
+    'Toggle',
     'Sidebar',
     'Accordion',
     'Tabs',

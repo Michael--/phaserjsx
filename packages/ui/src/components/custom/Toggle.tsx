@@ -283,7 +283,25 @@ export function Toggle(props: ToggleProps): VNodeLike {
       alpha={props.disabled ? disabledAlpha.current : 1}
     >
       {/* Track */}
-      <Graphics ref={trackRef} width={width.current} height={height.current} onDraw={drawTrack} />
+      <Graphics
+        ref={trackRef}
+        width={width.current}
+        height={height.current}
+        dependencies={[
+          checked,
+          width.current,
+          height.current,
+          trackColorOff.current,
+          trackColorOn.current,
+          trackBorderColorOff.current,
+          trackBorderColorOn.current,
+          trackBorderWidth.current,
+          disabledColor.current,
+          padding.current,
+          props.disabled,
+        ]}
+        onDraw={drawTrack}
+      />
 
       {/* Thumb - position controlled by state */}
       <Graphics
@@ -292,6 +310,12 @@ export function Toggle(props: ToggleProps): VNodeLike {
         height={thumbSize.current}
         x={thumbX}
         y={height.current / 2}
+        dependencies={[
+          thumbSize.current,
+          thumbColor.current,
+          thumbBorderColor.current,
+          thumbBorderWidth.current,
+        ]}
         onDraw={drawThumb}
       />
     </View>
