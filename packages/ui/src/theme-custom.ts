@@ -286,8 +286,14 @@ export interface CustomComponentThemes {
     thumbSize?: number
     trackColorOff?: number
     trackColorOn?: number
+    trackBorderColorOff?: number
+    trackBorderColorOn?: number
+    trackBorderWidth?: number
     thumbColor?: number
+    thumbBorderColor?: number
+    thumbBorderWidth?: number
     disabledColor?: number
+    disabledAlpha?: number
     padding?: number
     duration?: number
     gap?: number

@@ -88,8 +88,14 @@ export function Toggle(props: ToggleProps): VNodeLike {
   const thumbSize = useRef(themed.thumbSize ?? 24)
   const trackColorOff = useRef(themed.trackColorOff ?? 0x999999)
   const trackColorOn = useRef(themed.trackColorOn ?? 0x4caf50)
+  const trackBorderColorOff = useRef(themed.trackBorderColorOff ?? 0x777777)
+  const trackBorderColorOn = useRef(themed.trackBorderColorOn ?? themed.trackColorOn ?? 0x4caf50)
+  const trackBorderWidth = useRef(themed.trackBorderWidth ?? 1)
   const thumbColor = useRef(themed.thumbColor ?? 0xffffff)
+  const thumbBorderColor = useRef(themed.thumbBorderColor ?? 0xd1d5db)
+  const thumbBorderWidth = useRef(themed.thumbBorderWidth ?? 1)
   const disabledColor = useRef(themed.disabledColor ?? 0x666666)
+  const disabledAlpha = useRef(themed.disabledAlpha ?? 0.5)
   const padding = useRef(themed.padding ?? 2)
   const duration = useRef(themed.duration ?? 200)
   const gap = themed.gap ?? 8
@@ -101,8 +107,14 @@ export function Toggle(props: ToggleProps): VNodeLike {
   thumbSize.current = themed.thumbSize ?? 24
   trackColorOff.current = themed.trackColorOff ?? 0x999999
   trackColorOn.current = themed.trackColorOn ?? 0x4caf50
+  trackBorderColorOff.current = themed.trackBorderColorOff ?? 0x777777
+  trackBorderColorOn.current = themed.trackBorderColorOn ?? themed.trackColorOn ?? 0x4caf50
+  trackBorderWidth.current = themed.trackBorderWidth ?? 1
   thumbColor.current = themed.thumbColor ?? 0xffffff
+  thumbBorderColor.current = themed.thumbBorderColor ?? 0xd1d5db
+  thumbBorderWidth.current = themed.thumbBorderWidth ?? 1
   disabledColor.current = themed.disabledColor ?? 0x666666
+  disabledAlpha.current = themed.disabledAlpha ?? 0.5
   padding.current = themed.padding ?? 2
   duration.current = themed.duration ?? 200
 
@@ -122,6 +134,37 @@ export function Toggle(props: ToggleProps): VNodeLike {
   const trackRef = useRef<Phaser.GameObjects.Graphics | null>(null)
   const thumbRef = useRef<Phaser.GameObjects.Graphics | null>(null)
   const containerRef = useRef<Phaser.GameObjects.Container | null>(null)
+
+  const drawTrackShape = (g: Phaser.GameObjects.Graphics, color: number, borderColor: number) => {
+    const borderInset = trackBorderWidth.current / 2
+
+    g.clear()
+    g.fillStyle(color, 1)
+    g.fillRoundedRect(0, 0, width.current, height.current, trackRadius)
+
+    if (trackBorderWidth.current > 0) {
+      g.lineStyle(trackBorderWidth.current, borderColor, 1)
+      g.strokeRoundedRect(
+        borderInset,
+        borderInset,
+        width.current - trackBorderWidth.current,
+        height.current - trackBorderWidth.current,
+        Math.max(0, trackRadius - borderInset)
+      )
+    }
+  }
+
+  const getTrackColor = (targetChecked: boolean): number => {
+    if (props.disabled && !targetChecked) {
+      return disabledColor.current
+    }
+
+    return targetChecked ? trackColorOn.current : trackColorOff.current
+  }
+
+  const getTrackBorderColor = (targetChecked: boolean): number => {
+    return targetChecked ? trackBorderColorOn.current : trackBorderColorOff.current
+  }
 
   // Sync with controlled prop
   useEffect(() => {
@@ -178,9 +221,17 @@ export function Toggle(props: ToggleProps): VNodeLike {
         const progress = (tween.getValue() as number) ?? 0
         const currentColor = interpolateColor(startColor, endColor, progress)
 
-        track.clear()
-        track.fillStyle(props.disabled ? disabledColor.current : currentColor, 1)
-        track.fillRoundedRect(0, 0, width.current, height.current, trackRadius)
+        const currentBorderColor = interpolateColor(
+          getTrackBorderColor(checked),
+          getTrackBorderColor(newChecked),
+          progress
+        )
+
+        drawTrackShape(
+          track,
+          props.disabled && !newChecked ? disabledColor.current : currentColor,
+          currentBorderColor
+        )
       },
     })
 
@@ -203,13 +254,7 @@ export function Toggle(props: ToggleProps): VNodeLike {
    */
   const drawTrack = (g: Phaser.GameObjects.Graphics) => {
     g.clear()
-    const color = props.disabled
-      ? disabledColor.current
-      : checked
-        ? trackColorOn.current
-        : trackColorOff.current
-    g.fillStyle(color, 1)
-    g.fillRoundedRect(0, 0, width.current, height.current, trackRadius)
+    drawTrackShape(g, getTrackColor(checked), getTrackBorderColor(checked))
   }
 
   /**
@@ -219,6 +264,11 @@ export function Toggle(props: ToggleProps): VNodeLike {
     g.clear()
     g.fillStyle(thumbColor.current, 1)
     g.fillCircle(0, 0, thumbRadius)
+
+    if (thumbBorderWidth.current > 0) {
+      g.lineStyle(thumbBorderWidth.current, thumbBorderColor.current, 1)
+      g.strokeCircle(0, 0, Math.max(0, thumbRadius - thumbBorderWidth.current / 2))
+    }
   }
 
   // Build toggle element
@@ -229,7 +279,7 @@ export function Toggle(props: ToggleProps): VNodeLike {
       height={height.current}
       enableGestures={!props.disabled}
       onTouch={handleClick}
-      alpha={props.disabled ? 0.5 : 1}
+      alpha={props.disabled ? disabledAlpha.current : 1}
     >
       {/* Track */}
       <Graphics ref={trackRef} width={width.current} height={height.current} onDraw={drawTrack} />
@@ -249,7 +299,11 @@ export function Toggle(props: ToggleProps): VNodeLike {
   // Build label if provided
   const labelElement =
     props.label && labelPosition !== 'none' ? (
-      <Text text={props.label} style={themed.labelStyle} />
+      <Text
+        text={props.label}
+        style={themed.labelStyle}
+        alpha={props.disabled ? disabledAlpha.current : 1}
+      />
     ) : null
 
   // Render with label positioning
