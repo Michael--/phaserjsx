@@ -16,6 +16,7 @@ import {
   View,
 } from '@number10/phaserjsx'
 import { Icon } from './components/Icon'
+import { ShowCase5 } from './Showcase5'
 import { StencilClipLab } from './StencilClipLab'
 import { TestUI } from './TestUI'
 import type { AppProps } from './types'
@@ -28,14 +29,29 @@ function applyColorPreset(preset: Parameters<typeof setColorPreset>[0], mode?: '
 }
 
 // Initialize preset and mode in one go
-applyColorPreset('forestGreen', 'dark')
+applyColorPreset('oceanBlue', 'dark')
+
+type ShowCase = 'clip' | 'showcase' | 'Stackblitz 5'
+
+function ShowcaseWrapper(props: { mode: ShowCase }) {
+  switch (props.mode) {
+    case 'clip':
+      return <StencilClipLab />
+    case 'showcase':
+      return <TestUI />
+    case 'Stackblitz 5':
+      return <ShowCase5 title="nix" />
+    default:
+      return null
+  }
+}
 
 /**
  * Main App component
  */
 export function App(props: AppProps & MountProps) {
   const tokens = useThemeTokens()
-  const [mode, setMode] = useState<'clip' | 'showcase'>('showcase')
+  const [mode, setMode] = useState<ShowCase>('Stackblitz 5')
 
   return (
     <View width={'fill'} height={'fill'} direction="stack">
@@ -47,7 +63,7 @@ export function App(props: AppProps & MountProps) {
         width={140}
         innerProps={{ justifyContent: 'space-between', width: 'fill' }}
       />
-      <ScrollView sliderSize="small">
+      <ScrollView sliderSize="small" width={'fill'} height={'fill'} gap={20}>
         <View alignItems="center" justifyContent="start">
           {/* Header */}
           <View gap={10} alignItems="center" padding={20}>
@@ -71,16 +87,16 @@ export function App(props: AppProps & MountProps) {
                 options={[
                   { value: 'showcase', label: 'Showcase' },
                   { value: 'clip', label: 'Stencil Lab' },
+                  { value: 'Stackblitz 5', label: 'Stackblitz 5' },
                 ]}
                 value={mode}
-                onChange={(value) => setMode(value as 'clip' | 'showcase')}
+                onChange={(value) => setMode(value as ShowCase)}
               />
             </View>
             <Divider length={600} />
           </View>
-
           {/* Main Content */}
-          {mode === 'clip' ? <StencilClipLab /> : <TestUI />}
+          <ShowcaseWrapper mode={mode} />
         </View>
       </ScrollView>
     </View>
