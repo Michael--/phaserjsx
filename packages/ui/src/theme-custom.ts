@@ -215,6 +215,12 @@ export interface CustomComponentThemes {
     arrow?: {
       color?: number
       size?: number
+      strokeWidth?: number
+    }
+    selectionIndicator?: {
+      color?: number
+      size?: number
+      strokeWidth?: number
     }
     overlay?: ViewTheme & {
       maxHeight?: number

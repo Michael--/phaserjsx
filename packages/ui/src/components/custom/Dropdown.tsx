@@ -103,11 +103,12 @@ export interface DropdownProps<T = string> extends Omit<ViewProps, 'children'>, 
 }
 
 /**
- * Default arrow component - simple Graphics triangle
+ * Default arrow component - chevron indicator.
  */
-function DefaultArrow(props: { color?: number; size?: number }) {
+function DefaultArrow(props: { color?: number; size?: number; strokeWidth?: number }) {
   const color = props.color ?? 0xffffff
   const size = props.size ?? 8
+  const strokeWidth = props.strokeWidth ?? Math.max(2, Math.round(size * 0.16))
 
   return (
     <Graphics
@@ -115,13 +116,59 @@ function DefaultArrow(props: { color?: number; size?: number }) {
       height={size}
       onDraw={(g: Phaser.GameObjects.Graphics) => {
         g.clear()
-        g.fillStyle(color, 1)
+        g.lineStyle(strokeWidth, color, 1)
         g.beginPath()
-        g.moveTo(0, 0)
-        g.lineTo(size, 0)
-        g.lineTo(size / 2, size)
-        g.closePath()
-        g.fillPath()
+        g.moveTo(size * 0.18, size * 0.35)
+        g.lineTo(size * 0.5, size * 0.68)
+        g.lineTo(size * 0.82, size * 0.35)
+        g.strokePath()
+      }}
+    />
+  )
+}
+
+function DefaultOptionIndicator(props: {
+  selected: boolean
+  multiple: boolean
+  disabled: boolean
+  color?: number
+  size?: number
+  strokeWidth?: number
+}) {
+  const size = props.size ?? 16
+  const color = props.color ?? 0xffffff
+  const strokeWidth = props.strokeWidth ?? 2
+  const alpha = props.disabled ? 0.4 : 1
+
+  return (
+    <Graphics
+      width={size}
+      height={size}
+      dependencies={[props.selected, props.multiple, props.disabled, color, size, strokeWidth]}
+      onDraw={(g: Phaser.GameObjects.Graphics) => {
+        g.clear()
+
+        if (props.multiple) {
+          g.lineStyle(strokeWidth, color, props.selected ? alpha : alpha * 0.55)
+          g.strokeRoundedRect(
+            strokeWidth / 2,
+            strokeWidth / 2,
+            size - strokeWidth,
+            size - strokeWidth,
+            3
+          )
+
+          if (!props.selected) return
+        } else if (!props.selected) {
+          return
+        }
+
+        g.lineStyle(strokeWidth + 1, color, alpha)
+        g.beginPath()
+        g.moveTo(size * 0.22, size * 0.52)
+        g.lineTo(size * 0.43, size * 0.72)
+        g.lineTo(size * 0.8, size * 0.28)
+        g.strokePath()
       }}
     />
   )
@@ -184,6 +231,10 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
   const maxHeight = props.maxHeight ?? overlayTheme.maxHeight ?? 300
   const arrowConfig = themed.arrow ?? {}
   const arrowSize = arrowConfig.size ?? 12
+  const indicatorConfig = themed.selectionIndicator ?? {}
+  const indicatorSize = indicatorConfig.size ?? 16
+  const indicatorColor = indicatorConfig.color ?? arrowConfig.color
+  const indicatorStrokeWidth = indicatorConfig.strokeWidth ?? 2
   const placement = props.placement ?? 'bottom'
   const popoverPlacement: PopoverPlacement = placement === 'top' ? 'top-start' : 'bottom-start'
 
@@ -343,6 +394,14 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
             props.renderOption(option, isSelected)
           ) : (
             <>
+              <DefaultOptionIndicator
+                selected={isSelected}
+                multiple={props.multiple === true}
+                disabled={isDisabled}
+                color={indicatorColor ?? 0xffffff}
+                size={indicatorSize}
+                strokeWidth={indicatorStrokeWidth}
+              />
               {option.prefix}
               <Text text={option.label} />
               {option.suffix}
@@ -375,7 +434,11 @@ export function Dropdown<T = string>(props: DropdownProps<T>): VNodeLike {
         {props.arrow ? (
           props.arrow
         ) : (
-          <DefaultArrow color={arrowConfig.color ?? 0xffffff} size={arrowSize} />
+          <DefaultArrow
+            color={arrowConfig.color ?? 0xffffff}
+            size={arrowSize}
+            strokeWidth={arrowConfig.strokeWidth ?? 2}
+          />
         )}
       </TransformOriginView>
     </View>
