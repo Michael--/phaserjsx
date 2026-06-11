@@ -18,10 +18,44 @@ const sceneBackgroundTextureCaches = new WeakMap<
   Map<string, BackgroundTextureCacheEntry>
 >()
 
+type CornerRadius = NonNullable<BackgroundProps['cornerRadius']>
+
 function hasRenderableBackground(props: Partial<BackgroundProps>): boolean {
   const hasBackground = props.backgroundColor !== undefined
   const hasBorder = (props.borderWidth ?? 0) > 0 && props.borderColor !== undefined
   return hasBackground || hasBorder
+}
+
+function hasRoundedCorners(radius: CornerRadius): boolean {
+  if (typeof radius === 'number') {
+    return radius !== 0
+  }
+
+  return (
+    (radius.tl ?? 0) !== 0 ||
+    (radius.tr ?? 0) !== 0 ||
+    (radius.bl ?? 0) !== 0 ||
+    (radius.br ?? 0) !== 0
+  )
+}
+
+function insetCornerRadius(radius: CornerRadius, inset: number): CornerRadius {
+  const insetSingleRadius = (value: number | undefined): number => {
+    const resolved = value ?? 0
+    const sign = resolved < 0 ? -1 : 1
+    return sign * Math.max(0, Math.abs(resolved) - inset)
+  }
+
+  if (typeof radius === 'number') {
+    return insetSingleRadius(radius)
+  }
+
+  return {
+    tl: insetSingleRadius(radius.tl),
+    tr: insetSingleRadius(radius.tr),
+    bl: insetSingleRadius(radius.bl),
+    br: insetSingleRadius(radius.br),
+  }
 }
 
 function drawBackground(
@@ -37,6 +71,7 @@ function drawBackground(
   const borderWidth = props.borderWidth ?? 0
   const borderAlpha = props.borderAlpha ?? 1
   const hasBorder = borderWidth > 0 && borderColor !== undefined
+  const rounded = hasRoundedCorners(cornerRadius)
 
   if (bgColor !== undefined) {
     graphics.fillStyle(bgColor, bgAlpha)
@@ -46,19 +81,32 @@ function drawBackground(
     graphics.lineStyle(borderWidth, borderColor, borderAlpha)
   }
 
-  if (cornerRadius !== 0) {
+  if (rounded) {
     if (bgColor !== undefined) {
       graphics.fillRoundedRect(0, 0, width, height, cornerRadius)
     }
     if (hasBorder) {
-      graphics.strokeRoundedRect(0, 0, width, height, cornerRadius)
+      const inset = borderWidth / 2
+      graphics.strokeRoundedRect(
+        inset,
+        inset,
+        Math.max(0, width - borderWidth),
+        Math.max(0, height - borderWidth),
+        insetCornerRadius(cornerRadius, inset)
+      )
     }
   } else {
     if (bgColor !== undefined) {
       graphics.fillRect(0, 0, width, height)
     }
     if (hasBorder) {
-      graphics.strokeRect(0, 0, width, height)
+      const inset = borderWidth / 2
+      graphics.strokeRect(
+        inset,
+        inset,
+        Math.max(0, width - borderWidth),
+        Math.max(0, height - borderWidth)
+      )
     }
   }
 }
