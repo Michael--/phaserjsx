@@ -65,8 +65,10 @@ describe('theme resolution', () => {
 
     setColorPreset('forestGreen')
 
-    const { props } = getThemedProps('Button', undefined, {})
+    const { props: buttonProps } = getThemedProps('Button', undefined, {})
+    const { props: toggleProps } = getThemedProps('Toggle', undefined, {})
 
-    expect(props.backgroundColor).toBe(forest.colors.primary.medium.toNumber())
+    expect(buttonProps.backgroundColor).toBe(forest.colors.primary.medium.toNumber())
+    expect(toggleProps.trackColorOn).toBe(forest.colors.primary.DEFAULT.toNumber())
   })
 })

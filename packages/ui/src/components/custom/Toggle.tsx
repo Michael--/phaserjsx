@@ -174,6 +174,13 @@ export function Toggle(props: ToggleProps): VNodeLike {
     }
   }, [props.checked, checked])
 
+  // Keep the thumb aligned when theme-driven dimensions or padding change.
+  useEffect(() => {
+    if (!isAnimating) {
+      setThumbX(checked ? thumbOffsetOn : thumbOffsetOff)
+    }
+  }, [checked, thumbOffsetOn, thumbOffsetOff, isAnimating])
+
   /**
    * Animate toggle transition
    */

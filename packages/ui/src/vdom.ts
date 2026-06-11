@@ -1219,6 +1219,7 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
       if (newV.children !== undefined) {
         ctx.componentVNode.children = newV.children
       }
+      const previousTheme = ctx.theme
       // Update theme in context if it changed
       if (newV.__theme !== undefined) {
         ctx.theme = newV.__theme
@@ -1231,8 +1232,11 @@ export function patchVNode(parent: ParentType, oldV: VNode | null, newV: VNode |
         ? { ...(ctx.componentVNode.props ?? {}), children: ctx.componentVNode.children }
         : ctx.componentVNode.props
 
+      const themeChanged = !Object.is(previousTheme, ctx.theme)
+
       // Check if component should update (memoization)
-      if (!shouldComponentUpdate(ctx, propsWithChildren)) {
+      const propsChanged = shouldComponentUpdate(ctx, propsWithChildren)
+      if (!themeChanged && !propsChanged) {
         // Props haven't changed - skip re-render
         return
       }
