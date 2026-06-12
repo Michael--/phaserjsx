@@ -330,8 +330,6 @@ export function NotificationStack(props: NotificationStackProps): VNodeLike {
     }
   }, [scheduleKey, onDismiss])
 
-  if (items.length === 0) return null
-
   return (
     <Portal depth={depth ?? themed.depth ?? 1200} blockEvents={false}>
       <View
