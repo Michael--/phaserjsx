@@ -39,6 +39,19 @@ export interface NumberInputButtonRenderProps {
   activeColor: number
 }
 
+export interface NumberInputValueRenderProps {
+  value: number
+  displayText: string
+  min?: number
+  max?: number
+  step: number
+  disabled: boolean
+  canDecrement: boolean
+  canIncrement: boolean
+  valueWidth: number
+  controlHeight: number
+}
+
 export interface NumberInputIndicatorProps extends Omit<
   GraphicsProps,
   'children' | 'dependencies' | 'onDraw'
@@ -86,6 +99,8 @@ export interface NumberInputProps extends Omit<ViewProps, 'children'> {
   labelPosition?: NumberInputLabelPosition
   /** Formatter for the displayed value. */
   formatValue?: (value: number) => string
+  /** Render custom value content while preserving the NumberInput value frame. */
+  renderValue?: (props: NumberInputValueRenderProps) => ChildrenType
   /** Localized button/value labels. */
   labels?: NumberInputLabels
   /** Custom decrement button content. Children take precedence over labels.decrement. */
@@ -332,6 +347,7 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
     label,
     labelPosition,
     formatValue,
+    renderValue,
     labels: labelOverrides,
     decrementContent,
     incrementContent,
@@ -414,6 +430,18 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
   const incrementValue = getNextNumberInputValue(currentValue, 1, valueOptions)
   const canDecrement = decrementValue !== currentValue
   const canIncrement = incrementValue !== currentValue
+  const valueContent = renderValue?.({
+    value: currentValue,
+    displayText,
+    ...(min !== undefined ? { min } : {}),
+    ...(max !== undefined ? { max } : {}),
+    step,
+    disabled,
+    canDecrement,
+    canIncrement,
+    valueWidth: resolvedValueWidth,
+    controlHeight: resolvedControlHeight,
+  })
 
   const commitValue = (nextValue: number) => {
     const normalized = normalizeNumberInputValue(nextValue, valueOptions)
@@ -520,7 +548,7 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
       padding={themed.valuePadding ?? { left: 8, right: 8, top: 4, bottom: 4 }}
       theme={nestedTheme}
     >
-      <Text text={displayText} style={valueStyle} />
+      {valueContent ?? <Text text={displayText} style={valueStyle} />}
     </View>
   )
 

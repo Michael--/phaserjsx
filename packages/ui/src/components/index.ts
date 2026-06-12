@@ -107,6 +107,7 @@ export {
   type NumberInputLabelPosition,
   type NumberInputLabels,
   type NumberInputProps,
+  type NumberInputValueRenderProps,
   type NumberInputValueOptions,
 } from './custom/NumberInput'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'

@@ -6,6 +6,8 @@ import { BoundsNumberInputExample } from '@/examples/number-input/BoundsExample'
 import BoundsNumberInputExampleCode from '@/examples/number-input/BoundsExample.tsx?raw'
 import { ButtonPlacementNumberInputExample } from '@/examples/number-input/ButtonPlacementExample'
 import ButtonPlacementNumberInputExampleCode from '@/examples/number-input/ButtonPlacementExample.tsx?raw'
+import { CustomValueNumberInputExample } from '@/examples/number-input/CustomValueExample'
+import CustomValueNumberInputExampleCode from '@/examples/number-input/CustomValueExample.tsx?raw'
 import { QuickStartNumberInputExample } from '@/examples/number-input/QuickStartExample'
 import QuickStartNumberInputExampleCode from '@/examples/number-input/QuickStartExample.tsx?raw'
 import { ThemingNumberInputExample } from '@/examples/number-input/ThemingExample'
@@ -48,6 +50,15 @@ export const numberInputContent: ComponentDocs = {
       component: ButtonPlacementNumberInputExample,
       height: SCENE_SIZES.large,
       code: ButtonPlacementNumberInputExampleCode,
+    },
+    {
+      id: 'custom-value',
+      title: 'Custom Value Renderer',
+      description:
+        'Use renderValue to replace the displayed value with custom content while keeping numeric state, bounds, and stepping behavior.',
+      component: CustomValueNumberInputExample,
+      height: SCENE_SIZES.medium,
+      code: CustomValueNumberInputExampleCode,
     },
     {
       id: 'theming',
@@ -165,6 +176,13 @@ export const numberInputContent: ComponentDocs = {
       type: '(value: number) => string',
       default: undefined,
       description: 'Formatter for the displayed value.',
+    },
+    {
+      name: 'renderValue',
+      type: '(props: NumberInputValueRenderProps) => VNode',
+      default: undefined,
+      description:
+        'Render custom content inside the value frame. The numeric value remains the source of truth.',
     },
     {
       name: 'labels',
