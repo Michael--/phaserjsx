@@ -245,12 +245,15 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
     lighten(currentColor, 0.2),
     lighten(currentColor, 0.4),
   ]
+  const thumbSize = themed.thumbSize ?? 18
+  const thumbRadius = thumbSize / 2
+  const thumbShadowOffset = Math.max(1, Math.round(thumbRadius * 0.22))
 
   const sliderTheme: PartialTheme = mergeThemes(nestedTheme, {
     Slider: {
       trackHeight,
       trackBorderRadius: trackHeight / 2,
-      thumbSize: themed.thumbSize ?? 18,
+      thumbSize,
       thumbBorderWidth: 2,
       thumbBorderColor,
     },
@@ -278,15 +281,15 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
       onDraw={(g: Phaser.GameObjects.Graphics) => {
         g.clear()
         g.fillStyle(0x000000, 0.32)
-        g.fillCircle(0, 5, 10)
+        g.fillCircle(0, thumbShadowOffset, thumbRadius)
         g.fillStyle(color, 1)
-        g.fillCircle(0, 3, 10)
+        g.fillCircle(0, 0, thumbRadius)
         g.lineStyle(2, thumbBorderColor, 1)
-        g.strokeCircle(0, 3, 10)
+        g.strokeCircle(0, 0, thumbRadius)
 
         if (isDragging) {
           g.lineStyle(2, color, 0.7)
-          g.strokeCircle(0, 3, 14)
+          g.strokeCircle(0, 0, thumbRadius + 4)
         }
       }}
       scale={isDragging ? 1.2 : 1}
