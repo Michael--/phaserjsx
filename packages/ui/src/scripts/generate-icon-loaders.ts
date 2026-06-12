@@ -44,14 +44,44 @@ async function findTsFiles(dir: string): Promise<string[]> {
 /**
  * Extract icon names from file content
  */
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function addStringLiteralIcons(expression: string, iconNames: Set<string>): void {
+  const stringLiteralPattern = /(["'])([^"'\r\n]+)\1/g
+  let match: RegExpExecArray | null
+
+  while ((match = stringLiteralPattern.exec(expression)) !== null) {
+    const iconName = match[2]
+    if (iconName) {
+      iconNames.add(iconName)
+    }
+  }
+}
+
+function addIconTypeDeclarationIcons(content: string, iconNames: Set<string>): void {
+  const iconTypeLiteralDeclarationPattern =
+    /\b(?:const|let|var)\s+\w+\s*:\s*[^=;\r\n]*\bIconType\b[^=;\r\n]*=\s*(["'])([^"']+)\1/g
+  let match: RegExpExecArray | null
+
+  while ((match = iconTypeLiteralDeclarationPattern.exec(content)) !== null) {
+    const iconName = match[2]
+    if (iconName) {
+      iconNames.add(iconName)
+    }
+  }
+}
+
 function extractIconNames(content: string, componentNames: string[]): Set<string> {
   const iconNames = new Set<string>()
   let match: RegExpExecArray | null
 
   // Match: <Icon type="icon-name" or <Icon type={'icon-name'} for all component names
   for (const componentName of componentNames) {
+    const escapedComponentName = escapeRegExp(componentName)
     const typePattern = new RegExp(
-      `<${componentName}\\s+[^>]*type=(?:["']([^"']+)["']|\\{['"]([^"']+)["']}})`,
+      `<${escapedComponentName}\\s+[^>]*\\btype=(?:["']([^"']+)["']|\\{['"]([^"']+)["']\\})`,
       'g'
     )
 
@@ -61,7 +91,21 @@ function extractIconNames(content: string, componentNames: string[]): Set<string
         iconNames.add(iconName)
       }
     }
+
+    const typeExpressionPattern = new RegExp(
+      `<${escapedComponentName}\\s+[^>]*\\btype=\\{([^}]*)\\}`,
+      'g'
+    )
+
+    while ((match = typeExpressionPattern.exec(content)) !== null) {
+      const expression = match[1]
+      if (expression) {
+        addStringLiteralIcons(expression, iconNames)
+      }
+    }
   }
+
+  addIconTypeDeclarationIcons(content, iconNames)
 
   // Match: themed.xxxIcon ?? 'icon-name' (only if property ends with 'Icon')
   const themedPattern = /themed\.(\w*[Ii]con)\s*\?\?\s*["']([^"']+)["']/g
