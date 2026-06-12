@@ -12,6 +12,7 @@ import type { VNodeLike } from '../../vdom'
 import { Button, Text, View, type ButtonProps } from '../index'
 import type { ButtonSize, ButtonVariant } from './Button'
 import { Divider } from './Divider'
+import { MenuButton } from './MenuButton'
 import type { ContextMenuItem } from './Popover'
 
 export type ToolbarOrientation = 'horizontal' | 'vertical'
@@ -357,6 +358,43 @@ export function Toolbar(props: ToolbarProps): VNodeLike {
         ...(resolvedIconSize !== undefined ? { iconSize: resolvedIconSize } : {}),
       },
     })
+
+    if (isToolbarMenuItem(item)) {
+      return (
+        <MenuButton
+          key={key}
+          items={item.items ?? []}
+          onSelect={() => {
+            item.onSelect?.(item.id)
+            onSelect?.(item.id, item)
+          }}
+          placement={resolvedOrientation === 'horizontal' ? 'bottom-start' : 'right-start'}
+          disabled={itemDisabled}
+          theme={buttonTheme}
+          trigger={({ isOpen }) => (
+            <Button
+              variant={buttonVariant}
+              size={item.buttonSize ?? resolvedButtonSize}
+              disabled={itemDisabled}
+              width={itemWidth}
+              height={itemHeight}
+              theme={buttonTheme}
+              {...item.buttonProps}
+              {...(tooltipText ? { onTooltip: () => tooltipText } : {})}
+            >
+              <View
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                gap={themedToolbar.gap ?? 6}
+              >
+                {renderItemContent(item, isOpen, itemDisabled)}
+              </View>
+            </Button>
+          )}
+        />
+      )
+    }
 
     return (
       <Button

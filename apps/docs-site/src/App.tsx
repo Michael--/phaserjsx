@@ -17,13 +17,14 @@ import { graphicsContent } from './content/graphics.content'
 import { iconContent } from './content/icon.content'
 import { imageContent } from './content/image.content'
 import { joystickContent } from './content/joystick.content'
+import { menuButtonContent } from './content/menu-button.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { numberInputContent } from './content/number-input.content'
 import { palettePickerContent } from './content/palette-picker.content'
 import { particlesContent } from './content/particles.content'
-import { portalContent } from './content/portal.content'
 import { popoverContent } from './content/popover.content'
+import { portalContent } from './content/portal.content'
 import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
@@ -107,6 +108,10 @@ export function App() {
             element={<ComponentPage content={palettePickerContent} />}
           />
           <Route path="/components/toolbar" element={<ComponentPage content={toolbarContent} />} />
+          <Route
+            path="/components/menu-button"
+            element={<ComponentPage content={menuButtonContent} />}
+          />
           <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route
             path="/components/radiobutton"

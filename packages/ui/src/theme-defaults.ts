@@ -388,6 +388,14 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         gap: 6,
       },
     },
+    MenuButton: {
+      buttonVariant: 'secondary',
+      buttonSize: 'medium',
+      placement: 'bottom-start',
+      width: 220,
+      gap: 6,
+      iconGap: 8,
+    },
     Badge: {
       tone: 'neutral',
       variant: 'solid',
@@ -508,7 +516,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       },
       Icon: {
         size: 18,
-        tint: 0xffffff,
+        tint: colors.text.DEFAULT.toNumber(),
       },
       primary: {
         backgroundColor: colors.primary.medium.toNumber(),
@@ -518,7 +526,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
           fontStyle: 'bold',
         },
         Icon: {
-          tint: 0xffffff,
+          tint: colors.text.DEFAULT.toNumber(),
         },
       },
       secondary: {
@@ -569,7 +577,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
           fontStyle: 'bold',
         },
         Icon: {
-          tint: 0xffffff,
+          tint: colors.text.DEFAULT.toNumber(),
         },
       },
       variants: {

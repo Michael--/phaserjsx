@@ -188,6 +188,14 @@ export interface CustomComponentThemes {
     disabledAlpha?: number
     labels?: ToolbarLabels
   } & NestedComponentThemes
+  MenuButton: ViewTheme & {
+    buttonVariant?: ButtonVariant
+    buttonSize?: ButtonSize
+    placement?: PopoverPlacement
+    width?: number
+    gap?: number
+    iconGap?: number
+  } & NestedComponentThemes
   Badge: ViewTheme & {
     tone?: BadgeTone
     variant?: BadgeVariant

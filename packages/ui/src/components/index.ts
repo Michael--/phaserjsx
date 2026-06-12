@@ -92,6 +92,11 @@ export {
 } from './custom/DebugPanel'
 export { Graphics, type GraphicsProps } from './custom/Graphics'
 export {
+  MenuButton,
+  type MenuButtonProps,
+  type MenuButtonTriggerRenderProps,
+} from './custom/MenuButton'
+export {
   NumberInput,
   NumberInputIndicator,
   getNextNumberInputValue,

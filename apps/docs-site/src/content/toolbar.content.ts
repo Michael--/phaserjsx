@@ -180,7 +180,7 @@ export const toolbarContent: ComponentDocs = {
       title: 'Popover / ContextMenu',
       link: '/components/popover',
       description:
-        'Use Popover or the upcoming MenuButton pattern when a menu trigger needs overlay content.',
+        'Use Popover, ContextMenu, or MenuButton when a menu trigger needs overlay content.',
     },
     {
       title: 'SegmentedControl',
