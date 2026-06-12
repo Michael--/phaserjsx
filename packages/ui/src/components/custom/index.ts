@@ -60,6 +60,18 @@ export { Joystick, type JoystickProps, type JoystickTheme } from './Joystick'
 export { Modal, type ModalProps } from './Modal'
 export { NineSlice, type NineSliceProps } from './NineSlice'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
+export {
+  NumberInput,
+  getNextNumberInputValue,
+  getNumberInputPrecision,
+  normalizeNumberInputValue,
+  type NumberInputButtonDirection,
+  type NumberInputButtonPlacement,
+  type NumberInputLabelPosition,
+  type NumberInputLabels,
+  type NumberInputProps,
+  type NumberInputValueOptions,
+} from './NumberInput'
 export { Particles, type ParticlesProps } from './Particles'
 export { Portal, type PortalProps } from './Portal'
 export {

@@ -19,6 +19,7 @@ import { imageContent } from './content/image.content'
 import { joystickContent } from './content/joystick.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
+import { numberInputContent } from './content/number-input.content'
 import { particlesContent } from './content/particles.content'
 import { portalContent } from './content/portal.content'
 import { popoverContent } from './content/popover.content'
@@ -89,6 +90,10 @@ export function App() {
           <Route
             path="/components/progressbar"
             element={<ComponentPage content={progressbarContent} />}
+          />
+          <Route
+            path="/components/number-input"
+            element={<ComponentPage content={numberInputContent} />}
           />
           <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route

@@ -10,6 +10,12 @@ import type { AnimationConfig } from './animation/spring-physics'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonSize, ButtonVariant } from './components/custom/Button'
 import type { ColorPickerLabels } from './components/custom/ColorPicker'
+import type {
+  NumberInputButtonDirection,
+  NumberInputButtonPlacement,
+  NumberInputLabelPosition,
+  NumberInputLabels,
+} from './components/custom/NumberInput'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { EffectFn } from './effects/use-effect'
@@ -74,6 +80,32 @@ export interface CustomComponentThemes {
     titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
     hexStyle?: Phaser.Types.GameObjects.Text.TextStyle
     labels?: ColorPickerLabels
+  } & NestedComponentThemes
+  NumberInput: ViewTheme & {
+    valueWidth?: number
+    controlHeight?: number
+    controlGap?: number
+    buttonControlSize?: number
+    buttonGap?: number
+    buttonPlacement?: NumberInputButtonPlacement
+    buttonDirection?: NumberInputButtonDirection
+    buttonVariant?: ButtonVariant
+    buttonSize?: ButtonSize
+    buttonTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labelPosition?: NumberInputLabelPosition
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    valueStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    valueBackgroundColor?: number
+    valueBackgroundAlpha?: number
+    valueBorderColor?: number
+    valueBorderWidth?: number
+    valueCornerRadius?: number
+    valuePadding?: ViewTheme['padding']
+    disabledAlpha?: number
+    repeatOnHold?: boolean
+    holdDelay?: number
+    repeatInterval?: number
+    labels?: NumberInputLabels
   } & NestedComponentThemes
   Badge: ViewTheme & {
     tone?: BadgeTone

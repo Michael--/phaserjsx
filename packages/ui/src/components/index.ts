@@ -91,6 +91,18 @@ export {
   type DebugPanelProps,
 } from './custom/DebugPanel'
 export { Graphics, type GraphicsProps } from './custom/Graphics'
+export {
+  NumberInput,
+  getNextNumberInputValue,
+  getNumberInputPrecision,
+  normalizeNumberInputValue,
+  type NumberInputButtonDirection,
+  type NumberInputButtonPlacement,
+  type NumberInputLabelPosition,
+  type NumberInputLabels,
+  type NumberInputProps,
+  type NumberInputValueOptions,
+} from './custom/NumberInput'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
 export { Sprite, type SpriteProps } from './custom/Sprite'
