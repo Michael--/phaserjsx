@@ -16,6 +16,7 @@ import type {
   NumberInputLabelPosition,
   NumberInputLabels,
 } from './components/custom/NumberInput'
+import type { PalettePickerLabels } from './components/custom/PalettePicker'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type {
   SegmentedControlLabelPosition,
@@ -87,6 +88,27 @@ export interface CustomComponentThemes {
     titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
     hexStyle?: Phaser.Types.GameObjects.Text.TextStyle
     labels?: ColorPickerLabels
+  } & NestedComponentThemes
+  PalettePicker: ViewTheme & {
+    columns?: number
+    swatchSize?: number
+    swatchGap?: number
+    rowGap?: number
+    itemWidth?: ViewTheme['width']
+    swatchCornerRadius?: ViewTheme['cornerRadius']
+    swatchBorderColor?: number
+    swatchBorderWidth?: number
+    swatchSelectedBorderColor?: number
+    swatchSelectedBorderWidth?: number
+    swatchDisabledAlpha?: number
+    selectedCheckColor?: number
+    disabledAlpha?: number
+    titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    emptyStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    hexStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labels?: PalettePickerLabels
+    showTitle?: boolean
+    showHex?: boolean
   } & NestedComponentThemes
   NumberInput: ViewTheme & {
     valueWidth?: number

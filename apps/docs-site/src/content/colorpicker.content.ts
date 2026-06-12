@@ -201,6 +201,12 @@ export const colorPickerContent: ComponentDocs = {
       description: 'ColorPicker uses RadioGroup for the optional tone control.',
     },
     {
+      title: 'PalettePicker',
+      link: '/components/palette-picker',
+      description:
+        'Use PalettePicker for fixed palettes, theme colors, and recently used colors alongside or instead of ColorPicker.',
+    },
+    {
       title: 'Theme System',
       link: '/guides/theme-system',
       description: 'Customize ColorPicker through theme props or the global theme.',

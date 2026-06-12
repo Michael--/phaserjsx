@@ -8,8 +8,12 @@ import {
   ensureContrast,
   getContrastRatio,
   hexToNumber,
+  hslToNumber,
+  hslToRgb,
   lighten,
+  normalizeColorNumber,
   numberToHex,
+  numberToHsl,
   numberToRgb,
   rgbToNumber,
 } from './color-utils'
@@ -54,6 +58,19 @@ describe('Color Conversion', () => {
       expect(numberToHex(0x000100)).toBe('#000100')
       expect(numberToHex(0x010000)).toBe('#010000')
     })
+
+    it('normalizes out-of-range values', () => {
+      expect(numberToHex(0x1ffffff)).toBe('#ffffff')
+      expect(numberToHex(Number.NaN)).toBe('#000000')
+    })
+  })
+
+  describe('normalizeColorNumber', () => {
+    it('keeps colors in the Phaser RGB range', () => {
+      expect(normalizeColorNumber(0xff00aa)).toBe(0xff00aa)
+      expect(normalizeColorNumber(0x1ff00aa)).toBe(0xff00aa)
+      expect(normalizeColorNumber(Number.NaN)).toBe(0x000000)
+    })
   })
 
   describe('rgbToNumber', () => {
@@ -83,6 +100,19 @@ describe('Color Conversion', () => {
     it('handles mid-range values', () => {
       expect(numberToRgb(0x808080)).toEqual({ r: 128, g: 128, b: 128 })
       expect(numberToRgb(0x4080c0)).toEqual({ r: 64, g: 128, b: 192 })
+    })
+  })
+
+  describe('HSL conversion', () => {
+    it('converts normalized HSL to RGB and number values', () => {
+      expect(hslToRgb(0, 1, 0.5)).toEqual({ r: 255, g: 0, b: 0 })
+      expect(hslToRgb(1 / 3, 1, 0.5)).toEqual({ r: 0, g: 255, b: 0 })
+      expect(hslToNumber(2 / 3, 1, 0.5)).toBe(0x0000ff)
+    })
+
+    it('converts number colors to normalized HSL', () => {
+      expect(numberToHsl(0xff0000)).toEqual({ h: 0, s: 1, l: 0.5 })
+      expect(numberToHsl(0x808080).s).toBe(0)
     })
   })
 })

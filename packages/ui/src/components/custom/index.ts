@@ -80,6 +80,21 @@ export {
   type NumberInputValueOptions,
 } from './NumberInput'
 export { Particles, type ParticlesProps } from './Particles'
+export {
+  PalettePicker,
+  chunkPalettePickerColors,
+  getPalettePickerContrastColor,
+  normalizePalettePickerColor,
+  normalizePalettePickerColors,
+  resolvePalettePickerValue,
+  type NormalizedPalettePickerOption,
+  type PalettePickerColor,
+  type PalettePickerLabels,
+  type PalettePickerOption,
+  type PalettePickerProps,
+  type PalettePickerSwatchRenderProps,
+  type PalettePickerThemeSlot,
+} from './PalettePicker'
 export { Portal, type PortalProps } from './Portal'
 export {
   ContextMenu,

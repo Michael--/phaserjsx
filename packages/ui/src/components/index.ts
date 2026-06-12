@@ -133,6 +133,21 @@ export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
 export { View, type ViewProps } from './custom/View'
 export { Particles, type ParticlesProps } from './custom/Particles'
 export {
+  PalettePicker,
+  chunkPalettePickerColors,
+  getPalettePickerContrastColor,
+  normalizePalettePickerColor,
+  normalizePalettePickerColors,
+  resolvePalettePickerValue,
+  type NormalizedPalettePickerOption,
+  type PalettePickerColor,
+  type PalettePickerLabels,
+  type PalettePickerOption,
+  type PalettePickerProps,
+  type PalettePickerSwatchRenderProps,
+  type PalettePickerThemeSlot,
+} from './custom/PalettePicker'
+export {
   ContextMenu,
   Popover,
   calculateOverlayPosition,

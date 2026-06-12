@@ -51,6 +51,7 @@ const navigation: NavSection[] = [
       { label: 'ProgressBar', path: '/components/progressbar' },
       { label: 'NumberInput', path: '/components/number-input' },
       { label: 'SegmentedControl', path: '/components/segmented-control' },
+      { label: 'PalettePicker', path: '/components/palette-picker' },
       { label: 'Badge / Tag', path: '/components/badge' },
       { label: 'RadioButton', path: '/components/radiobutton' },
       { label: 'Dropdown', path: '/components/dropdown' },

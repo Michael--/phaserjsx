@@ -5,7 +5,7 @@
  */
 import * as Phaser from 'phaser'
 import type { ViewProps } from '..'
-import { darken, lighten, numberToHex, numberToRgb, rgbToHsl } from '../../colors'
+import { darken, hslToNumber, lighten, numberToHex, numberToHsl, numberToRgb } from '../../colors'
 import { useEffect, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
@@ -93,17 +93,16 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
-function hslToNumber(hue: number, saturation: number, lightness: number): number {
-  return Phaser.Display.Color.HSLToColor(
+function colorPickerHslToNumber(hue: number, saturation: number, lightness: number): number {
+  return hslToNumber(
     clamp(hue, 0, 360) / 360,
     clamp(saturation, 0, 100) / 100,
     clamp(lightness, 0, 100) / 100
-  ).color
+  )
 }
 
 function numberToHslValues(color: number): Omit<ColorPickerState, 'tone'> {
-  const rgb = numberToRgb(color)
-  const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b)
+  const hsl = numberToHsl(color)
 
   return {
     hue: Math.round(hsl.h * 360),
@@ -149,7 +148,7 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
   const lastEmittedColor = useRef<number | undefined>(undefined)
 
   const resolvedTone = tone ?? internalTone
-  const currentColor = hslToNumber(hue, saturation, lightness)
+  const currentColor = colorPickerHslToNumber(hue, saturation, lightness)
   const rgb = numberToRgb(currentColor)
   const hexLabel = numberToHex(currentColor).toUpperCase()
 
@@ -194,7 +193,7 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
     nextLightness: number,
     nextTone = resolvedTone
   ) => {
-    const nextColor = hslToNumber(nextHue, nextSaturation, nextLightness)
+    const nextColor = colorPickerHslToNumber(nextHue, nextSaturation, nextLightness)
     lastEmittedColor.current = nextColor
     onChange?.(nextColor, {
       hue: nextHue,
@@ -407,8 +406,10 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
             max={360}
             step={1}
             trackLength={trackLength}
-            renderTrack={renderGradientTrack((progress) => hslToNumber(progress * 360, 100, 50))}
-            renderThumb={renderThumb(hslToNumber(hue, 100, 50))}
+            renderTrack={renderGradientTrack((progress) =>
+              colorPickerHslToNumber(progress * 360, 100, 50)
+            )}
+            renderThumb={renderThumb(colorPickerHslToNumber(hue, 100, 50))}
           />
         </View>
 
@@ -425,7 +426,7 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
             step={1}
             trackLength={trackLength}
             renderTrack={renderGradientTrack((progress) =>
-              hslToNumber(hue, progress * 100, lightness)
+              colorPickerHslToNumber(hue, progress * 100, lightness)
             )}
             renderThumb={renderThumb(currentColor)}
           />
@@ -444,7 +445,7 @@ export function ColorPicker(props: ColorPickerProps): VNodeLike {
             step={1}
             trackLength={trackLength}
             renderTrack={renderGradientTrack((progress) =>
-              hslToNumber(hue, saturation, progress * 100)
+              colorPickerHslToNumber(hue, saturation, progress * 100)
             )}
             renderThumb={renderThumb(currentColor)}
           />

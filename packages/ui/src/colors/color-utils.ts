@@ -33,8 +33,18 @@ export function hexToNumber(hex: string): number {
  * ```
  */
 export function numberToHex(num: number, withHash = true): string {
-  const hex = num.toString(16).padStart(6, '0')
+  const hex = normalizeColorNumber(num).toString(16).padStart(6, '0')
   return withHash ? `#${hex}` : hex
+}
+
+/**
+ * Normalize a color number to Phaser's 0x000000-0xffffff RGB range.
+ * @param color - Color number to normalize
+ * @returns RGB color number in the 24-bit range
+ */
+export function normalizeColorNumber(color: number): number {
+  if (!Number.isFinite(color)) return 0x000000
+  return Math.max(0, Math.round(color)) & 0xffffff
 }
 
 /**
@@ -65,10 +75,12 @@ export function rgbToNumber(r: number, g: number, b: number): number {
  * ```
  */
 export function numberToRgb(num: number): RGBColor {
+  const normalized = normalizeColorNumber(num)
+
   return {
-    r: (num >> 16) & 0xff,
-    g: (num >> 8) & 0xff,
-    b: num & 0xff,
+    r: (normalized >> 16) & 0xff,
+    g: (normalized >> 8) & 0xff,
+    b: normalized & 0xff,
   }
 }
 
@@ -119,6 +131,66 @@ export function rgbToHsl(r: number, g: number, b: number): HSLColor {
     hueValue = (red - green) / delta + 4
   }
   return { h: hueValue / 6, s: saturationValue, l: light }
+}
+
+/**
+ * Convert normalized HSL values to RGB components.
+ * @param h - Hue in normalized range (0.0 to 1.0)
+ * @param s - Saturation in normalized range (0.0 to 1.0)
+ * @param l - Lightness in normalized range (0.0 to 1.0)
+ * @returns RGB color object
+ */
+export function hslToRgb(h: number, s: number, l: number): RGBColor {
+  const hue = (((Number.isFinite(h) ? h : 0) % 1) + 1) % 1
+  const saturation = Math.max(0, Math.min(1, Number.isFinite(s) ? s : 0))
+  const lightness = Math.max(0, Math.min(1, Number.isFinite(l) ? l : 0))
+
+  if (saturation === 0) {
+    const value = Math.round(lightness * 255)
+    return { r: value, g: value, b: value }
+  }
+
+  const hueToRgb = (p: number, q: number, t: number): number => {
+    let next = t
+    if (next < 0) next += 1
+    if (next > 1) next -= 1
+    if (next < 1 / 6) return p + (q - p) * 6 * next
+    if (next < 1 / 2) return q
+    if (next < 2 / 3) return p + (q - p) * (2 / 3 - next) * 6
+    return p
+  }
+
+  const q =
+    lightness < 0.5 ? lightness * (1 + saturation) : lightness + saturation - lightness * saturation
+  const p = 2 * lightness - q
+
+  return {
+    r: Math.round(hueToRgb(p, q, hue + 1 / 3) * 255),
+    g: Math.round(hueToRgb(p, q, hue) * 255),
+    b: Math.round(hueToRgb(p, q, hue - 1 / 3) * 255),
+  }
+}
+
+/**
+ * Convert normalized HSL values to Phaser number format.
+ * @param h - Hue in normalized range (0.0 to 1.0)
+ * @param s - Saturation in normalized range (0.0 to 1.0)
+ * @param l - Lightness in normalized range (0.0 to 1.0)
+ * @returns Phaser color number
+ */
+export function hslToNumber(h: number, s: number, l: number): number {
+  const rgb = hslToRgb(h, s, l)
+  return rgbToNumber(rgb.r, rgb.g, rgb.b)
+}
+
+/**
+ * Convert Phaser number format to normalized HSL values.
+ * @param color - Phaser color number
+ * @returns HSL color values with normalized components
+ */
+export function numberToHsl(color: number): HSLColor {
+  const rgb = numberToRgb(color)
+  return rgbToHsl(rgb.r, rgb.g, rgb.b)
 }
 
 /**

@@ -20,6 +20,7 @@ import { joystickContent } from './content/joystick.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
 import { numberInputContent } from './content/number-input.content'
+import { palettePickerContent } from './content/palette-picker.content'
 import { particlesContent } from './content/particles.content'
 import { portalContent } from './content/portal.content'
 import { popoverContent } from './content/popover.content'
@@ -99,6 +100,10 @@ export function App() {
           <Route
             path="/components/segmented-control"
             element={<ComponentPage content={segmentedControlContent} />}
+          />
+          <Route
+            path="/components/palette-picker"
+            element={<ComponentPage content={palettePickerContent} />}
           />
           <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route
