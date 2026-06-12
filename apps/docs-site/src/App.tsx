@@ -27,6 +27,7 @@ import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
+import { segmentedControlContent } from './content/segmented-control.content'
 import { sliderContent } from './content/slider.content'
 import { spriteContent } from './content/sprite.content'
 import { tabsContent } from './content/tabs.content'
@@ -94,6 +95,10 @@ export function App() {
           <Route
             path="/components/number-input"
             element={<ComponentPage content={numberInputContent} />}
+          />
+          <Route
+            path="/components/segmented-control"
+            element={<ComponentPage content={segmentedControlContent} />}
           />
           <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route

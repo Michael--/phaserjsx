@@ -17,6 +17,13 @@ import type {
   NumberInputLabels,
 } from './components/custom/NumberInput'
 import type { PopoverPlacement } from './components/custom/Popover'
+import type {
+  SegmentedControlLabelPosition,
+  SegmentedControlLabels,
+  SegmentedControlOrientation,
+  SegmentedControlSize,
+  SegmentedControlVariant,
+} from './components/custom/SegmentedControl'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
@@ -108,6 +115,29 @@ export interface CustomComponentThemes {
     holdDelay?: number
     repeatInterval?: number
     labels?: NumberInputLabels
+  } & NestedComponentThemes
+  SegmentedControl: ViewTheme & {
+    orientation?: SegmentedControlOrientation
+    size?: SegmentedControlSize
+    variant?: SegmentedControlVariant
+    segmentWidth?: ViewTheme['width']
+    segmentHeight?: ViewTheme['height']
+    segmentGap?: number
+    segmentPadding?: ViewTheme['padding']
+    segmentCornerRadius?: ViewTheme['cornerRadius']
+    segmentStyle?: ViewTheme
+    segmentHoverStyle?: ViewTheme
+    segmentSelectedStyle?: ViewTheme
+    segmentDisabledStyle?: ViewTheme
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    selectedTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    iconGap?: number
+    iconSize?: number
+    disabledAlpha?: number
+    labelPosition?: SegmentedControlLabelPosition
+    labels?: SegmentedControlLabels
   } & NestedComponentThemes
   Badge: ViewTheme & {
     tone?: BadgeTone

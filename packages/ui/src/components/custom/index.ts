@@ -105,6 +105,21 @@ export {
 } from './ProgressBar'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
+export {
+  SegmentedControl,
+  findSegmentedControlOption,
+  isSegmentedControlOptionSelectable,
+  resolveSegmentedControlValue,
+  type SegmentedControlLabelPosition,
+  type SegmentedControlLabels,
+  type SegmentedControlOption,
+  type SegmentedControlOptionRenderProps,
+  type SegmentedControlOrientation,
+  type SegmentedControlProps,
+  type SegmentedControlSize,
+  type SegmentedControlThemeSlot,
+  type SegmentedControlVariant,
+} from './SegmentedControl'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'
 export {
   ScrollSlider,

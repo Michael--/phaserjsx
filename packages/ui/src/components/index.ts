@@ -112,6 +112,21 @@ export {
 } from './custom/NumberInput'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
+export {
+  SegmentedControl,
+  findSegmentedControlOption,
+  isSegmentedControlOptionSelectable,
+  resolveSegmentedControlValue,
+  type SegmentedControlLabelPosition,
+  type SegmentedControlLabels,
+  type SegmentedControlOption,
+  type SegmentedControlOptionRenderProps,
+  type SegmentedControlOrientation,
+  type SegmentedControlProps,
+  type SegmentedControlSize,
+  type SegmentedControlThemeSlot,
+  type SegmentedControlVariant,
+} from './custom/SegmentedControl'
 export { Sprite, type SpriteProps } from './custom/Sprite'
 export { Text, type TextProps } from './custom/Text'
 export { TileSprite, type TileSpriteProps } from './custom/TileSprite'
