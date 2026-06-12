@@ -9,6 +9,7 @@
 import type { AnimationConfig } from './animation/spring-physics'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonSize, ButtonVariant } from './components/custom/Button'
+import type { ColorPickerLabels } from './components/custom/ColorPicker'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
 import type { EffectFn } from './effects/use-effect'
@@ -49,6 +50,30 @@ export interface CustomComponentThemes {
     size?: number
     disabledAlpha?: number
     labelPosition?: 'left' | 'right' | 'none'
+  } & NestedComponentThemes
+  ColorPicker: ViewTheme & {
+    previewSize?: number
+    previewGap?: number
+    previewBorderWidth?: number
+    previewCornerRadius?: number
+    trackLength?: number
+    trackHeight?: number
+    gradientSteps?: number
+    controlGap?: number
+    controlBackgroundColor?: number
+    controlBackgroundAlpha?: number
+    closeButtonSize?: number
+    closeButtonCornerRadius?: number
+    thumbSize?: number
+    thumbBorderColor?: number
+    swatchSize?: number
+    swatchGap?: number
+    swatchCornerRadius?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    valueStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    hexStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labels?: ColorPickerLabels
   } & NestedComponentThemes
   Badge: ViewTheme & {
     tone?: BadgeTone

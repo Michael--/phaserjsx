@@ -9,6 +9,7 @@ import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
 import { checkboxContent } from './content/checkbox.content'
+import { colorPickerContent } from './content/colorpicker.content'
 import { dialogContent } from './content/dialog.content'
 import { dividerContent } from './content/divider.content'
 import { dropdownContent } from './content/dropdown.content'
@@ -81,6 +82,10 @@ export function App() {
           />
           <Route path="/components/toggle" element={<ComponentPage content={toggleContent} />} />
           <Route path="/components/slider" element={<ComponentPage content={sliderContent} />} />
+          <Route
+            path="/components/colorpicker"
+            element={<ComponentPage content={colorPickerContent} />}
+          />
           <Route
             path="/components/progressbar"
             element={<ComponentPage content={progressbarContent} />}

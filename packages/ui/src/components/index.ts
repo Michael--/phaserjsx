@@ -78,6 +78,13 @@ export {
   type CheckboxState,
 } from './custom/Checkbox'
 export {
+  ColorPicker,
+  type ColorPickerLabels,
+  type ColorPickerProps,
+  type ColorPickerState,
+  type ColorPickerTone,
+} from './custom/ColorPicker'
+export {
   DebugPanel,
   type DebugMetricKey,
   type DebugPanelPreset,
