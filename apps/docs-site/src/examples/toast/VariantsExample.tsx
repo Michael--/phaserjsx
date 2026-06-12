@@ -1,6 +1,6 @@
 /** @jsxImportSource @number10/phaserjsx */
 import { Icon } from '@/components/Icon'
-import { NotificationStack, View, type ToastItem } from '@number10/phaserjsx'
+import { NotificationStack, View, useState, type ToastItem } from '@number10/phaserjsx'
 
 const variantItems: ToastItem[] = [
   {
@@ -38,14 +38,16 @@ const variantItems: ToastItem[] = [
 ]
 
 export function VariantsToastExample() {
+  const [items, setItems] = useState<ToastItem[]>(variantItems)
+
   return (
     <View width="fill" height="fill">
       <NotificationStack
-        items={variantItems}
+        items={items}
         position="top"
         width={360}
         duration={0}
-        onDismiss={() => undefined}
+        onDismiss={(id) => setItems((current) => current.filter((item) => item.id !== id))}
       />
     </View>
   )

@@ -1062,6 +1062,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       gap: 10,
       contentGap: 2,
       accentWidth: 4,
+      prefixWidth: 24,
       padding: { left: 10, right: 10, top: 9, bottom: 9 },
       backgroundColor: colors.surface.dark.toNumber(),
       backgroundAlpha: 0.98,
@@ -1077,6 +1078,11 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       messageStyle: {
         ...textStyles.small,
         color: colors.text.light.toString(),
+      },
+      closeTextStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+        fontStyle: 'normal',
       },
       labels: {
         close: 'x',

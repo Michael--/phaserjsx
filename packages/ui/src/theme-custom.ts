@@ -533,9 +533,11 @@ export interface CustomComponentThemes {
     minHeight?: ViewTheme['height']
     contentGap?: number
     accentWidth?: number
+    prefixWidth?: number
     titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
     messageStyle?: Phaser.Types.GameObjects.Text.TextStyle
     closeButtonSize?: number
+    closeTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
     labels?: ToastLabels
     variants?: Partial<Record<ToastVariant, ToastVariantTheme>>
   } & NestedComponentThemes

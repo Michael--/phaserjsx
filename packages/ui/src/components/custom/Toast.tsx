@@ -3,6 +3,7 @@
  * Toast and NotificationStack components.
  * Compact transient feedback for saves, errors, confirmations, and status updates.
  */
+import type { EdgeInsets, GapInsets } from '../../core-props'
 import { useEffect, useMemo, useScene, useTheme } from '../../hooks'
 import { portalRegistry } from '../../portal'
 import { getThemedProps, mergeThemes } from '../../theme'
@@ -40,9 +41,11 @@ export interface ToastThemeSlot extends ViewTheme {
   gap?: number
   contentGap?: number
   accentWidth?: number
+  prefixWidth?: number
   titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
   messageStyle?: Phaser.Types.GameObjects.Text.TextStyle
   closeButtonSize?: number
+  closeTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
   labels?: ToastLabels
   variants?: Partial<Record<ToastVariant, ToastVariantTheme>>
 }
@@ -93,6 +96,18 @@ export interface NotificationStackAlignment {
   alignItems: NonNullable<ViewProps['alignItems']>
 }
 
+export interface ToastContentWidthOptions {
+  width: ViewProps['width']
+  padding: ViewProps['padding']
+  gap: number
+  accentWidth: number
+  hasPrefix: boolean
+  prefixWidth: number
+  hasClose: boolean
+  closeButtonSize: number
+  minContentWidth?: number
+}
+
 export function resolveNotificationStackAlignment(
   position: NotificationStackPosition
 ): NotificationStackAlignment {
@@ -106,6 +121,36 @@ export function resolveNotificationStackAlignment(
 export function getToastAutoDismissDuration(item: ToastItem, fallbackDuration: number): number {
   if (item.autoDismiss === false) return 0
   return item.duration ?? fallbackDuration
+}
+
+function getHorizontalPadding(padding: ViewProps['padding']): number {
+  if (typeof padding === 'number') return padding * 2
+  if (!padding) return 0
+
+  const edgeInsets = padding as EdgeInsets
+  return (edgeInsets.left ?? 0) + (edgeInsets.right ?? 0)
+}
+
+function getHorizontalGap(gap: ViewProps['gap']): number {
+  if (typeof gap === 'number') return gap
+  if (!gap) return 0
+
+  return (gap as GapInsets).horizontal ?? 0
+}
+
+export function getToastContentWidth(options: ToastContentWidthOptions): number | undefined {
+  if (typeof options.width !== 'number') return undefined
+
+  const columnCount = 1 + 1 + (options.hasPrefix ? 1 : 0) + (options.hasClose ? 1 : 0)
+  const totalGap = Math.max(0, columnCount - 1) * options.gap
+  const reservedWidth =
+    getHorizontalPadding(options.padding) +
+    options.accentWidth +
+    (options.hasPrefix ? options.prefixWidth : 0) +
+    (options.hasClose ? options.closeButtonSize : 0) +
+    totalGap
+
+  return Math.max(options.minContentWidth ?? 96, options.width - reservedWidth)
 }
 
 function isPositiveDuration(duration: number): boolean {
@@ -134,6 +179,13 @@ export function Toast(props: ToastProps): VNodeLike {
   const themedToast = themed as ToastThemeSlot
   const resolvedVariant = variant ?? themedToast.variant ?? 'info'
   const variantTheme = themedToast.variants?.[resolvedVariant] ?? {}
+  const resolvedWidth = viewProps.width ?? themedToast.width ?? 320
+  const resolvedPadding = viewProps.padding ??
+    themedToast.padding ?? { left: 10, right: 10, top: 9, bottom: 9 }
+  const resolvedGap = getHorizontalGap(viewProps.gap ?? themedToast.gap ?? 10)
+  const accentWidth = themedToast.accentWidth ?? 4
+  const prefixWidth = themedToast.prefixWidth ?? 24
+  const closeButtonSize = themedToast.closeButtonSize ?? 22
 
   const resolvedPrefix = prefix ?? variantTheme.prefix
   const resolvedTitleStyle =
@@ -146,18 +198,27 @@ export function Toast(props: ToastProps): VNodeLike {
       : undefined
   const closeLabel = labels?.close ?? themedToast.labels?.close ?? 'x'
   const hasTextContent = title !== undefined || message !== undefined || children !== undefined
+  const hasCloseButton = dismissible && onDismiss !== undefined
+  const contentWidth = getToastContentWidth({
+    width: resolvedWidth,
+    padding: resolvedPadding,
+    gap: resolvedGap,
+    accentWidth,
+    hasPrefix: resolvedPrefix !== undefined,
+    prefixWidth,
+    hasClose: hasCloseButton,
+    closeButtonSize,
+  })
 
   return (
     <View
       {...viewProps}
       direction="row"
       alignItems="stretch"
-      gap={viewProps.gap ?? themedToast.gap ?? 10}
-      width={viewProps.width ?? themedToast.width ?? 320}
+      gap={resolvedGap}
+      width={resolvedWidth}
       minHeight={viewProps.minHeight ?? themedToast.minHeight ?? 58}
-      padding={
-        viewProps.padding ?? themedToast.padding ?? { left: 10, right: 10, top: 9, bottom: 9 }
-      }
+      padding={resolvedPadding}
       backgroundColor={
         viewProps.backgroundColor ?? variantTheme.backgroundColor ?? themedToast.backgroundColor
       }
@@ -170,19 +231,26 @@ export function Toast(props: ToastProps): VNodeLike {
       theme={nestedTheme}
     >
       <View
-        width={themedToast.accentWidth ?? 4}
+        width={accentWidth}
         backgroundColor={variantTheme.accentColor ?? variantTheme.borderColor ?? 0x38bdf8}
         cornerRadius={2}
       />
 
       {resolvedPrefix && (
-        <View alignItems="center" justifyContent="center" padding={{ top: 1 }}>
+        <View width={prefixWidth} alignItems="center" justifyContent="center" padding={{ top: 1 }}>
           {resolvedPrefix}
         </View>
       )}
 
       {hasTextContent && (
-        <View flex={1} width="fill" gap={themedToast.contentGap ?? 2} justifyContent="center">
+        <View
+          {...(contentWidth === undefined ? { flex: 1 } : {})}
+          width={contentWidth ?? 'fill'}
+          flexShrink={1}
+          gap={themedToast.contentGap ?? 2}
+          justifyContent="center"
+          overflow="hidden"
+        >
           {title !== undefined && <Text text={title} style={resolvedTitleStyle} />}
           {message !== undefined && <WrapText text={message} style={resolvedMessageStyle} />}
           {children}
@@ -192,16 +260,19 @@ export function Toast(props: ToastProps): VNodeLike {
       {action}
       {suffix}
 
-      {dismissible && onDismiss && (
-        <Button
-          variant="ghost"
-          size="small"
-          width={themedToast.closeButtonSize ?? 24}
-          height={themedToast.closeButtonSize ?? 24}
-          onClick={onDismiss}
-        >
-          <Text text={closeLabel} />
-        </Button>
+      {hasCloseButton && (
+        <View alignItems="center" justifyContent="center" padding={{ top: 1 }}>
+          <Button
+            variant="ghost"
+            maxWidth={closeButtonSize}
+            maxHeight={closeButtonSize}
+            cornerRadius={closeButtonSize}
+            padding={0}
+            onClick={onDismiss}
+          >
+            <Text text={closeLabel} />
+          </Button>
+        </View>
       )}
     </View>
   )
