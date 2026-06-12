@@ -50,7 +50,7 @@ export const checkboxContent: ComponentDocs = {
       title: 'Customization',
       description: 'Theme size, colors, label style, and label position.',
       component: CustomizationCheckboxExample,
-      height: SCENE_SIZES.medium,
+      height: SCENE_SIZES.large,
       code: CustomizationCheckboxExampleRaw,
     },
   ],
