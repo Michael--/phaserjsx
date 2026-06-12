@@ -92,6 +92,8 @@ export interface CustomComponentThemes {
     buttonVariant?: ButtonVariant
     buttonSize?: ButtonSize
     buttonTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    buttonIndicatorColor?: number
+    buttonIndicatorActiveColor?: number
     labelPosition?: NumberInputLabelPosition
     labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
     valueStyle?: Phaser.Types.GameObjects.Text.TextStyle

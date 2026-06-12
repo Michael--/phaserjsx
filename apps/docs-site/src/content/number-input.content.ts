@@ -185,6 +185,13 @@ export const numberInputContent: ComponentDocs = {
       description: 'Custom increment button content. Useful for icon components.',
     },
     {
+      name: 'renderButtonContent',
+      type: '(props: NumberInputButtonRenderProps) => VNode',
+      default: undefined,
+      description:
+        'Render decrement/increment button content with action, disabled state, current value, next value, size, and theme colors.',
+    },
+    {
       name: 'disabled',
       type: 'boolean',
       default: 'false',
@@ -220,6 +227,18 @@ export const numberInputContent: ComponentDocs = {
       type: 'TextStyle',
       default: undefined,
       description: 'Text style forwarded to generated decrement/increment labels.',
+    },
+    {
+      name: 'buttonIndicatorColor',
+      type: 'number',
+      default: '0xffffff',
+      description: 'Base color passed to renderButtonContent.',
+    },
+    {
+      name: 'buttonIndicatorActiveColor',
+      type: 'number',
+      default: '0xffffff',
+      description: 'Active color passed to renderButtonContent.',
     },
     {
       name: 'repeatOnHold',

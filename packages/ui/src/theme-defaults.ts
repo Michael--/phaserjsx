@@ -195,6 +195,8 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         ...textStyles.DEFAULT,
         fontStyle: 'bold',
       },
+      buttonIndicatorColor: colors.text.DEFAULT.toNumber(),
+      buttonIndicatorActiveColor: colors.surface.DEFAULT.toNumber(),
       labelPosition: 'left',
       valueBackgroundColor: colors.surface.light.toNumber(),
       valueBackgroundAlpha: 1,

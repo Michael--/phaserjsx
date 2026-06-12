@@ -10,7 +10,7 @@ import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
-import { Text, View } from '../index'
+import { Graphics, Text, View, type GraphicsProps } from '../index'
 import { Button, type ButtonSize, type ButtonVariant } from './Button'
 
 export interface NumberInputLabels {
@@ -25,6 +25,45 @@ export interface NumberInputLabels {
 export type NumberInputLabelPosition = 'left' | 'right' | 'top' | 'bottom' | 'none'
 export type NumberInputButtonPlacement = 'split' | 'left' | 'right'
 export type NumberInputButtonDirection = 'row' | 'column'
+export type NumberInputButtonAction = 'decrement' | 'increment'
+export type NumberInputIndicatorDirection = 'left' | 'right' | 'up' | 'down'
+export type NumberInputIndicatorVariant = 'sign' | 'chevron'
+
+export interface NumberInputButtonRenderProps {
+  action: NumberInputButtonAction
+  disabled: boolean
+  value: number
+  nextValue: number
+  size: number
+  color: number
+  activeColor: number
+}
+
+export interface NumberInputIndicatorProps extends Omit<
+  GraphicsProps,
+  'children' | 'dependencies' | 'onDraw'
+> {
+  /** Indicator variant. Sign draws minus/plus; chevron draws an arrow. */
+  variant?: NumberInputIndicatorVariant
+  /** NumberInput action. Used by the sign variant. */
+  action?: NumberInputButtonAction
+  /** Chevron direction. Defaults from action when omitted. */
+  direction?: NumberInputIndicatorDirection
+  /** Indicator square size. */
+  size?: number
+  /** Stroke and border color. */
+  color?: number
+  /** Optional active stroke color. */
+  activeColor?: number
+  /** Disabled visual state. */
+  disabled?: boolean
+  /** Draw a framed background behind the glyph. */
+  framed?: boolean
+  /** Alpha applied to the framed background. */
+  backgroundAlpha?: number
+  /** Alpha applied to the frame border. */
+  borderAlpha?: number
+}
 
 export interface NumberInputProps extends Omit<ViewProps, 'children'> {
   /** Current value in controlled mode. */
@@ -53,6 +92,8 @@ export interface NumberInputProps extends Omit<ViewProps, 'children'> {
   decrementContent?: ChildrenType
   /** Custom increment button content. Children take precedence over labels.increment. */
   incrementContent?: ChildrenType
+  /** Render step button content with action, disabled state, size, and theme colors. */
+  renderButtonContent?: (props: NumberInputButtonRenderProps) => ChildrenType
   /** Disable all interactions. */
   disabled?: boolean
   /** Placement of the decrement/increment buttons around the value display. */
@@ -65,6 +106,10 @@ export interface NumberInputProps extends Omit<ViewProps, 'children'> {
   buttonSize?: ButtonSize
   /** Text style forwarded to generated button labels. */
   buttonTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+  /** Color passed to renderButtonContent and NumberInputIndicator examples. */
+  buttonIndicatorColor?: number
+  /** Active color passed to renderButtonContent and NumberInputIndicator examples. */
+  buttonIndicatorActiveColor?: number
   /** Enable repeated changes after a long press. */
   repeatOnHold?: boolean
   /** Delay before hold repeat starts in milliseconds. */
@@ -90,6 +135,133 @@ const DEFAULT_LABELS: Required<NumberInputLabels> = {
   decrement: '-',
   increment: '+',
   value: 'Value',
+}
+
+function getDefaultIndicatorDirection(
+  action: NumberInputButtonAction
+): NumberInputIndicatorDirection {
+  return action === 'decrement' ? 'left' : 'right'
+}
+
+function drawChevronPath(
+  g: Phaser.GameObjects.Graphics,
+  direction: NumberInputIndicatorDirection,
+  size: number
+): void {
+  const center = size / 2
+  const inset = size * 0.32
+  const outer = size * 0.68
+  const start = size * 0.3
+  const end = size * 0.7
+
+  g.beginPath()
+
+  if (direction === 'left') {
+    g.moveTo(outer, start)
+    g.lineTo(inset, center)
+    g.lineTo(outer, end)
+  } else if (direction === 'right') {
+    g.moveTo(inset, start)
+    g.lineTo(outer, center)
+    g.lineTo(inset, end)
+  } else if (direction === 'up') {
+    g.moveTo(start, outer)
+    g.lineTo(center, inset)
+    g.lineTo(end, outer)
+  } else {
+    g.moveTo(start, inset)
+    g.lineTo(center, outer)
+    g.lineTo(end, inset)
+  }
+
+  g.strokePath()
+}
+
+function drawSignPath(
+  g: Phaser.GameObjects.Graphics,
+  action: NumberInputButtonAction,
+  size: number
+): void {
+  const center = size / 2
+  const lineStart = size * 0.3
+  const lineEnd = size * 0.7
+
+  g.beginPath()
+  g.moveTo(lineStart, center)
+  g.lineTo(lineEnd, center)
+  g.strokePath()
+
+  if (action === 'increment') {
+    g.beginPath()
+    g.moveTo(center, lineStart)
+    g.lineTo(center, lineEnd)
+    g.strokePath()
+  }
+}
+
+/**
+ * NumberInputIndicator component
+ * Small Graphics-based sign or chevron indicator for NumberInput buttons.
+ */
+export function NumberInputIndicator(props: NumberInputIndicatorProps): VNodeLike {
+  const {
+    variant = 'sign',
+    action = 'increment',
+    direction,
+    size = 24,
+    color = 0xffffff,
+    activeColor = color,
+    disabled = false,
+    framed = false,
+    backgroundAlpha = 0.12,
+    borderAlpha = 1,
+    ...viewProps
+  } = props
+
+  const resolvedDirection = direction ?? getDefaultIndicatorDirection(action)
+
+  return (
+    <Graphics
+      {...viewProps}
+      width={size}
+      height={size}
+      dependencies={[
+        variant,
+        action,
+        resolvedDirection,
+        size,
+        color,
+        activeColor,
+        disabled,
+        framed,
+        backgroundAlpha,
+        borderAlpha,
+      ]}
+      onDraw={(g: Phaser.GameObjects.Graphics) => {
+        const alpha = disabled ? 0.45 : 1
+        const inset = Math.max(3, Math.round(size * 0.16))
+        const stroke = Math.max(2, Math.round(size * 0.12))
+        const iconColor = disabled ? color : activeColor
+
+        g.clear()
+
+        if (framed) {
+          g.fillStyle(iconColor, backgroundAlpha * alpha)
+          g.lineStyle(2, iconColor, borderAlpha * alpha)
+          g.fillRoundedRect(inset, inset, size - inset * 2, size - inset * 2, size * 0.18)
+          g.strokeRoundedRect(inset, inset, size - inset * 2, size - inset * 2, size * 0.18)
+        }
+
+        g.lineStyle(stroke, iconColor, alpha)
+
+        if (variant === 'chevron') {
+          drawChevronPath(g, resolvedDirection, size)
+        } else {
+          drawSignPath(g, action, size)
+        }
+      }}
+    />
+  )
 }
 
 function isFiniteNumber(value: unknown): value is number {
@@ -163,12 +335,15 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
     labels: labelOverrides,
     decrementContent,
     incrementContent,
+    renderButtonContent,
     disabled = false,
     buttonPlacement,
     buttonDirection,
     buttonVariant,
     buttonSize,
     buttonTextStyle,
+    buttonIndicatorColor,
+    buttonIndicatorActiveColor,
     repeatOnHold,
     holdDelay,
     repeatInterval,
@@ -219,6 +394,10 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
   const resolvedButtonSize = buttonSize ?? themed.buttonSize ?? 'small'
   const resolvedButtonTextStyle = buttonTextStyle ??
     themed.buttonTextStyle ?? { color: '#111827', fontSize: '16px' }
+  const resolvedButtonIndicatorColor =
+    buttonIndicatorColor ?? themed.buttonIndicatorColor ?? 0xffffff
+  const resolvedButtonIndicatorActiveColor =
+    buttonIndicatorActiveColor ?? themed.buttonIndicatorActiveColor ?? resolvedButtonIndicatorColor
   const resolvedRepeatOnHold = repeatOnHold ?? themed.repeatOnHold ?? true
   const resolvedHoldDelay = holdDelay ?? themed.holdDelay ?? 350
   const resolvedRepeatInterval = repeatInterval ?? themed.repeatInterval ?? 90
@@ -275,28 +454,42 @@ export function NumberInput(props: NumberInputProps): VNodeLike {
     }
   }
 
-  const renderStepButton = (direction: -1 | 1) => {
-    const isDecrement = direction === -1
+  const renderStepButton = (stepDirection: -1 | 1) => {
+    const isDecrement = stepDirection === -1
+    const action: NumberInputButtonAction = isDecrement ? 'decrement' : 'increment'
     const canChange = isDecrement ? canDecrement : canIncrement
     const content = isDecrement ? decrementContent : incrementContent
     const text = isDecrement ? labels.decrement : labels.increment
+    const nextValue = isDecrement ? decrementValue : incrementValue
+    const isButtonDisabled = disabled || !canChange
+    const renderedContent =
+      content ??
+      renderButtonContent?.({
+        action,
+        disabled: isButtonDisabled,
+        value: currentValue,
+        nextValue,
+        size: buttonControlSize,
+        color: resolvedButtonIndicatorColor,
+        activeColor: resolvedButtonIndicatorActiveColor,
+      })
 
     return (
       <Button
         key={isDecrement ? 'decrement' : 'increment'}
-        label={content ? undefined : text}
+        label={renderedContent ? undefined : text}
         width={buttonControlSize}
         height={buttonControlSize}
         variant={resolvedButtonVariant}
         size={resolvedButtonSize}
         textStyle={resolvedButtonTextStyle}
-        disabled={disabled || !canChange}
-        onClick={() => commitStep(direction)}
-        onLongPress={() => startHoldRepeat(direction)}
+        disabled={isButtonDisabled}
+        onClick={() => commitStep(stepDirection)}
+        onLongPress={() => startHoldRepeat(stepDirection)}
         onTouchMove={handleHoldMove}
         longPressDuration={resolvedHoldDelay}
       >
-        {content}
+        {renderedContent}
       </Button>
     )
   }

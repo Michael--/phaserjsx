@@ -62,11 +62,17 @@ export { NineSlice, type NineSliceProps } from './NineSlice'
 export { NineSliceButton, type NineSliceButtonProps } from './NineSliceButton'
 export {
   NumberInput,
+  NumberInputIndicator,
   getNextNumberInputValue,
   getNumberInputPrecision,
   normalizeNumberInputValue,
+  type NumberInputButtonAction,
   type NumberInputButtonDirection,
   type NumberInputButtonPlacement,
+  type NumberInputButtonRenderProps,
+  type NumberInputIndicatorDirection,
+  type NumberInputIndicatorProps,
+  type NumberInputIndicatorVariant,
   type NumberInputLabelPosition,
   type NumberInputLabels,
   type NumberInputProps,
