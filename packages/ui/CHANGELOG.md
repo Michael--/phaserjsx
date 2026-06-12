@@ -1,5 +1,20 @@
 # @number10/phaserjsx
 
+## 4.4.0
+
+### Minor Changes
+
+- Improve Button defaults and public theme slots with generated `label`/`text` content, `ghost` and `danger` variants, themed size/variant maps, nested Text/Icon defaults, and stronger docs examples.
+- Add Popover and ContextMenu open/close presence animations with configurable effects and durations while keeping portal placement and viewport clamping behavior.
+
+### Patch Changes
+
+- Preserve local theme props for function components, notify theme listeners on custom theme updates, and restore global plus nested theme resolution for registered component themes.
+- Strengthen themed states and drawing for Toggle, RadioButton, Dropdown, CharTextInput, ScrollSlider, Badge, Tag, and generated background borders.
+- Account for margins when resolving fill sizes and add layout/VDOM regression coverage for edge cases around child changes and themed function component rerenders.
+- Align ScrollView slider size variants with theme defaults and document the slider-size behavior in the docs site.
+- Expand docs and playground coverage for Button variants, effects, icons, sizing, Checkbox custom indicators, Popover behavior, and a StackBlitz showcase.
+
 ## 4.3.0
 
 ### Minor Changes

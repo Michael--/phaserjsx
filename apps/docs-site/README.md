@@ -4,7 +4,7 @@ Documentation and showcase site for @number10/phaserjsx component library.
 
 This docs site documents the PhaserJSX 4.x line for Phaser 4. Phaser 3 projects should use `@number10/phaserjsx@0.6.1`.
 
-Current docs target `@number10/phaserjsx@4.3.0`, including the standalone stencil clip extension for native Phaser Containers and the newer public UI components such as Checkbox, ProgressBar, Badge, Popover, and ContextMenu.
+Current docs target `@number10/phaserjsx@4.4.0`, including the standalone stencil clip extension for native Phaser Containers, the newer public UI components such as Checkbox, ProgressBar, Badge, Popover, and ContextMenu, and the refreshed Button/theme control surfaces.
 
 ## Architecture
 
@@ -23,7 +23,7 @@ The site uses **two separate JSX runtimes** without conflicts:
 2. **Live Examples (PhaserJSX)**: Interactive Phaser components in isolated canvas
 3. **Bridge Pattern**: `LiveExample` component wraps Phaser.Game, mounts PhaserJSX components
 
-The View documentation also includes a native Phaser stencil clip example that uses PhaserJSX only as the root mount and demonstrates direct `Container#setStencilClip(...)` usage. Component pages and interactive guide examples cover the current 4.3 UI surface and are intended to be published through GitHub Pages with the next push.
+The View documentation also includes a native Phaser stencil clip example that uses PhaserJSX only as the root mount and demonstrates direct `Container#setStencilClip(...)` usage. Component pages and interactive guide examples cover the current 4.4 UI surface and are intended to be published through GitHub Pages with the next push.
 
 ## Development
 

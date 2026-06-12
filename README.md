@@ -38,7 +38,7 @@ This monorepo contains:
 - **[docs-site](./apps/docs-site)** - Documentation website (GitHub Pages)
 - **[test-ui](./apps/test-ui)** - Development playground and testing app
 
-The current package line is `@number10/phaserjsx@4.3.0`, targeting Phaser 4.1+.
+The current package line is `@number10/phaserjsx@4.4.0`, targeting Phaser 4.1+.
 
 ## 🚀 Getting Started for Development
 

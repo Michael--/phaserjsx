@@ -1,5 +1,17 @@
 # docs-site
 
+## 0.8.0
+
+### Minor Changes
+
+- Document the `@number10/phaserjsx@4.4.0` UI surface for refreshed Button defaults, generated labels, additional variants, nested theme slots, Popover animations, and themed ScrollView slider sizing.
+- Add and update interactive examples for Button effects/icons/sizing/states, Checkbox custom render indicators, Popover behavior, ScrollView slider sizes, and the StackBlitz showcase.
+
+### Patch Changes
+
+- Updated dependency target documentation for `@number10/phaserjsx@4.4.0`.
+- Correct docs copy for layout and component examples touched since the 4.3.0 publish.
+
 ## 0.7.0
 
 ### Minor Changes

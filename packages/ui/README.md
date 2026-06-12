@@ -33,14 +33,15 @@ The 4.x line uses Phaser 4 render steps, filters, and WebGL behavior and is not 
 
 ## Current Release
 
-The current package line is `@number10/phaserjsx@4.3.0`, targeting Phaser 4.1+.
+The current package line is `@number10/phaserjsx@4.4.0`, targeting Phaser 4.1+.
 
 Recent public API additions include:
 
+- Button `ghost` and `danger` variants, generated `label`/`text` content, nested Text/Icon theme slots, and themed size/variant maps.
 - `Checkbox` for form and settings UIs, including controlled/uncontrolled and tristate state.
 - `ProgressBar` for horizontal or vertical progress indicators with optional labels.
 - `Badge` and `Tag` for compact status, count, and label indicators.
-- `Popover` and `ContextMenu` for portal-based overlays with measured placement and viewport clamping.
+- `Popover` and `ContextMenu` for portal-based overlays with measured placement, viewport clamping, and open/close presence animations.
 - `DebugPanel` for lightweight runtime diagnostics in development and performance demos.
 - Tooltip support as an API-level interaction feature for pointer/hover-capable displays.
 
