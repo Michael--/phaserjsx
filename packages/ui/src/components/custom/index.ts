@@ -158,6 +158,26 @@ export {
   type SliderMark,
   type SliderProps,
 } from './Slider'
+export {
+  ToolButtonGroup,
+  Toolbar,
+  getToolbarItemId,
+  isToolbarMenuItem,
+  isToolbarSeparatorItem,
+  isToolbarToggleItem,
+  resolveToolbarActiveId,
+  type ToolbarActionItem,
+  type ToolbarDensity,
+  type ToolbarItem,
+  type ToolbarItemType,
+  type ToolbarLabels,
+  type ToolbarMenuItem,
+  type ToolbarOrientation,
+  type ToolbarProps,
+  type ToolbarSeparatorItem,
+  type ToolbarThemeSlot,
+  type ToolbarToggleItem,
+} from './Toolbar'
 export { Tab, TabPanel, Tabs, type TabPanelProps, type TabProps, type TabsProps } from './Tabs'
 export { Toggle, type ToggleProps } from './Toggle'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'

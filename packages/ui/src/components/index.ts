@@ -169,6 +169,26 @@ export {
   type ProgressBarOrientation,
   type ProgressBarProps,
 } from './custom/ProgressBar'
+export {
+  ToolButtonGroup,
+  Toolbar,
+  getToolbarItemId,
+  isToolbarMenuItem,
+  isToolbarSeparatorItem,
+  isToolbarToggleItem,
+  resolveToolbarActiveId,
+  type ToolbarActionItem,
+  type ToolbarDensity,
+  type ToolbarItem,
+  type ToolbarItemType,
+  type ToolbarLabels,
+  type ToolbarMenuItem,
+  type ToolbarOrientation,
+  type ToolbarProps,
+  type ToolbarSeparatorItem,
+  type ToolbarThemeSlot,
+  type ToolbarToggleItem,
+} from './custom/Toolbar'
 
 // Re-export primitive creators/patchers for advanced use cases
 export { textCreator, textPatcher, type TextBaseProps } from './primitives/text'

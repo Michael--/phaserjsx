@@ -26,6 +26,7 @@ import type {
   SegmentedControlVariant,
 } from './components/custom/SegmentedControl'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
+import type { ToolbarDensity, ToolbarLabels, ToolbarOrientation } from './components/custom/Toolbar'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
@@ -160,6 +161,32 @@ export interface CustomComponentThemes {
     disabledAlpha?: number
     labelPosition?: SegmentedControlLabelPosition
     labels?: SegmentedControlLabels
+  } & NestedComponentThemes
+  Toolbar: ViewTheme & {
+    orientation?: ToolbarOrientation
+    density?: ToolbarDensity
+    itemWidth?: ViewTheme['width']
+    itemHeight?: ViewTheme['height']
+    compactItemWidth?: ViewTheme['width']
+    compactItemHeight?: ViewTheme['height']
+    itemGap?: number
+    groupGap?: number
+    buttonVariant?: ButtonVariant
+    activeButtonVariant?: ButtonVariant
+    menuButtonVariant?: ButtonVariant
+    buttonSize?: ButtonSize
+    compactButtonSize?: ButtonSize
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    activeTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    menuIndicatorStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    iconSize?: number
+    compactIconSize?: number
+    separatorColor?: number
+    separatorThickness?: number
+    separatorLength?: ViewTheme['width']
+    disabledAlpha?: number
+    labels?: ToolbarLabels
   } & NestedComponentThemes
   Badge: ViewTheme & {
     tone?: BadgeTone

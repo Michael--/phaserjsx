@@ -35,6 +35,7 @@ import { tabsContent } from './content/tabs.content'
 import { textContent } from './content/text.content'
 import { tileSpriteContent } from './content/tilesprite.content'
 import { toggleContent } from './content/toggle.content'
+import { toolbarContent } from './content/toolbar.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
 import { wraptextContent } from './content/wraptext.content'
@@ -105,6 +106,7 @@ export function App() {
             path="/components/palette-picker"
             element={<ComponentPage content={palettePickerContent} />}
           />
+          <Route path="/components/toolbar" element={<ComponentPage content={toolbarContent} />} />
           <Route path="/components/badge" element={<ComponentPage content={badgeContent} />} />
           <Route
             path="/components/radiobutton"
