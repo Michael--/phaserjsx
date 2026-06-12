@@ -76,6 +76,7 @@ const navigation: NavSection[] = [
       { label: 'Modal', path: '/components/modal' },
       { label: 'Dialog', path: '/components/dialog' },
       { label: 'AlertDialog', path: '/components/alertdialog' },
+      { label: 'Toast / NotificationStack', path: '/components/toast' },
       { label: 'Accordion', path: '/components/accordion' },
     ],
   },

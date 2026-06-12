@@ -26,6 +26,12 @@ import type {
   SegmentedControlVariant,
 } from './components/custom/SegmentedControl'
 import type { SidebarSize, SidebarVariant } from './components/custom/Sidebar'
+import type {
+  NotificationStackPosition,
+  ToastLabels,
+  ToastVariant,
+  ToastVariantTheme,
+} from './components/custom/Toast'
 import type { ToolbarDensity, ToolbarLabels, ToolbarOrientation } from './components/custom/Toolbar'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
@@ -520,6 +526,26 @@ export interface CustomComponentThemes {
         prefixTint?: number
       }
     }
+  } & NestedComponentThemes
+  Toast: ViewTheme & {
+    variant?: ToastVariant
+    width?: ViewTheme['width']
+    minHeight?: ViewTheme['height']
+    contentGap?: number
+    accentWidth?: number
+    titleStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    messageStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    closeButtonSize?: number
+    labels?: ToastLabels
+    variants?: Partial<Record<ToastVariant, ToastVariantTheme>>
+  } & NestedComponentThemes
+  NotificationStack: ViewTheme & {
+    position?: NotificationStackPosition
+    width?: ViewTheme['width']
+    gap?: number
+    offset?: number
+    duration?: number
+    depth?: number
   } & NestedComponentThemes
   WrapText: {
     wrap?: boolean

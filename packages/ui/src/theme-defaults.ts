@@ -1055,6 +1055,69 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     AlertDialog: {
       maxWidth: 500,
     },
+    Toast: {
+      variant: 'info',
+      width: 320,
+      minHeight: 58,
+      gap: 10,
+      contentGap: 2,
+      accentWidth: 4,
+      padding: { left: 10, right: 10, top: 9, bottom: 9 },
+      backgroundColor: colors.surface.dark.toNumber(),
+      backgroundAlpha: 0.98,
+      borderColor: colors.border.dark.toNumber(),
+      borderWidth: 1,
+      cornerRadius: 8,
+      closeButtonSize: 24,
+      titleStyle: {
+        ...textStyles.small,
+        color: colors.text.lightest.toString(),
+        fontStyle: 'bold',
+      },
+      messageStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      labels: {
+        close: 'x',
+      },
+      variants: {
+        info: {
+          accentColor: colors.info.DEFAULT.toNumber(),
+          borderColor: colors.info.dark.toNumber(),
+        },
+        success: {
+          accentColor: colors.success.DEFAULT.toNumber(),
+          borderColor: colors.success.dark.toNumber(),
+        },
+        warning: {
+          accentColor: colors.warning.DEFAULT.toNumber(),
+          borderColor: colors.warning.dark.toNumber(),
+        },
+        error: {
+          accentColor: colors.error.DEFAULT.toNumber(),
+          borderColor: colors.error.dark.toNumber(),
+        },
+      },
+      Button: {
+        ghost: {
+          padding: 0,
+          backgroundAlpha: 0,
+          textStyle: {
+            color: colors.text.light.toString(),
+            fontStyle: 'bold',
+          },
+        },
+      },
+    },
+    NotificationStack: {
+      position: 'top-right',
+      width: 320,
+      gap: 8,
+      offset: 16,
+      duration: 4000,
+      depth: 1200,
+    },
     WrapText: {
       wrap: true,
       paddingOffset: 0,

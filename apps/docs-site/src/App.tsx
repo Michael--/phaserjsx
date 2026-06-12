@@ -36,6 +36,7 @@ import { tabsContent } from './content/tabs.content'
 import { textContent } from './content/text.content'
 import { tileSpriteContent } from './content/tilesprite.content'
 import { toggleContent } from './content/toggle.content'
+import { toastContent } from './content/toast.content'
 import { toolbarContent } from './content/toolbar.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
@@ -154,6 +155,7 @@ export function App() {
             path="/components/alertdialog"
             element={<ComponentPage content={alertdialogContent} />}
           />
+          <Route path="/components/toast" element={<ComponentPage content={toastContent} />} />
           <Route
             path="/components/accordion"
             element={<ComponentPage content={accordionContent} />}
