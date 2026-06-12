@@ -46,17 +46,40 @@ export interface IconProps<T extends string = string> extends Omit<
  */
 export function Icon<T extends string = string>(props: IconProps<T>): VNodeLike {
   const { type, loader, size = 32, ...imageProps } = props
-  const [svg, setSvg] = useState<string | null>(null)
+  const [loadedIcon, setLoadedIcon] = useState<{ type: T; svg: string } | null>(null)
 
   useEffect(() => {
-    if (type != null)
-      loader(type)
-        .then(setSvg)
-        .catch((err) => console.error(`Failed to load icon ${type}:`, err))
+    let cancelled = false
+
+    if (type == null) {
+      setLoadedIcon(null)
+      return
+    }
+
+    setLoadedIcon((current) => (current?.type === type ? current : null))
+
+    loader(type)
+      .then((svg) => {
+        if (!cancelled) {
+          setLoadedIcon({ type, svg })
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error(`Failed to load icon ${type}:`, err)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [type, loader])
 
+  const currentIcon = loadedIcon?.type === type ? loadedIcon : null
+  const svg = currentIcon?.svg ?? null
+
   // Include size in texture key to prevent conflicts with different sizes
-  const textureKey = `icon-${type}-${size}`
+  const textureKey = type != null ? `icon-${type}-${size}` : ''
   const ready = svg ? useSVGTexture(textureKey, svg, size, size) : false
 
   return <Image texture={ready ? textureKey : ''} width={size} height={size} {...imageProps} />
@@ -108,13 +131,29 @@ export function createIconComponent<T extends string>(loader: IconLoaderFn<T>) {
  * ```
  */
 export function useIconPreload<T extends string>(type: T, loader: IconLoaderFn<T>): boolean {
-  const [svg, setSvg] = useState<string | null>(null)
+  const [loadedIcon, setLoadedIcon] = useState<{ type: T; svg: string } | null>(null)
 
   useEffect(() => {
+    let cancelled = false
+
+    setLoadedIcon((current) => (current?.type === type ? current : null))
+
     loader(type)
-      .then(setSvg)
-      .catch((err) => console.error(`Failed to load icon ${type}:`, err))
+      .then((svg) => {
+        if (!cancelled) {
+          setLoadedIcon({ type, svg })
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          console.error(`Failed to load icon ${type}:`, err)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
   }, [type, loader])
 
-  return svg !== null
+  return loadedIcon?.type === type
 }
