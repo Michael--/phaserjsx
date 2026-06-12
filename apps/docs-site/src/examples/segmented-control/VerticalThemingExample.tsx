@@ -8,14 +8,7 @@ export function VerticalThemingSegmentedControlExample() {
   const [alignment, setAlignment] = useState('center')
 
   return (
-    <View
-      width="fill"
-      height="fill"
-      direction="row"
-      justifyContent="center"
-      alignItems="center"
-      gap={28}
-    >
+    <View width="fill" height="fill" justifyContent="center" alignItems="center" gap={28}>
       <SegmentedControl
         label="Align"
         labelPosition="left"

@@ -43,6 +43,8 @@ export interface SegmentedControlOptionRenderProps {
   size: SegmentedControlSize
   variant: SegmentedControlVariant
   orientation: SegmentedControlOrientation
+  textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+  iconSize?: number
 }
 
 export interface SegmentedControlThemeSlot extends ViewTheme {
@@ -374,17 +376,6 @@ export function SegmentedControl(props: SegmentedControlProps): VNodeLike {
     const optionDisabled = disabled || !!option.disabled
     const hovered = hoveredValue === option.value
     const selectable = isSegmentedControlOptionSelectable(option, currentValue, disabled)
-    const content =
-      renderOption?.({
-        option,
-        selected,
-        disabled: optionDisabled,
-        hovered,
-        index,
-        size: resolvedSize,
-        variant: resolvedVariant,
-        orientation: resolvedOrientation,
-      }) ?? option.children
     const generatedLabel = option.label ?? (option.icon ? undefined : option.value)
     const segmentStyle = mergeViewTheme(
       {
@@ -413,6 +404,27 @@ export function SegmentedControl(props: SegmentedControlProps): VNodeLike {
         ...(resolvedIconSize !== undefined ? { size: resolvedIconSize } : {}),
       },
     })
+    const content =
+      renderOption?.({
+        option,
+        selected,
+        disabled: optionDisabled,
+        hovered,
+        index,
+        size: resolvedSize,
+        variant: resolvedVariant,
+        orientation: resolvedOrientation,
+        ...(effectiveTextStyle ? { textStyle: effectiveTextStyle } : {}),
+        ...(resolvedIconSize !== undefined ? { iconSize: resolvedIconSize } : {}),
+      }) ?? option.children
+    const hoverHandlers =
+      selectable && (themedControl.segmentHoverStyle || variantTheme.segmentHoverStyle)
+        ? {
+            onHoverStart: () => setHoveredValue(option.value),
+            onHoverEnd: () =>
+              setHoveredValue((current) => (current === option.value ? undefined : current)),
+          }
+        : {}
 
     return (
       <View
@@ -424,16 +436,18 @@ export function SegmentedControl(props: SegmentedControlProps): VNodeLike {
         {...segmentStyle}
         enableGestures={selectable}
         onTouch={() => commitValue(option.value)}
-        onHoverStart={() => setHoveredValue(option.value)}
-        onHoverEnd={() =>
-          setHoveredValue((current) => (current === option.value ? undefined : current))
-        }
+        {...hoverHandlers}
         theme={contentTheme}
       >
         {content ?? (
           <>
             {option.icon}
-            {generatedLabel !== undefined ? <Text text={generatedLabel} /> : null}
+            {generatedLabel !== undefined ? (
+              <Text
+                text={generatedLabel}
+                {...(effectiveTextStyle ? { style: effectiveTextStyle } : {})}
+              />
+            ) : null}
           </>
         )}
       </View>

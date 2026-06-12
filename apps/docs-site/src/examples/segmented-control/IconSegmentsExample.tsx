@@ -26,14 +26,14 @@ export function IconSegmentsSegmentedControlExample() {
           { value: 'settings', label: 'Settings' },
           { value: 'export', label: 'Export' },
         ]}
-        renderOption={({ option, selected }) => (
+        renderOption={({ option, selected, textStyle, iconSize }) => (
           <View direction="row" gap={8} alignItems="center">
             <Icon
               type={iconByValue[option.value] ?? 'star'}
-              size={18}
+              size={iconSize}
               tint={selected ? 0xffffff : 0x94a3b8}
             />
-            <Text text={option.label ?? option.value} />
+            <Text text={option.label ?? option.value} style={textStyle} />
           </View>
         )}
       />
