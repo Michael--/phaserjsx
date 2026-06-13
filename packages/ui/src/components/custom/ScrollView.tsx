@@ -492,9 +492,11 @@ export function ScrollView(props: ScrollViewProps): VNodeLike {
     const { x: xTargets, y: yTargets } = getSnapTargets()
     const viewportHeightLocal = viewportRef.current?.height ?? 0
     const viewportWidthLocal = viewportRef.current?.width ?? 0
+    const snapXTargets = maxScrollX > epsilon ? xTargets : []
+    const snapYTargets = maxScrollY > epsilon ? yTargets : []
 
-    const snapX = findNearestSnap(baseDx, xTargets, viewportWidthLocal, maxScrollX)
-    const snapY = findNearestSnap(baseDy, yTargets, viewportHeightLocal, maxScrollY)
+    const snapX = findNearestSnap(baseDx, snapXTargets, viewportWidthLocal, maxScrollX)
+    const snapY = findNearestSnap(baseDy, snapYTargets, viewportHeightLocal, maxScrollY)
 
     // Prefer Y index if available, otherwise X
     const snapIndex = snapY.index >= 0 ? snapY.index : snapX.index
