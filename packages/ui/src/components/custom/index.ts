@@ -145,6 +145,14 @@ export {
 } from './ProgressView'
 export { RadioButton, type RadioButtonProps } from './RadioButton'
 export { RadioGroup, type RadioGroupProps } from './RadioGroup'
+export {
+  RatingBar,
+  type RatingBarIconRenderProps,
+  type RatingBarLabels,
+  type RatingBarProps,
+  type RatingBarSize,
+  type RatingBarThemeSlot,
+} from './RatingBar'
 export { RefOriginView, type RefOriginViewProps } from './RefOriginView'
 export {
   calculateSliderSize,

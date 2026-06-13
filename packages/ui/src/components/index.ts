@@ -180,6 +180,14 @@ export {
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
 export {
+  RatingBar,
+  type RatingBarIconRenderProps,
+  type RatingBarLabels,
+  type RatingBarProps,
+  type RatingBarSize,
+  type RatingBarThemeSlot,
+} from './custom/RatingBar'
+export {
   findSegmentedControlOption,
   isSegmentedControlOptionSelectable,
   resolveSegmentedControlValue,

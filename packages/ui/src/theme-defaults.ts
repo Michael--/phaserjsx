@@ -523,6 +523,14 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         fontSize: '13px',
       },
     },
+    RatingBar: {
+      size: 'medium',
+      gap: 4,
+      iconSize: 24,
+      filledColor: '#fbbf24',
+      emptyColor: '#475569',
+      disabledAlpha: 0.5,
+    },
     ScrollSlider: {
       borderColor: colors.border.medium.toNumber(),
       trackColor: colors.surface.dark.toNumber(),

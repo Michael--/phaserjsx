@@ -30,6 +30,7 @@ import { portalContent } from './content/portal.content'
 import { progressViewContent } from './content/progress-view.content'
 import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
+import { ratingBarContent } from './content/rating-bar.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
 import { segmentedControlContent } from './content/segmented-control.content'
@@ -125,6 +126,10 @@ export function App() {
           <Route
             path="/components/radiobutton"
             element={<ComponentPage content={radiobuttonContent} />}
+          />
+          <Route
+            path="/components/rating-bar"
+            element={<ComponentPage content={ratingBarContent} />}
           />
           <Route
             path="/components/dropdown"

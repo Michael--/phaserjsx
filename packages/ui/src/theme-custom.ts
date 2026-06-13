@@ -25,6 +25,7 @@ import type {
 import type { PalettePickerLabels } from './components/custom/PalettePicker'
 import type { PopoverPlacement } from './components/custom/Popover'
 import type { ProgressViewLabels } from './components/custom/ProgressView'
+import type { RatingBarSize } from './components/custom/RatingBar'
 import type {
   SegmentedControlLabelPosition,
   SegmentedControlLabels,
@@ -292,6 +293,15 @@ export interface CustomComponentThemes {
     percentageStyle?: Phaser.Types.GameObjects.Text.TextStyle
     cancelButtonSize?: ButtonSize
     labels?: ProgressViewLabels
+  } & NestedComponentThemes
+  RatingBar: ViewTheme & {
+    size?: RatingBarSize
+    gap?: number
+    iconSize?: number
+    filledColor?: string
+    emptyColor?: string
+    disabledAlpha?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
   } & NestedComponentThemes
   ScrollSlider: {
     borderColor?: number
