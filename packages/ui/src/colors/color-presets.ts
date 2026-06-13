@@ -4,7 +4,7 @@
  */
 
 import { HexColor, type ColorShade, type ColorTokens } from './color-types'
-import { darkenHex, lightenHex } from './color-utils'
+import { hexToNumber, hslToNumber, numberToHex, numberToHsl } from './color-utils'
 
 /**
  * Base ColorShade without DEFAULT property
@@ -21,7 +21,7 @@ function addDefault(shade: ColorShadeBase): ColorShade {
 }
 
 /**
- * Generate a complete color scale from a base color
+ * Generate a complete color scale from a base color using HSL-based perceptual scaling
  * Creates shades from lightest to darkest with DEFAULT pointing to medium
  * @param baseColor - The base color in hex format (e.g., '#2196f3')
  * @returns Complete ColorShade with all semantic levels as HexColor objects
@@ -33,12 +33,15 @@ function addDefault(shade: ColorShadeBase): ColorShade {
  * ```
  */
 export function generateColorScale(baseColor: string): ColorShade {
+  const num = hexToNumber(baseColor)
+  const hsl = numberToHsl(num)
+
   return addDefault({
-    lightest: lightenHex(baseColor, 0.7),
-    light: lightenHex(baseColor, 0.4),
-    medium: lightenHex(baseColor, 0.15),
-    dark: darkenHex(baseColor, 0.15),
-    darkest: darkenHex(baseColor, 0.4),
+    lightest: HexColor.from(numberToHex(hslToNumber(hsl.h, hsl.s, 0.92))),
+    light: HexColor.from(numberToHex(hslToNumber(hsl.h, hsl.s * 0.7, 0.72))),
+    medium: HexColor.from(baseColor),
+    dark: HexColor.from(numberToHex(hslToNumber(hsl.h, hsl.s * 0.8, 0.35))),
+    darkest: HexColor.from(numberToHex(hslToNumber(hsl.h, hsl.s * 0.6, 0.15))),
   })
 }
 
