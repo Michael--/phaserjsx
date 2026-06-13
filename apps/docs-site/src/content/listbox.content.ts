@@ -131,6 +131,13 @@ export const listboxContent: ComponentDocs = {
       description: 'Clamps visible height to a fixed number of rows; content scrolls beyond.',
     },
     {
+      name: 'scrollViewProps',
+      type: "Pick<ScrollViewProps, 'sliderSize' | 'momentum' | ...>",
+      default: undefined,
+      description:
+        "Props forwarded to the underlying ScrollView. Use sliderSize to control scrollbar thickness ('large', 'medium', 'small', 'tiny', 'micro', 'nano').",
+    },
+    {
       name: 'theme',
       type: 'PartialTheme',
       default: undefined,

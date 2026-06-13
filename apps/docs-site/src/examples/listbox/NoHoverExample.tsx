@@ -3,10 +3,13 @@ import type { ListBoxItem } from '@number10/phaserjsx'
 import { ListBox, Text, View, useState } from '@number10/phaserjsx'
 
 const items: ListBoxItem[] = [
+  { value: 'story', label: 'Story' },
   { value: 'easy', label: 'Easy' },
   { value: 'normal', label: 'Normal' },
   { value: 'hard', label: 'Hard' },
   { value: 'expert', label: 'Expert' },
+  { value: 'nightmare', label: 'Nightmare' },
+  { value: 'custom', label: 'Custom' },
 ]
 
 export function NoHoverListBoxExample() {
@@ -21,6 +24,7 @@ export function NoHoverListBoxExample() {
         maxVisibleItems={4}
         width={200}
         hoverable={false}
+        scrollViewProps={{ sliderSize: 'tiny' }}
       />
       <Text text={`Difficulty: ${items.find((i) => i.value === selected)?.label ?? selected}`} />
     </View>

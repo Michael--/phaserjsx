@@ -10,7 +10,7 @@ import type { PartialTheme, ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
 import type { VNodeLike } from '../../vdom'
 import { Text, View } from '../index'
-import { ScrollView } from './ScrollView'
+import { ScrollView, type ScrollViewProps } from './ScrollView'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -72,6 +72,18 @@ export interface ListBoxProps extends Omit<ViewProps, 'children'> {
   disabled?: boolean
   /** Maximum visible items before scrolling. If unset, the list grows to fit. */
   maxVisibleItems?: number
+  /** Props forwarded to the underlying ScrollView (sliderSize, momentum, etc.). */
+  scrollViewProps?: Pick<
+    ScrollViewProps,
+    | 'sliderSize'
+    | 'showVerticalSlider'
+    | 'showHorizontalSlider'
+    | 'momentum'
+    | 'snap'
+    | 'snapAlignment'
+    | 'snapThreshold'
+    | 'onSnap'
+  >
   /** Theme overrides. */
   theme?: PartialTheme
 }
@@ -152,6 +164,7 @@ export function ListBox(props: ListBoxProps): VNodeLike {
     onChange,
     renderItem,
     hoverable = true,
+    scrollViewProps,
     labels: labelOverrides,
     disabled = false,
     maxVisibleItems,
@@ -304,6 +317,7 @@ export function ListBox(props: ListBoxProps): VNodeLike {
           height={listHeight > 0 ? listHeight : undefined}
           width="fill"
           theme={nestedTheme}
+          {...scrollViewProps}
         >
           <View direction="column" gap={itemGap} width="fill" theme={nestedTheme}>
             {items.map(renderListItem)}
