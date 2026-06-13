@@ -40,6 +40,7 @@ import type {
   ToastVariantTheme,
 } from './components/custom/Toast'
 import type { ToolbarDensity, ToolbarLabels, ToolbarOrientation } from './components/custom/Toolbar'
+import type { WheelPickerLabels, WheelPickerSize } from './components/custom/WheelPicker'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
@@ -594,6 +595,24 @@ export interface CustomComponentThemes {
     emptyStyle?: Phaser.Types.GameObjects.Text.TextStyle
     disabledAlpha?: number
     labels?: ListBoxLabels
+  } & NestedComponentThemes
+  WheelPicker: ViewTheme & {
+    size?: WheelPickerSize
+    textColor?: string
+    itemHeight?: number
+    visibleItems?: number
+    itemPadding?: ViewTheme['padding']
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    selectedTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    fadeColor?: number
+    fadeHeight?: number
+    selectionColor?: number
+    selectionAlpha?: number
+    selectionHeight?: number
+    selectionCornerRadius?: number
+    disabledAlpha?: number
+    labels?: WheelPickerLabels
   } & NestedComponentThemes
   WrapText: {
     wrap?: boolean

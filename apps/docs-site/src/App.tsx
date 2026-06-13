@@ -27,8 +27,8 @@ import { palettePickerContent } from './content/palette-picker.content'
 import { particlesContent } from './content/particles.content'
 import { popoverContent } from './content/popover.content'
 import { portalContent } from './content/portal.content'
-import { progressbarContent } from './content/progressbar.content'
 import { progressViewContent } from './content/progress-view.content'
+import { progressbarContent } from './content/progressbar.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
@@ -43,6 +43,7 @@ import { toggleContent } from './content/toggle.content'
 import { toolbarContent } from './content/toolbar.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
+import { wheelPickerContent } from './content/wheel-picker.content'
 import { wraptextContent } from './content/wraptext.content'
 import { CorePropsApiPage } from './pages/ApiReference/CorePropsApiPage'
 import { EffectRegistryApiPage } from './pages/ApiReference/EffectRegistryApiPage'
@@ -149,6 +150,10 @@ export function App() {
                 }
               />
             }
+          />
+          <Route
+            path="/components/wheel-picker"
+            element={<ComponentPage content={wheelPickerContent} />}
           />
           <Route
             path="/components/scroll-view"

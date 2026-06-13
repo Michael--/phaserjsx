@@ -9,8 +9,8 @@ import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme, ViewTheme } from '../../theme-base'
 import type { VNodeLike } from '../../vdom'
 import { Button, Text, View, type ViewProps } from '../index'
-import type { ButtonSize } from './Button'
 import { ActivityIndicator } from './ActivityIndicator'
+import type { ButtonSize } from './Button'
 import { ProgressBar, type ProgressBarProps } from './ProgressBar'
 
 export interface ProgressViewLabels {

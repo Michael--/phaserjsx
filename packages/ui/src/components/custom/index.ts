@@ -221,4 +221,13 @@ export {
   type ToolbarToggleItem,
 } from './Toolbar'
 export { TransformOriginView, type TransformOriginViewProps } from './TransformOriginView'
+export {
+  WheelPicker,
+  type WheelPickerItem,
+  type WheelPickerItemRenderProps,
+  type WheelPickerLabels,
+  type WheelPickerProps,
+  type WheelPickerSize,
+  type WheelPickerThemeSlot,
+} from './WheelPicker'
 export { WrapText, type WrapTextProps } from './WrapText'
