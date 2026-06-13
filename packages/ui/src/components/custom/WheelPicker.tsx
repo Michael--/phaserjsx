@@ -3,7 +3,7 @@
  * WheelPicker component — SwiftUI-style scrollable cylinder picker.
  * Items snap to center with no additional overlays — selected styling is text-only.
  */
-import { useEffect, useMemo, useState, useTheme } from '../../hooks'
+import { useEffect, useMemo, useRef, useState, useTheme } from '../../hooks'
 import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme, ViewTheme } from '../../theme-base'
 import type { ChildrenType } from '../../types'
@@ -175,10 +175,38 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
     () => items.findIndex((i) => i.value === initialValue),
     [items, initialValue]
   )
+  const hasInitialSnapRef = useRef(false)
+  const currentSnapIndex = useMemo(
+    () => items.findIndex((i) => i.value === currentValue),
+    [items, currentValue]
+  )
+  const lastControlledValueRef = useRef<string | undefined>(isControlled ? currentValue : undefined)
 
-  const commitValue = (nextValue: string) => {
+  // Programmatic scroll target (tap-to-center). Reset after ScrollView consumes it.
+  const [pendingSnapIndex, setPendingSnapIndex] = useState<number | undefined>(undefined)
+  const scrollTarget = useMemo(() => {
+    if (pendingSnapIndex !== undefined) {
+      return { snapIndex: pendingSnapIndex }
+    }
+    if (!hasInitialSnapRef.current) {
+      hasInitialSnapRef.current = true
+      return { snapIndex: initialSnapIndex >= 0 ? initialSnapIndex : 0 }
+    }
+    if (isControlled && currentValue !== lastControlledValueRef.current) {
+      lastControlledValueRef.current = currentValue
+      return { snapIndex: currentSnapIndex >= 0 ? currentSnapIndex : 0 }
+    }
+    lastControlledValueRef.current = isControlled ? currentValue : undefined
+    return undefined
+  }, [pendingSnapIndex, initialSnapIndex, isControlled, currentValue, currentSnapIndex])
+
+  const commitValue = (nextValue: string, scrollToIndex?: number) => {
     const item = findWheelPickerItem(items, nextValue)
     if (!item || item.disabled || disabled) return
+
+    if (scrollToIndex !== undefined) {
+      setPendingSnapIndex(scrollToIndex)
+    }
 
     if (!isControlled) {
       setInternalValue(nextValue)
@@ -187,9 +215,14 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
   }
 
   const handleSnap = (index: number) => {
+    // ScrollView has landed on this index — clear any pending programmatic scroll
+    setPendingSnapIndex(undefined)
     const item = items[index]
     if (item && !item.disabled && !disabled) {
-      commitValue(item.value)
+      if (!isControlled) {
+        setInternalValue(item.value)
+      }
+      onChange?.(item.value)
     }
   }
 
@@ -222,6 +255,7 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
         justifyContent="center"
         padding={themedControl.itemPadding}
         enableGestures={!itemDisabled}
+        onTouch={() => commitValue(item.value, index)}
       >
         {content ?? (
           <Text text={item.label} {...(effectiveStyle ? { style: effectiveStyle } : {})} />
@@ -260,11 +294,9 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
             showVerticalSlider={false}
             showHorizontalSlider={false}
             momentum
-            snap={{ positions: snapPositions, threshold: itemHeight * 0.4 }}
+            snap={{ positions: snapPositions, threshold: itemHeight }}
             snapAlignment="center"
-            scroll={{
-              snapIndex: initialSnapIndex >= 0 ? initialSnapIndex : 0,
-            }}
+            {...(scrollTarget ? { scroll: scrollTarget } : {})}
             onSnap={handleSnap}
             theme={nestedTheme}
           >
