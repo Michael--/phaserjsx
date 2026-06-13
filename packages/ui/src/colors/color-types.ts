@@ -57,7 +57,7 @@ export class HexColor {
  * Color shade scale with semantic naming
  * Each color token has multiple shades for different use cases
  * Uses HexColor type for VS Code color picker support and .toNumber() method
- * DEFAULT is computed property pointing to medium (not in interface)
+ * DEFAULT is an alias for medium
  * @example
  * ```typescript
  * const primaryShade: ColorShade = {
@@ -66,10 +66,10 @@ export class HexColor {
  *   medium: HexColor.from('#42a5f5'),
  *   dark: HexColor.from('#1976d2'),
  *   darkest: HexColor.from('#0d47a1'),
+ *   DEFAULT: HexColor.from('#42a5f5'), // alias to medium
  * }
- * // DEFAULT is available via getter:
- * backgroundColor: colors.primary.DEFAULT.toNumber() // returns medium
- * // Direct usage:
+ * // Usage:
+ * backgroundColor: colors.primary.DEFAULT.toNumber() // same as medium
  * backgroundColor: colors.primary.medium.toNumber()
  * ```
  */
@@ -84,7 +84,7 @@ export interface ColorShade {
   dark: HexColor
   /** Darkest shade - text, emphasis */
   darkest: HexColor
-  /** DEFAULT shade - computed property that points to medium */
+  /** DEFAULT shade - alias for medium */
   readonly DEFAULT: HexColor
 }
 
