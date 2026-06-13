@@ -43,12 +43,7 @@ export interface WheelPickerThemeSlot extends ViewTheme {
   textStyle?: Phaser.Types.GameObjects.Text.TextStyle
   selectedTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
   disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
-  fadeColor?: number
-  fadeHeight?: number
-  selectionColor?: number
-  selectionAlpha?: number
-  selectionHeight?: number
-  selectionCornerRadius?: number
+  overlayAlpha?: number
   disabledAlpha?: number
   labels?: WheelPickerLabels
 }
@@ -248,6 +243,7 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
       backgroundAlpha={themedControl.backgroundAlpha}
       borderColor={themedControl.borderColor}
       borderWidth={themedControl.borderWidth}
+      direction="stack"
       {...viewProps}
       {...(finalAlpha !== undefined ? { alpha: finalAlpha } : {})}
       theme={nestedTheme}
@@ -257,26 +253,44 @@ export function WheelPicker(props: WheelPickerProps): VNodeLike {
           <Text text={emptyLabel} style={textStyle} />
         </View>
       ) : (
-        <ScrollView
-          width="fill"
-          height="fill"
-          showVerticalSlider={false}
-          showHorizontalSlider={false}
-          momentum
-          snap={{ positions: snapPositions, threshold: itemHeight * 0.4 }}
-          snapAlignment="center"
-          scroll={{
-            snapIndex: initialSnapIndex >= 0 ? initialSnapIndex : 0,
-          }}
-          onSnap={handleSnap}
-          theme={nestedTheme}
-        >
-          <View width="fill" height={topPad} />
-          <View direction="column" width="fill" theme={nestedTheme}>
-            {items.map(renderPickerItem)}
-          </View>
-          <View width="fill" height={topPad} />
-        </ScrollView>
+        <>
+          <ScrollView
+            width="fill"
+            height="fill"
+            showVerticalSlider={false}
+            showHorizontalSlider={false}
+            momentum
+            snap={{ positions: snapPositions, threshold: itemHeight * 0.4 }}
+            snapAlignment="center"
+            scroll={{
+              snapIndex: initialSnapIndex >= 0 ? initialSnapIndex : 0,
+            }}
+            onSnap={handleSnap}
+            theme={nestedTheme}
+          >
+            <View width="fill" height={topPad} />
+            <View direction="column" width="fill" theme={nestedTheme}>
+              {items.map(renderPickerItem)}
+            </View>
+            <View width="fill" height={topPad} />
+          </ScrollView>
+
+          {/* Stationary overlay mask: blocks top and bottom, center is transparent */}
+          <View
+            width="fill"
+            height={halfVisible * itemHeight}
+            backgroundColor={themedControl.backgroundColor ?? 0x000000}
+            backgroundAlpha={themedControl.overlayAlpha ?? 0.85}
+            y={0}
+          />
+          <View
+            width="fill"
+            height={halfVisible * itemHeight}
+            backgroundColor={themedControl.backgroundColor ?? 0x000000}
+            backgroundAlpha={themedControl.overlayAlpha ?? 0.85}
+            y={containerHeight - halfVisible * itemHeight}
+          />
+        </>
       )}
     </View>
   )

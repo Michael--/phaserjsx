@@ -599,18 +599,13 @@ export interface CustomComponentThemes {
   WheelPicker: ViewTheme & {
     size?: WheelPickerSize
     textColor?: string
+    overlayAlpha?: number
     itemHeight?: number
     visibleItems?: number
     itemPadding?: ViewTheme['padding']
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     selectedTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
     disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
-    fadeColor?: number
-    fadeHeight?: number
-    selectionColor?: number
-    selectionAlpha?: number
-    selectionHeight?: number
-    selectionCornerRadius?: number
     disabledAlpha?: number
     labels?: WheelPickerLabels
   } & NestedComponentThemes

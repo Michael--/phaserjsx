@@ -1095,6 +1095,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     WheelPicker: {
       size: 'medium',
       textColor: colors.text.light.toString(),
+      overlayAlpha: 0.85,
       backgroundColor: colors.surface.darkest.toNumber(),
       backgroundAlpha: 0.95,
       borderColor: colors.border.medium.toNumber(),
@@ -1103,12 +1104,6 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       itemHeight: 40,
       visibleItems: 5,
       itemPadding: { left: 12, right: 12 },
-      fadeColor: colors.surface.darkest.toNumber(),
-      fadeHeight: 40,
-      selectionColor: colors.surface.medium.toNumber(),
-      selectionAlpha: 0.4,
-      selectionHeight: 40,
-      selectionCornerRadius: 4,
       disabledAlpha: 0.5,
       textStyle: {
         ...textStyles.medium,
