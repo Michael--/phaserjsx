@@ -3,12 +3,18 @@
  * Provides semantic tokens for colors, text styles, spacing, sizes, and radius
  */
 export {
+  compactControlSizePresets,
   controlMinWidthPresets,
   controlPadding,
   controlSizePresets,
   indicatorSizePresets,
+  toolbarSizePresets,
 } from './component-size-presets'
-export type { ControlSizePreset, IndicatorSizePreset } from './component-size-presets'
+export type {
+  ControlSizePreset,
+  IndicatorSizePreset,
+  ToolbarItemSizePreset,
+} from './component-size-presets'
 export {
   createTextStyleTokens,
   defaultRadiusTokens,

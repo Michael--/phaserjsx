@@ -30,6 +30,39 @@ export const controlSizePresets: Record<'sm' | 'md' | 'lg', ControlSizePreset> =
 }
 
 /**
+ * Compact size preset for smaller interactive controls
+ * (SegmentedControl segments, NumberInput buttons, ContextMenu items)
+ * Scale: 28 → 34 → 40 (6px increments, aligns with 2px grid for tight layouts)
+ */
+export const compactControlSizePresets: Record<'sm' | 'md' | 'lg', ControlSizePreset> = {
+  sm: { height: 28, paddingH: 8, paddingV: 4, radius: 5, gap: 4, iconSize: 14 },
+  md: { height: 34, paddingH: 10, paddingV: 6, radius: 6, gap: 5, iconSize: 16 },
+  lg: { height: 40, paddingH: 14, paddingV: 8, radius: 7, gap: 6, iconSize: 20 },
+}
+
+/**
+ * Toolbar item size presets (density-based, not sm/md/lg)
+ * Toolbar uses density: 'compact' | 'normal' instead of size scale
+ */
+export interface ToolbarItemSizePreset {
+  width: number
+  height: number
+  compactWidth: number
+  compactHeight: number
+  iconSize: number
+  compactIconSize: number
+}
+
+export const toolbarSizePresets: ToolbarItemSizePreset = {
+  width: 42,
+  height: 36,
+  compactWidth: 34,
+  compactHeight: 34,
+  iconSize: compactControlSizePresets.md.iconSize,
+  compactIconSize: compactControlSizePresets.sm.iconSize,
+}
+
+/**
  * Size preset for compact indicators
  * (Badge, Tag, small labels)
  */

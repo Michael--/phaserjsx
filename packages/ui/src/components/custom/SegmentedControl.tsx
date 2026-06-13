@@ -4,6 +4,7 @@
  * Compact single-selection control for short mode, filter, and toolbar choices.
  */
 import type { ViewProps } from '..'
+import { compactControlSizePresets } from '../../design-tokens/component-size-presets'
 import { useEffect, useState, useTheme } from '../../hooks'
 import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme, ViewTheme } from '../../theme-base'
@@ -181,21 +182,32 @@ function getSegmentedControlSizeTheme(
   SegmentedControlThemeSlot,
   'segmentWidth' | 'segmentHeight' | 'segmentPadding' | 'textStyle' | 'iconSize'
 > {
+  const { sm, lg } = compactControlSizePresets
   switch (size) {
     case 'small':
       return {
         segmentWidth: 72,
-        segmentHeight: 28,
-        segmentPadding: { left: 8, right: 8, top: 4, bottom: 4 },
-        iconSize: 14,
+        segmentHeight: sm.height,
+        segmentPadding: {
+          left: sm.paddingH,
+          right: sm.paddingH,
+          top: sm.paddingV,
+          bottom: sm.paddingV,
+        },
+        iconSize: sm.iconSize,
         textStyle: { fontSize: '12px' },
       }
     case 'large':
       return {
         segmentWidth: 108,
-        segmentHeight: 40,
-        segmentPadding: { left: 14, right: 14, top: 8, bottom: 8 },
-        iconSize: 20,
+        segmentHeight: lg.height,
+        segmentPadding: {
+          left: lg.paddingH,
+          right: lg.paddingH,
+          top: lg.paddingV,
+          bottom: lg.paddingV,
+        },
+        iconSize: lg.iconSize,
         textStyle: { fontSize: '16px' },
       }
     default:

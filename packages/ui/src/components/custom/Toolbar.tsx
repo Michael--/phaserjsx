@@ -4,6 +4,7 @@
  * Compact action/toggle button groups for editor tools, HUD controls, and debug panels.
  */
 import type { ViewProps } from '..'
+import { toolbarSizePresets } from '../../design-tokens/component-size-presets'
 import { useEffect, useState, useTheme } from '../../hooks'
 import { getThemedProps, mergeThemes } from '../../theme'
 import type { PartialTheme, ViewTheme } from '../../theme-base'
@@ -185,10 +186,10 @@ function getDensityTheme(
 ): Pick<ToolbarThemeSlot, 'itemWidth' | 'itemHeight' | 'buttonSize' | 'iconSize'> {
   if (density === 'compact') {
     return {
-      itemWidth: 34,
-      itemHeight: 34,
+      itemWidth: toolbarSizePresets.compactWidth,
+      itemHeight: toolbarSizePresets.compactHeight,
       buttonSize: 'small',
-      iconSize: 16,
+      iconSize: toolbarSizePresets.compactIconSize,
     }
   }
 

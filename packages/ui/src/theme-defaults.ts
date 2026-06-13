@@ -6,9 +6,11 @@
 import { getPresetWithMode, type PresetName } from './colors/color-presets'
 import type { ColorTokens } from './colors/color-types'
 import {
+  compactControlSizePresets,
   controlMinWidthPresets,
   controlPadding,
   controlSizePresets,
+  toolbarSizePresets,
 } from './design-tokens/component-size-presets'
 import { createTextStyleTokens } from './design-tokens/design-token-presets'
 import type { Theme } from './theme-base'
@@ -113,7 +115,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       },
       hexStyle: {
         ...textStyles.small,
-        color: '#ffffff',
+        color: colors.text.lightest.toString(),
         fontStyle: 'bold',
       },
       labels: {
@@ -238,14 +240,14 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       backgroundAlpha: 0.95,
       borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,
-      cornerRadius: 8,
+      cornerRadius: controlSizePresets.md.radius,
       padding: 3,
-      gap: 8,
+      gap: controlSizePresets.md.gap,
       segmentGap: 0,
-      segmentWidth: 88,
-      segmentHeight: 34,
-      segmentPadding: { left: 10, right: 10, top: 6, bottom: 6 },
-      segmentCornerRadius: 6,
+      segmentWidth: controlMinWidthPresets.md,
+      segmentHeight: compactControlSizePresets.md.height,
+      segmentPadding: controlPadding(compactControlSizePresets.md),
+      segmentCornerRadius: compactControlSizePresets.md.radius,
       segmentStyle: {
         backgroundColor: colors.surface.dark.toNumber(),
         backgroundAlpha: 0,
@@ -264,8 +266,8 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       segmentDisabledStyle: {
         alpha: 0.45,
       },
-      iconGap: 6,
-      iconSize: 16,
+      iconGap: compactControlSizePresets.sm.gap + 2, // 6px — slightly wider than segment gap for readability
+      iconSize: compactControlSizePresets.md.iconSize,
       disabledAlpha: 0.5,
       labelPosition: 'none',
       labelStyle: {
@@ -295,22 +297,22 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       backgroundAlpha: 0.92,
       borderColor: colors.border.medium.toNumber(),
       borderWidth: 1,
-      cornerRadius: 8,
+      cornerRadius: controlSizePresets.md.radius,
       padding: 4,
-      gap: 6,
-      itemGap: 6,
-      groupGap: 10,
-      itemWidth: 42,
-      itemHeight: 36,
-      compactItemWidth: 34,
-      compactItemHeight: 34,
+      gap: controlSizePresets.sm.gap,
+      itemGap: controlSizePresets.sm.gap,
+      groupGap: controlSizePresets.lg.gap,
+      itemWidth: toolbarSizePresets.width,
+      itemHeight: toolbarSizePresets.height,
+      compactItemWidth: toolbarSizePresets.compactWidth,
+      compactItemHeight: toolbarSizePresets.compactHeight,
       buttonVariant: 'secondary',
       activeButtonVariant: 'primary',
       menuButtonVariant: 'outline',
       buttonSize: 'small',
       compactButtonSize: 'small',
-      iconSize: 18,
-      compactIconSize: 16,
+      iconSize: toolbarSizePresets.iconSize,
+      compactIconSize: toolbarSizePresets.compactIconSize,
       separatorColor: colors.border.medium.toNumber(),
       separatorThickness: 1,
       separatorLength: 26,
@@ -340,9 +342,14 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       },
       Button: {
         minWidth: 0,
-        padding: { left: 8, right: 8, top: 6, bottom: 6 },
-        cornerRadius: 6,
-        gap: 6,
+        padding: {
+          left: 8,
+          right: 8,
+          top: controlSizePresets.sm.paddingV,
+          bottom: controlSizePresets.sm.paddingV,
+        },
+        cornerRadius: controlSizePresets.sm.radius,
+        gap: controlSizePresets.sm.gap,
       },
     },
     MenuButton: {
