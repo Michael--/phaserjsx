@@ -5,6 +5,11 @@
  */
 import { getPresetWithMode, type PresetName } from './colors/color-presets'
 import type { ColorTokens } from './colors/color-types'
+import {
+  controlMinWidthPresets,
+  controlPadding,
+  controlSizePresets,
+} from './design-tokens/component-size-presets'
 import { createTextStyleTokens } from './design-tokens/design-token-presets'
 import type { Theme } from './theme-base'
 import './theme-custom' // Import to activate declaration merging
@@ -440,72 +445,58 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       size: 'medium',
       disabledColor: colors.surface.medium.toNumber(),
       disabledAlpha: 0.48,
-      iconSize: 18,
-      minWidth: 92,
-      height: 40,
+      minWidth: controlMinWidthPresets.md,
+      height: controlSizePresets.md.height,
       backgroundColor: colors.primary.medium.toNumber(),
       backgroundAlpha: 1,
       borderColor: colors.primary.dark.toNumber(),
       borderWidth: 1,
-      cornerRadius: 8,
-      padding: { top: 8, bottom: 8, left: 16, right: 16 },
-      gap: 8,
+      cornerRadius: controlSizePresets.md.radius,
+      gap: controlSizePresets.md.gap,
+      padding: controlPadding(controlSizePresets.md),
       justifyContent: 'center',
       alignItems: 'center',
       effect: 'press',
       effectConfig: { intensity: 0.94, time: 140 },
+      iconSize: controlSizePresets.md.iconSize,
       textStyle: {
         ...textStyles.medium,
-        color: '#ffffff',
+        color: colors.text.lightest.toString(),
         fontStyle: 'bold',
       },
       Text: {
         style: {
           ...textStyles.medium,
-          color: '#ffffff',
+          color: colors.text.lightest.toString(),
           fontStyle: 'bold',
         },
       },
       Icon: {
-        size: 18,
+        size: controlSizePresets.md.iconSize,
         tint: colors.text.DEFAULT.toNumber(),
       },
+      // Variant overrides (flat keys, resolved by Button component)
       primary: {
         backgroundColor: colors.primary.medium.toNumber(),
         borderColor: colors.primary.dark.toNumber(),
-        textStyle: {
-          color: '#ffffff',
-          fontStyle: 'bold',
-        },
-        Icon: {
-          tint: colors.text.DEFAULT.toNumber(),
-        },
+        textStyle: { color: colors.text.lightest.toString(), fontStyle: 'bold' },
+        Icon: { tint: colors.text.DEFAULT.toNumber() },
       },
       secondary: {
         backgroundColor: colors.surface.lightest.toNumber(),
         backgroundAlpha: 0.92,
         borderColor: colors.border.light.toNumber(),
         borderWidth: 1,
-        textStyle: {
-          color: colors.text.dark.toString(),
-          fontStyle: 'bold',
-        },
-        Icon: {
-          tint: colors.text.dark.toNumber(),
-        },
+        textStyle: { color: colors.text.dark.toString(), fontStyle: 'bold' },
+        Icon: { tint: colors.text.dark.toNumber() },
       },
       outline: {
         backgroundColor: colors.primary.dark.toNumber(),
         backgroundAlpha: 0.08,
         borderColor: colors.primary.light.toNumber(),
         borderWidth: 2,
-        textStyle: {
-          color: colors.primary.light.toString(),
-          fontStyle: 'bold',
-        },
-        Icon: {
-          tint: colors.primary.light.toNumber(),
-        },
+        textStyle: { color: colors.primary.light.toString(), fontStyle: 'bold' },
+        Icon: { tint: colors.primary.light.toNumber() },
       },
       ghost: {
         backgroundColor: colors.surface.light.toNumber(),
@@ -513,121 +504,44 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         borderColor: colors.border.medium.toNumber(),
         borderAlpha: 0.35,
         borderWidth: 1,
-        textStyle: {
-          color: colors.text.light.toString(),
-          fontStyle: 'bold',
-        },
-        Icon: {
-          tint: colors.text.light.toNumber(),
-        },
+        textStyle: { color: colors.text.light.toString(), fontStyle: 'bold' },
+        Icon: { tint: colors.text.light.toNumber() },
       },
       danger: {
         backgroundColor: colors.error.medium.toNumber(),
         borderColor: colors.error.dark.toNumber(),
-        textStyle: {
-          color: '#ffffff',
-          fontStyle: 'bold',
-        },
-        Icon: {
-          tint: colors.text.DEFAULT.toNumber(),
-        },
+        textStyle: { color: colors.text.lightest.toString(), fontStyle: 'bold' },
+        Icon: { tint: colors.text.DEFAULT.toNumber() },
       },
-      variants: {
-        primary: {
-          backgroundColor: colors.primary.medium.toNumber(),
-          borderColor: colors.primary.dark.toNumber(),
-        },
-        secondary: {
-          backgroundColor: colors.surface.lightest.toNumber(),
-          backgroundAlpha: 0.92,
-          borderColor: colors.border.light.toNumber(),
-          borderWidth: 1,
-        },
-        outline: {
-          backgroundColor: colors.primary.dark.toNumber(),
-          backgroundAlpha: 0.08,
-          borderColor: colors.primary.light.toNumber(),
-          borderWidth: 2,
-        },
-        ghost: {
-          backgroundColor: colors.surface.light.toNumber(),
-          backgroundAlpha: 0.18,
-          borderColor: colors.border.medium.toNumber(),
-          borderAlpha: 0.35,
-          borderWidth: 1,
-        },
-        danger: {
-          backgroundColor: colors.error.medium.toNumber(),
-          borderColor: colors.error.dark.toNumber(),
-        },
-      },
+      // Size overrides (flat keys, resolved by Button component)
       small: {
-        minWidth: 72,
-        height: 32,
-        padding: { top: 6, bottom: 6, left: 12, right: 12 },
-        cornerRadius: 7,
-        gap: 6,
-        iconSize: 15,
-        textStyle: {
-          fontSize: '12px',
-        },
-        Icon: {
-          size: 15,
-        },
+        minWidth: controlMinWidthPresets.sm,
+        height: controlSizePresets.sm.height,
+        padding: controlPadding(controlSizePresets.sm),
+        cornerRadius: controlSizePresets.sm.radius,
+        gap: controlSizePresets.sm.gap,
+        iconSize: controlSizePresets.sm.iconSize,
+        textStyle: { fontSize: '12px' },
+        Icon: { size: controlSizePresets.sm.iconSize },
       },
       medium: {
-        minWidth: 92,
-        height: 40,
-        padding: { top: 8, bottom: 8, left: 16, right: 16 },
-        cornerRadius: 8,
-        gap: 8,
-        iconSize: 18,
-        Icon: {
-          size: 18,
-        },
+        minWidth: controlMinWidthPresets.md,
+        height: controlSizePresets.md.height,
+        padding: controlPadding(controlSizePresets.md),
+        cornerRadius: controlSizePresets.md.radius,
+        gap: controlSizePresets.md.gap,
+        iconSize: controlSizePresets.md.iconSize,
+        Icon: { size: controlSizePresets.md.iconSize },
       },
       large: {
-        minWidth: 116,
-        height: 48,
-        padding: { top: 10, bottom: 10, left: 20, right: 20 },
-        cornerRadius: 10,
-        gap: 10,
-        iconSize: 22,
-        textStyle: {
-          fontSize: '18px',
-        },
-        Icon: {
-          size: 22,
-        },
-      },
-      sizes: {
-        small: {
-          minWidth: 72,
-          height: 32,
-          padding: { top: 6, bottom: 6, left: 12, right: 12 },
-          cornerRadius: 7,
-          gap: 6,
-          iconSize: 15,
-        },
-        medium: {
-          minWidth: 92,
-          height: 40,
-          padding: { top: 8, bottom: 8, left: 16, right: 16 },
-          cornerRadius: 8,
-          gap: 8,
-          iconSize: 18,
-        },
-        large: {
-          minWidth: 116,
-          height: 48,
-          padding: { top: 10, bottom: 10, left: 20, right: 20 },
-          cornerRadius: 10,
-          gap: 10,
-          iconSize: 22,
-          textStyle: {
-            fontSize: '18px',
-          },
-        },
+        minWidth: controlMinWidthPresets.lg,
+        height: controlSizePresets.lg.height,
+        padding: controlPadding(controlSizePresets.lg),
+        cornerRadius: controlSizePresets.lg.radius,
+        gap: controlSizePresets.lg.gap,
+        iconSize: controlSizePresets.lg.iconSize,
+        textStyle: { fontSize: '18px' },
+        Icon: { size: controlSizePresets.lg.iconSize },
       },
     },
     Sidebar: {
