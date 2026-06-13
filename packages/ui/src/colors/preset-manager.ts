@@ -34,17 +34,16 @@ export function setColorPreset(presetName: PresetName, colorMode?: 'light' | 'da
   themeRegistry.setGlobalTheme(createDefaultTheme(presetName, targetMode))
   themeRegistry.setCurrentPresetName(presetName, true) // true = skip notify
 
-  // If caller asked for a specific mode, update it here so we only remount once
+  // If caller asked for a specific mode different from current
   if (colorMode && themeRegistry.getColorMode() !== colorMode) {
     themeRegistry.setColorMode(colorMode)
-    return
+    // setColorMode already schedules remountAll internally
+  } else {
+    // Trigger complete remount of all VDOM trees to apply new preset
+    setTimeout(() => {
+      remountAll()
+    }, 0)
   }
-
-  // Trigger complete remount of all VDOM trees to apply new preset
-  // Using setTimeout(0) to ensure all synchronous state updates complete first
-  setTimeout(() => {
-    remountAll()
-  }, 0)
 }
 
 /**
