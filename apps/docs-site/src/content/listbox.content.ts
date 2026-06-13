@@ -4,6 +4,8 @@
 import { SCENE_SIZES } from '@/constants/scene-sizes'
 import { CustomRenderListBoxExample } from '@/examples/listbox/CustomRenderExample'
 import CustomRenderListBoxExampleCode from '@/examples/listbox/CustomRenderExample.tsx?raw'
+import { NoHoverListBoxExample } from '@/examples/listbox/NoHoverExample'
+import NoHoverListBoxExampleCode from '@/examples/listbox/NoHoverExample.tsx?raw'
 import { QuickStartListBoxExample } from '@/examples/listbox/QuickStartExample'
 import QuickStartListBoxExampleCode from '@/examples/listbox/QuickStartExample.tsx?raw'
 import type { ComponentDocs } from '@/types/docs'
@@ -31,6 +33,15 @@ export const listboxContent: ComponentDocs = {
       component: CustomRenderListBoxExample,
       height: SCENE_SIZES.medium,
       code: CustomRenderListBoxExampleCode,
+    },
+    {
+      id: 'no-hover',
+      title: 'No Hover',
+      description:
+        'Disable hover tracking via hoverable={false} for click-only selection without hover highlights.',
+      component: NoHoverListBoxExample,
+      height: SCENE_SIZES.small,
+      code: NoHoverListBoxExampleCode,
     },
   ],
 
@@ -93,6 +104,13 @@ export const listboxContent: ComponentDocs = {
       default: undefined,
       description:
         'Custom row renderer receiving item, selected, disabled, hovered, index, and textStyle.',
+    },
+    {
+      name: 'hoverable',
+      type: 'boolean',
+      default: 'true',
+      description:
+        'Enables hover state tracking and hover styling. Set to false for click-only interaction.',
     },
     {
       name: 'labels',

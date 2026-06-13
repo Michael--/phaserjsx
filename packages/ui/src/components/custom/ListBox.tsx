@@ -64,6 +64,8 @@ export interface ListBoxProps extends Omit<ViewProps, 'children'> {
   onChange?: (value: string) => void
   /** Render custom item content. */
   renderItem?: (props: ListBoxItemRenderProps) => ChildrenType
+  /** Enable hover state tracking and hover styling. Default true. */
+  hoverable?: boolean
   /** Localized labels. */
   labels?: ListBoxLabels
   /** Disabled state for the whole control. */
@@ -149,6 +151,7 @@ export function ListBox(props: ListBoxProps): VNodeLike {
     defaultValue,
     onChange,
     renderItem,
+    hoverable = true,
     labels: labelOverrides,
     disabled = false,
     maxVisibleItems,
@@ -219,13 +222,13 @@ export function ListBox(props: ListBoxProps): VNodeLike {
   const renderListItem = (item: ListBoxItem, index: number) => {
     const selected = item.value === currentValue
     const itemDisabled = disabled || !!item.disabled
-    const hovered = hoveredValue === item.value
+    const hovered = hoverable ? hoveredValue === item.value : false
     const selectable = !itemDisabled
 
     const itemStyle = mergeViewTheme(
       { height: itemHeight },
       themedControl.itemStyle,
-      hovered && !selected && !itemDisabled ? themedControl.itemHoverStyle : undefined,
+      hoverable && hovered && !selected && !itemDisabled ? themedControl.itemHoverStyle : undefined,
       selected ? themedControl.itemSelectedStyle : undefined,
       itemDisabled ? themedControl.itemDisabledStyle : undefined
     )
@@ -250,7 +253,7 @@ export function ListBox(props: ListBoxProps): VNodeLike {
     })
 
     const hoverHandlers =
-      selectable && (themedControl.itemHoverStyle || themedControl.itemSelectedStyle)
+      hoverable && selectable && (themedControl.itemHoverStyle || themedControl.itemSelectedStyle)
         ? {
             onHoverStart: () => setHoveredValue(item.value),
             onHoverEnd: () =>
