@@ -1,7 +1,7 @@
 /**
  * Color system hooks for component usage
  */
-import { useEffect, useState, useTheme } from '../hooks'
+import { useEffect, useRef, useState, useTheme } from '../hooks'
 import { themeRegistry } from '../theme'
 import { getPresetWithMode } from './color-presets'
 import type { ColorTokens } from './color-types'
@@ -19,54 +19,40 @@ import type { ColorTokens } from './color-types'
  * // New way:
  * const tokens = useThemeTokens()
  * const colors = tokens?.colors
- *
- * // Access text styles, spacing, etc.:
- * <Text style={tokens.textStyles.DEFAULT} />
- * <View padding={tokens.spacing.lg} />
  * ```
  */
 export function useColors(): ColorTokens | undefined {
   const localTheme = useTheme()
 
-  // Initialize colors state
-  const getInitialColors = (): ColorTokens | undefined => {
-    // Check if local theme has color preset info
-    if (localTheme?.__colorPreset) {
-      const preset = getPresetWithMode(
-        localTheme.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
-        localTheme.__colorPreset.mode ?? 'light'
-      )
-      return preset.colors
-    }
+  // Track latest localTheme via ref to avoid re-subscribing on every render
+  const localThemeRef = useRef(localTheme)
+  localThemeRef.current = localTheme
 
-    // Fall back to global color tokens
-    return themeRegistry.getColorTokens()
-  }
-
-  const [colors, setColors] = useState<ColorTokens | undefined>(getInitialColors())
-  const [, forceUpdate] = useState(0)
+  const [colors, setColors] = useState<ColorTokens | undefined>(
+    localTheme?.__colorPreset
+      ? getPresetWithMode(
+          localTheme.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
+          localTheme.__colorPreset.mode ?? 'light'
+        ).colors
+      : themeRegistry.getColorTokens()
+  )
 
   useEffect(() => {
-    // Subscribe to theme changes (mode/preset switches)
     const unsubscribe = themeRegistry.subscribe(() => {
-      // Check if local theme has preset
-      if (localTheme?.__colorPreset) {
+      const current = localThemeRef.current
+      if (current?.__colorPreset) {
         const currentMode = themeRegistry.getColorMode()
         const preset = getPresetWithMode(
-          localTheme.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
+          current.__colorPreset.name as Parameters<typeof getPresetWithMode>[0],
           currentMode
         )
         setColors(preset.colors)
       } else {
-        // Use global tokens
         setColors(themeRegistry.getColorTokens())
       }
-      // Force re-render when theme changes
-      forceUpdate((n) => n + 1)
     })
-
     return unsubscribe
-  }, [localTheme])
+  }, []) // Subscribe once, read latest theme via ref
 
   return colors
 }
