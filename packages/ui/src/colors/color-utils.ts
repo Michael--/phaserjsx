@@ -369,6 +369,7 @@ export function getContrastRatio(foreground: number, background: number): number
 
 /**
  * Ensure minimum contrast ratio by adjusting foreground color
+ * Uses binary search for efficiency (O(log n) vs O(n))
  * @param foreground - Foreground color to adjust
  * @param background - Background color (fixed)
  * @param minRatio - Minimum contrast ratio (default: 4.5 for WCAG AA)
@@ -380,11 +381,8 @@ export function getContrastRatio(foreground: number, background: number): number
  * ```
  */
 export function ensureContrast(foreground: number, background: number, minRatio = 4.5): number {
-  let adjusted = foreground
-  let ratio = getContrastRatio(adjusted, background)
-
   // If contrast is already sufficient, return original
-  if (ratio >= minRatio) {
+  if (getContrastRatio(foreground, background) >= minRatio) {
     return foreground
   }
 
@@ -392,15 +390,22 @@ export function ensureContrast(foreground: number, background: number, minRatio 
   const bgLuminance = getLuminance(background)
   const shouldLighten = bgLuminance < 0.5
 
-  // Adjust in steps until we meet minimum ratio
-  let step = 0.1
-  while (ratio < minRatio && step <= 1.0) {
-    adjusted = shouldLighten ? lighten(foreground, step) : darken(foreground, step)
-    ratio = getContrastRatio(adjusted, background)
-    step += 0.1
+  // Binary search for the minimal adjustment needed
+  let low = 0
+  let high = 1
+
+  while (high - low > 0.01) {
+    const mid = (low + high) / 2
+    const adjusted = shouldLighten ? lighten(foreground, mid) : darken(foreground, mid)
+
+    if (getContrastRatio(adjusted, background) >= minRatio) {
+      high = mid
+    } else {
+      low = mid
+    }
   }
 
-  return adjusted
+  return shouldLighten ? lighten(foreground, high) : darken(foreground, high)
 }
 
 /**
