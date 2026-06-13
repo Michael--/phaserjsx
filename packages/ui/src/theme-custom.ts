@@ -7,6 +7,11 @@
  * 2. Add the corresponding default values in theme-defaults.ts
  */
 import type { AnimationConfig } from './animation/spring-physics'
+import type {
+  ActivityIndicatorLabels,
+  ActivityIndicatorSize,
+  ActivityIndicatorVariant,
+} from './components/custom/ActivityIndicator'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonSize, ButtonVariant } from './components/custom/Button'
 import type { ColorPickerLabels } from './components/custom/ColorPicker'
@@ -51,6 +56,20 @@ type ButtonThemeSlot = ViewTheme & {
 export interface CustomComponentThemes {
   // Custom components can extend this interface via module augmentation
   // or be defined directly here for built-in custom components
+  ActivityIndicator: ViewTheme & {
+    variant?: ActivityIndicatorVariant
+    size?: ActivityIndicatorSize
+    color?: number
+    trackColor?: number
+    lineWidth?: number
+    gap?: number
+    dotCount?: number
+    dotSize?: number
+    pulseScale?: number
+    animationSpeed?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    labels?: ActivityIndicatorLabels
+  } & NestedComponentThemes
   RadioButton: {
     selectedColor?: number
     color?: number

@@ -79,6 +79,7 @@ const navigation: NavSection[] = [
       { label: 'AlertDialog', path: '/components/alertdialog' },
       { label: 'Toast / NotificationStack', path: '/components/toast' },
       { label: 'Accordion', path: '/components/accordion' },
+      { label: 'ActivityIndicator', path: '/components/activity-indicator' },
     ],
   },
   {

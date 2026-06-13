@@ -53,6 +53,14 @@ export { type LayoutSize } from './../layout/types'
 
 // Re-export custom components (public API)
 export {
+  ActivityIndicator,
+  type ActivityIndicatorLabels,
+  type ActivityIndicatorProps,
+  type ActivityIndicatorSize,
+  type ActivityIndicatorThemeSlot,
+  type ActivityIndicatorVariant,
+} from './custom/ActivityIndicator'
+export {
   Badge,
   formatBadgeCount,
   getBadgeSizeConfig,

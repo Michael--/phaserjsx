@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
 import { DocsThemeProvider } from './components/Layout'
 import { accordionContent } from './content/accordion.content'
+import { activityIndicatorContent } from './content/activity-indicator.content'
 import { alertdialogContent } from './content/alertdialog.content'
 import { badgeContent } from './content/badge.content'
 import { buttonContent } from './content/button.content'
@@ -161,6 +162,10 @@ export function App() {
           <Route
             path="/components/accordion"
             element={<ComponentPage content={accordionContent} />}
+          />
+          <Route
+            path="/components/activity-indicator"
+            element={<ComponentPage content={activityIndicatorContent} />}
           />
           <Route path="/components/text" element={<ComponentPage content={textContent} />} />
           <Route

@@ -49,6 +49,25 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       size: 24,
       tint: colors.border.dark.toNumber(),
     },
+    ActivityIndicator: {
+      variant: 'spinner',
+      size: 'medium',
+      color: colors.primary.DEFAULT.toNumber(),
+      trackColor: colors.primary.DEFAULT.toNumber(),
+      animationSpeed: 2.4,
+      lineWidth: 3,
+      gap: 8,
+      dotCount: 3,
+      dotSize: 7,
+      pulseScale: 1,
+      labelStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      labels: {
+        loading: '',
+      },
+    },
     RadioButton: {
       selectedColor: colors.primary.DEFAULT.toNumber(),
       color: colors.border.dark.toNumber(),

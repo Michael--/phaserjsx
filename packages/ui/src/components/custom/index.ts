@@ -4,6 +4,14 @@
  */
 
 export { Accordion, type AccordionProps } from './Accordion'
+export {
+  ActivityIndicator,
+  type ActivityIndicatorLabels,
+  type ActivityIndicatorProps,
+  type ActivityIndicatorSize,
+  type ActivityIndicatorThemeSlot,
+  type ActivityIndicatorVariant,
+} from './ActivityIndicator'
 export { AlertDialog, type AlertDialogProps } from './AlertDialog'
 export {
   Badge,
