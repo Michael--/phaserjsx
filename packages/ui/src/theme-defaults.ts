@@ -12,83 +12,35 @@ import './theme-custom' // Import to activate declaration merging
 function buildDefaultTheme(colors: ColorTokens): Theme {
   const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
 
+  /** Shared defaults for primitive components (alpha + visible). */
+  const primitiveVisible = { alpha: 1, visible: true } as const
+  /** Shared text primitive with default style. */
+  const textPrimitive = { text: '', alpha: 1, visible: true, style: textStyles.DEFAULT } as const
+
   /**
    * Default theme values for all built-in and custom components
    */
   return {
-    // Primitives (lowercase) - share same defaults as uppercase
-    view: {
-      alpha: 1,
-      visible: true,
-    },
+    // Primitives (lowercase + uppercase share same defaults)
+    view: primitiveVisible,
+    View: primitiveVisible,
+    text: textPrimitive,
+    Text: textPrimitive,
+    nineslice: primitiveVisible,
+    NineSlice: primitiveVisible,
+    sprite: primitiveVisible,
+    Sprite: primitiveVisible,
+    image: primitiveVisible,
+    Image: primitiveVisible,
+    graphics: primitiveVisible,
+    Graphics: primitiveVisible,
+    tilesprite: primitiveVisible,
+    TileSprite: primitiveVisible,
+    particles: primitiveVisible,
+    Particles: primitiveVisible,
     Icon: {
       size: 24,
       tint: colors.border.dark.toNumber(),
-    },
-    text: {
-      text: '',
-      alpha: 1,
-      visible: true,
-      style: textStyles.DEFAULT,
-    },
-    nineslice: {
-      alpha: 1,
-      visible: true,
-    },
-    sprite: {
-      alpha: 1,
-      visible: true,
-    },
-    image: {
-      alpha: 1,
-      visible: true,
-    },
-    graphics: {
-      alpha: 1,
-      visible: true,
-    },
-    tilesprite: {
-      alpha: 1,
-      visible: true,
-    },
-    particles: {
-      alpha: 1,
-      visible: true,
-    },
-    // Public API (uppercase)
-    View: {
-      alpha: 1,
-      visible: true,
-    },
-    Text: {
-      text: '',
-      alpha: 1,
-      visible: true,
-      style: textStyles.DEFAULT,
-    },
-    NineSlice: {
-      alpha: 1,
-      visible: true,
-    },
-    Sprite: {
-      alpha: 1,
-      visible: true,
-    },
-    Image: {
-      alpha: 1,
-      visible: true,
-    },
-    Graphics: {
-      alpha: 1,
-      visible: true,
-    },
-    TileSprite: {
-      alpha: 1,
-      visible: true,
-    },
-    Particles: {
-      alpha: 1,
-      visible: true,
     },
     RadioButton: {
       selectedColor: colors.primary.DEFAULT.toNumber(),

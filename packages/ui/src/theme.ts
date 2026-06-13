@@ -3,8 +3,8 @@
  * Provides type-safe theming with inheritance and component-specific styles
  */
 import type { ColorTokens } from './colors'
-import type { NodeType } from './core-types'
 import { getPresetWithMode } from './colors/color-presets'
+import type { NodeType } from './core-types'
 import { DebugLogger } from './dev-config'
 import type { ComponentThemes, PartialTheme, Theme } from './theme-base'
 import './theme-custom' // Import to activate declaration merging
@@ -40,6 +40,39 @@ class ThemeRegistry {
   private colorMode: 'light' | 'dark' = 'light'
   private currentPresetName: string | undefined = undefined
   private listeners: Set<() => void> = new Set()
+  private cachedComponentNames: Set<string> | null = null
+
+  /** Invalidate the cached component name set after mutations */
+  private invalidateComponentNamesCache(): void {
+    this.cachedComponentNames = null
+  }
+
+  /**
+   * Get all known component names (built-in + custom), cached for performance.
+   * Used by extractNestedThemes to avoid rebuilding the set on every render.
+   * @returns Set of all registered component names
+   */
+  getAllComponentNames(): Set<string> {
+    if (this.cachedComponentNames) return this.cachedComponentNames
+
+    const internalPrimitiveNames = new Set([
+      'view',
+      'text',
+      'nineslice',
+      'sprite',
+      'image',
+      'graphics',
+      'tilesprite',
+      'particles',
+    ])
+
+    this.cachedComponentNames = new Set(
+      Object.keys(this.globalTheme)
+        .concat(Array.from(this.customThemes.keys()))
+        .filter((key) => key !== '__colorPreset' && !internalPrimitiveNames.has(key))
+    )
+    return this.cachedComponentNames
+  }
 
   /**
    * Get the complete global theme
@@ -54,16 +87,17 @@ class ThemeRegistry {
    */
   updateGlobalTheme(theme: PartialTheme): void {
     for (const [component, styles] of Object.entries(theme)) {
-      if (component in this.globalTheme) {
-        this.globalTheme[component as NodeType] = {
-          ...this.globalTheme[component as NodeType],
-          ...styles,
-        } as never
-        DebugLogger.log(
-          'theme',
-          `Updated ${component} theme:`,
-          this.globalTheme[component as NodeType]
-        )
+      const key = component as keyof Theme
+      if (key in this.globalTheme) {
+        // Merge existing full theme with partial overrides.
+        // 'key in this.globalTheme' ensures the entry exists (non-undefined).
+        const existing = this.globalTheme[key]
+        // Spread of full defaults + partial overrides satisfies the component theme type.
+        // TypeScript cannot infer this because `styles` is Record<string, unknown> from
+        // Object.entries on PartialTheme (union of partials). The runtime behavior is safe.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.globalTheme[key] = { ...existing, ...styles } as any
+        DebugLogger.log('theme', `Updated ${component} theme:`, this.globalTheme[key])
       } else {
         // Custom component
         const existing = this.customThemes.get(component) ?? {}
@@ -72,6 +106,7 @@ class ThemeRegistry {
     }
 
     this.notifyListeners()
+    this.invalidateComponentNamesCache()
   }
 
   /**
@@ -80,6 +115,7 @@ class ThemeRegistry {
    */
   setGlobalTheme(theme: Theme): void {
     this.globalTheme = { ...theme }
+    this.invalidateComponentNamesCache()
   }
 
   /**
@@ -88,6 +124,7 @@ class ThemeRegistry {
   resetGlobalTheme(): void {
     this.globalTheme = { ...defaultTheme }
     this.customThemes.clear()
+    this.invalidateComponentNamesCache()
   }
 
   /**
@@ -100,6 +137,7 @@ class ThemeRegistry {
     defaultStyles: T
   ): void {
     this.customThemes.set(componentName, defaultStyles)
+    this.invalidateComponentNamesCache()
   }
 
   /**
@@ -334,23 +372,7 @@ function extractNestedThemes<T extends object>(
   const ownProps = { ...theme }
   const nestedThemes: PartialTheme = {}
 
-  const internalPrimitiveNames = new Set([
-    'view',
-    'text',
-    'nineslice',
-    'sprite',
-    'image',
-    'graphics',
-    'tilesprite',
-    'particles',
-  ])
-  const allComponentNames = new Set(
-    [
-      ...Object.keys(defaultTheme),
-      ...Object.keys(themeRegistry.getGlobalTheme()),
-      ...Array.from(themeRegistry.getCustomComponentNames()),
-    ].filter((key) => key !== '__colorPreset' && !internalPrimitiveNames.has(key))
-  )
+  const allComponentNames = themeRegistry.getAllComponentNames()
 
   for (const key in ownProps) {
     // Check if this key is a registered component theme.
