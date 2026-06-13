@@ -171,6 +171,12 @@ export {
   type ProgressBarOrientation,
   type ProgressBarProps,
 } from './custom/ProgressBar'
+export {
+  ProgressView,
+  type ProgressViewLabels,
+  type ProgressViewProps,
+  type ProgressViewThemeSlot,
+} from './custom/ProgressView'
 export { RadioButton, type RadioButtonProps } from './custom/RadioButton'
 export { RadioGroup, type RadioGroupOption, type RadioGroupProps } from './custom/RadioGroup'
 export {

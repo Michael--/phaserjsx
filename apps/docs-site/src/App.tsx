@@ -28,6 +28,7 @@ import { particlesContent } from './content/particles.content'
 import { popoverContent } from './content/popover.content'
 import { portalContent } from './content/portal.content'
 import { progressbarContent } from './content/progressbar.content'
+import { progressViewContent } from './content/progress-view.content'
 import { radiobuttonContent } from './content/radiobutton.content'
 import { refOriginViewContent } from './content/ref-origin-view.content'
 import { scrollviewContent } from './content/scrollview.content'
@@ -97,6 +98,10 @@ export function App() {
           <Route
             path="/components/progressbar"
             element={<ComponentPage content={progressbarContent} />}
+          />
+          <Route
+            path="/components/progress-view"
+            element={<ComponentPage content={progressViewContent} />}
           />
           <Route
             path="/components/number-input"

@@ -24,6 +24,7 @@ import type {
 } from './components/custom/NumberInput'
 import type { PalettePickerLabels } from './components/custom/PalettePicker'
 import type { PopoverPlacement } from './components/custom/Popover'
+import type { ProgressViewLabels } from './components/custom/ProgressView'
 import type {
   SegmentedControlLabelPosition,
   SegmentedControlLabels,
@@ -281,6 +282,15 @@ export interface CustomComponentThemes {
       ratio: number
       percent: number
     }) => string
+  } & NestedComponentThemes
+  ProgressView: ViewTheme & {
+    width?: ViewTheme['width']
+    barHeight?: number
+    gap?: number
+    labelStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    percentageStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    cancelButtonSize?: ButtonSize
+    labels?: ProgressViewLabels
   } & NestedComponentThemes
   ScrollSlider: {
     borderColor?: number

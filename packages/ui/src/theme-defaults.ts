@@ -489,6 +489,23 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       dangerTextColor: colors.error.darkest.toString(),
       dangerBackgroundColor: colors.error.dark.toNumber(),
     },
+    ProgressView: {
+      width: 'fill',
+      barHeight: 24,
+      gap: 8,
+      labelStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      percentageStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      labels: {
+        cancel: 'Cancel',
+        loading: 'Loading...',
+      },
+    },
     ProgressBar: {
       width: 240,
       height: 22,

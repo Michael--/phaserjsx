@@ -49,6 +49,7 @@ const navigation: NavSection[] = [
       { label: 'Slider', path: '/components/slider' },
       { label: 'ColorPicker', path: '/components/colorpicker' },
       { label: 'ProgressBar', path: '/components/progressbar' },
+      { label: 'ProgressView', path: '/components/progress-view' },
       { label: 'NumberInput', path: '/components/number-input' },
       { label: 'SegmentedControl', path: '/components/segmented-control' },
       { label: 'PalettePicker', path: '/components/palette-picker' },
