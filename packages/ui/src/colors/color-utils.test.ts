@@ -4,6 +4,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   alpha,
+  createTextStyle,
   darken,
   ensureContrast,
   getContrastRatio,
@@ -265,5 +266,55 @@ describe('Contrast Utilities', () => {
 
       expect(getContrastRatio(adjusted, bg)).toBeGreaterThanOrEqual(4.5)
     })
+  })
+})
+
+describe('createTextStyle', () => {
+  it('uses default fontSize and color when no baseStyle provided', () => {
+    const style = createTextStyle(undefined, {})
+    expect(style.fontSize).toBe('14px')
+    expect(style.color).toBe('#ffffff')
+  })
+
+  it('applies overrides over defaults', () => {
+    const style = createTextStyle(undefined, { fontSize: '20px', color: '#ff0000' })
+    expect(style.fontSize).toBe('20px')
+    expect(style.color).toBe('#ff0000')
+  })
+
+  it('uses baseStyle values when overrides are not provided', () => {
+    const base = { fontSize: '12px', color: '#000000' }
+    const style = createTextStyle(base, {})
+    expect(style.fontSize).toBe('12px')
+    expect(style.color).toBe('#000000')
+  })
+
+  it('overrides take precedence over baseStyle', () => {
+    const base = { fontSize: '12px', color: '#000000' }
+    const style = createTextStyle(base, { fontSize: '18px' })
+    expect(style.fontSize).toBe('18px')
+    expect(style.color).toBe('#000000')
+  })
+
+  it('preserves optional baseStyle properties', () => {
+    const base = { fontFamily: 'Arial', align: 'center' as const }
+    const style = createTextStyle(base, {})
+    expect(style.fontFamily).toBe('Arial')
+    expect(style.align).toBe('center')
+  })
+
+  it('merges incompatible types via overrides', () => {
+    const base = { fontFamily: 'Arial', align: 'center' as const }
+    const style = createTextStyle(base, { color: '#00ff00', fontSize: '24px' })
+    expect(style.fontFamily).toBe('Arial')
+    expect(style.align).toBe('center')
+    expect(style.color).toBe('#00ff00')
+    expect(style.fontSize).toBe('24px')
+  })
+
+  it('handles empty baseStyle object', () => {
+    const style = createTextStyle({}, { fontSize: '16px' })
+    expect(style.fontSize).toBe('16px')
+    expect(style.color).toBe('#ffffff')
   })
 })
