@@ -21,8 +21,8 @@ export {
 } from './color-utils'
 
 // Color manipulation
-export { alpha, darken, darkenHex, hex, lighten, lightenHex } from './color-utils'
-export type { HexColorWrapper, HSLColor } from './color-utils'
+export { alpha, darken, darkenHex, lighten, lightenHex } from './color-utils'
+export type { HSLColor } from './color-utils'
 
 // Contrast utilities
 export { createTextStyle, ensureContrast, getContrastRatio } from './color-utils'
