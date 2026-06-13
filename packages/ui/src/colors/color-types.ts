@@ -10,17 +10,38 @@
 export type ShadeLevel = 'lightest' | 'light' | 'medium' | 'dark' | 'darkest'
 
 /**
- * Hex color string with conversion method
- * Extends string but adds toNumber() for Phaser compatibility
+ * Hex color with conversion method for Phaser compatibility
+ * Wraps a string value and provides toNumber() for Phaser color integration
  */
-export class HexColor extends String {
+export class HexColor {
+  readonly #value: string
+
+  constructor(hex: string) {
+    this.#value = hex
+  }
+
   /**
    * Convert to Phaser number format
    * @returns Color as number (0xffffff)
    */
   toNumber(): number {
-    const hex = this.valueOf().replace('#', '')
-    return parseInt(hex, 16)
+    return parseInt(this.#value.replace('#', ''), 16)
+  }
+
+  /**
+   * Return the hex string value
+   * @returns Hex color string
+   */
+  toString(): string {
+    return this.#value
+  }
+
+  /**
+   * Primitive string value for coercion contexts
+   * @returns Hex color string
+   */
+  valueOf(): string {
+    return this.#value
   }
 
   /**
@@ -28,7 +49,7 @@ export class HexColor extends String {
    * @param hex - Hex color string
    */
   static from(hex: string): HexColor {
-    return new HexColor(hex) as HexColor
+    return new HexColor(hex)
   }
 }
 
