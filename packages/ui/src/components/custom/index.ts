@@ -30,6 +30,12 @@ export {
   type BadgeVariant,
   type TagProps,
 } from './Badge'
+export {
+  BottomSheet,
+  type BottomSheetLabels,
+  type BottomSheetProps,
+  type BottomSheetThemeSlot,
+} from './BottomSheet'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
 export { CharTextInput, type CharTextInputProps } from './CharTextInput'

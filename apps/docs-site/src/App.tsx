@@ -6,6 +6,7 @@ import { accordionContent } from './content/accordion.content'
 import { activityIndicatorContent } from './content/activity-indicator.content'
 import { alertdialogContent } from './content/alertdialog.content'
 import { badgeContent } from './content/badge.content'
+import { bottomSheetContent } from './content/bottom-sheet.content'
 import { buttonContent } from './content/button.content'
 import { chartextContent } from './content/chartext.content'
 import { chartextinputContent } from './content/chartextinput.content'
@@ -85,7 +86,6 @@ export function App() {
           <Route path="/introduction" element={<IntroductionPage />} />
           <Route path="/installation" element={<InstallationPage />} />
           <Route path="/quick-start" element={<QuickStartPage />} />
-
           <Route path="/components/button" element={<ComponentPage content={buttonContent} />} />
           <Route
             path="/components/checkbox"
@@ -186,7 +186,11 @@ export function App() {
           <Route
             path="/components/wraptext"
             element={<ComponentPage content={wraptextContent} />}
-          />
+          />{' '}
+          <Route
+            path="/components/bottom-sheet"
+            element={<ComponentPage content={bottomSheetContent} />}
+          />{' '}
           <Route
             path="/components/chartext"
             element={<ComponentPage content={chartextContent} />}
@@ -222,7 +226,6 @@ export function App() {
             path="/components/transform-origin-view"
             element={<ComponentPage content={transformOriginViewContent} />}
           />
-
           <Route path="/guides/best-practices" element={<BestPracticesPage />} />
           <Route path="/guides/testing" element={<TestingPage />} />
           <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
@@ -238,12 +241,10 @@ export function App() {
           <Route path="/guides/icon-generator-config" element={<IconGeneratorConfigPage />} />
           <Route path="/guides/custom-icon-component" element={<CustomIconComponentPage />} />
           <Route path="/guides/custom-svg-icons" element={<CustomSvgIconsPage />} />
-
           <Route path="/api/hooks" element={<HooksApiPage />} />
           <Route path="/api/core-props" element={<CorePropsApiPage />} />
           <Route path="/api/theme-types" element={<ThemeTypesApiPage />} />
           <Route path="/api/effects" element={<EffectRegistryApiPage />} />
-
           <Route path="/components/*" element={<ComingSoonPage />} />
           <Route path="/guides/*" element={<ComingSoonPage />} />
           <Route path="*" element={<ComingSoonPage />} />
