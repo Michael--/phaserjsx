@@ -139,8 +139,8 @@ describe('Color Presets', () => {
       const lightPreset = applyLightMode(oceanBluePreset)
 
       // DEFAULT should be alias to medium
-      expect(lightPreset.colors.background.DEFAULT.toString()).toBe('#e0e0e0')
-      expect(lightPreset.colors.surface.DEFAULT.toString()).toBe('#eeeeee')
+      expect(lightPreset.colors.background.DEFAULT.toString()).toBe('#f0f0f0')
+      expect(lightPreset.colors.surface.DEFAULT.toString()).toBe('#e0e0e0')
 
       // Text should be dark in light mode
       expect(lightPreset.colors.text.DEFAULT.toString()).toBe('#616161')
@@ -150,11 +150,11 @@ describe('Color Presets', () => {
       const darkPreset = applyDarkMode(oceanBluePreset)
 
       // DEFAULT should be alias to medium
-      expect(darkPreset.colors.background.DEFAULT.toString()).toBe('#212121')
-      expect(darkPreset.colors.surface.DEFAULT.toString()).toBe('#262626')
+      expect(darkPreset.colors.background.DEFAULT.toString()).toBe('#1e1e1e')
+      expect(darkPreset.colors.surface.DEFAULT.toString()).toBe('#333333')
 
       // Text should be light in dark mode
-      expect(darkPreset.colors.text.DEFAULT.toString()).toBe('#bdbdbd')
+      expect(darkPreset.colors.text.DEFAULT.toString()).toBe('#cccccc')
     })
 
     it('mode application preserves brand colors', () => {
@@ -188,15 +188,15 @@ describe('Color Presets', () => {
     it('getPresetWithMode applies light mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'light')
 
-      expect(preset.colors.background.DEFAULT.toString()).toBe('#e0e0e0')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#f0f0f0')
       expect(preset.colors.text.DEFAULT.toString()).toBe('#616161')
     })
 
     it('getPresetWithMode applies dark mode', () => {
       const preset = getPresetWithMode('oceanBlue', 'dark')
 
-      expect(preset.colors.background.DEFAULT.toString()).toBe('#212121')
-      expect(preset.colors.text.DEFAULT.toString()).toBe('#bdbdbd')
+      expect(preset.colors.background.DEFAULT.toString()).toBe('#1e1e1e')
+      expect(preset.colors.text.DEFAULT.toString()).toBe('#cccccc')
     })
   })
 

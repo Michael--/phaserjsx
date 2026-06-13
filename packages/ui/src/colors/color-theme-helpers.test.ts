@@ -2,6 +2,7 @@
  * Tests for color theme helper functions
  */
 import { describe, expect, it } from 'vitest'
+import { generateColorScale, getPreset } from './color-presets'
 import {
   colorsToTheme,
   getBackgroundColor,
@@ -9,7 +10,6 @@ import {
   getSurfaceColor,
   getTextColor,
 } from './color-theme-helpers'
-import { generateColorScale, getPreset } from './color-presets'
 import type { ColorTokens } from './color-types'
 import { HexColor } from './color-types'
 

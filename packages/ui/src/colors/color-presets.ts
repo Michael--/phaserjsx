@@ -18,17 +18,17 @@ type NeutralHexValues = Record<'lightest' | 'light' | 'medium' | 'dark' | 'darke
 const LIGHT_NEUTRALS = {
   background: {
     lightest: '#ffffff',
-    light: '#f5f5f5',
-    medium: '#e0e0e0',
-    dark: '#bdbdbd',
-    darkest: '#9e9e9e',
+    light: '#fafafa',
+    medium: '#f0f0f0',
+    dark: '#e5e5e5',
+    darkest: '#d0d0d0',
   },
   surface: {
-    lightest: '#ffffff',
-    light: '#f5f5f5',
-    medium: '#eeeeee',
-    dark: '#e0e0e0',
-    darkest: '#bdbdbd',
+    lightest: '#f5f5f5',
+    light: '#ebebeb',
+    medium: '#e0e0e0',
+    dark: '#d5d5d5',
+    darkest: '#c8c8c8',
   },
   text: {
     lightest: '#9e9e9e',
@@ -38,43 +38,43 @@ const LIGHT_NEUTRALS = {
     darkest: '#212121',
   },
   border: {
-    lightest: '#e0e0e0',
-    light: '#bdbdbd',
-    medium: '#9e9e9e',
-    dark: '#757575',
-    darkest: '#424242',
+    lightest: '#d5d5d5',
+    light: '#c0c0c0',
+    medium: '#a8a8a8',
+    dark: '#8e8e8e',
+    darkest: '#6e6e6e',
   },
 } as const satisfies Record<string, NeutralHexValues>
 
 /** Dark mode neutral color definitions */
 const DARK_NEUTRALS = {
   background: {
-    lightest: '#424242',
-    light: '#303030',
-    medium: '#212121',
-    dark: '#1a1a1a',
+    lightest: '#3a3a3a',
+    light: '#2e2e2e',
+    medium: '#1e1e1e',
+    dark: '#161616',
     darkest: '#0a0a0a',
   },
   surface: {
-    lightest: '#424242',
-    light: '#303030',
-    medium: '#262626',
-    dark: '#1e1e1e',
-    darkest: '#121212',
+    lightest: '#4a4a4a',
+    light: '#3e3e3e',
+    medium: '#333333',
+    dark: '#2a2a2a',
+    darkest: '#222222',
   },
   text: {
     lightest: '#ffffff',
-    light: '#e0e0e0',
-    medium: '#bdbdbd',
-    dark: '#9e9e9e',
-    darkest: '#757575',
+    light: '#e8e8e8',
+    medium: '#cccccc',
+    dark: '#a0a0a0',
+    darkest: '#808080',
   },
   border: {
-    lightest: '#616161',
-    light: '#424242',
-    medium: '#303030',
-    dark: '#212121',
-    darkest: '#1a1a1a',
+    lightest: '#757575',
+    light: '#616161',
+    medium: '#4a4a4a',
+    dark: '#3a3a3a',
+    darkest: '#2e2e2e',
   },
 } as const satisfies Record<string, NeutralHexValues>
 
@@ -175,7 +175,7 @@ export const forestGreenPreset: ColorPreset = {
     // Brand colors
     primary: generateColorScale('#4caf50'), // Green
     secondary: generateColorScale('#8bc34a'), // Light Green
-    accent: generateColorScale('#ffeb3b'), // Yellow
+    accent: generateColorScale('#ff8f00'), // Amber (warm earth tone)
 
     // Feedback colors
     success: generateColorScale('#66bb6a'), // Light Green
