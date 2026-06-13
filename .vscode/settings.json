@@ -37,5 +37,8 @@
   },
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
-  "workbench.browser.openLocalhostLinks": false
+  "workbench.browser.openLocalhostLinks": false,
+  "chat.tools.terminal.autoApprove": {
+    "pnpm": true
+  }
 }

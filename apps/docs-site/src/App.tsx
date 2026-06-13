@@ -17,6 +17,7 @@ import { graphicsContent } from './content/graphics.content'
 import { iconContent } from './content/icon.content'
 import { imageContent } from './content/image.content'
 import { joystickContent } from './content/joystick.content'
+import { listboxContent } from './content/listbox.content'
 import { menuButtonContent } from './content/menu-button.content'
 import { modalContent } from './content/modal.content'
 import { nineSliceButtonContent } from './content/nine-slice-button.content'
@@ -35,8 +36,8 @@ import { spriteContent } from './content/sprite.content'
 import { tabsContent } from './content/tabs.content'
 import { textContent } from './content/text.content'
 import { tileSpriteContent } from './content/tilesprite.content'
-import { toggleContent } from './content/toggle.content'
 import { toastContent } from './content/toast.content'
+import { toggleContent } from './content/toggle.content'
 import { toolbarContent } from './content/toolbar.content'
 import { transformOriginViewContent } from './content/transform-origin-view.content'
 import { viewContent } from './content/view.content'
@@ -123,6 +124,7 @@ export function App() {
             element={<ComponentPage content={dropdownContent} />}
           />
           <Route path="/components/tabs" element={<ComponentPage content={tabsContent} />} />
+          <Route path="/components/listbox" element={<ComponentPage content={listboxContent} />} />
           <Route
             path="/components/joystick"
             element={<ComponentPage content={joystickContent} />}

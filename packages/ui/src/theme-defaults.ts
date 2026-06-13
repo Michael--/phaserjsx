@@ -290,6 +290,60 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         group: 'Options',
       },
     },
+    ListBox: {
+      backgroundColor: colors.surface.dark.toNumber(),
+      backgroundAlpha: 0.95,
+      borderColor: colors.border.medium.toNumber(),
+      borderWidth: 1,
+      cornerRadius: controlSizePresets.md.radius,
+      padding: 2,
+      itemHeight: 36,
+      itemGap: 1,
+      itemPadding: {
+        left: compactControlSizePresets.md.paddingH,
+        right: compactControlSizePresets.md.paddingH,
+        top: compactControlSizePresets.md.paddingV,
+        bottom: compactControlSizePresets.md.paddingV,
+      },
+      itemCornerRadius: compactControlSizePresets.md.radius,
+      itemStyle: {
+        backgroundColor: colors.surface.dark.toNumber(),
+        backgroundAlpha: 0,
+        borderWidth: 0,
+      },
+      itemHoverStyle: {
+        backgroundColor: colors.surface.medium.toNumber(),
+        backgroundAlpha: 0.55,
+      },
+      itemSelectedStyle: {
+        backgroundColor: colors.primary.medium.toNumber(),
+        backgroundAlpha: 1,
+        borderColor: colors.primary.dark.toNumber(),
+        borderWidth: 1,
+      },
+      itemDisabledStyle: {
+        alpha: 0.45,
+      },
+      disabledAlpha: 0.5,
+      textStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      selectedTextStyle: {
+        color: colors.text.lightest.toString(),
+        fontStyle: 'bold',
+      },
+      disabledTextStyle: {
+        color: colors.text.lightest.toString(),
+      },
+      emptyStyle: {
+        ...textStyles.small,
+        color: colors.text.light.toString(),
+      },
+      labels: {
+        empty: 'No items',
+      },
+    },
     Toolbar: {
       orientation: 'horizontal',
       density: 'normal',

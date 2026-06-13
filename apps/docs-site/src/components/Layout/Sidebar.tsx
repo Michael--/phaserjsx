@@ -57,6 +57,7 @@ const navigation: NavSection[] = [
       { label: 'Badge / Tag', path: '/components/badge' },
       { label: 'RadioButton', path: '/components/radiobutton' },
       { label: 'Dropdown', path: '/components/dropdown' },
+      { label: 'ListBox', path: '/components/listbox' },
       { label: 'Tabs', path: '/components/tabs' },
       { label: 'Joystick', path: '/components/joystick' },
     ],

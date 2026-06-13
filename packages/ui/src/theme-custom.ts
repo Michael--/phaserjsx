@@ -10,6 +10,7 @@ import type { AnimationConfig } from './animation/spring-physics'
 import type { BadgeSize, BadgeTone, BadgeVariant } from './components/custom/Badge'
 import type { ButtonSize, ButtonVariant } from './components/custom/Button'
 import type { ColorPickerLabels } from './components/custom/ColorPicker'
+import type { ListBoxLabels } from './components/custom/ListBox'
 import type {
   NumberInputButtonDirection,
   NumberInputButtonPlacement,
@@ -548,6 +549,22 @@ export interface CustomComponentThemes {
     offset?: number
     duration?: number
     depth?: number
+  } & NestedComponentThemes
+  ListBox: ViewTheme & {
+    itemHeight?: number
+    itemGap?: number
+    itemPadding?: ViewTheme['padding']
+    itemCornerRadius?: number
+    itemStyle?: ViewTheme
+    itemHoverStyle?: ViewTheme
+    itemSelectedStyle?: ViewTheme
+    itemDisabledStyle?: ViewTheme
+    textStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    selectedTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledTextStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    emptyStyle?: Phaser.Types.GameObjects.Text.TextStyle
+    disabledAlpha?: number
+    labels?: ListBoxLabels
   } & NestedComponentThemes
   WrapText: {
     wrap?: boolean
