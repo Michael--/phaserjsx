@@ -1,7 +1,14 @@
 /**
  * BottomSheetExample — Tests controlled/uncontrolled, backdrop modes, drag-to-dismiss
  */
-import { BottomSheet, BottomSheetDepth, Text, useState, View } from '@number10/phaserjsx'
+import {
+  BottomSheet,
+  BottomSheetDepth,
+  BottomSheetHandle,
+  Text,
+  useState,
+  View,
+} from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
@@ -117,6 +124,35 @@ function DragThresholdSheet() {
   )
 }
 
+/**
+ * Custom handle — Pill variant via renderHandle, larger handle area.
+ */
+function CustomHandleSheet() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <ViewLevel3>
+      <Text text="Custom Handle (Grip, area=48)" />
+      <Button text="Open Sheet" disabled={open} onClick={() => setOpen(true)} />
+      <BottomSheet
+        open={open}
+        onOpenChange={setOpen}
+        height={0.35}
+        handleAreaHeight={48}
+        renderHandle={BottomSheetHandle.Grip}
+        closeOnBackdrop
+      >
+        <View padding={20} gap={12}>
+          <Text text="Pill Handle Sheet" />
+          <Text text="renderHandle + handleAreaHeight=48" />
+          <Text text="Item P" />
+          <Text text="Item Q" />
+        </View>
+      </BottomSheet>
+    </ViewLevel3>
+  )
+}
+
 export function ButtonSheetExample() {
   return (
     <View width={'100%'} height={'100%'} direction="row" gap={20} padding={20} flexWrap="wrap">
@@ -131,6 +167,9 @@ export function ButtonSheetExample() {
       </ViewLevel2>
       <ViewLevel2>
         <DragThresholdSheet />
+      </ViewLevel2>
+      <ViewLevel2>
+        <CustomHandleSheet />
       </ViewLevel2>
     </View>
   )

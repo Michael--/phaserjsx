@@ -21,6 +21,14 @@ export interface BottomSheetLabels {
   handle?: string
 }
 
+/** Props passed to renderHandle function for custom handle rendering. */
+export interface HandleRenderProps {
+  width: number
+  height: number
+  color: number
+  cornerRadius: number
+}
+
 export interface BottomSheetThemeSlot extends ViewTheme {
   backdropAlpha?: number
   backdropColor?: number
@@ -28,6 +36,9 @@ export interface BottomSheetThemeSlot extends ViewTheme {
   handleWidth?: number
   handleHeight?: number
   handleColor?: number
+  handleCornerRadius?: number
+  handleAreaHeight?: number
+  handleAreaColor?: number
   dismissThreshold?: number
   labels?: BottomSheetLabels
 }
@@ -55,6 +66,10 @@ export interface BottomSheetProps {
   closeOnBackdrop?: boolean
   /** Backdrop alpha when closeOnBackdrop is active. Default 0.5. */
   backdropAlpha?: number
+  /** Height of the drag-handle touch area in px. Also used as max-drag cap. Default 32. */
+  handleAreaHeight?: number
+  /** Custom handle renderer. Receives themed dimensions. Falls back to default bar. */
+  renderHandle?: VNodeLike | ((props: HandleRenderProps) => VNodeLike)
   /** Theme overrides. */
   theme?: PartialTheme
 }
@@ -78,6 +93,8 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
     depth = BottomSheetDepth,
     closeOnBackdrop = false,
     backdropAlpha,
+    handleAreaHeight = 32,
+    renderHandle,
     theme,
   } = props
 
@@ -127,8 +144,8 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
       setDragOffset(0)
     } else if (state === 'move') {
       const delta = data.pointer.worldY - dragStartY.current
-      // Cap drag so the handle area (32px) stays visible and interactive
-      const maxDrag = panelHeight - 32
+      // Cap drag so the handle area stays visible and interactive
+      const maxDrag = panelHeight - handleAreaHeight
       const nextOffset = Math.max(0, Math.min(delta, maxDrag))
       dragOffsetRef.current = nextOffset
       setDragOffset(nextOffset)
@@ -151,6 +168,8 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
   const handleW = themedControl.handleWidth ?? 36
   const handleH = themedControl.handleHeight ?? 5
   const handleColor = themedControl.handleColor ?? 0x64748b
+  const handleCornerRadius = themedControl.handleCornerRadius ?? 2
+  const handleAreaColor = themedControl.handleAreaColor
 
   // Panel sits at bottom: y = viewportHeight - panelHeight + drag (drag pulls down)
   // When closed (isOpen=false and dragOffset=0), panelY is irrelevant (showContent=false)
@@ -188,19 +207,33 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
           {showHandle ? (
             <View
               width={viewportWidth}
-              height={32}
+              height={handleAreaHeight}
               alignItems="center"
               justifyContent="center"
+              backgroundColor={handleAreaColor}
               enableGestures
               onTouch={(event: GestureEventData) => event.stopPropagation()}
               onTouchMove={handleTouchMove}
             >
-              <View
-                width={handleW}
-                height={handleH}
-                backgroundColor={handleColor}
-                cornerRadius={handleH / 2}
-              />
+              {renderHandle ? (
+                typeof renderHandle === 'function' ? (
+                  renderHandle({
+                    width: handleW,
+                    height: handleH,
+                    color: handleColor,
+                    cornerRadius: handleCornerRadius,
+                  })
+                ) : (
+                  renderHandle
+                )
+              ) : (
+                <View
+                  width={handleW}
+                  height={handleH}
+                  backgroundColor={handleColor}
+                  cornerRadius={handleCornerRadius}
+                />
+              )}
             </View>
           ) : null}
 
@@ -211,4 +244,58 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
       ) : null}
     </Portal>
   )
+}
+
+/**
+ * Pre-built handle renderers for use with {@link BottomSheetProps.renderHandle}.
+ *
+ * @example
+ * ```tsx
+ * <BottomSheet renderHandle={BottomSheetHandle.Bar} />
+ * <BottomSheet renderHandle={BottomSheetHandle.Pill} />
+ * <BottomSheet renderHandle={(h) => <View width={h.width} height={h.height} backgroundColor={0xff0000} cornerRadius={4} />} />
+ * ```
+ */
+export const BottomSheetHandle = {
+  /** Default bar — uses themed width, height, color, cornerRadius. */
+  Bar: (props: HandleRenderProps): VNodeLike => (
+    <View
+      width={props.width}
+      height={props.height}
+      backgroundColor={props.color}
+      cornerRadius={props.cornerRadius}
+    />
+  ),
+  /** Pill variant — cornerRadius for a fully rounded look. */
+  Pill: (props: HandleRenderProps): VNodeLike => (
+    <View
+      width={props.width * 2}
+      height={props.height * 3}
+      backgroundColor={props.color}
+      cornerRadius={props.height * 1.5}
+    />
+  ),
+  /** Gripper variant*/
+  Grip: (props: HandleRenderProps): VNodeLike => (
+    <View gap={props.height}>
+      <View
+        width={props.width * 2}
+        height={props.height}
+        backgroundColor={props.color}
+        cornerRadius={props.cornerRadius}
+      />
+      <View
+        width={props.width * 2}
+        height={props.height}
+        backgroundColor={props.color}
+        cornerRadius={props.cornerRadius}
+      />
+      <View
+        width={props.width * 2}
+        height={props.height}
+        backgroundColor={props.color}
+        cornerRadius={props.cornerRadius}
+      />
+    </View>
+  ),
 }

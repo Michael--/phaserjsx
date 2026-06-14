@@ -33,9 +33,11 @@ export {
 export {
   BottomSheet,
   BottomSheetDepth,
+  BottomSheetHandle,
   type BottomSheetLabels,
   type BottomSheetProps,
   type BottomSheetThemeSlot,
+  type HandleRenderProps,
 } from './BottomSheet'
 export { Button, type ButtonProps } from './Button'
 export { CharText, type CharTextAPI, type CharTextProps } from './CharText'
