@@ -3,7 +3,23 @@
  * Runtime-configurable settings for debugging and development
  */
 
-import { debounce } from 'lodash'
+/**
+ * Simple debounce implementation — avoids pulling in ~1.1 MB of lodash
+ * @internal
+ */
+function debounce<T extends (...args: unknown[]) => void>(
+  fn: T,
+  delay: number
+): (...args: unknown[]) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  return (...args: unknown[]) => {
+    if (timeoutId !== undefined) clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => {
+      timeoutId = undefined
+      fn(...args)
+    }, delay)
+  }
+}
 
 /**
  * Development configuration object
