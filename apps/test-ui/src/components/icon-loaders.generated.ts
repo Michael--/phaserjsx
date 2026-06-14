@@ -25,6 +25,7 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'gear': () => import('bootstrap-icons/icons/gear.svg?raw'),
   'grid': () => import('bootstrap-icons/icons/grid.svg?raw'),
   'hand-index': () => import('bootstrap-icons/icons/hand-index.svg?raw'),
+  'hand-index-thumb': () => import('bootstrap-icons/icons/hand-index-thumb.svg?raw'),
   'hourglass': () => import('bootstrap-icons/icons/hourglass.svg?raw'),
   'house': () => import('bootstrap-icons/icons/house.svg?raw'),
   'info-circle': () => import('bootstrap-icons/icons/info-circle.svg?raw'),

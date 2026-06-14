@@ -5,11 +5,16 @@ import {
   BottomSheet,
   BottomSheetDepth,
   BottomSheetHandle,
+  Divider,
   Text,
+  useEffect,
   useState,
   View,
+  type HandleRenderProps,
+  type VNodeLike,
 } from '@number10/phaserjsx'
 import { Button } from '../components'
+import { Icon } from '../components/Icon'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
@@ -124,27 +129,58 @@ function DragThresholdSheet() {
   )
 }
 
+const customHandle = (props: HandleRenderProps): VNodeLike => (
+  <View alignItems="center" justifyContent="center" gap={4}>
+    <View direction="row" gap={8} alignItems="center" justifyContent="center">
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+    </View>
+    <Divider length="98%" color={props.color} />
+  </View>
+)
+
 /**
- * Custom handle — Pill variant via renderHandle, larger handle area.
+ * Custom handle — cycle through Bar, Grip, Pill variants.
  */
 function CustomHandleSheet() {
   const [open, setOpen] = useState(false)
+  const [handleIdx, setHandleIdx] = useState(0)
+
+  const variants = [
+    { name: 'Bar', render: BottomSheetHandle.Bar },
+    { name: 'Grip', render: BottomSheetHandle.Grip },
+    { name: 'Pill', render: BottomSheetHandle.Pill },
+    { name: 'Custom', render: customHandle },
+  ] as const
+
+  const current = variants[handleIdx]
+
+  const cycleHandle = () => {
+    setOpen(true)
+  }
+
+  // increment handleIdx to cycle handle variant each time sheet is closed
+  useEffect(() => {
+    if (!open) setHandleIdx((prev: number) => (prev + 1) % variants.length)
+  }, [open])
 
   return (
     <ViewLevel3>
-      <Text text="Custom Handle (Grip, area=48)" />
-      <Button text="Open Sheet" disabled={open} onClick={() => setOpen(true)} />
+      <Text text={`Handle: ${current?.name} (area=48)`} />
+      <Button text={`Open (${current?.name})`} disabled={open} onClick={cycleHandle} />
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
         height={0.35}
         handleAreaHeight={48}
-        renderHandle={BottomSheetHandle.Grip}
+        renderHandle={current?.render}
         closeOnBackdrop
       >
         <View padding={20} gap={12}>
-          <Text text="Pill Handle Sheet" />
+          <Text text={`${current?.name} Handle Sheet`} />
           <Text text="renderHandle + handleAreaHeight=48" />
+          <Text text="Close & re-open to cycle variant" />
           <Text text="Item P" />
           <Text text="Item Q" />
         </View>
