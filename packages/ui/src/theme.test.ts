@@ -75,36 +75,40 @@ describe('theme resolution', () => {
     expect(toggleProps.trackColorOn).toBe(forest.colors.primary.DEFAULT.toNumber())
   })
 
-  it('keeps default button variant text contrast at WCAG AA in light and dark modes', () => {
-    for (const mode of ['light', 'dark'] as const) {
-      const theme = createDefaultTheme('oceanBlue', mode)
-      const colors = getPresetWithMode('oceanBlue', mode).colors
-      const button = theme.Button
+  it('keeps default button variant text contrast at WCAG AA across all presets', () => {
+    const presetNames = Object.keys(presets) as PresetName[]
 
-      const checks = [
-        { name: 'primary', background: button.primary?.backgroundColor },
-        { name: 'secondary', background: button.secondary?.backgroundColor },
-        { name: 'danger', background: button.danger?.backgroundColor },
-        {
-          name: 'disabled',
-          foreground: button.disabledTextColor,
-          background: button.disabledColor,
-        },
-        { name: 'ghost', background: colors.surface.light.toNumber() },
-        { name: 'outline', background: colors.surface.dark.toNumber() },
-      ] as const
+    for (const presetName of presetNames) {
+      for (const mode of ['light', 'dark'] as const) {
+        const theme = createDefaultTheme(presetName, mode)
+        const colors = getPresetWithMode(presetName, mode).colors
+        const button = theme.Button
 
-      for (const check of checks) {
-        const variant = check.name === 'disabled' ? undefined : button[check.name]
-        const foreground = hexToNumber(
-          ('foreground' in check ? check.foreground : variant?.textStyle?.color) ?? '#000000'
-        )
-        const background = check.background ?? 0xffffff
+        const checks = [
+          { name: 'primary', background: button.primary?.backgroundColor },
+          { name: 'secondary', background: button.secondary?.backgroundColor },
+          { name: 'danger', background: button.danger?.backgroundColor },
+          {
+            name: 'disabled',
+            foreground: button.disabledTextColor,
+            background: button.disabledColor,
+          },
+          { name: 'ghost', background: colors.surface.light.toNumber() },
+          { name: 'outline', background: colors.surface.dark.toNumber() },
+        ] as const
 
-        expect(
-          getContrastRatio(foreground, background),
-          `${mode} ${check.name} button text contrast`
-        ).toBeGreaterThanOrEqual(4.5)
+        for (const check of checks) {
+          const variant = check.name === 'disabled' ? undefined : button[check.name]
+          const foreground = hexToNumber(
+            ('foreground' in check ? check.foreground : variant?.textStyle?.color) ?? '#000000'
+          )
+          const background = check.background ?? 0xffffff
+
+          expect(
+            getContrastRatio(foreground, background),
+            `${presetName}.${mode} ${check.name} button text contrast`
+          ).toBeGreaterThanOrEqual(4.5)
+        }
       }
     }
   })
