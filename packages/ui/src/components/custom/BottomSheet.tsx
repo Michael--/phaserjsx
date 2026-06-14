@@ -53,6 +53,10 @@ export interface BottomSheetProps {
 
 /**
  * BottomSheet — slide-up panel with backdrop and drag-to-dismiss.
+ *
+ * Portal lifecycle: once opened, the Portal stays mounted to avoid
+ * duplicate backdrop issues from mount/unmount races in the VDOM.
+ * Visibility is controlled via conditional children, not by returning null.
  */
 export function BottomSheet(props: BottomSheetProps): VNodeLike {
   const {
@@ -87,9 +91,18 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
   const dragStartY = useRef(0)
   const dragOffsetRef = useRef(0)
 
+  // Track whether portal has ever been mounted — once true, stays true
+  // to prevent duplicate Portal instances from mount/unmount races.
+  const [portalEverMounted, setPortalEverMounted] = useState(false)
+
   const commitOpen = (nextOpen: boolean) => {
     if (!isControlled) setInternalOpen(nextOpen)
     onOpenChange?.(nextOpen)
+  }
+
+  // Open: ensure portal is mounted
+  if (isOpen && !portalEverMounted) {
+    setPortalEverMounted(true)
   }
 
   const handleTouchMove = (data: GestureEventData) => {
@@ -104,7 +117,9 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
       setDragOffset(0)
     } else if (state === 'move') {
       const delta = data.pointer.worldY - dragStartY.current
-      const nextOffset = Math.max(0, delta)
+      // Cap drag so the handle area (32px) stays visible and interactive
+      const maxDrag = panelHeight - 32
+      const nextOffset = Math.max(0, Math.min(delta, maxDrag))
       dragOffsetRef.current = nextOffset
       setDragOffset(nextOffset)
     } else if (state === 'end') {
@@ -116,14 +131,20 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
     }
   }
 
-  if (!isOpen && dragOffset === 0) return null
+  // Never mounted and not opening → render nothing
+  if (!portalEverMounted && !isOpen) return null
+
+  // Content visible when open or during drag animation
+  const showContent = isOpen || dragOffset > 0
 
   const cornerRadius = themedControl.panelCornerRadius ?? 16
   const handleW = themedControl.handleWidth ?? 36
   const handleH = themedControl.handleHeight ?? 5
   const handleColor = themedControl.handleColor ?? 0x64748b
+
   // Panel sits at bottom: y = viewportHeight - panelHeight + drag (drag pulls down)
-  const panelY = viewportHeight - panelHeight + (isOpen ? dragOffset : panelHeight)
+  // When closed (isOpen=false and dragOffset=0), panelY is irrelevant (showContent=false)
+  const panelY = isOpen ? viewportHeight - panelHeight + dragOffset : viewportHeight - panelHeight
 
   return (
     <Portal depth={depth} blockEvents={false}>
@@ -138,44 +159,46 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
         />
       ) : null}
 
-      <View
-        width={viewportWidth}
-        height={panelHeight}
-        y={panelY}
-        backgroundColor={themedControl.backgroundColor}
-        backgroundAlpha={themedControl.backgroundAlpha ?? 1}
-        borderColor={themedControl.borderColor}
-        borderWidth={themedControl.borderWidth}
-        cornerRadius={cornerRadius}
-        direction="column"
-        enableGestures
-        onTouch={(event: GestureEventData) => event.stopPropagation()}
-        onTouchMove={(event: GestureEventData) => event.stopPropagation()}
-        theme={nestedTheme}
-      >
-        {showHandle ? (
-          <View
-            width={viewportWidth}
-            height={32}
-            alignItems="center"
-            justifyContent="center"
-            enableGestures
-            onTouch={(event: GestureEventData) => event.stopPropagation()}
-            onTouchMove={handleTouchMove}
-          >
+      {showContent ? (
+        <View
+          width={viewportWidth}
+          height={panelHeight}
+          y={panelY}
+          backgroundColor={themedControl.backgroundColor}
+          backgroundAlpha={themedControl.backgroundAlpha ?? 1}
+          borderColor={themedControl.borderColor}
+          borderWidth={themedControl.borderWidth}
+          cornerRadius={cornerRadius}
+          direction="column"
+          enableGestures
+          onTouch={(event: GestureEventData) => event.stopPropagation()}
+          onTouchMove={(event: GestureEventData) => event.stopPropagation()}
+          theme={nestedTheme}
+        >
+          {showHandle ? (
             <View
-              width={handleW}
-              height={handleH}
-              backgroundColor={handleColor}
-              cornerRadius={handleH / 2}
-            />
-          </View>
-        ) : null}
+              width={viewportWidth}
+              height={32}
+              alignItems="center"
+              justifyContent="center"
+              enableGestures
+              onTouch={(event: GestureEventData) => event.stopPropagation()}
+              onTouchMove={handleTouchMove}
+            >
+              <View
+                width={handleW}
+                height={handleH}
+                backgroundColor={handleColor}
+                cornerRadius={handleH / 2}
+              />
+            </View>
+          ) : null}
 
-        <View flex={1} width={'fill'} overflow="hidden" theme={nestedTheme}>
-          {children}
+          <View flex={1} width={'fill'} overflow="hidden" theme={nestedTheme}>
+            {children}
+          </View>
         </View>
-      </View>
+      ) : null}
     </Portal>
   )
 }
