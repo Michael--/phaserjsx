@@ -1,6 +1,6 @@
 /**
  * Animation Showcase examples index
  */
-export { AnimatedCardExample } from './AnimatedCardExample'
-export { AnimatedDashboardExample } from './AnimatedDashboardExample'
-export { SpringButtonGridExample } from './SpringButtonGridExample'
+export { PressFeedbackExample } from './PressFeedbackExample'
+export { SmoothedProgressExample } from './SmoothedProgressExample'
+export { SnapPanelExample } from './SnapPanelExample'

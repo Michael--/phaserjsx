@@ -1,91 +1,89 @@
 /**
  * Animation Showcase Page
- * Demonstrates spring animations applied to real UI components and layouts
+ * Demonstrates spring animations as solutions for common UI interaction problems
  */
 /** @jsxImportSource react */
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
 import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import {
-  AnimatedCardExample,
-  AnimatedDashboardExample,
-  SpringButtonGridExample,
+  PressFeedbackExample,
+  SmoothedProgressExample,
+  SnapPanelExample,
 } from '@/examples/animation-showcase'
-import AnimatedCardExampleRaw from '@/examples/animation-showcase/AnimatedCardExample.tsx?raw'
-import AnimatedDashboardExampleRaw from '@/examples/animation-showcase/AnimatedDashboardExample.tsx?raw'
-import SpringButtonGridExampleRaw from '@/examples/animation-showcase/SpringButtonGridExample.tsx?raw'
+import PressFeedbackExampleRaw from '@/examples/animation-showcase/PressFeedbackExample.tsx?raw'
+import SmoothedProgressExampleRaw from '@/examples/animation-showcase/SmoothedProgressExample.tsx?raw'
+import SnapPanelExampleRaw from '@/examples/animation-showcase/SnapPanelExample.tsx?raw'
 import '@/styles/docs.css'
 import { createPhaserScene } from '@/utils/phaser-bridge'
 
 /**
- * Animation Showcase guide page
+ * Spring animation patterns guide page
  */
 export function AnimationShowcasePage() {
   return (
     <DocLayout>
-      <h1>Animation Showcase</h1>
+      <h1>Spring Patterns</h1>
       <DocDescription>
-        Spring animations applied to real UI components. These examples demonstrate how spring
-        physics enhance common UI patterns — cards, buttons, dashboards — with smooth, natural
-        motion.
+        Spring animations are most useful when they solve a concrete interaction problem: tactile
+        feedback without layout shift, smoothing volatile values, and moving overlays between stable
+        states. These examples focus on those patterns instead of decorative motion.
       </DocDescription>
 
-      <Section title="Animated Card">
+      <Section title="Press Feedback Without Layout Shift">
         <SectionDescription>
-          A card component that responds to taps with spring-driven scale and rotation. The{' '}
-          <code>TransformOriginView</code> handles the pivot point while <code>useSpring</code> with
-          the "wobbly" preset creates a playful bounce effect. The card contains real UI elements:
-          icon, title, description text, and a Button.
+          Buttons should acknowledge a tap immediately, but changing width, height, or padding would
+          disturb surrounding layout. This pattern springs only <code>scale</code> on a fixed-size{' '}
+          <code>TransformOriginView</code>, giving tactile feedback while the layout remains stable.
         </SectionDescription>
 
         <LiveExample
-          sceneFactory={() => createPhaserScene(AnimatedCardExample)}
+          sceneFactory={() => createPhaserScene(PressFeedbackExample)}
           width={600}
           height={260}
         />
 
         <details>
           <summary>View source code</summary>
-          <CodeBlock language="tsx">{AnimatedCardExampleRaw}</CodeBlock>
+          <CodeBlock language="tsx">{PressFeedbackExampleRaw}</CodeBlock>
         </details>
       </Section>
 
-      <Section title="Spring Button Grid">
+      <Section title="Smooth Incoming Values">
         <SectionDescription>
-          Five buttons, each using a different spring preset. This demonstrates how the same
-          interaction (tap-to-scale) feels different with each preset. Gentle feels smooth, wobbly
-          feels playful, stiff feels snappy — choose the right preset for your UX.
+          Game values often jump: sensor readings, scores, loading state, cooldowns. Keep the real
+          target value in state, but render a spring-smoothed value into the progress bar and label.
+          The data remains accurate while the UI becomes easier to read.
         </SectionDescription>
 
         <LiveExample
-          sceneFactory={() => createPhaserScene(SpringButtonGridExample)}
+          sceneFactory={() => createPhaserScene(SmoothedProgressExample)}
           width={620}
-          height={220}
+          height={280}
         />
 
         <details>
           <summary>View source code</summary>
-          <CodeBlock language="tsx">{SpringButtonGridExampleRaw}</CodeBlock>
+          <CodeBlock language="tsx">{SmoothedProgressExampleRaw}</CodeBlock>
         </details>
       </Section>
 
-      <Section title="Animated Dashboard">
+      <Section title="Snap Panel State Transitions">
         <SectionDescription>
-          A mini dashboard combining multiple UI components with spring animations. A pulsing
-          circular indicator uses <code>useSpring</code> with "wobbly" for continuous heartbeat-like
-          animation. The Slider and ProgressBar provide interactive control — demonstrating how
-          spring-animated elements coexist with standard form controls.
+          Bottom sheets, drawers, and command panels usually have a few meaningful states rather
+          than arbitrary animation timelines. <code>useSprings</code> coordinates position, alpha,
+          and scale so the panel snaps between closed, peek, and open states with one update.
         </SectionDescription>
 
         <LiveExample
-          sceneFactory={() => createPhaserScene(AnimatedDashboardExample)}
-          width={600}
-          height={340}
+          sceneFactory={() => createPhaserScene(SnapPanelExample)}
+          width={620}
+          height={360}
         />
 
         <details>
           <summary>View source code</summary>
-          <CodeBlock language="tsx">{AnimatedDashboardExampleRaw}</CodeBlock>
+          <CodeBlock language="tsx">{SnapPanelExampleRaw}</CodeBlock>
         </details>
       </Section>
     </DocLayout>

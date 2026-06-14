@@ -334,7 +334,9 @@ function AnimatedBox() {
 
         <p>
           See <a href="/components/transform-origin-view">TransformOriginView Spring Example</a> for
-          live demonstrations of spring-based rotation and scaling.
+          live demonstrations of spring-based rotation and scaling, or{' '}
+          <a href="/guides/animation-showcase">Spring Patterns</a> for examples that solve common UI
+          interaction problems.
         </p>
 
         <h3>The useForceRedraw Pattern</h3>
@@ -387,7 +389,7 @@ useForceRedraw(20, x, y)`}
 
         <CodeBlock language="tsx">
           {`// Different presets for different interactions
-const [width, setWidth] = useSpring(100, 'wobbly')    // Fun, bouncy
+const [scale, setScale] = useSpring(1, 'wobbly')      // Fun, bouncy
 const [opacity, setOpacity] = useSpring(1, 'gentle')  // Smooth fade
 const [x, setX] = useSpring(0, 'stiff')               // Quick response`}
         </CodeBlock>

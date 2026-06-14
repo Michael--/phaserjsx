@@ -87,7 +87,7 @@ export function SpringPlaygroundExample() {
 
       <View direction="row" gap={16} flexWrap="wrap" justifyContent="center">
         {PRESETS.map((p) => (
-          <PresetCard key={p.name} preset={p.name} color={p.color} label={p.label} />
+          <PresetCard preset={p.name} color={p.color} label={p.label} />
         ))}
       </View>
     </View>

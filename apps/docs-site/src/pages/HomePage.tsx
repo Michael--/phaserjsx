@@ -4,13 +4,10 @@
 /** @jsxImportSource react */
 import logoImage from '@/assets/phaser-jsx-logo.png'
 import { Section } from '@/components/Doc'
-import { LiveExample } from '@/components/Example'
 import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
-import { HomeAnimationShowcase } from '@/examples/home-showcase'
 import '@/styles/docs.css'
 import '@/styles/home.css'
-import { createPhaserScene } from '@/utils/phaser-bridge'
 
 export function HomePage() {
   return (
@@ -42,14 +39,6 @@ export function HomePage() {
         </ul>
       </Section>
 
-      <Section title="Animations in Action">
-        <LiveExample
-          sceneFactory={() => createPhaserScene(HomeAnimationShowcase)}
-          width={700}
-          height={200}
-        />
-      </Section>
-
       <Section title="Quick Start">
         <pre className="code-install">
           <code>npm install @number10/phaserjsx</code>
@@ -60,6 +49,7 @@ export function HomePage() {
         <CTAButtons
           buttons={[
             { to: '/components/view', text: 'View Components', variant: 'primary' },
+            { to: '/guides/animation-showcase', text: 'Spring Patterns', variant: 'secondary' },
             { to: '/installation', text: 'Installation Guide', variant: 'secondary' },
           ]}
         />
