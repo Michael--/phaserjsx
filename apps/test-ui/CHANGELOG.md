@@ -1,5 +1,17 @@
 # @phaserjsx/test-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- Add the BottomSheet playground example with backdrop, drag-to-dismiss, and handle variant coverage.
+- Align example sidebar groups with the docs navigation and persist the selected demo across reloads via `localStorage`.
+
+### Patch Changes
+
+- Updated dependency target documentation for `@number10/phaserjsx@4.5.0`.
+- Refresh generated icon loaders for the latest icon type output.
+
 ## 0.6.0
 
 ### Major Changes

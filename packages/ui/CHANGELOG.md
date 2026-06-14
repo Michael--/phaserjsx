@@ -1,5 +1,22 @@
 # @number10/phaserjsx
 
+## 4.5.0
+
+### Minor Changes
+
+- Add `NumberInput`, `ColorPicker`, `PalettePicker`, `SegmentedControl`, `Toolbar`, `MenuButton`, `ListBox`, `WheelPicker`, `ActivityIndicator`, `ProgressView`, `Toast`, `RatingBar`, and `BottomSheet` as public custom components with theme defaults, docs examples, and focused test coverage.
+- Extend `BottomSheet` with portal-backed overlays, backdrop dismissal, drag-to-dismiss behavior, configurable backdrop alpha, custom handle rendering, handle area sizing/color/corner radius, and corner-radius inset handling.
+- Add shared compact component size presets and migrate Button, SegmentedControl, and Toolbar to the shared size/variant theme model.
+
+### Patch Changes
+
+- Improve theme and color internals with cached component-name lookups, HSL-based color scaling, shared neutral constants, binary-search contrast adjustment, more stable `useColors`, and reliable remount notifications when color presets change.
+- Strengthen accessibility-oriented color handling with better neutral contrast, deterministic disabled Button styling, improved Button text contrast, and WCAG contrast regression coverage across presets and modes.
+- Fix notification stack cleanup, toast layout/dismiss controls, SegmentedControl hover text styles, ColorPicker slider-thumb alignment, and icon texture/type updates for generated icon loaders.
+- Add ListBox hover control and ScrollView prop passthrough support for slider sizing and related custom behavior.
+- Expand generated icon script coverage and include `IconType` literals in generated icon loader output.
+- Remove `lodash` dependency, replacing its `debounce` with a lightweight inline implementation (~490 kB / 43% custom-chunk size reduction).
+
 ## 4.4.0
 
 ### Minor Changes

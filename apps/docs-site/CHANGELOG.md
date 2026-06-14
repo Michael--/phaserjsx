@@ -1,5 +1,18 @@
 # docs-site
 
+## 0.9.0
+
+### Minor Changes
+
+- Document the `@number10/phaserjsx@4.5.0` UI surface for ActivityIndicator, BottomSheet, ColorPicker, ListBox, MenuButton, NumberInput, PalettePicker, ProgressView, RatingBar, SegmentedControl, Toast, Toolbar, and WheelPicker.
+- Reorganize the component sidebar navigation to align the examples with the public docs structure and new component groups.
+- Add interactive docs examples for BottomSheet backdrops and handles, NumberInput bounds/custom values/button placement, PalettePicker swatches/theme palettes, SegmentedControl icon and vertical modes, Toast variants, Toolbar modes, and WheelPicker selections.
+
+### Patch Changes
+
+- Updated dependency target documentation for `@number10/phaserjsx@4.5.0`.
+- Refresh Button docs and component copy touched by the new theme, contrast, and component-size work.
+
 ## 0.8.0
 
 ### Minor Changes
