@@ -195,14 +195,38 @@ export function QuickStartExample() {
   )
 }
 
+const DEMO_STORAGE_KEY = 'phaserjsx:test-ui:selectedDemo'
+
+/**
+ * Reads persisted demo key from localStorage, validated against ExampleKey union
+ */
+function getPersistedDemo(): ExampleKey {
+  if (typeof localStorage === 'undefined') return 'button'
+  const stored = localStorage.getItem(DEMO_STORAGE_KEY)
+  return (stored as ExampleKey) ?? 'button'
+}
+
+/**
+ * Persists the selected demo key to localStorage
+ */
+function persistDemo(key: ExampleKey): void {
+  if (typeof localStorage === 'undefined') return
+  localStorage.setItem(DEMO_STORAGE_KEY, key)
+}
+
 export function App(props: MountProps) {
   if (testMe) {
     return <QuickStartExample />
   }
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('bottomSheet')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>(getPersistedDemo())
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
+
+  // Persist selected demo across page reloads
+  useEffect(() => {
+    persistDemo(selectedDemo)
+  }, [selectedDemo])
 
   return (
     <View direction="row" justifyContent="start" height={'100%'} width={'100%'}>
