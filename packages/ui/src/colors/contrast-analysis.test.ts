@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { getPreset, getPresetWithMode } from './color-presets'
-import type { ColorShade, ColorTokens } from './color-types'
+import type { ColorTokens } from './color-types'
 
 /**
  * WCAG relative luminance
@@ -26,10 +26,6 @@ function contrastRatio(fgHex: string, bgHex: string): number {
   const lighter = Math.max(l1, l2)
   const darker = Math.min(l1, l2)
   return (lighter + 0.05) / (darker + 0.05)
-}
-
-function shadeLabel(level: keyof ColorShade): string {
-  return level === 'DEFAULT' ? 'DEFAULT(medium)' : level
 }
 
 function analyzePreset(name: string, colors: ColorTokens, mode: string) {

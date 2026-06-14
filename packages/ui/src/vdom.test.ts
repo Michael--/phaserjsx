@@ -36,13 +36,13 @@ vi.mock('./render-context', () => ({
   })),
 }))
 
-import { host } from './host'
+import { Toggle } from './components/custom/Toggle'
 import { useTheme } from './hooks'
+import { host } from './host'
 import { jsx } from './jsx-runtime'
 import { createTheme, getThemedProps } from './theme'
 import type { ParentType } from './types'
 import { createElement, mount, mountJSX, patchVNode, unmount, unmountJSX } from './vdom'
-import { Toggle } from './components/custom/Toggle'
 
 describe('VDOM', () => {
   let mockScene: unknown
@@ -151,7 +151,6 @@ describe('VDOM', () => {
         sys: { settings: { active: true } },
         add: { container: vi.fn(() => ({ visible: true })) },
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(host.create).mockImplementation(
         (_type, _props, sceneArg) =>
           ({
@@ -159,7 +158,7 @@ describe('VDOM', () => {
             list: [],
             add: vi.fn(),
             remove: vi.fn(),
-          }) as any
+          }) as unknown as Phaser.GameObjects.Container
       )
 
       const vnode = jsx(Toggle, {
