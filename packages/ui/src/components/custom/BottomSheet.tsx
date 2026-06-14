@@ -12,6 +12,9 @@ import type { VNodeLike } from '../../vdom'
 import { View } from '../index'
 import { Portal } from './Portal'
 
+/// The default portal depth for BottomSheet — can be overridden via props.
+export const BottomSheetDepth = 1100
+
 export interface BottomSheetLabels {
   close?: string
   handle?: string
@@ -47,6 +50,10 @@ export interface BottomSheetProps {
   showHandle?: boolean
   /** Portal depth. */
   depth?: number
+  /** Whether tapping the backdrop closes the sheet. Default false. */
+  closeOnBackdrop?: boolean
+  /** Backdrop alpha when closeOnBackdrop is active. Default 0.5. */
+  backdropAlpha?: number
   /** Theme overrides. */
   theme?: PartialTheme
 }
@@ -67,7 +74,9 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
     height: heightFraction = 0.5,
     dismissThreshold,
     showHandle = true,
-    depth = 1100,
+    depth = BottomSheetDepth,
+    closeOnBackdrop = false,
+    backdropAlpha,
     theme,
   } = props
 
@@ -148,12 +157,12 @@ export function BottomSheet(props: BottomSheetProps): VNodeLike {
 
   return (
     <Portal depth={depth} blockEvents={false}>
-      {isOpen ? (
+      {isOpen && closeOnBackdrop ? (
         <View
           width={viewportWidth}
           height={viewportHeight}
           backgroundColor={themedControl.backdropColor ?? 0x000000}
-          backgroundAlpha={themedControl.backdropAlpha ?? 0.5}
+          backgroundAlpha={backdropAlpha ?? themedControl.backdropAlpha ?? 0.5}
           enableGestures
           onTouch={() => commitOpen(false)}
         />

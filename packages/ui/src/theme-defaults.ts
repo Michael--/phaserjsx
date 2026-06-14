@@ -69,7 +69,7 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       },
     },
     BottomSheet: {
-      backdropAlpha: 0.5,
+      backdropAlpha: 0,
       backdropColor: 0x000000,
       backgroundColor: colors.surface.dark.toNumber(),
       backgroundAlpha: 1,

@@ -32,6 +32,7 @@ export {
 } from './Badge'
 export {
   BottomSheet,
+  BottomSheetDepth,
   type BottomSheetLabels,
   type BottomSheetProps,
   type BottomSheetThemeSlot,

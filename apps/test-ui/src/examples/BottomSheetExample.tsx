@@ -1,13 +1,13 @@
 /**
- * BottomSheetExample — Tests controlled/uncontrolled, double-open guard, drag-to-dismiss
+ * BottomSheetExample — Tests controlled/uncontrolled, backdrop modes, drag-to-dismiss
  */
-import { BottomSheet, Text, useState, View } from '@number10/phaserjsx'
+import { BottomSheet, BottomSheetDepth, Text, useState, View } from '@number10/phaserjsx'
 import { Button } from '../components'
 import { ViewLevel2, ViewLevel3 } from './Helper/ViewLevel'
 
 /**
- * Controlled BottomSheet — open/close via parent state.
- * Tests: controlled open, controlled close, double-open guard.
+ * Controlled + closeOnBackdrop — toggle via parent state.
+ * Tests: controlled open, controlled close.
  */
 function ControlledSheet() {
   const [open, setOpen] = useState(false)
@@ -15,13 +15,11 @@ function ControlledSheet() {
   return (
     <ViewLevel3>
       <Text text={`Controlled (open=${String(open)})`} />
-      <Button text="Open Sheet" onClick={() => setOpen(true)} />
-      <Button text="Close Sheet" onClick={() => setOpen(false)} />
       <Button text="Toggle Sheet" onClick={() => setOpen(!open)} />
       <BottomSheet open={open} onOpenChange={setOpen} height={0.3}>
         <View padding={20} gap={12}>
           <Text text="Controlled Sheet" />
-          <Text text="Tap backdrop or drag handle to close" />
+          <Text text="Tap Toggle or drag handle to close" />
           <Text text="Item 1" />
           <Text text="Item 2" />
           <Text text="Item 3" />
@@ -32,26 +30,57 @@ function ControlledSheet() {
 }
 
 /**
- * Uncontrolled BottomSheet — manages its own open state.
- * Tests: defaultOpen, internal state, onOpenChange callback.
+ * Uncontrolled — defaultOpen starts open, drag-to-dismiss only.
+ * Tests: uncontrolled mode (no parent open state), onOpenChange callback.
  */
 function UncontrolledSheet() {
-  const [lastEvent, setLastEvent] = useState('none')
+  const [lastEvent, setLastEvent] = useState('opened')
 
   return (
     <ViewLevel3>
-      <Text text={`Uncontrolled (last event: ${lastEvent})`} />
+      <Text text={`Uncontrolled (defaultOpen, event: ${lastEvent})`} />
       <BottomSheet
-        defaultOpen={false}
+        defaultOpen
         height={0.4}
         onOpenChange={(o: boolean) => setLastEvent(o ? 'opened' : 'closed')}
+        depth={BottomSheetDepth - 1} // test custom depth below default sheet
       >
         <View padding={20} gap={12}>
           <Text text="Uncontrolled Sheet" />
-          <Text text="Drag handle down to dismiss" />
+          <Text text="Starts open — drag handle to dismiss" />
+          <Text text="No parent button needed" />
           <Text text="Item A" />
           <Text text="Item B" />
           <Text text="Item C" />
+        </View>
+      </BottomSheet>
+    </ViewLevel3>
+  )
+}
+
+/**
+ * Custom backdropAlpha — closeOnBackdrop with lighter backdrop.
+ */
+function BackdropAlphaSheet() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <ViewLevel3>
+      <Text text="Backdrop Alpha (0.25)" />
+      <Button text="Open Sheet" disabled={open} onClick={() => setOpen(true)} />
+      <BottomSheet
+        open={open}
+        onOpenChange={setOpen}
+        height={0.4}
+        closeOnBackdrop
+        backdropAlpha={0.25}
+        depth={BottomSheetDepth + 2} // test custom depth above default sheet
+      >
+        <View padding={20} gap={12}>
+          <Text text="Light Backdrop Sheet" />
+          <Text text="Backdrop alpha=0.25, tap to close" />
+          <Text text="Item X" />
+          <Text text="Item Y" />
         </View>
       </BottomSheet>
     </ViewLevel3>
@@ -67,8 +96,14 @@ function DragThresholdSheet() {
   return (
     <ViewLevel3>
       <Text text="Drag Threshold (dismiss=120px)" />
-      <Button text="Open Sheet" onClick={() => setOpen(true)} />
-      <BottomSheet open={open} onOpenChange={setOpen} height={0.5} dismissThreshold={120}>
+      <Button text="Open Sheet" disabled={open} onClick={() => setOpen(true)} />
+      <BottomSheet
+        open={open}
+        onOpenChange={setOpen}
+        height={0.5}
+        dismissThreshold={120}
+        depth={BottomSheetDepth + 1} // test custom depth above default sheet
+      >
         <View padding={20} gap={12}>
           <Text text="High Threshold Sheet" />
           <Text text="Need to drag >120px to dismiss" />
@@ -89,6 +124,9 @@ export function ButtonSheetExample() {
       </ViewLevel2>
       <ViewLevel2>
         <UncontrolledSheet />
+      </ViewLevel2>
+      <ViewLevel2>
+        <BackdropAlphaSheet />
       </ViewLevel2>
       <ViewLevel2>
         <DragThresholdSheet />
