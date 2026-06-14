@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { setColorPreset } from './colors/preset-manager'
 import { getPresetWithMode } from './colors/color-presets'
+import { getContrastRatio, hexToNumber } from './colors/color-utils'
+import { setColorPreset } from './colors/preset-manager'
+import { createDefaultTheme } from './theme-defaults'
 import { createTheme, getThemedProps, themeRegistry } from './theme'
 
 describe('theme resolution', () => {
@@ -68,7 +70,34 @@ describe('theme resolution', () => {
     const { props: buttonProps } = getThemedProps('Button', undefined, {})
     const { props: toggleProps } = getThemedProps('Toggle', undefined, {})
 
-    expect(buttonProps.backgroundColor).toBe(forest.colors.primary.medium.toNumber())
+    expect(buttonProps.backgroundColor).toBe(forest.colors.primary.dark.toNumber())
     expect(toggleProps.trackColorOn).toBe(forest.colors.primary.DEFAULT.toNumber())
+  })
+
+  it('keeps default button variant text contrast at WCAG AA in light and dark modes', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      const theme = createDefaultTheme('oceanBlue', mode)
+      const colors = getPresetWithMode('oceanBlue', mode).colors
+      const button = theme.Button
+
+      const checks = [
+        { name: 'primary', background: button.primary?.backgroundColor },
+        { name: 'secondary', background: button.secondary?.backgroundColor },
+        { name: 'danger', background: button.danger?.backgroundColor },
+        { name: 'ghost', background: colors.surface.light.toNumber() },
+        { name: 'outline', background: colors.surface.dark.toNumber() },
+      ] as const
+
+      for (const check of checks) {
+        const variant = button[check.name]
+        const foreground = hexToNumber(variant?.textStyle?.color ?? '#000000')
+        const background = check.background ?? 0xffffff
+
+        expect(
+          getContrastRatio(foreground, background),
+          `${mode} ${check.name} button text contrast`
+        ).toBeGreaterThanOrEqual(4.5)
+      }
+    }
   })
 })

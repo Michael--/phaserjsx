@@ -68,7 +68,31 @@ function mergeButtonTheme(
   base: ButtonTheme,
   override: ButtonVariantTheme | undefined
 ): ButtonTheme {
-  return override ? ({ ...base, ...override } as ButtonTheme) : base
+  return override
+    ? ({
+        ...base,
+        ...override,
+        textStyle:
+          base.textStyle || override.textStyle
+            ? { ...(base.textStyle ?? {}), ...(override.textStyle ?? {}) }
+            : undefined,
+        Text:
+          base.Text || override.Text
+            ? {
+                ...(base.Text ?? {}),
+                ...(override.Text ?? {}),
+                style:
+                  base.Text?.style || override.Text?.style
+                    ? { ...(base.Text?.style ?? {}), ...(override.Text?.style ?? {}) }
+                    : undefined,
+              }
+            : undefined,
+        Icon:
+          base.Icon || override.Icon
+            ? { ...(base.Icon ?? {}), ...(override.Icon ?? {}) }
+            : undefined,
+      } as ButtonTheme)
+    : base
 }
 
 function resolveButtonSlotTheme<TName extends ButtonVariant | ButtonSize>(

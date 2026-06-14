@@ -5,6 +5,7 @@
  */
 import { getPresetWithMode, type PresetName } from './colors/color-presets'
 import type { ColorTokens } from './colors/color-types'
+import { ensureContrast, numberToHex } from './colors/color-utils'
 import {
   compactControlSizePresets,
   controlMinWidthPresets,
@@ -18,6 +19,29 @@ import './theme-custom' // Import to activate declaration merging
 
 function buildDefaultTheme(colors: ColorTokens): Theme {
   const textStyles = createTextStyleTokens(colors.text.DEFAULT.toString())
+  const buttonPrimaryBackground = colors.primary.dark.toNumber()
+  const buttonPrimaryForeground = ensureContrast(
+    colors.text.lightest.toNumber(),
+    buttonPrimaryBackground
+  )
+  const buttonSecondaryBackground = colors.surface.lightest.toNumber()
+  const buttonSecondaryForeground = ensureContrast(
+    colors.text.dark.toNumber(),
+    buttonSecondaryBackground
+  )
+  const buttonOutlineForeground = ensureContrast(
+    colors.primary.light.toNumber(),
+    colors.surface.dark.toNumber()
+  )
+  const buttonGhostForeground = ensureContrast(
+    colors.text.light.toNumber(),
+    colors.surface.light.toNumber()
+  )
+  const buttonDangerBackground = colors.error.dark.toNumber()
+  const buttonDangerForeground = ensureContrast(
+    colors.text.lightest.toNumber(),
+    buttonDangerBackground
+  )
 
   /** Shared defaults for primitive components (alpha + visible). */
   const primitiveVisible = { alpha: 1, visible: true } as const
@@ -564,9 +588,9 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       disabledAlpha: 0.48,
       minWidth: controlMinWidthPresets.md,
       height: controlSizePresets.md.height,
-      backgroundColor: colors.primary.medium.toNumber(),
+      backgroundColor: buttonPrimaryBackground,
       backgroundAlpha: 1,
-      borderColor: colors.primary.dark.toNumber(),
+      borderColor: colors.primary.darkest.toNumber(),
       borderWidth: 1,
       cornerRadius: controlSizePresets.md.radius,
       gap: controlSizePresets.md.gap,
@@ -578,42 +602,42 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       iconSize: controlSizePresets.md.iconSize,
       textStyle: {
         ...textStyles.medium,
-        color: colors.text.lightest.toString(),
+        color: numberToHex(buttonPrimaryForeground),
         fontStyle: 'bold',
       },
       Text: {
         style: {
           ...textStyles.medium,
-          color: colors.text.lightest.toString(),
+          color: numberToHex(buttonPrimaryForeground),
           fontStyle: 'bold',
         },
       },
       Icon: {
         size: controlSizePresets.md.iconSize,
-        tint: colors.text.DEFAULT.toNumber(),
+        tint: buttonPrimaryForeground,
       },
       // Variant overrides (flat keys, resolved by Button component)
       primary: {
-        backgroundColor: colors.primary.medium.toNumber(),
-        borderColor: colors.primary.dark.toNumber(),
-        textStyle: { color: colors.text.lightest.toString(), fontStyle: 'bold' },
-        Icon: { tint: colors.text.DEFAULT.toNumber() },
+        backgroundColor: buttonPrimaryBackground,
+        borderColor: colors.primary.darkest.toNumber(),
+        textStyle: { color: numberToHex(buttonPrimaryForeground), fontStyle: 'bold' },
+        Icon: { tint: buttonPrimaryForeground },
       },
       secondary: {
-        backgroundColor: colors.surface.lightest.toNumber(),
+        backgroundColor: buttonSecondaryBackground,
         backgroundAlpha: 0.92,
         borderColor: colors.border.light.toNumber(),
         borderWidth: 1,
-        textStyle: { color: colors.text.dark.toString(), fontStyle: 'bold' },
-        Icon: { tint: colors.text.dark.toNumber() },
+        textStyle: { color: numberToHex(buttonSecondaryForeground), fontStyle: 'bold' },
+        Icon: { tint: buttonSecondaryForeground },
       },
       outline: {
         backgroundColor: colors.primary.dark.toNumber(),
         backgroundAlpha: 0.08,
-        borderColor: colors.primary.light.toNumber(),
+        borderColor: buttonOutlineForeground,
         borderWidth: 2,
-        textStyle: { color: colors.primary.light.toString(), fontStyle: 'bold' },
-        Icon: { tint: colors.primary.light.toNumber() },
+        textStyle: { color: numberToHex(buttonOutlineForeground), fontStyle: 'bold' },
+        Icon: { tint: buttonOutlineForeground },
       },
       ghost: {
         backgroundColor: colors.surface.light.toNumber(),
@@ -621,14 +645,14 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
         borderColor: colors.border.medium.toNumber(),
         borderAlpha: 0.35,
         borderWidth: 1,
-        textStyle: { color: colors.text.light.toString(), fontStyle: 'bold' },
-        Icon: { tint: colors.text.light.toNumber() },
+        textStyle: { color: numberToHex(buttonGhostForeground), fontStyle: 'bold' },
+        Icon: { tint: buttonGhostForeground },
       },
       danger: {
-        backgroundColor: colors.error.medium.toNumber(),
-        borderColor: colors.error.dark.toNumber(),
-        textStyle: { color: colors.text.lightest.toString(), fontStyle: 'bold' },
-        Icon: { tint: colors.text.DEFAULT.toNumber() },
+        backgroundColor: buttonDangerBackground,
+        borderColor: colors.error.darkest.toNumber(),
+        textStyle: { color: numberToHex(buttonDangerForeground), fontStyle: 'bold' },
+        Icon: { tint: buttonDangerForeground },
       },
       // Size overrides (flat keys, resolved by Button component)
       small: {
