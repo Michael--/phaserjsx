@@ -7,10 +7,12 @@ import { DocDescription, Section, SectionDescription } from '@/components/Doc'
 import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import {
+  PathMorphExample,
   PressFeedbackExample,
   SmoothedProgressExample,
   SnapPanelExample,
 } from '@/examples/animation-showcase'
+import PathMorphExampleRaw from '@/examples/animation-showcase/PathMorphExample.tsx?raw'
 import PressFeedbackExampleRaw from '@/examples/animation-showcase/PressFeedbackExample.tsx?raw'
 import SmoothedProgressExampleRaw from '@/examples/animation-showcase/SmoothedProgressExample.tsx?raw'
 import SnapPanelExampleRaw from '@/examples/animation-showcase/SnapPanelExample.tsx?raw'
@@ -84,6 +86,26 @@ export function AnimationShowcasePage() {
         <details>
           <summary>View source code</summary>
           <CodeBlock language="tsx">{SnapPanelExampleRaw}</CodeBlock>
+        </details>
+      </Section>
+
+      <Section title="Vector Shape Morphing">
+        <SectionDescription>
+          Morphing between arbitrary vector shapes — icons, avatars, or decorative elements — is a
+          single-spring problem. Pre-sample both shapes to the same vertex count, then let{' '}
+          <code>useSpring</code> drive the interpolation. The <code>Graphics</code> component
+          redraws the polygon every frame from the interpolated point cloud.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(PathMorphExample)}
+          width={620}
+          height={340}
+        />
+
+        <details>
+          <summary>View source code</summary>
+          <CodeBlock language="tsx">{PathMorphExampleRaw}</CodeBlock>
         </details>
       </Section>
     </DocLayout>
