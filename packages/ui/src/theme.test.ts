@@ -84,13 +84,20 @@ describe('theme resolution', () => {
         { name: 'primary', background: button.primary?.backgroundColor },
         { name: 'secondary', background: button.secondary?.backgroundColor },
         { name: 'danger', background: button.danger?.backgroundColor },
+        {
+          name: 'disabled',
+          foreground: button.disabledTextColor,
+          background: button.disabledColor,
+        },
         { name: 'ghost', background: colors.surface.light.toNumber() },
         { name: 'outline', background: colors.surface.dark.toNumber() },
       ] as const
 
       for (const check of checks) {
-        const variant = button[check.name]
-        const foreground = hexToNumber(variant?.textStyle?.color ?? '#000000')
+        const variant = check.name === 'disabled' ? undefined : button[check.name]
+        const foreground = hexToNumber(
+          ('foreground' in check ? check.foreground : variant?.textStyle?.color) ?? '#000000'
+        )
         const background = check.background ?? 0xffffff
 
         expect(

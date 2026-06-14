@@ -29,6 +29,11 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     colors.text.dark.toNumber(),
     buttonSecondaryBackground
   )
+  const buttonDisabledBackground = colors.surface.medium.toNumber()
+  const buttonDisabledForeground = ensureContrast(
+    colors.text.light.toNumber(),
+    buttonDisabledBackground
+  )
   const buttonOutlineForeground = ensureContrast(
     colors.primary.light.toNumber(),
     colors.surface.dark.toNumber()
@@ -584,7 +589,9 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
     Button: {
       variant: 'primary',
       size: 'medium',
-      disabledColor: colors.surface.medium.toNumber(),
+      disabledColor: buttonDisabledBackground,
+      disabledTextColor: numberToHex(buttonDisabledForeground),
+      disabledIconTint: buttonDisabledForeground,
       disabledAlpha: 0.48,
       minWidth: controlMinWidthPresets.md,
       height: controlSizePresets.md.height,

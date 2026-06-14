@@ -25,6 +25,8 @@ export type ButtonVariantTheme = ViewTheme &
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     iconSize?: number
     disabledColor?: number
+    disabledTextColor?: string
+    disabledIconTint?: number
     disabledAlpha?: number
   }
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
@@ -193,9 +195,20 @@ export function Button(props: ButtonProps): VNodeLike {
       : undefined
   const resolvedIconSize = iconSize ?? sizeTheme.iconSize
   const resolvedDisabledAlpha = disabledAlpha ?? sizeTheme.disabledAlpha ?? 0.5
+  const resolvedDisabledTextColor =
+    sizeTheme.disabledTextColor ?? themedButton.disabledTextColor ?? resolvedTextStyle?.color
+  const resolvedDisabledIconTint =
+    sizeTheme.disabledIconTint ?? themedButton.disabledIconTint ?? sizeTheme.Icon?.tint
+  const effectiveTextStyle =
+    disabled && resolvedDisabledTextColor
+      ? { ...(resolvedTextStyle ?? {}), color: resolvedDisabledTextColor }
+      : resolvedTextStyle
   const contentStyleProps: Partial<ButtonTheme> = {
-    ...(resolvedTextStyle ? { textStyle: resolvedTextStyle } : {}),
+    ...(effectiveTextStyle ? { textStyle: effectiveTextStyle } : {}),
     ...(resolvedIconSize !== undefined ? { iconSize: resolvedIconSize } : {}),
+    ...(disabled && resolvedDisabledIconTint !== undefined
+      ? { Icon: { ...(sizeTheme.Icon ?? {}), tint: resolvedDisabledIconTint } }
+      : {}),
   }
 
   // Apply disabled state styling
@@ -204,7 +217,8 @@ export function Button(props: ButtonProps): VNodeLike {
         ...sizeTheme,
         backgroundColor:
           sizeTheme.disabledColor ?? themedButton.disabledColor ?? sizeTheme.backgroundColor,
-        alpha: alpha ?? resolvedDisabledAlpha,
+        backgroundAlpha: resolvedDisabledAlpha,
+        ...(alpha !== undefined ? { alpha } : {}),
         ...contentStyleProps,
       }
     : {
@@ -229,7 +243,7 @@ export function Button(props: ButtonProps): VNodeLike {
     (generatedText !== undefined ? (
       <Text
         text={`${generatedText}`}
-        {...(resolvedTextStyle ? { style: resolvedTextStyle } : {})}
+        {...(effectiveTextStyle ? { style: effectiveTextStyle } : {})}
       />
     ) : null)
 
@@ -238,6 +252,8 @@ export function Button(props: ButtonProps): VNodeLike {
   // Filter out non-View props from theme
   const {
     disabledColor: _disabledColor,
+    disabledTextColor: _disabledTextColor,
+    disabledIconTint: _disabledIconTint,
     disabledAlpha: _disabledAlpha,
     effect: _effect,
     effectConfig: _effectConfig,

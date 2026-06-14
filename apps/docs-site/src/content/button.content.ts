@@ -133,7 +133,7 @@ export const buttonContent: ComponentDocs = {
       type: 'boolean',
       default: 'false',
       description:
-        'Disables interaction (enableGestures=false), sets alpha=0.5, applies disabledColor from theme',
+        'Disables interaction, applies disabledColor, disabledAlpha, and disabled text/icon colors from theme',
     },
     {
       name: 'onClick',
@@ -195,7 +195,8 @@ export const buttonContent: ComponentDocs = {
       name: 'disabledAlpha',
       type: 'number',
       default: '0.48',
-      description: 'Alpha applied while disabled, configurable through the Button theme.',
+      description:
+        'Background alpha applied while disabled, configurable through the Button theme.',
     },
   ],
 

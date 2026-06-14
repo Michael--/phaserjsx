@@ -333,6 +333,8 @@ export interface CustomComponentThemes {
     variant?: ButtonVariant
     size?: ButtonSize
     disabledColor?: number
+    disabledTextColor?: string
+    disabledIconTint?: number
     disabledAlpha?: number
     textStyle?: Phaser.Types.GameObjects.Text.TextStyle
     iconSize?: number
