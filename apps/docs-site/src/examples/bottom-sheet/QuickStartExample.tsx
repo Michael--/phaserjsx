@@ -5,12 +5,17 @@ export function QuickStartBottomSheetExample() {
   const [open, setOpen] = useState(false)
 
   return (
-    <View width="fill" height="fill" alignItems="center" justifyContent="center">
-      <Button width={160} height={40} onClick={() => setOpen(true)}>
-        <Text text="Open Sheet" />
-      </Button>
+    <View
+      width="fill"
+      height="fill"
+      alignItems="center"
+      justifyContent="start"
+      padding={20}
+      gap={12}
+    >
+      <Button text="Open Sheet" disabled={open} onClick={() => setOpen(true)} />
 
-      <BottomSheet open={open} onOpenChange={setOpen} height={0.4} closeOnBackdrop>
+      <BottomSheet open={open} onOpenChange={setOpen} height={0.5}>
         <View
           padding={20}
           gap={12}

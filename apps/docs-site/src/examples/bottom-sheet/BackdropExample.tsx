@@ -5,17 +5,22 @@ export function BackdropBottomSheetExample() {
   const [open, setOpen] = useState(false)
 
   return (
-    <View width="fill" height="fill" alignItems="center" justifyContent="center">
-      <Button width={180} height={40} onClick={() => setOpen(true)}>
-        <Text text="Open with Backdrop" />
-      </Button>
+    <View
+      width="fill"
+      height="fill"
+      alignItems="center"
+      justifyContent="start"
+      padding={20}
+      gap={12}
+    >
+      <Button text="Open with Backdrop" disabled={open} onClick={() => setOpen(true)} />
 
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
-        height={0.35}
+        height={0.5}
         closeOnBackdrop
-        backdropAlpha={0.25}
+        backdropAlpha={0.35}
       >
         <View
           padding={20}

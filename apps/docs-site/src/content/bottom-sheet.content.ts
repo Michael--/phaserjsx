@@ -18,8 +18,7 @@ export const bottomSheetContent: ComponentDocs = {
   quickStart: {
     id: 'quick-start',
     title: 'Quick Start',
-    description:
-      'A button-triggered sheet with backdrop. Tap the backdrop or drag the handle down to dismiss.',
+    description: 'A button-triggered sheet. Drag the handle down to dismiss.',
     component: QuickStartBottomSheetExample,
     height: SCENE_SIZES.medium,
     code: QuickStartBottomSheetExampleCode,

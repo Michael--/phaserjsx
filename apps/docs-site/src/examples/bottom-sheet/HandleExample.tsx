@@ -1,55 +1,87 @@
 /** @jsxImportSource @number10/phaserjsx */
-import { BottomSheet, BottomSheetHandle, Button, Text, View, useState } from '@number10/phaserjsx'
+import { Icon } from '@/components/Icon'
+import {
+  BottomSheet,
+  BottomSheetHandle,
+  Button,
+  Divider,
+  Text,
+  View,
+  useState,
+  type HandleRenderProps,
+  type VNodeLike,
+} from '@number10/phaserjsx'
+
+const customHandle = (props: HandleRenderProps): VNodeLike => (
+  <View alignItems="center" justifyContent="center" gap={4}>
+    <View direction="row" gap={8} alignItems="center" justifyContent="center">
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+      <Icon type="hand-index-thumb" size={36} tint={props.color} />
+    </View>
+    <Divider length="98%" color={props.color} />
+  </View>
+)
 
 export function HandleBottomSheetExample() {
   const [open, setOpen] = useState(false)
-  const [variant, setVariant] = useState<'Bar' | 'Grip' | 'Pill'>('Bar')
+  const [variant, setVariant] = useState<'Bar' | 'Grip' | 'Pill' | 'Custom'>('Bar')
 
   const handleMap = {
     Bar: BottomSheetHandle.Bar,
     Grip: BottomSheetHandle.Grip,
     Pill: BottomSheetHandle.Pill,
+    Custom: customHandle,
   } as const
 
   return (
-    <View width="fill" height="fill" alignItems="center" justifyContent="center" gap={12}>
+    <View
+      width="fill"
+      height="fill"
+      alignItems="center"
+      justifyContent="start"
+      padding={20}
+      gap={12}
+    >
       <View direction="row" gap={8}>
         <Button
           width={64}
-          height={32}
+          text="Bar"
           onClick={() => {
             setVariant('Bar')
             setOpen(true)
           }}
-        >
-          <Text text="Bar" />
-        </Button>
+        />
         <Button
           width={64}
-          height={32}
+          text="Grip"
           onClick={() => {
             setVariant('Grip')
             setOpen(true)
           }}
-        >
-          <Text text="Grip" />
-        </Button>
+        />
         <Button
           width={64}
-          height={32}
+          text="Pill"
           onClick={() => {
             setVariant('Pill')
             setOpen(true)
           }}
-        >
-          <Text text="Pill" />
-        </Button>
+        />
+        <Button
+          width={64}
+          text="Custom"
+          onClick={() => {
+            setVariant('Custom')
+            setOpen(true)
+          }}
+        />
       </View>
 
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
-        height={0.3}
+        height={0.5}
         handleAreaHeight={48}
         renderHandle={handleMap[variant]}
         closeOnBackdrop
