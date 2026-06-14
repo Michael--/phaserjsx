@@ -79,7 +79,6 @@ function buildDefaultTheme(colors: ColorTokens): Theme {
       handleWidth: 36,
       handleHeight: 5,
       handleColor: colors.border.dark.toNumber(),
-      dismissThreshold: 80,
     },
     RadioButton: {
       selectedColor: colors.primary.DEFAULT.toNumber(),

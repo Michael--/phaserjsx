@@ -116,8 +116,9 @@ export const bottomSheetContent: ComponentDocs = {
     {
       name: 'dismissThreshold',
       type: 'number',
-      default: '80',
-      description: 'Drag distance in pixels required to dismiss the sheet.',
+      default: 'half available drag',
+      description:
+        'Drag distance in pixels required to dismiss the sheet. Defaults to half of the available drag distance.',
     },
     {
       name: 'depth',
