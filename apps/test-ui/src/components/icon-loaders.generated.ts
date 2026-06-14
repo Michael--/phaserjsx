@@ -7,6 +7,8 @@
 export type IconLoaderFn = () => Promise<{ default: string }>
 
 export const iconLoaders: Record<string, IconLoaderFn> = {
+  'activity': () => import('bootstrap-icons/icons/activity.svg?raw'),
+  'arrows-move': () => import('bootstrap-icons/icons/arrows-move.svg?raw'),
   'bell': () => import('bootstrap-icons/icons/bell.svg?raw'),
   'bell-fill': () => import('bootstrap-icons/icons/bell-fill.svg?raw'),
   'boxes': () => import('bootstrap-icons/icons/boxes.svg?raw'),
@@ -22,18 +24,21 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'envelope': () => import('bootstrap-icons/icons/envelope.svg?raw'),
   'exclamation-triangle': () => import('bootstrap-icons/icons/exclamation-triangle.svg?raw'),
   'file-text': () => import('bootstrap-icons/icons/file-text.svg?raw'),
+  'fonts': () => import('bootstrap-icons/icons/fonts.svg?raw'),
   'gear': () => import('bootstrap-icons/icons/gear.svg?raw'),
   'grid': () => import('bootstrap-icons/icons/grid.svg?raw'),
   'hand-index': () => import('bootstrap-icons/icons/hand-index.svg?raw'),
   'hand-index-thumb': () => import('bootstrap-icons/icons/hand-index-thumb.svg?raw'),
   'hourglass': () => import('bootstrap-icons/icons/hourglass.svg?raw'),
   'house': () => import('bootstrap-icons/icons/house.svg?raw'),
+  'image': () => import('bootstrap-icons/icons/image.svg?raw'),
   'info-circle': () => import('bootstrap-icons/icons/info-circle.svg?raw'),
   'moon': () => import('bootstrap-icons/icons/moon.svg?raw'),
   'palette': () => import('bootstrap-icons/icons/palette.svg?raw'),
   'person': () => import('bootstrap-icons/icons/person.svg?raw'),
   'person-circle': () => import('bootstrap-icons/icons/person-circle.svg?raw'),
   'question-circle': () => import('bootstrap-icons/icons/question-circle.svg?raw'),
+  'sliders': () => import('bootstrap-icons/icons/sliders.svg?raw'),
   'square': () => import('bootstrap-icons/icons/square.svg?raw'),
   'star': () => import('bootstrap-icons/icons/star.svg?raw'),
   'stars': () => import('bootstrap-icons/icons/stars.svg?raw'),
@@ -41,4 +46,5 @@ export const iconLoaders: Record<string, IconLoaderFn> = {
   'toggle-on': () => import('bootstrap-icons/icons/toggle-on.svg?raw'),
   'trash': () => import('bootstrap-icons/icons/trash.svg?raw'),
   'wifi': () => import('bootstrap-icons/icons/wifi.svg?raw'),
+  'window': () => import('bootstrap-icons/icons/window.svg?raw'),
 }

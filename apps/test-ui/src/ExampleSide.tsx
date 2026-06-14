@@ -110,55 +110,79 @@ type GroupedExamples = Record<
 >
 
 const groupedExamples: GroupedExamples = {
-  components: {
-    label: 'Components',
-    iconType: 'gear',
-    examples: {
-      bottomSheet: { label: 'BottomSheet Component', component: ButtonSheetExample },
-      button: { label: 'Button Variants', component: ButtonExample },
-      badge: { label: 'Badge / Tag Component', component: BadgeExample },
-      checkbox: { label: 'Checkbox Component', component: CheckboxExample },
-      toggle: { label: 'Toggle/Switch Component', component: ToggleExample },
-      graphics: { label: 'Graphics Component', component: GraphicsExample },
-      image: { label: 'Image Component', component: ImageExample },
-      sprite: { label: 'Sprite Component', component: SpriteExample },
-      tilesprite: { label: 'TileSprite Component', component: TileSpriteExample },
-      nineslice: { label: 'NineSlice UI', component: NineSliceExample },
-      particles: { label: 'Particles Component', component: ParticlesExample },
-      accordion: { label: 'Accordion Component', component: AccordionExample },
-      charText: { label: 'CharText Component', component: ChartTextExample },
-      charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
-      dropdown: { label: 'Dropdown Component', component: DropdownExample },
-      slider: { label: 'Slider Component', component: SliderExample },
-      progressBar: { label: 'ProgressBar Component', component: ProgressBarExample },
-      tooltip: { label: 'Tooltip Component', component: TooltipExample },
-      portal: { label: 'Portal System (Foundation)', component: PortalExample },
-      popover: { label: 'Popover / ContextMenu', component: PopoverExample },
-      modal: { label: 'Modal Component', component: ModalExample },
-      dialog: { label: 'Dialog Component', component: DialogExample },
-      alertDialog: { label: 'AlertDialog Component', component: AlertDialogExample },
-      wrapText: { label: 'WrapText Component', component: WrapTextExample },
-    },
-  },
   layout: {
-    label: 'Layout',
+    label: 'Layout & Structure',
     iconType: 'grid',
     examples: {
+      accordion: { label: 'Accordion Component', component: AccordionExample },
       stack: { label: 'Stack', component: StackExample },
       flex: { label: 'Flex vs Spacer', component: FlexExample },
       flexAdvanced: { label: 'Flex Shrink/Basis', component: FlexAdvancedExample },
       flexGrid: { label: 'Flex Grid (Wrap)', component: FlexGridExample },
       constraints: { label: 'Min/Max Constraints', component: ConstraintsExample },
+      scroll: { label: 'Scroll Example', component: ScrollExample },
       advanced: { label: 'Advanced Layouts', component: AdvancedLayoutExample },
     },
   },
-  interactions: {
-    label: 'Interactions',
-    iconType: 'hand-index',
+  text: {
+    label: 'Text & Content',
+    iconType: 'fonts',
     examples: {
-      gesture: { label: 'Gesture System', component: GestureExample },
-      scroll: { label: 'Scroll Example', component: ScrollExample },
+      wrapText: { label: 'WrapText Component', component: WrapTextExample },
+      charText: { label: 'CharText Component', component: ChartTextExample },
+      charTextInput: { label: 'CharTextInput Component', component: ChartTextInputExample },
+    },
+  },
+  inputs: {
+    label: 'Inputs & Selection',
+    iconType: 'sliders',
+    examples: {
+      button: { label: 'Button Variants', component: ButtonExample },
+      checkbox: { label: 'Checkbox Component', component: CheckboxExample },
+      dropdown: { label: 'Dropdown Component', component: DropdownExample },
+      slider: { label: 'Slider Component', component: SliderExample },
+      toggle: { label: 'Toggle/Switch Component', component: ToggleExample },
+    },
+  },
+  overlays: {
+    label: 'Overlays & Dialogs',
+    iconType: 'window',
+    examples: {
+      portal: { label: 'Portal System (Foundation)', component: PortalExample },
+      popover: { label: 'Popover / ContextMenu', component: PopoverExample },
+      bottomSheet: { label: 'BottomSheet Component', component: ButtonSheetExample },
+      modal: { label: 'Modal Component', component: ModalExample },
+      dialog: { label: 'Dialog Component', component: DialogExample },
+      alertDialog: { label: 'AlertDialog Component', component: AlertDialogExample },
+      tooltip: { label: 'Tooltip Component', component: TooltipExample },
+    },
+  },
+  feedback: {
+    label: 'Feedback & Status',
+    iconType: 'activity',
+    examples: {
+      badge: { label: 'Badge / Tag Component', component: BadgeExample },
+      progressBar: { label: 'ProgressBar Component', component: ProgressBarExample },
+    },
+  },
+  rendering: {
+    label: 'Rendering & Media',
+    iconType: 'image',
+    examples: {
+      graphics: { label: 'Graphics Component', component: GraphicsExample },
+      image: { label: 'Image Component', component: ImageExample },
+      nineslice: { label: 'NineSlice UI', component: NineSliceExample },
+      particles: { label: 'Particles Component', component: ParticlesExample },
+      sprite: { label: 'Sprite Component', component: SpriteExample },
+      tilesprite: { label: 'TileSprite Component', component: TileSpriteExample },
+    },
+  },
+  transforms: {
+    label: 'Transforms & Origins',
+    iconType: 'arrows-move',
+    examples: {
       ref: { label: 'Ref Example', component: RefExample },
+      origin: { label: 'Origin View', component: OriginExample },
     },
   },
   themes: {
@@ -178,9 +202,15 @@ const groupedExamples: GroupedExamples = {
     examples: {
       springAnimation: { label: 'Spring Animation', component: SpringAnimationExample },
       effects: { label: 'Object Effects', component: GameObjectEffectsExample },
-      origin: { label: 'Origin View', component: OriginExample },
       customEffects: { label: 'Custom Effects', component: CustomEffectsExample },
       fx: { label: 'FX System', component: FXSystemExample },
+    },
+  },
+  interactions: {
+    label: 'Interactions',
+    iconType: 'hand-index',
+    examples: {
+      gesture: { label: 'Gesture System', component: GestureExample },
     },
   },
   miscellaneous: {
