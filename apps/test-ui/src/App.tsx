@@ -200,7 +200,7 @@ export function App(props: MountProps) {
     return <QuickStartExample />
   }
 
-  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('toggle')
+  const [selectedDemo, setSelectedDemo] = useState<ExampleKey>('bottomSheet')
   const [selectedExample, setSelectedExample] = useState<DebugPresetKey>('production')
   const token = useThemeTokens()
 

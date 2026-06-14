@@ -1,5 +1,5 @@
 import type * as PhaserJSX from '@number10/phaserjsx'
-import { getThemedProps, RadioButton, Text, View, type VNode } from '@number10/phaserjsx'
+import { getThemedProps, RadioButton, Text, View } from '@number10/phaserjsx'
 import { Accordion, Icon, type IconType } from './components'
 import { AccordionExample } from './examples/AccordionExample'
 import { AdvancedLayoutExample } from './examples/AdvancedLayoutExample'
@@ -18,6 +18,7 @@ import { GameObjectEffectsExample } from './examples/GameObjectEffectsExample'
 import { GestureExample } from './examples/GestureExample'
 import { GraphicsExample } from './examples/GraphicsExample'
 
+import { ButtonSheetExample } from './examples/BottomSheetExample'
 import { ChartTextExample } from './examples/CharTextExample'
 import { ChartTextInputExample } from './examples/CharTextInputExample'
 import { CheckboxExample } from './examples/CheckboxExample'
@@ -29,8 +30,8 @@ import { ModalExample } from './examples/ModalExample'
 import { NineSliceExample } from './examples/NineSliceExample'
 import { OriginExample } from './examples/OriginExample'
 import { ParticlesExample } from './examples/ParticlesExample'
-import { PortalExample } from './examples/PortalExample'
 import { PopoverExample } from './examples/PopoverExample'
+import { PortalExample } from './examples/PortalExample'
 import { ProgressBarExample } from './examples/ProgressBarExample'
 import { RefExample } from './examples/RefExample'
 import { ScrollExample } from './examples/ScrollExamples'
@@ -56,6 +57,7 @@ declare module '@number10/phaserjsx' {
 }
 
 export type ExampleKey =
+  | 'bottomSheet'
   | 'button'
   | 'badge'
   | 'graphics'
@@ -100,7 +102,7 @@ export type ExampleKey =
   | 'wrapText'
   | 'fx'
 
-type ExampleConfig = { label: string; component: () => VNode }
+type ExampleConfig = { label: string; component: () => PhaserJSX.VNodeLike }
 
 type GroupedExamples = Record<
   string,
@@ -112,6 +114,7 @@ const groupedExamples: GroupedExamples = {
     label: 'Components',
     iconType: 'gear',
     examples: {
+      bottomSheet: { label: 'BottomSheet Component', component: ButtonSheetExample },
       button: { label: 'Button Variants', component: ButtonExample },
       badge: { label: 'Badge / Tag Component', component: BadgeExample },
       checkbox: { label: 'Checkbox Component', component: CheckboxExample },
