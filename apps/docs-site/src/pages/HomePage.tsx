@@ -8,9 +8,9 @@ import { LiveExample } from '@/components/Example'
 import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
 import { HomeAnimationShowcase } from '@/examples/home-showcase'
-import { createPhaserScene } from '@/utils/phaser-bridge'
 import '@/styles/docs.css'
 import '@/styles/home.css'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 
 export function HomePage() {
   return (

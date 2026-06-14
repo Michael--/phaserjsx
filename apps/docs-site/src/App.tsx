@@ -63,6 +63,7 @@ import {
   TestingPage,
   TooltipsPage,
 } from './pages/Guides'
+import { AnimationShowcasePage } from './pages/Guides/AnimationShowcasePage'
 import { EffectsPage } from './pages/Guides/EffectsPage'
 import { GesturesPage } from './pages/Guides/GesturesPage'
 import { LayoutPatternsPage } from './pages/Guides/LayoutPatternsPage'
@@ -229,6 +230,7 @@ export function App() {
           <Route path="/guides/best-practices" element={<BestPracticesPage />} />
           <Route path="/guides/testing" element={<TestingPage />} />
           <Route path="/guides/scene-backgrounds" element={<SceneBackgroundsPage />} />
+          <Route path="/guides/animation-showcase" element={<AnimationShowcasePage />} />
           <Route path="/guides/effects-animations" element={<EffectsPage />} />
           <Route path="/guides/gestures" element={<GesturesPage />} />
           <Route path="/guides/tooltips" element={<TooltipsPage />} />

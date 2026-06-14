@@ -94,6 +94,7 @@ const navigation: NavSection[] = [
   {
     title: 'Animation & Transforms',
     items: [
+      { label: 'Showcase', path: '/guides/animation-showcase' },
       { label: 'Effects & Animations', path: '/guides/effects-animations' },
       { label: 'TransformOriginView', path: '/components/transform-origin-view' },
       { label: 'RefOriginView', path: '/components/ref-origin-view' },

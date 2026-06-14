@@ -5,10 +5,10 @@
 import { DocDescription, Section, SectionDescription } from '@/components/Doc'
 import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
-import { ThemeEffectsPlaygroundExample } from '@/examples/theme-effects'
-import ThemeEffectsPlaygroundExampleRaw from '@/examples/theme-effects/ThemeEffectsPlaygroundExample.tsx?raw'
 import { SpringPlaygroundExample } from '@/examples/spring-playground'
 import SpringPlaygroundExampleRaw from '@/examples/spring-playground/SpringPlaygroundExample.tsx?raw'
+import { ThemeEffectsPlaygroundExample } from '@/examples/theme-effects'
+import ThemeEffectsPlaygroundExampleRaw from '@/examples/theme-effects/ThemeEffectsPlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
 import { createPhaserScene } from '@/utils/phaser-bridge'
 
