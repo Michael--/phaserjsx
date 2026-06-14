@@ -4,8 +4,11 @@
 /** @jsxImportSource react */
 import logoImage from '@/assets/phaser-jsx-logo.png'
 import { Section } from '@/components/Doc'
+import { LiveExample } from '@/components/Example'
 import { CTAButtons, Hero } from '@/components/Home'
 import { DocLayout } from '@/components/Layout'
+import { HomeAnimationShowcase } from '@/examples/home-showcase'
+import { createPhaserScene } from '@/utils/phaser-bridge'
 import '@/styles/docs.css'
 import '@/styles/home.css'
 
@@ -37,6 +40,14 @@ export function HomePage() {
           <li>✅ 30+ Built-in Components</li>
           <li>✅ TypeScript First</li>
         </ul>
+      </Section>
+
+      <Section title="Animations in Action">
+        <LiveExample
+          sceneFactory={() => createPhaserScene(HomeAnimationShowcase)}
+          width={700}
+          height={200}
+        />
       </Section>
 
       <Section title="Quick Start">

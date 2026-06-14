@@ -92,6 +92,14 @@ const navigation: NavSection[] = [
     ],
   },
   {
+    title: 'Animation & Transforms',
+    items: [
+      { label: 'Effects & Animations', path: '/guides/effects-animations' },
+      { label: 'TransformOriginView', path: '/components/transform-origin-view' },
+      { label: 'RefOriginView', path: '/components/ref-origin-view' },
+    ],
+  },
+  {
     title: 'Rendering & Media',
     items: [
       { label: 'Graphics', path: '/components/graphics' },
@@ -104,13 +112,6 @@ const navigation: NavSection[] = [
     ],
   },
   {
-    title: 'Transforms & Origins',
-    items: [
-      { label: 'RefOriginView', path: '/components/ref-origin-view' },
-      { label: 'TransformOriginView', path: '/components/transform-origin-view' },
-    ],
-  },
-  {
     title: 'Guides',
     items: [
       { label: 'Best Practices', path: '/guides/best-practices' },
@@ -119,7 +120,6 @@ const navigation: NavSection[] = [
       { label: 'Theme System', path: '/guides/theme-system' },
       { label: 'Responsive Design', path: '/guides/responsive-design' },
       { label: 'Layout Patterns', path: '/guides/layout-patterns' },
-      { label: 'Effects & Animations', path: '/guides/effects-animations' },
       { label: 'Performance', path: '/guides/performance' },
       { label: 'Scene Backgrounds', path: '/guides/scene-backgrounds' },
       { label: 'PhaserJSX Plugin', path: '/guides/phaserjsx-plugin' },

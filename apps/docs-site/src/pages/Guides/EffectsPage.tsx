@@ -7,6 +7,8 @@ import { CodeBlock, LiveExample } from '@/components/Example'
 import { DocLayout } from '@/components/Layout'
 import { ThemeEffectsPlaygroundExample } from '@/examples/theme-effects'
 import ThemeEffectsPlaygroundExampleRaw from '@/examples/theme-effects/ThemeEffectsPlaygroundExample.tsx?raw'
+import { SpringPlaygroundExample } from '@/examples/spring-playground'
+import SpringPlaygroundExampleRaw from '@/examples/spring-playground/SpringPlaygroundExample.tsx?raw'
 import '@/styles/docs.css'
 import { createPhaserScene } from '@/utils/phaser-bridge'
 
@@ -389,6 +391,23 @@ const [width, setWidth] = useSpring(100, 'wobbly')    // Fun, bouncy
 const [opacity, setOpacity] = useSpring(1, 'gentle')  // Smooth fade
 const [x, setX] = useSpring(0, 'stiff')               // Quick response`}
         </CodeBlock>
+
+        <h3>Spring Presets Playground</h3>
+        <SectionDescription>
+          See all six spring presets in action side by side. Click any colored box to trigger a
+          rotation and scale animation with that preset's physics personality.
+        </SectionDescription>
+
+        <LiveExample
+          sceneFactory={() => createPhaserScene(SpringPlaygroundExample)}
+          width={700}
+          height={280}
+        />
+
+        <details>
+          <summary>View source code</summary>
+          <CodeBlock language="tsx">{SpringPlaygroundExampleRaw}</CodeBlock>
+        </details>
 
         <h3>Custom Spring Configuration</h3>
         <p>
