@@ -43,6 +43,7 @@ import type {
 } from './components/custom/Toast'
 import type { ToolbarDensity, ToolbarLabels, ToolbarOrientation } from './components/custom/Toolbar'
 import type { WheelPickerLabels, WheelPickerSize } from './components/custom/WheelPicker'
+import type { CornerRadiusInsets } from './core-props'
 import type { EffectFn } from './effects/use-effect'
 import type { NestedComponentThemes, TextTheme, ViewTheme } from './theme-base'
 import type { ChildrenType } from './types'
@@ -63,7 +64,7 @@ export interface CustomComponentThemes {
   BottomSheet: ViewTheme & {
     backdropAlpha?: number
     backdropColor?: number
-    panelCornerRadius?: number
+    panelCornerRadius?: number | CornerRadiusInsets
     handleWidth?: number
     handleHeight?: number
     handleColor?: number

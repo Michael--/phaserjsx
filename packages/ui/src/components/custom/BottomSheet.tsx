@@ -2,6 +2,7 @@
 /**
  * BottomSheet component — slide-up panel with backdrop and drag-to-dismiss.
  */
+import type { CornerRadiusInsets } from '@number10/phaserjsx/core-props'
 import type { GestureEventData, TouchMoveState } from '../../gestures/gesture-types'
 import { useRef, useScene, useState, useTheme } from '../../hooks'
 import { portalRegistry } from '../../portal'
@@ -23,7 +24,7 @@ export interface BottomSheetLabels {
 export interface BottomSheetThemeSlot extends ViewTheme {
   backdropAlpha?: number
   backdropColor?: number
-  panelCornerRadius?: number
+  panelCornerRadius?: number | CornerRadiusInsets
   handleWidth?: number
   handleHeight?: number
   handleColor?: number

@@ -44,6 +44,7 @@ function UncontrolledSheet() {
         height={0.4}
         onOpenChange={(o: boolean) => setLastEvent(o ? 'opened' : 'closed')}
         depth={BottomSheetDepth - 1} // test custom depth below default sheet
+        theme={{ BottomSheet: { panelCornerRadius: { tl: 10, bl: 0, tr: 10, br: 0 } } }}
       >
         <View padding={20} gap={12}>
           <Text text="Uncontrolled Sheet" />
