@@ -95,6 +95,7 @@ const navigation: NavSection[] = [
     title: 'Animation & Transforms',
     items: [
       { label: 'Spring Patterns', path: '/guides/animation-showcase' },
+      { label: 'Custom Components', path: '/guides/custom-component-pattern' },
       { label: 'Effects & Animations', path: '/guides/effects-animations' },
       { label: 'TransformOriginView', path: '/components/transform-origin-view' },
       { label: 'RefOriginView', path: '/components/ref-origin-view' },

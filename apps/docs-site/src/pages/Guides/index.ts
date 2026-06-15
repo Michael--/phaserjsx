@@ -3,6 +3,7 @@
  */
 export { AnimationShowcasePage } from './AnimationShowcasePage'
 export { BestPracticesPage } from './BestPracticesPage'
+export { CustomComponentPatternPage } from './CustomComponentPatternPage'
 export { CustomIconComponentPage } from './CustomIconComponentPage'
 export { CustomSvgIconsPage } from './CustomSvgIconsPage'
 export { IconGeneratorConfigPage } from './IconGeneratorConfigPage'
