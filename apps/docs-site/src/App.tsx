@@ -2,6 +2,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ComponentPage } from './components/ComponentPage'
 import { DocsThemeProvider } from './components/Layout'
+import { SeoMetadata } from './components/SeoMetadata'
 import { accordionContent } from './content/accordion.content'
 import { activityIndicatorContent } from './content/activity-indicator.content'
 import { alertdialogContent } from './content/alertdialog.content'
@@ -83,6 +84,7 @@ export function App() {
   return (
     <DocsThemeProvider>
       <BrowserRouter basename={basename}>
+        <SeoMetadata />
         <Routes>
           <Route path="/index.html" element={<HomePage />} />
           <Route path="/" element={<HomePage />} />

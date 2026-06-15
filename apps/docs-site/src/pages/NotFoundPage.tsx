@@ -16,8 +16,8 @@ export function NotFoundPage() {
         <div style={{ fontSize: '72px', marginBottom: '24px' }}>🔍</div>
         <h1>404 — Page not found</h1>
         <DocDescription>
-          <code>{location.pathname}</code> doesn&apos;t exist. If you followed a link here, the page
-          may have moved.
+          <code>{location.pathname}</code> does not exist. If you followed a link here, the page may
+          have moved.
         </DocDescription>
 
         <div style={{ marginTop: '32px' }}>

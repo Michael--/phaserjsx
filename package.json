@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.33.0",
-  "description": "Declarative Phaser 4 + UI framework with TypeScript",
+  "description": "React-like JSX UI framework and component library for Phaser 4 games",
   "author": "Michael Rieck (Michael--) <mr@number10.de>",
   "license": "GPL-3.0-only",
   "workspaces": [
