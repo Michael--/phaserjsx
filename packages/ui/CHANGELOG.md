@@ -1,5 +1,12 @@
 # @number10/phaserjsx
 
+## 4.5.1
+
+### Patch Changes
+
+- Improve npm package discoverability with a clearer package description and more search-oriented keywords for Phaser JSX, Phaser UI, game UI, TSX, and component-library use cases.
+- Align the repository README and package README release copy with the `@number10/phaserjsx@4.5.1` package line.
+
 ## 4.5.0
 
 ### Minor Changes

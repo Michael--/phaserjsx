@@ -1,6 +1,6 @@
 # PhaserJSX
 
-> Declarative Phaser 4 UI framework with React-like components and TypeScript
+> React-like JSX UI framework and component library for Phaser 4 games
 
 A modern, type-safe framework for building game UIs in Phaser 4 using JSX components, hooks, and a powerful theme system.
 
@@ -38,7 +38,7 @@ This monorepo contains:
 - **[docs-site](./apps/docs-site)** - Documentation website (GitHub Pages)
 - **[test-ui](./apps/test-ui)** - Development playground and testing app
 
-The current package line is `@number10/phaserjsx@4.5.0`, targeting Phaser 4.1+.
+The current package line is `@number10/phaserjsx@4.5.1`, targeting Phaser 4.1+.
 
 ## 🚀 Getting Started for Development
 

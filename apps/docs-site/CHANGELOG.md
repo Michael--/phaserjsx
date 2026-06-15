@@ -1,5 +1,19 @@
 # docs-site
 
+## 0.10.0
+
+### Minor Changes
+
+- Add a practical Animation Showcase guide with spring, smoothed progress, press feedback, snap panel, and path morph examples.
+- Add a Custom Components guide with a static VU meter example for PhaserJSX component authoring patterns.
+- Rework the homepage Explore actions to prioritize Quick Start, Installation, and component discovery.
+
+### Patch Changes
+
+- Add GitHub Pages SPA deep-link recovery through `404.html` and `sessionStorage` path restoration.
+- Add docs-site SEO metadata, route-aware titles/descriptions, `robots.txt`, and `sitemap.xml` for better crawl discovery.
+- Update sidebar and Effects guide navigation around the new animation and custom-component guide structure.
+
 ## 0.9.0
 
 ### Minor Changes

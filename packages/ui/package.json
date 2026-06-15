@@ -1,6 +1,6 @@
 {
   "name": "@number10/phaserjsx",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "type": "module",
   "description": "React-like JSX UI framework and component library for Phaser 4 games",
   "author": "Michael Rieck (Michael--) <mr@number10.de>",
