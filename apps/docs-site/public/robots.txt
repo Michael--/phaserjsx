@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://michael--.github.io/phaserjsx/sitemap.xml
+Sitemap: https://phaserjsx.number10.de/sitemap.xml

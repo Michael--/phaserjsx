@@ -20,7 +20,7 @@ A modern, type-safe framework for building game UIs in Phaser 4 using JSX compon
 
 ## 📚 Documentation
 
-[📖 Full Documentation](https://michael--.github.io/phaserjsx/)
+[📖 Full Documentation](https://phaserjsx.number10.de/)
 
 ## Compatibility
 
@@ -142,7 +142,7 @@ GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--)
 
 ## 🔗 Links
 
-- [📖 Documentation](https://michael--.github.io/phaserjsx/)
+- [📖 Documentation](https://phaserjsx.number10.de/)
 - [GitHub Repository](https://github.com/Michael--/phaserjsx)
 - [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)
 - [Issue Tracker](https://github.com/Michael--/phaserjsx/issues)

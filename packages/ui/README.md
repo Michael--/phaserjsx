@@ -148,7 +148,7 @@ panel.setStencilClip({
 
 ## 📖 Documentation
 
-[📖 Full Documentation](https://michael--.github.io/phaserjsx/)
+[📖 Full Documentation](https://phaserjsx.number10.de/)
 
 [🎮 Live Examples on StackBlitz](https://stackblitz.com/@Michael--/collections/phaserjsx)
 
@@ -293,7 +293,7 @@ GPL-3.0-only. Commercial licensing available—contact Michael Rieck (Michael--)
 
 ## 🔗 Links
 
-- [📖 Documentation](https://michael--.github.io/phaserjsx/)
+- [📖 Documentation](https://phaserjsx.number10.de/)
 - [GitHub Repository](https://github.com/Michael--/phaserjsx)
 - [npm Package](https://www.npmjs.com/package/@number10/phaserjsx)
 - [Issue Tracker](https://github.com/Michael--/phaserjsx/issues)

@@ -2,7 +2,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 
-const siteUrl = 'https://michael--.github.io/phaserjsx'
+const siteUrl = 'https://phaserjsx.number10.de'
 const siteTitle = 'PhaserJSX'
 const defaultDescription =
   'PhaserJSX is a React-like JSX UI framework and component library for building type-safe Phaser 4 game interfaces.'

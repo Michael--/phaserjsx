@@ -281,10 +281,7 @@ function DocsCard() {
         <Badge label="stateful selection" tone="warning" variant="soft" />
         <Badge label="theme tokens" tone="primary" variant="soft" />
       </View>
-      <Button
-        size="medium"
-        onClick={() => window.open('https://michael--.github.io/phaserjsx/', '_blank')}
-      >
+      <Button size="medium" onClick={() => window.open('https://phaserjsx.number10.de/', '_blank')}>
         <Text text="Open docs" />
       </Button>
     </View>

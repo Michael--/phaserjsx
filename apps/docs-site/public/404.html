@@ -7,7 +7,7 @@
   <script>
     /*
      * GitHub Pages SPA redirect:
-     * When a user navigates directly to a deep URL like /phaserjsx/introduction,
+     * When a user navigates directly to a deep URL like /introduction,
      * GitHub Pages returns 404 (no such file). This 404.html stores the intended
      * path in sessionStorage and redirects to the SPA root. index.html reads the
      * stored path back and restores it via history.replaceState before React mounts.
@@ -16,7 +16,7 @@
       'phaserjsx-redirect',
       location.pathname + location.search + location.hash,
     )
-    location.replace('/phaserjsx/')
+    location.replace('/')
   </script>
 </head>
 <body></body>
