@@ -74,6 +74,7 @@ import { ThemeSystemPage } from './pages/Guides/ThemeSystemPage'
 import { HomePage } from './pages/HomePage'
 import { InstallationPage } from './pages/InstallationPage'
 import { IntroductionPage } from './pages/IntroductionPage'
+import { NotFoundPage } from './pages/NotFoundPage'
 import { QuickStartPage } from './pages/QuickStartPage'
 
 const basename = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -251,7 +252,7 @@ export function App() {
           <Route path="/api/effects" element={<EffectRegistryApiPage />} />
           <Route path="/components/*" element={<ComingSoonPage />} />
           <Route path="/guides/*" element={<ComingSoonPage />} />
-          <Route path="*" element={<ComingSoonPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
     </DocsThemeProvider>

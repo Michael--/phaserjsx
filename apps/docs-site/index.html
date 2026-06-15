@@ -8,6 +8,19 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      /*
+       * Restore the original path after a GitHub Pages 404 → SPA redirect.
+       * See public/404.html for the counterpart.
+       */
+      ;(function () {
+        var path = sessionStorage.getItem('phaserjsx-redirect')
+        if (path) {
+          sessionStorage.removeItem('phaserjsx-redirect')
+          history.replaceState(null, '', path)
+        }
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
