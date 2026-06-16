@@ -123,6 +123,71 @@ function getRouteMeta(slug: string): Omit<RouteMeta, 'priority' | 'changefreq'> 
       description:
         'Configure the PhaserJSX plugin and integrate declarative JSX UI rendering into Phaser 4 scenes.',
     },
+    '/guides/best-practices': {
+      title: 'Best Practices - PhaserJSX',
+      description:
+        'Recommended patterns, anti-patterns, and architecture tips for building Phaser 4 game UIs with PhaserJSX.',
+    },
+    '/guides/testing': {
+      title: 'Testing - PhaserJSX',
+      description:
+        'Write unit and component tests for PhaserJSX UI components using Vitest, mock game objects, and test helpers.',
+    },
+    '/guides/scene-backgrounds': {
+      title: 'Scene Backgrounds - PhaserJSX',
+      description:
+        'Set up Phaser 4 scene backgrounds with parallax layers, gradient fills, and tiled textures using PhaserJSX Views.',
+    },
+    '/guides/animation-showcase': {
+      title: 'Animation Showcase - PhaserJSX',
+      description:
+        'Explore built-in PhaserJSX animation presets, spring transitions, easing curves, and custom motion patterns.',
+    },
+    '/guides/custom-component-pattern': {
+      title: 'Custom Component Pattern - PhaserJSX',
+      description:
+        'Learn how to build reusable PhaserJSX components with props, hooks, nested themes, and Phaser display objects.',
+    },
+    '/guides/gestures': {
+      title: 'Gestures - PhaserJSX',
+      description:
+        'Handle tap, swipe, drag, pinch, and long-press gestures in PhaserJSX components with declarative gesture hooks.',
+    },
+    '/guides/tooltips': {
+      title: 'Tooltips - PhaserJSX',
+      description:
+        'Add hover and focus tooltips to PhaserJSX components with auto-placement, custom styling, and portal rendering.',
+    },
+    '/guides/layout-patterns': {
+      title: 'Layout Patterns - PhaserJSX',
+      description:
+        'Common UI layout recipes for Phaser 4 games: flex-like rows, grids, anchored panels, and safe-area layouts.',
+    },
+    '/guides/performance': {
+      title: 'Performance - PhaserJSX',
+      description:
+        'Optimize PhaserJSX render passes, reduce draw calls, batch texture atlases, and profile component trees.',
+    },
+    '/guides/icon-system': {
+      title: 'Icon System - PhaserJSX',
+      description:
+        'Use the PhaserJSX icon pipeline to load, cache, tint, and render SVG icons from Bootstrap Icons and custom sets.',
+    },
+    '/guides/icon-generator-config': {
+      title: 'Icon Generator Config - PhaserJSX',
+      description:
+        'Configure the vite-plugin-icons generator to select icon sets, filter icons, and customize output paths.',
+    },
+    '/guides/custom-icon-component': {
+      title: 'Custom Icon Component - PhaserJSX',
+      description:
+        'Build a custom icon component in PhaserJSX with dynamic SVG loading, caching, and runtime tinting.',
+    },
+    '/guides/custom-svg-icons': {
+      title: 'Custom SVG Icons - PhaserJSX',
+      description:
+        'Integrate custom SVG icon sets into PhaserJSX with the icon pipeline, tree-shaking, and sprite sheet generation.',
+    },
     '/api/hooks': {
       title: 'Hooks API - PhaserJSX',
       description:
@@ -132,6 +197,16 @@ function getRouteMeta(slug: string): Omit<RouteMeta, 'priority' | 'changefreq'> 
       title: 'Core Props API - PhaserJSX',
       description:
         'Reference for shared PhaserJSX component props, layout options, styling props, and Phaser display settings.',
+    },
+    '/api/theme-types': {
+      title: 'Theme Types API - PhaserJSX',
+      description:
+        'TypeScript type reference for the PhaserJSX theme system: ThemeConfig, ColorMode, NestedTheme, and presets.',
+    },
+    '/api/effects': {
+      title: 'Effect Registry API - PhaserJSX',
+      description:
+        'API reference for registering and applying PhaserJSX visual effects, post-processing pipelines, and shader hooks.',
     },
   }
 

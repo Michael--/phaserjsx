@@ -8,6 +8,7 @@
     "prebuild": "pnpm run generate-icons",
     "build": "tsc -b && vite build && pnpm run prerender",
     "prerender": "tsx scripts/prerender.ts",
+    "seo-check": "node scripts/check-seo.mjs ./dist --base-url https://phaserjsx.number10.de",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc -b && tsc -p src/examples-docs/tsconfig.json --noEmit",
