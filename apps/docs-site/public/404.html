@@ -1,23 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="robots" content="index, follow" />
-  <title>Redirecting to PhaserJSX Docs</title>
-  <script>
-    /*
-     * GitHub Pages SPA redirect:
-     * When a user navigates directly to a deep URL like /introduction,
-     * GitHub Pages returns 404 (no such file). This 404.html stores the intended
-     * path in sessionStorage and redirects to the SPA root. index.html reads the
-     * stored path back and restores it via history.replaceState before React mounts.
-     */
-    sessionStorage.setItem(
-      'phaserjsx-redirect',
-      location.pathname + location.search + location.hash,
-    )
-    location.replace('/')
-  </script>
-</head>
-<body></body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, follow" />
+    <title>Page not found - PhaserJSX</title>
+    <script>
+      /*
+       * GitHub Pages SPA fallback.
+       * Known routes are prerendered as static HTML and served directly.
+       * Unknown routes are restored in index.html so React can render NotFoundPage.
+       */
+      sessionStorage.setItem(
+        'phaserjsx-redirect',
+        location.pathname + location.search + location.hash,
+      )
+      location.replace('/')
+    </script>
+  </head>
+  <body></body>
 </html>

@@ -80,7 +80,7 @@ const componentTitles: Record<string, string> = {
   listbox: 'ListBox',
   'menu-button': 'MenuButton',
   modal: 'Modal',
-  'nine-slice-button': 'NineSliceButton',
+  'nineslice-button': 'NineSliceButton',
   'number-input': 'NumberInput',
   'palette-picker': 'PalettePicker',
   particles: 'Particles',
